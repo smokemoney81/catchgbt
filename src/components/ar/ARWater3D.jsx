@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { base44 } from '@/api/base44Client';
@@ -786,7 +785,7 @@ export default function ARWater3D() {
         </Card>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .glass-morphism {
           background: rgba(15, 23, 42, 0.7);
           backdrop-filter: blur(16px);

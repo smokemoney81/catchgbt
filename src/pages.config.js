@@ -8,7 +8,6 @@ import Quiz from './pages/Quiz';
 import Shop from './pages/Shop';
 import GearV1 from './pages/GearV1';
 import Match3Game from './pages/Match3Game';
-import Maps from './pages/Maps';
 import Ranking from './pages/Ranking';
 import Analysis from './pages/Analysis';
 import Community from './pages/Community';
@@ -58,7 +57,6 @@ export const PAGES = {
     "Shop": Shop,
     "GearV1": GearV1,
     "Match3Game": Match3Game,
-    "Maps": Maps,
     "Ranking": Ranking,
     "Analysis": Analysis,
     "Community": Community,

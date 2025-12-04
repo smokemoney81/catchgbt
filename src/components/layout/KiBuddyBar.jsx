@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { createPageUrl } from "@/utils";
 import { User } from "@/entities/User";
@@ -169,7 +168,7 @@ export default function KiBuddyBar({ onToggleChatbot, chatbotOpen }) {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .safe-area-bottom {
           padding-bottom: env(safe-area-inset-bottom, 0);
         }

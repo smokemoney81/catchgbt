@@ -136,7 +136,7 @@ export default function Tutorials() {
         </Card>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes loading {
           from {
             width: 0%;
