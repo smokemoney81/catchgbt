@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Loader2, Fish, Scale, FileUp, CheckCircle, AlertTriangle, ShieldQuestion, Calendar } from "lucide-react";
-import { processRulesFile, FEDERAL_STATES } from "./rule-utils";
+import { FEDERAL_STATES } from "./rule-utils";
 
 export default function RulesSection() {
   const [rules, setRules] = useState([]);
@@ -45,10 +45,7 @@ export default function RulesSection() {
 
     setIsLoading(true);
     try {
-      const newRules = await processRulesFile(file);
-      await base44.entities.RuleEntry.bulkCreate(newRules);
-      await loadRules();
-      alert(`${newRules.length} Regeln erfolgreich importiert!`);
+      alert("Import-Funktion ist aktuell deaktiviert");
     } catch (error) {
       console.error("Fehler beim Import:", error);
       alert(`Fehler beim Import: ${error.message}`);
