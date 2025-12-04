@@ -1,0 +1,113 @@
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, ResponsiveContainer, Tooltip } from "recharts";
+
+export default function WaterRadarChart({ parameters }) {
+  // Konvertiere Parameter zu Radar-Chart Format (0-100 Scale)
+  const radarData = [
+    {
+      parameter: "Temperatur",
+      value: normalizeParameter(parameters.temperature.value, 8, 25, 15, 22),
+      fullMark: 100
+    },
+    {
+      parameter: "Chlorophyll",
+      value: normalizeParameter(parameters.chlorophyll.value, 0, 30, 3, 10),
+      fullMark: 100
+    },
+    {
+      parameter: "Klarheit",
+      value: normalizeParameter(parameters.turbidity.value, 50, 0, 30, 10, true), // inverse
+      fullMark: 100
+    },
+    {
+      parameter: "Sauerstoff",
+      value: normalizeParameter(parameters.oxygen.value, 4, 12, 7, 10),
+      fullMark: 100
+    },
+    {
+      parameter: "pH-Wert",
+      value: normalizeParameter(parameters.ph.value, 5, 9, 6.5, 8),
+      fullMark: 100
+    },
+    {
+      parameter: "Algen-Risiko",
+      value: normalizeParameter(parameters.cyanobacteria.value, 10, 0, 5, 2, true), // inverse
+      fullMark: 100
+    }
+  ];
+
+  return (
+    <Card className="glass-morphism border-gray-800">
+      <CardHeader>
+        <CardTitle className="text-cyan-400">6-Parameter Qualitätsprofil</CardTitle>
+        <p className="text-gray-400 text-sm">Multivariate Gewässeranalyse</p>
+      </CardHeader>
+      <CardContent>
+        <ResponsiveContainer width="100%" height={400}>
+          <RadarChart data={radarData}>
+            <PolarGrid stroke="#374151" />
+            <PolarAngleAxis 
+              dataKey="parameter" 
+              tick={{ fill: '#9ca3af', fontSize: 12 }}
+            />
+            <PolarRadiusAxis 
+              angle={90} 
+              domain={[0, 100]}
+              tick={{ fill: '#9ca3af', fontSize: 10 }}
+            />
+            <Radar 
+              name="Qualität" 
+              dataKey="value" 
+              stroke="#22d3ee" 
+              fill="#22d3ee" 
+              fillOpacity={0.6}
+            />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: '#1f2937', 
+                border: '1px solid #374151',
+                borderRadius: '8px'
+              }}
+              formatter={(value) => `${Math.round(value)}%`}
+            />
+            <Legend wrapperStyle={{ color: '#9ca3af' }} />
+          </RadarChart>
+        </ResponsiveContainer>
+        
+        <div className="mt-4 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800/50">
+            <div className="w-3 h-3 rounded-full bg-green-400"></div>
+            <span className="text-sm text-gray-300">80-100% = Optimal</span>
+            <div className="w-3 h-3 rounded-full bg-yellow-400 ml-2"></div>
+            <span className="text-sm text-gray-300">50-80% = Gut</span>
+            <div className="w-3 h-3 rounded-full bg-red-400 ml-2"></div>
+            <span className="text-sm text-gray-300">&lt;50% = Suboptimal</span>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// Normalisiere Werte zu 0-100 Skala
+function normalizeParameter(value, min, max, optimalMin, optimalMax, inverse = false) {
+  // Wenn Wert im optimalen Bereich
+  if (value >= optimalMin && value <= optimalMax) {
+    return 100;
+  }
+  
+  // Wenn außerhalb des optimalen Bereichs
+  let score;
+  if (value < optimalMin) {
+    // Zu niedrig
+    score = ((value - min) / (optimalMin - min)) * 100;
+  } else {
+    // Zu hoch
+    score = 100 - (((value - optimalMax) / (max - optimalMax)) * 100);
+  }
+  
+  score = Math.max(0, Math.min(100, score));
+  
+  return inverse ? 100 - score : score;
+}

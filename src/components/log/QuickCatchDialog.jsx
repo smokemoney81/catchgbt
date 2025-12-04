@@ -1,0 +1,511 @@
+import React, { useEffect, useState } from "react";
+import { Catch, Spot, User } from "@/entities/all";
+import { UploadFile } from "@/integrations/Core";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card } from "@/components/ui/card";
+import { RuleEntry } from "@/entities/RuleEntry";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { toast } from "sonner";
+import { useHaptic } from "@/components/utils/HapticFeedback";
+import { useSound } from "@/components/utils/SoundManager";
+import { useLanguage } from "@/components/i18n/LanguageContext";
+
+export default function QuickCatchDialog() {
+  const { t } = useLanguage();
+  const [open, setOpen] = useState(false);
+  const [spots, setSpots] = useState([]);
+  const [form, setForm] = useState({
+    species: "", spot_id: "", length_cm: "", weight_kg: "", bait_used: "", notes: "", catch_time: new Date().toISOString().slice(0,16), photo_url: ""
+  });
+  const [ruleWarnings, setRuleWarnings] = useState([]);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const { triggerHaptic } = useHaptic();
+  const { playSound } = useSound();
+
+  // EXIF Parser (minimal JPEG: DateTimeOriginal, GPS)
+  const parseEXIF = async (file) => {
+    try {
+      const buf = await file.arrayBuffer();
+      const dv = new DataView(buf);
+      let offset = 2;
+      if (dv.getUint16(0, false) !== 0xFFD8) return {};
+
+      while (offset < dv.byteLength) {
+        const marker = dv.getUint16(offset, false);
+        offset += 2;
+        const size = dv.getUint16(offset, false);
+        offset += 2;
+
+        if (marker === 0xFFE1) {
+          const exifHeader = new TextDecoder().decode(new DataView(buf, offset, 6));
+          if (!exifHeader.startsWith("Exif")) break;
+
+          const tiffOffset = offset + 6;
+          const endianMark = dv.getUint16(tiffOffset, false);
+          const isLE = (endianMark === 0x4949);
+
+          if (dv.getUint16(tiffOffset + 2, isLE) !== 0x002A) break;
+
+          const firstIFDOffset = dv.getUint32(tiffOffset + 4, isLE);
+
+          const getTag = (base, i) => {
+            const entry = base + 2 + i * 12;
+            const tag = dv.getUint16(entry, isLE);
+            const type = dv.getUint16(entry + 2, isLE);
+            const count = dv.getUint32(entry + 4, isLE);
+            const valueOffset = dv.getUint32(entry + 8, isLE);
+            return { tag, type, count, valueOffset, entry };
+          };
+
+          const readAscii = (off, count) => {
+            const bytes = new Uint8Array(buf, off, count);
+            return new TextDecoder().decode(bytes).replace(/\0+$/, "");
+          };
+
+          const readRational = (off) => {
+            const num = dv.getUint32(off, isLE);
+            const den = dv.getUint32(off + 4, isLE);
+            return den ? num / den : 0;
+          };
+
+          const IFD0 = tiffOffset + firstIFDOffset;
+          const entries0 = dv.getUint16(IFD0, isLE);
+          let exifIFDPointer = 0, gpsIFDPointer = 0;
+
+          for (let i = 0; i < entries0; i++) {
+            const { tag, valueOffset } = getTag(IFD0, i);
+            if (tag === 0x8769) exifIFDPointer = valueOffset;
+            if (tag === 0x8825) gpsIFDPointer = valueOffset;
+          }
+
+          let dateTimeOriginal = null;
+          if (exifIFDPointer) {
+            const exifIFD = tiffOffset + exifIFDPointer;
+            const count = dv.getUint16(exifIFD, isLE);
+            for (let i = 0; i < count; i++) {
+              const { tag, type, count: c, valueOffset } = getTag(exifIFD, i);
+              if (tag === 0x9003 && type === 2) {
+                const off = c > 4 ? tiffOffset + valueOffset : exifIFD + 8;
+                const str = readAscii(off, c);
+                const safeStr = String(str || "");
+                if (safeStr.match(/^\d{4}:\d{2}:\d{2} \d{2}:\d{2}:\d{2}/)) {
+                  const iso = safeStr.replace(/^(\d{4}):(\d{2}):(\d{2}) /, "$1-$2-$3T") + "Z";
+                  dateTimeOriginal = iso;
+                }
+              }
+            }
+          }
+
+          let gpsLat = null, gpsLon = null;
+          if (gpsIFDPointer) {
+            const gpsIFD = tiffOffset + gpsIFDPointer;
+            const count = dv.getUint16(gpsIFD, isLE);
+            let latRef = "N", lonRef = "E", latArr = null, lonArr = null;
+
+            for (let i = 0; i < count; i++) {
+              const { tag, type, count: c, valueOffset } = getTag(gpsIFD, i);
+              if (tag === 0x0001) {
+                const off = c > 4 ? tiffOffset + valueOffset : gpsIFD + 8;
+                latRef = String(readAscii(off, c) || "N").trim();
+              }
+              if (tag === 0x0003) {
+                const off = c > 4 ? tiffOffset + valueOffset : gpsIFD + 8;
+                lonRef = String(readAscii(off, c) || "E").trim();
+              }
+              if (tag === 0x0002 && type === 5) {
+                const off = tiffOffset + valueOffset;
+                latArr = [readRational(off), readRational(off + 8), readRational(off + 16)];
+              }
+              if (tag === 0x0004 && type === 5) {
+                const off = tiffOffset + valueOffset;
+                lonArr = [readRational(off), readRational(off + 8), readRational(off + 16)];
+              }
+            }
+
+            const dmsToDec = (dms) => dms ? (dms[0] + dms[1] / 60 + dms[2] / 3600) : null;
+            if (latArr && lonArr) {
+              gpsLat = dmsToDec(latArr) * (latRef === "S" ? -1 : 1);
+              gpsLon = dmsToDec(lonArr) * (lonRef === "W" ? -1 : 1);
+            }
+          }
+          return { dateTimeOriginal, gpsLat, gpsLon };
+        } else {
+          offset += size - 2;
+        }
+      }
+    } catch (error) {
+      console.warn("EXIF parsing error:", error);
+    }
+    return {};
+  };
+
+  const compressImage = (file, maxDim = 1600, maxKB = 500) => new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return reject(new Error("Could not get 2D context"));
+      ctx.drawImage(img, 0, 0, w, h);
+
+      const tryQuality = (q, cb) => canvas.toBlob(cb, "image/jpeg", q);
+
+      const attempt = (q) => {
+        tryQuality(q, (blob) => {
+          if (!blob) return reject(new Error("Blob creation failed"));
+          if (blob.size / 1024 <= maxKB || q <= 0.5) {
+            return resolve(blob);
+          }
+          attempt(q - 0.1);
+        });
+      };
+      attempt(0.92);
+    };
+    img.onerror = reject;
+    const url = URL.createObjectURL(file);
+    img.src = url;
+  });
+
+  const handleClose = () => {
+    triggerHaptic('light');
+    playSound('click');
+    setOpen(false);
+    setForm({
+      species: "",
+      spot_id: "",
+      length_cm: "",
+      weight_kg: "",
+      bait_used: "",
+      notes: "",
+      catch_time: new Date().toISOString().slice(0,16),
+      photo_url: ""
+    });
+  };
+
+  useEffect(() => {
+    const handler = () => {
+      setOpen(true);
+    };
+    window.addEventListener("openCatchDialog", handler);
+    (async ()=> {
+        const spotList = await Spot.list();
+        setSpots(spotList.filter(s => s && s.id));
+    })();
+    return () => window.removeEventListener("openCatchDialog", handler);
+  }, []);
+
+  useEffect(() => {
+    const processQueue = async () => {
+      const raw = localStorage.getItem("fishmaster_catch_queue");
+      const queue = raw ? JSON.parse(raw) : [];
+      if (!queue.length) return;
+      console.log(`Processing catch queue: ${queue.length} items`);
+      const rest = [];
+      for (const payload of queue) {
+        try {
+          await Catch.create(payload);
+          console.log("Successfully re-submitted queued catch.");
+          playSound('notification');
+        } catch (e) {
+          console.error("Failed to re-submit queued catch, keeping in queue:", e);
+          rest.push(payload);
+        }
+      }
+      localStorage.setItem("fishmaster_catch_queue", JSON.stringify(rest));
+      if (rest.length === 0) {
+        console.log("Catch queue cleared.");
+      }
+    };
+    window.addEventListener("online", processQueue);
+    processQueue();
+    return () => window.removeEventListener("online", processQueue);
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const rules = await RuleEntry.list();
+      const warns = [];
+      const speciesLower = String(form.species || "").toLowerCase();
+      rules.filter(r => String(r.fish || "").toLowerCase() === speciesLower).forEach(r => {
+        if (r.min_size_cm && form.length_cm && Number(form.length_cm) < r.min_size_cm) warns.push(`Mindestmaß ${r.min_size_cm} cm unterschritten (${form.length_cm} cm).`);
+        if (r.closed_from && r.closed_to) {
+          const d = form.catch_time ? new Date(form.catch_time).toISOString().slice(0,10) : new Date().toISOString().slice(0,10);
+          if (d >= r.closed_from && d <= r.closed_to) warns.push(`Schonzeit: ${r.closed_from}–${r.closed_to}.`);
+        }
+      });
+      setRuleWarnings(warns);
+    })();
+  }, [form.species, form.length_cm, form.catch_time]);
+
+  const calculateCatchCredits = (species, lengthCm) => {
+    const baseCredits = 100;
+    const maxCredits = 1000;
+    
+    const rarityMultiplier = {
+      'Hecht': 1.5,
+      'Zander': 1.4, 
+      'Wels': 2.0,
+      'Forelle': 1.2,
+      'Karpfen': 1.3,
+      'Barsch': 1.0,
+      'Brassen': 0.8,
+      'Rotauge': 0.7
+    };
+    
+    const speciesMultiplier = rarityMultiplier[String(species || "")] || 1.0;
+    const sizeBonus = lengthCm ? Math.min(lengthCm / 10, 10) : 1;
+    
+    const calculatedCredits = Math.round(baseCredits * speciesMultiplier * sizeBonus);
+    return Math.min(Math.max(calculatedCredits, baseCredits), maxCredits);
+  };
+
+  const saveDraft = () => {
+    triggerHaptic('light');
+    playSound('click');
+    const drafts = JSON.parse(localStorage.getItem("fishmaster_drafts") || "[]");
+    drafts.push({ ...form, saved_at: new Date().toISOString() });
+    localStorage.setItem("fishmaster_drafts", JSON.stringify(drafts));
+    toast.success("Als Entwurf gespeichert (offline verfügbar)");
+    handleClose();
+  };
+
+  const haversine = (a, b) => {
+    const toRad = (x) => x * Math.PI/180;
+    const R = 6371;
+    const dLat = toRad(b.lat - a.lat);
+    const dLon = toRad(b.lon - a.lon);
+    const lat1 = toRad(a.lat);
+    const lat2 = toRad(b.lat);
+    const h = Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)**2;
+    return 2*R*Math.asin(Math.sqrt(h));
+  };
+
+  const assignNearestSpot = async (lat, lon) => {
+    const availableSpots = await Spot.list();
+    if (!availableSpots.length) return;
+    let best = null, bestD = Infinity;
+    availableSpots.forEach(s => {
+      if (s.latitude && s.longitude) {
+        const d = haversine({lat, lon}, {lat: s.latitude, lon: s.longitude});
+        if (d < bestD) { bestD = d; best = s; }
+      }
+    });
+    if (best && bestD < 2) {
+      setForm(prev => ({ ...prev, spot_id: best.id }));
+      toast.info(`Nächster Spot zugewiesen: ${best.name}`);
+      triggerHaptic('light');
+      playSound('notification');
+      console.log(`Assigned nearest spot: ${best.name} (${bestD.toFixed(2)} km away)`);
+    } else if (best) {
+      console.log(`Nearest spot ${best.name} too far (${bestD.toFixed(2)} km), not auto-assigning.`);
+    }
+  };
+
+  const save = async () => {
+    triggerHaptic('medium');
+    const trimmedSpecies = String(form.species || "").trim();
+    if (!trimmedSpecies) {
+      toast.error("Bitte Fischart eingeben!");
+      playSound('error');
+      triggerHaptic('light');
+      return;
+    }
+    if (ruleWarnings.length && !confirm(`Hinweise:\n- ${ruleWarnings.join("\n- ")}\nTrotzdem speichern?`)) {
+      triggerHaptic('light');
+      playSound('click');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const catchData = {
+        species: trimmedSpecies,
+        spot_id: form.spot_id || null,
+        length_cm: form.length_cm ? parseFloat(form.length_cm) : null,
+        weight_kg: form.weight_kg ? parseFloat(form.weight_kg) : null,
+        bait_used: String(form.bait_used || ""),
+        notes: String(form.notes || ""),
+        catch_time: new Date(form.catch_time).toISOString(),
+        photo_url: String(form.photo_url || ""),
+        points_earned: form.length_cm ? (1 + Math.floor(parseFloat(form.length_cm)/10)) : 1
+      };
+
+      await Catch.create(catchData);
+
+      try {
+        const user = await User.me();
+        const credits = calculateCatchCredits(trimmedSpecies, parseFloat(form.length_cm));
+        await User.updateMyUserData({
+          credits: (user.credits || 0) + credits,
+          total_earned: (user.total_earned || 0) + credits
+        });
+
+        playSound('success');
+
+        toast.success(
+          `${trimmedSpecies} erfolgreich gespeichert! 🎣`,
+          {
+            description: `${form.length_cm || 'unbekannt'} cm • +${credits} Credits erhalten`,
+            duration: 4000
+          }
+        );
+        
+        handleClose();
+      } catch (creditError) {
+        console.error("Credits konnten nicht gutgeschrieben werden:", creditError);
+        playSound('warning');
+        toast.warning("Fang gespeichert, aber Credits konnten nicht gutgeschrieben werden.");
+        handleClose();
+      }
+    } catch (e) {
+      console.error("Failed to save catch, queueing offline:", e);
+      triggerHaptic('light');
+      playSound('notification');
+      
+      const catchData = {
+        species: trimmedSpecies,
+        spot_id: form.spot_id || null,
+        length_cm: form.length_cm ? parseFloat(form.length_cm) : null,
+        weight_kg: form.weight_kg ? parseFloat(form.weight_kg) : null,
+        bait_used: String(form.bait_used || ""),
+        notes: String(form.notes || ""),
+        catch_time: new Date(form.catch_time).toISOString(),
+        photo_url: String(form.photo_url || ""),
+        points_earned: form.length_cm ? (1 + Math.floor(parseFloat(form.length_cm)/10)) : 1
+      };
+      
+      const q = JSON.parse(localStorage.getItem("fishmaster_catch_queue") || "[]");
+      q.push(catchData);
+      localStorage.setItem("fishmaster_catch_queue", JSON.stringify(q));
+      
+      toast.info(
+        "Offline gespeichert 📱", 
+        {
+          description: "Wird automatisch synchronisiert, sobald Internet verfügbar ist",
+          duration: 5000
+        }
+      );
+      handleClose();
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const upload = async (file) => {
+    triggerHaptic('light');
+    playSound('click');
+
+    let exif = {};
+    try { 
+      exif = await parseEXIF(file); 
+    } catch (e) { 
+      console.warn("EXIF parsing failed:", e); 
+    }
+
+    if (exif?.dateTimeOriginal) {
+      const safeDateTime = String(exif.dateTimeOriginal).slice(0,16);
+      setForm(prev => ({ ...prev, catch_time: safeDateTime }));
+      toast.info("Fangzeit aus Bild-Metadaten übernommen.");
+      triggerHaptic('light');
+      playSound('notification');
+    }
+    if (exif?.gpsLat && exif?.gpsLon) {
+      assignNearestSpot(exif.gpsLat, exif.gpsLon);
+    }
+
+    let blob = file;
+    try {
+      blob = await compressImage(file, 1600, 500);
+    } catch (e) {
+      console.warn("Image compression failed, uploading original file:", e);
+    }
+
+    toast.info(`Lade Bild hoch: ${file.name}`);
+    playSound('loading');
+    const fileName = String(file.name || "fang") + ".jpg";
+    const f = new File([blob], fileName, { type: "image/jpeg" });
+    const { file_url } = await UploadFile({ file: f });
+    setForm(prev=>({ ...prev, photo_url: file_url }));
+    toast.success("Bild erfolgreich hochgeladen!");
+    playSound('success');
+    triggerHaptic('light');
+  };
+
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4" onClick={handleClose}>
+      <Card className="w-full max-w-xl glass-morphism border-gray-800 rounded-2xl p-4" onClick={(e) => e.stopPropagation()}>
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-white text-lg font-semibold">{t('catch.title')}</h3>
+          <Button variant="ghost" onClick={handleClose}>{t('common.close')}</Button>
+        </div>
+        {ruleWarnings.length > 0 && (
+          <Alert variant="destructive" className="mb-3">
+            <AlertDescription>
+              {ruleWarnings.map((w, i) => <div key={i}>• {w}</div>)}
+            </AlertDescription>
+          </Alert>
+        )}
+        <div className="grid sm:grid-cols-2 gap-3">
+          <Input placeholder={t('catch.species')} value={form.species}
+            onBlur={e => { toast.info(`${t('catch.species')}: ${e.target.value}`); triggerHaptic('light'); playSound('pop'); }}
+            onChange={(e) => { setForm({...form, species: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
+            className="bg-gray-800/50 border-gray-700 text-white" />
+          <Select value={form.spot_id || ""} onValueChange={(v)=>{
+              setForm({...form, spot_id: v});
+              const spotName = spots.find(s => s.id === v)?.name || 'Kein Spot';
+              toast.info(`Spot: ${spotName}`);
+              triggerHaptic('light');
+              playSound('click');
+            }}>
+            <SelectTrigger className="bg-gray-800/50 border-gray-700 text-white"><SelectValue placeholder={t('catch.spot')} /></SelectTrigger>
+            <SelectContent>
+              {spots.map(s => s.id && <SelectItem value={s.id} key={s.id}>{s.name || 'Unbenannt'}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Input type="number" placeholder={t('catch.length')} value={form.length_cm}
+            onBlur={e => { toast.info(`${t('catch.length')}: ${e.target.value} cm`); triggerHaptic('light'); playSound('pop'); }}
+            onChange={(e) => { setForm({...form, length_cm: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
+            className="bg-gray-800/50 border-gray-700 text-white" />
+          <Input type="number" step="0.1" placeholder={t('catch.weight')} value={form.weight_kg}
+            onBlur={e => { toast.info(`${t('catch.weight')}: ${e.target.value} kg`); triggerHaptic('light'); playSound('pop'); }}
+            onChange={(e) => { setForm({...form, weight_kg: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
+            className="bg-gray-800/50 border-gray-700 text-white" />
+          <Input placeholder={t('catch.bait')} value={form.bait_used}
+            onBlur={e => { toast.info(`${t('catch.bait')}: ${e.target.value}`); triggerHaptic('light'); playSound('pop'); }}
+            onChange={(e) => { setForm({...form, bait_used: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
+            className="bg-gray-800/50 border-gray-700 text-white" />
+          <Input type="datetime-local" value={form.catch_time}
+            onBlur={e => { toast.info(`Fangzeit geändert`); triggerHaptic('light'); playSound('pop'); }}
+            onChange={(e) => { setForm({...form, catch_time: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
+            className="bg-gray-800/50 border-gray-700 text-white" />
+          <Input placeholder={t('catch.notes')} value={form.notes}
+            onBlur={e => { toast.info(`Notiz hinzugefügt`); triggerHaptic('light'); playSound('pop'); }}
+            onChange={(e) => { setForm({...form, notes: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
+            className="bg-gray-800/50 border-gray-700 text-white sm:col-span-2" />
+          <div className="sm:col-span-2">
+            <input type="file" accept="image/*" onChange={(e)=>e.target.files[0] && upload(e.target.files[0])} />
+            {form.photo_url && <img src={form.photo_url} alt="Fang" className="mt-2 h-24 rounded-xl object-cover" />}
+          </div>
+        </div>
+        <div className="flex justify-between gap-2 mt-4">
+          <Button variant="outline" onClick={saveDraft}>{t('catch.save_draft')}</Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={handleClose}>{t('common.cancel')}</Button>
+            <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={save} disabled={isSaving}>
+              {isSaving ? `${t('common.loading')}` : t('common.save')}
+            </Button>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+}
