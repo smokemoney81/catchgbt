@@ -1,8 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
-import { Camera, ArrowLeft } from 'lucide-react';
+import { Camera, Star, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import LanguageSwitcher from '@/components/i18n/LanguageSwitcher';
 import { LanguageProvider, useLanguage } from '@/components/i18n/LanguageContext';
@@ -109,8 +110,18 @@ function LandingPageContent() {
         setIsLoadingPlan(false);
     };
 
-    const handleLogin = () => {
-        base44.auth.redirectToLogin(createPageUrl('Dashboard'));
+    const handleLogin = async () => {
+        try {
+            const isAuth = await base44.auth.isAuthenticated();
+            if (isAuth) {
+                window.location.href = createPageUrl('Dashboard');
+            } else {
+                base44.auth.redirectToLogin(createPageUrl('Dashboard'));
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            base44.auth.redirectToLogin(createPageUrl('Dashboard'));
+        }
     };
 
     const handleCameraClick = () => {
@@ -283,7 +294,12 @@ function LandingPageContent() {
                     duration: 3000
                 });
                 setIsUploading(false);
-                base44.auth.redirectToLogin(createPageUrl('Logbook'));
+                try {
+                    base44.auth.redirectToLogin(createPageUrl('Logbook'));
+                } catch (error) {
+                    console.error('Redirect error:', error);
+                    window.location.href = createPageUrl('Dashboard');
+                }
                 return;
             }
 
