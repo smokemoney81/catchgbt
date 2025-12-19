@@ -347,40 +347,10 @@ export default function TutorialModal({ isOpen, onClose }) {
       const step = steps[stepIndex];
       const text = `${step.title}. ${step.content}`;
 
-      try {
-        const response = await base44.functions.invoke('backendTextToSpeech', { 
-          text: text.trim(),
-          speechRate: 1.0,
-          voiceId: "alloy",
-          quality: "standard"
-        }, {
-          responseType: 'arraybuffer'
-        });
-
-        const contentType = response.headers?.['content-type'] || '';
-        
-        if (contentType.includes('application/json')) {
-          const decoder = new TextDecoder();
-          const jsonText = decoder.decode(response.data);
-          const jsonData = JSON.parse(jsonText);
-          
-          if (jsonData.fallback_to_browser) {
-            await playTextWithBrowserTTS(text);
-            return;
-          }
-        }
-
-        if (response.data && response.data instanceof ArrayBuffer && response.data.byteLength > 0) {
-          await playAudio(response.data);
-        } else {
-          await playTextWithBrowserTTS(text);
-        }
-      } catch (networkError) {
-        console.error('Backend TTS error:', networkError);
-        await playTextWithBrowserTTS(text);
-      }
+      console.log('[Tutorial TTS] Starting speech');
+      await playTextWithBrowserTTS(text);
     } catch (error) {
-      console.error('Audio playback error:', error);
+      console.error('[Tutorial TTS] Error:', error);
     } finally {
       setIsPlaying(false);
       setPlayingStep(null);
