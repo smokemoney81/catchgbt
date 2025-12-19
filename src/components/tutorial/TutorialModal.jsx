@@ -364,99 +364,114 @@ export default function TutorialModal({ isOpen, onClose }) {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
-          className="relative w-full max-w-3xl bg-gray-900 rounded-2xl shadow-2xl border border-gray-800 overflow-hidden"
+          className="relative w-full max-w-2xl bg-gradient-to-b from-gray-900 to-gray-950 rounded-3xl shadow-2xl border border-gray-800 overflow-hidden"
         >
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 z-10 p-2 rounded-full bg-gray-800/80 hover:bg-gray-700/80 transition-colors"
+            className="absolute top-4 right-4 z-10 p-2 rounded-full bg-gray-800/90 hover:bg-gray-700 transition-colors shadow-lg"
           >
-            <X className="w-5 h-5 text-gray-300" />
+            <X className="w-5 h-5 text-white" />
           </button>
 
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gray-800">
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gray-800">
             <motion.div
-              className="h-full bg-gradient-to-r from-cyan-500 to-emerald-500"
+              className="h-full bg-gradient-to-r from-cyan-500 via-emerald-500 to-cyan-500"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.3 }}
             />
           </div>
 
-          <div className="p-8 pt-12">
+          <div className="p-6">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentStep}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="mb-6 rounded-xl overflow-hidden">
+                <div className="mb-6 rounded-2xl overflow-hidden shadow-xl">
                   <img
                     src={currentStepData.image}
                     alt={currentStepData.title}
-                    className="w-full h-48 object-cover"
+                    className="w-full h-64 object-cover"
                   />
                 </div>
 
-                <div className="flex items-start justify-between mb-4">
-                  <h2 className="text-2xl font-bold text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.7)]">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-3xl font-bold text-white">
                     {currentStepData.title}
                   </h2>
                   <button
                     onClick={() => handlePlayAudio(currentStep)}
                     disabled={isPlaying}
-                    className="ml-4 p-2 rounded-full bg-emerald-600/20 hover:bg-emerald-600/30 transition-colors disabled:opacity-50"
+                    className="ml-4 p-3 rounded-full bg-cyan-600/20 hover:bg-cyan-600/30 transition-all disabled:opacity-50 border border-cyan-500/30"
                     title="Text vorlesen"
                   >
                     {isPlaying && playingStep === currentStep ? (
-                      <Loader2 className="w-5 h-5 text-emerald-400 animate-spin" />
+                      <Loader2 className="w-6 h-6 text-cyan-400 animate-spin" />
                     ) : (
-                      <Volume2 className="w-5 h-5 text-emerald-400" />
+                      <Volume2 className="w-6 h-6 text-cyan-400" />
                     )}
                   </button>
                 </div>
 
-                <p className="text-gray-300 leading-relaxed mb-6">
+                <p className="text-gray-200 text-lg leading-relaxed mb-6 min-h-[120px]">
                   {currentStepData.content}
                 </p>
 
-                <div className="text-center text-sm text-gray-500 mb-4">
-                  Schritt {currentStep + 1} von {steps.length}
+                <div className="flex items-center justify-center gap-2 mb-6">
+                  {steps.map((_, index) => (
+                    <div
+                      key={index}
+                      className={`h-2 rounded-full transition-all ${
+                        index === currentStep 
+                          ? 'w-8 bg-cyan-500' 
+                          : index < currentStep
+                          ? 'w-2 bg-emerald-500'
+                          : 'w-2 bg-gray-700'
+                      }`}
+                    />
+                  ))}
+                </div>
+
+                <div className="text-center text-sm text-gray-400 mb-4">
+                  {currentStep + 1} / {steps.length}
                 </div>
               </motion.div>
             </AnimatePresence>
 
-            <div className="flex items-center justify-between pt-6 border-t border-gray-800">
+            <div className="flex items-center justify-between pt-4 gap-4">
               <Button
                 onClick={handlePrev}
                 disabled={currentStep === 0}
                 variant="outline"
-                className="flex items-center gap-2"
+                className="flex-1 h-12 text-base border-gray-700 hover:bg-gray-800 disabled:opacity-30"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-5 h-5 mr-2" />
                 Zurück
               </Button>
 
               {currentStep === steps.length - 1 ? (
                 <Button
                   onClick={onClose}
-                  className="bg-emerald-600 hover:bg-emerald-700"
+                  className="flex-1 h-12 text-base bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-700 hover:to-cyan-700 shadow-lg"
                 >
                   Tutorial beenden
                 </Button>
               ) : (
                 <Button
                   onClick={handleNext}
-                  className="bg-cyan-600 hover:bg-cyan-700 flex items-center gap-2"
+                  className="flex-1 h-12 text-base bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700 shadow-lg"
                 >
                   Weiter
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-5 h-5 ml-2" />
                 </Button>
               )}
             </div>
