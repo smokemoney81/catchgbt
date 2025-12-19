@@ -11,6 +11,7 @@ import MessageBubble from "./MessageBubble";
 import { useSound } from "@/components/utils/SoundManager";
 import { useLanguage } from "@/components/i18n/LanguageContext";
 import { Loader2, Mic, MicOff, Send, X, Volume2, VolumeX, Sparkles, Settings, AlertTriangle } from "lucide-react";
+import { backendTextToSpeech } from "@/functions/backendTextToSpeech";
 import { WakeWordDetector } from '@/components/utils/WakeWordDetector';
 import { base44 } from "@/api/base44Client";
 
@@ -237,8 +238,42 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
       const planId = currentUser?.premium_plan_id || 'free';
       const quality = (planId === 'pro' || planId === 'ultimate') ? 'hd' : 'standard';
 
-      console.log('[TTS] Using browser TTS');
-      await playTextWithBrowserTTS(cleanText, speechRate);
+      try {
+        console.log('[TTS] Attempting backend TTS');
+        const response = await base44.functions.invoke('backendTextToSpeech', {
+          text: cleanText,
+          speechRate: speechRate,
+          voiceId: voiceId,
+          quality: quality
+        }, {
+          responseType: 'arraybuffer'
+        });
+
+        const contentType = response.headers?.['content-type'] || '';
+        
+        if (contentType.includes('application/json')) {
+          const decoder = new TextDecoder();
+          const jsonText = decoder.decode(response.data);
+          const jsonData = JSON.parse(jsonText);
+          
+          if (jsonData.fallback_to_browser) {
+            console.log('[TTS] Backend requested browser fallback:', jsonData.reason);
+            await playTextWithBrowserTTS(cleanText, speechRate);
+            return;
+          }
+        }
+
+        if (response.data && response.data instanceof ArrayBuffer && response.data.byteLength > 0) {
+          console.log('[TTS] Playing backend audio');
+          await playAudio(response.data);
+        } else {
+          console.log('[TTS] Invalid backend response, using browser TTS');
+          await playTextWithBrowserTTS(cleanText, speechRate);
+        }
+      } catch (backendError) {
+        console.log('[TTS] Backend error, using browser TTS:', backendError.message);
+        await playTextWithBrowserTTS(cleanText, speechRate);
+      }
     } catch (e) {
       console.error('[TTS] General error:', e.message);
       const cleanText = cleanTextForSpeech(text);
