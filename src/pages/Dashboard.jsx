@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { motion } from "framer-motion";
 import WakeWordIndicator from "@/components/header/WakeWordIndicator";
 import MiniWaterAnalysis from "@/components/home/MiniWaterAnalysis";
 
@@ -174,7 +175,7 @@ export default function Dashboard() {
         
         <div className="flex-shrink-0 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
+            <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
               {getGreeting()}
             </h1>
             {user && user.premium_plan_id && user.premium_plan_id !== 'free' && (
@@ -195,89 +196,97 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="flex-shrink-0 grid grid-cols-4 gap-2">
-          <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-2">
-            <div className="text-2xl font-bold text-cyan-400">{stats.catches}</div>
-            <div className="text-[10px] text-gray-400">Faenge</div>
-          </div>
-          <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-2">
-            <div className="text-2xl font-bold text-emerald-400">{stats.spots}</div>
-            <div className="text-[10px] text-gray-400">Spots</div>
-          </div>
-          <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-2">
-            <div className="text-2xl font-bold text-amber-400">{stats.weekCatches}</div>
-            <div className="text-[10px] text-gray-400">Diese Woche</div>
-          </div>
-          <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-2">
-            <div className="text-2xl font-bold text-purple-400">{stats.points}</div>
-            <div className="text-[10px] text-gray-400">Punkte</div>
-          </div>
+        <div className="flex-shrink-0 grid grid-cols-2 md:grid-cols-4 gap-3">
+          <Card className="bg-gray-900/50 border-gray-800 p-3">
+            <CardContent className="p-0 space-y-1">
+              <div className="text-xs text-gray-400">Fänge</div>
+              <div className="text-3xl font-bold text-cyan-400">{stats.catches}</div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gray-900/50 border-gray-800 p-3">
+            <CardContent className="p-0 space-y-1">
+              <div className="text-xs text-gray-400">Spots</div>
+              <div className="text-3xl font-bold text-emerald-400">{stats.spots}</div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gray-900/50 border-gray-800 p-3">
+            <CardContent className="p-0 space-y-1">
+              <div className="text-xs text-gray-400">Diese Woche</div>
+              <div className="text-3xl font-bold text-amber-400">{stats.weekCatches}</div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gray-900/50 border-gray-800 p-3">
+            <CardContent className="p-0 space-y-1">
+              <div className="text-xs text-gray-400">Punkte</div>
+              <div className="text-3xl font-bold text-purple-400">{stats.points}</div>
+            </CardContent>
+          </Card>
         </div>
 
         <div className="flex-1 grid grid-cols-12 gap-2 min-h-0">
           
           <div className="col-span-8 flex flex-col gap-2 min-h-0">
             
-            <div className="grid grid-cols-2 gap-2">
-              <Card className="bg-gray-900/50 border-gray-800">
-                <CardHeader className="p-2">
-                  <CardTitle className="text-xs text-cyan-400">Wetter</CardTitle>
-                </CardHeader>
-                <CardContent className="p-2 pt-0">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <Card className="bg-gray-900/50 border-gray-800 p-4">
+                <CardContent className="p-0 space-y-2">
+                  <CardTitle className="text-sm text-cyan-400">Aktuelles Wetter</CardTitle>
                   {weather ? (
                     <>
-                      <div className="text-2xl font-bold text-white">{Math.round(weather.temperature_2m)}</div>
-                      <div className="text-[10px] text-gray-400">{getWeatherDesc(weather.weather_code)}</div>
-                      <div className="text-[10px] text-gray-500 mt-1">Wind: {Math.round(weather.wind_speed_10m)} m/s</div>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-4xl font-bold text-white">{Math.round(weather.temperature_2m)}°</span>
+                        <span className="text-sm text-gray-400">{getWeatherDesc(weather.weather_code)}</span>
+                      </div>
+                      <div className="text-xs text-gray-500">Wind: {Math.round(weather.wind_speed_10m)} m/s</div>
                     </>
                   ) : (
-                    <div className="text-[10px] text-gray-500">Keine Daten</div>
+                    <div className="text-sm text-gray-500">Keine Wetterdaten verfügbar</div>
                   )}
                 </CardContent>
               </Card>
 
-              <Card className="bg-gray-900/50 border-gray-800">
-                <CardHeader className="p-2">
-                  <CardTitle className="text-xs text-emerald-400">Naechster Spot</CardTitle>
-                </CardHeader>
-                <CardContent className="p-2 pt-0">
+              <Card className="bg-gray-900/50 border-gray-800 p-4">
+                <CardContent className="p-0 space-y-2">
+                  <CardTitle className="text-sm text-emerald-400">Nächster Spot</CardTitle>
                   {nearestSpot ? (
                     <>
-                      <div className="text-sm font-semibold text-white truncate">{nearestSpot.name}</div>
-                      <div className="text-[10px] text-gray-400">{nearestSpot.water_type}</div>
+                      <div className="text-base font-semibold text-white truncate">{nearestSpot.name}</div>
+                      <div className="text-xs text-gray-400">{nearestSpot.water_type}</div>
+                      <Link to={createPageUrl('Map')} className="text-xs text-cyan-400 hover:underline block">
+                        Auf Karte anzeigen
+                      </Link>
                     </>
                   ) : (
-                    <div className="text-[10px] text-gray-500">Kein Spot</div>
+                    <div className="text-sm text-gray-500">Kein Spot in der Nähe</div>
                   )}
                 </CardContent>
               </Card>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
-              <Card className="bg-gray-900/50 border-gray-800">
-                <CardHeader className="p-2">
-                  <CardTitle className="text-xs text-purple-400">Aktive Trips</CardTitle>
-                </CardHeader>
-                <CardContent className="p-2 pt-0">
-                  <div className="text-2xl font-bold text-white">{activeTrips}</div>
-                  <Link to={createPageUrl('TripPlanner')} className="text-[10px] text-cyan-400 hover:underline">
-                    Planer oeffnen
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <Card className="bg-gray-900/50 border-gray-800 p-4">
+                <CardContent className="p-0 space-y-2">
+                  <CardTitle className="text-sm text-purple-400">Aktive Trips</CardTitle>
+                  <div className="text-3xl font-bold text-white">{activeTrips}</div>
+                  <Link to={createPageUrl('TripPlanner')} className="text-xs text-cyan-400 hover:underline block">
+                    Planer öffnen
                   </Link>
                 </CardContent>
               </Card>
 
-              <Card className="bg-gray-900/50 border-gray-800">
-                <CardHeader className="p-2">
-                  <CardTitle className="text-xs text-amber-400">Letzter Fang</CardTitle>
-                </CardHeader>
-                <CardContent className="p-2 pt-0">
+              <Card className="bg-gray-900/50 border-gray-800 p-4">
+                <CardContent className="p-0 space-y-2">
+                  <CardTitle className="text-sm text-amber-400">Letzter Fang</CardTitle>
                   {lastCatch ? (
                     <>
-                      <div className="text-sm font-semibold text-white truncate">{lastCatch.species}</div>
-                      <div className="text-[10px] text-gray-400">{lastCatch.length_cm ? `${lastCatch.length_cm}cm` : '-'}</div>
+                      <div className="text-base font-semibold text-white truncate">{lastCatch.species}</div>
+                      <div className="text-xs text-gray-400">{lastCatch.length_cm ? `${lastCatch.length_cm} cm` : 'Keine Länge'}</div>
+                      <Link to={createPageUrl('Logbook')} className="text-xs text-cyan-400 hover:underline block">
+                        Zum Fangbuch
+                      </Link>
                     </>
                   ) : (
-                    <div className="text-[10px] text-gray-500">Kein Fang</div>
+                    <div className="text-sm text-gray-500">Noch kein Fang registriert</div>
                   )}
                 </CardContent>
               </Card>
@@ -288,18 +297,18 @@ export default function Dashboard() {
             </div>
 
             <Card className="bg-gray-900/50 border-gray-800 flex-1 min-h-0 flex flex-col">
-              <CardHeader className="p-2 flex-shrink-0">
-                <CardTitle className="text-xs text-white">Alle Funktionen</CardTitle>
+              <CardHeader className="p-3 flex-shrink-0">
+                <CardTitle className="text-sm text-white">Alle Funktionen</CardTitle>
               </CardHeader>
-              <CardContent className="p-2 pt-0 flex-1 overflow-auto">
-                <div className="grid grid-cols-4 gap-1">
+              <CardContent className="p-3 pt-0 flex-1 overflow-auto">
+                <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
                   {allFeatures.map((feature) => (
                     <Link
                       key={feature.path}
                       to={createPageUrl(feature.path)}
-                      className="bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 rounded p-2 text-center transition-all"
+                      className="bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 rounded-lg p-3 text-center transition-all"
                     >
-                      <div className="text-[10px] font-semibold text-cyan-400 truncate">{feature.name}</div>
+                      <div className="text-xs font-semibold text-cyan-400">{feature.name}</div>
                     </Link>
                   ))}
                 </div>
@@ -309,32 +318,32 @@ export default function Dashboard() {
 
           <div className="col-span-4">
             <Card className="bg-gray-900/50 border-gray-800 h-full flex flex-col">
-              <CardHeader className="p-2 flex-shrink-0">
-                <CardTitle className="text-xs text-cyan-400">KI-Assistent</CardTitle>
+              <CardHeader className="p-3 flex-shrink-0">
+                <CardTitle className="text-sm text-cyan-400">KI-Assistent</CardTitle>
               </CardHeader>
-              <CardContent className="p-2 pt-0 flex-1 flex flex-col gap-2">
+              <CardContent className="p-3 pt-0 flex-1 flex flex-col gap-3">
                 <Link
                   to={createPageUrl('AIAssistant')}
-                  className="flex-1 bg-gradient-to-br from-cyan-600/20 to-emerald-600/20 border border-cyan-500/30 rounded-lg p-3 hover:from-cyan-600/30 hover:to-emerald-600/30 transition-all flex items-center justify-center"
+                  className="flex-1 bg-gradient-to-br from-cyan-600/20 to-emerald-600/20 border border-cyan-500/30 rounded-xl p-4 hover:from-cyan-600/30 hover:to-emerald-600/30 transition-all flex items-center justify-center"
                 >
                   <div className="text-center">
-                    <div className="text-sm font-semibold text-white mb-1">Chat starten</div>
-                    <div className="text-[10px] text-gray-400">Frag mich etwas!</div>
+                    <div className="text-base font-semibold text-white mb-1">Chat starten</div>
+                    <div className="text-xs text-gray-400">Frag mich etwas!</div>
                   </div>
                 </Link>
                 
-                <div className="text-[10px] text-gray-500 text-center">Schnellfragen:</div>
+                <div className="text-xs text-gray-500 text-center">Schnellfragen:</div>
                 
-                <Link to={createPageUrl('Weather')} className="bg-gray-800/50 border border-gray-700/50 rounded p-2 hover:bg-gray-700/50 transition-all">
-                  <div className="text-[10px] text-white text-center">Wie ist das Wetter?</div>
+                <Link to={createPageUrl('Weather')} className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-3 hover:bg-gray-700/50 transition-all">
+                  <div className="text-xs text-white text-center">Wie ist das Wetter?</div>
                 </Link>
                 
-                <Link to={createPageUrl('Map')} className="bg-gray-800/50 border border-gray-700/50 rounded p-2 hover:bg-gray-700/50 transition-all">
-                  <div className="text-[10px] text-white text-center">Zeig mir Spots</div>
+                <Link to={createPageUrl('Map')} className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-3 hover:bg-gray-700/50 transition-all">
+                  <div className="text-xs text-white text-center">Zeig mir Spots</div>
                 </Link>
                 
-                <Link to={createPageUrl('WaterAnalysis')} className="bg-gray-800/50 border border-gray-700/50 rounded p-2 hover:bg-gray-700/50 transition-all">
-                  <div className="text-[10px] text-white text-center">Gewaesser analysieren</div>
+                <Link to={createPageUrl('WaterAnalysis')} className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-3 hover:bg-gray-700/50 transition-all">
+                  <div className="text-xs text-white text-center">Gewässer analysieren</div>
                 </Link>
               </CardContent>
             </Card>
