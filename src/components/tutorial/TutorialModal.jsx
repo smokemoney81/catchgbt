@@ -28,6 +28,7 @@ const playAudio = async (audioData) => {
 const playTextWithBrowserTTS = (text) => {
   return new Promise((resolve) => {
     if (typeof window === "undefined" || !window.speechSynthesis) {
+      console.log('[TTS] Browser TTS not available');
       return resolve();
     }
 
@@ -37,18 +38,33 @@ const playTextWithBrowserTTS = (text) => {
     utterance.lang = 'de-DE';
     utterance.rate = 1.0;
     utterance.pitch = 1;
-    utterance.volume = 0.8;
+    utterance.volume = 1.0;
 
-    const voices = window.speechSynthesis.getVoices();
-    const germanVoice = voices.find(voice => voice.lang.startsWith('de'));
-    if (germanVoice) {
-      utterance.voice = germanVoice;
+    const setVoice = () => {
+      const voices = window.speechSynthesis.getVoices();
+      const germanVoice = voices.find(voice => voice.lang.startsWith('de'));
+      if (germanVoice) {
+        utterance.voice = germanVoice;
+      }
+    };
+
+    if (window.speechSynthesis.getVoices().length > 0) {
+      setVoice();
+    } else {
+      window.speechSynthesis.onvoiceschanged = setVoice;
     }
 
-    utterance.onend = () => resolve();
-    utterance.onerror = () => resolve();
+    utterance.onend = () => {
+      console.log('[TTS] Browser TTS finished');
+      resolve();
+    };
+    utterance.onerror = (error) => {
+      console.error('[TTS] Browser TTS error:', error);
+      resolve();
+    };
 
     setTimeout(() => {
+      console.log('[TTS] Starting browser TTS');
       window.speechSynthesis.speak(utterance);
     }, 100);
   });
