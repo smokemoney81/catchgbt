@@ -47,9 +47,11 @@ export default function Community() {
       
       for (const email of allEmails) {
         try {
-          const users = await base44.entities.User.filter({ email });
-          if (users && users.length > 0) {
-            newCache[email] = users[0];
+          const allUsers = await base44.entities.User.list('', 1000);
+          const foundUser = allUsers.find(u => u.email === email);
+          
+          if (foundUser) {
+            newCache[email] = foundUser;
           } else {
             newCache[email] = {
               email: email,
@@ -79,9 +81,11 @@ export default function Community() {
             for (const comment of comments) {
               if (!newCache[comment.created_by]) {
                 try {
-                  const users = await base44.entities.User.filter({ email: comment.created_by });
-                  if (users && users.length > 0) {
-                    newCache[comment.created_by] = users[0];
+                  const allUsers = await base44.entities.User.list('', 1000);
+                  const foundUser = allUsers.find(u => u.email === comment.created_by);
+                  
+                  if (foundUser) {
+                    newCache[comment.created_by] = foundUser;
                   } else {
                     newCache[comment.created_by] = {
                       email: comment.created_by,
