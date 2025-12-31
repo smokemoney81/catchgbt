@@ -117,6 +117,8 @@ export default function Community() {
   };
 
   const getUserDisplayName = (email) => {
+    if (!email) return "Unbekannt";
+    
     const user = userCache[email];
     if (!user) {
       const emailUsername = email.split('@')[0];
