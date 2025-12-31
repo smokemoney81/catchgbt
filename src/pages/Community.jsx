@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -120,11 +119,11 @@ export default function Community() {
       return emailUsername || "Unbekannt";
     }
     
-    if (user.nickname && user.nickname.trim() !== '') {
-      return user.nickname.trim();
-    }
     if (user.full_name && user.full_name.trim() !== '') {
       return user.full_name.trim();
+    }
+    if (user.nickname && user.nickname.trim() !== '') {
+      return user.nickname.trim();
     }
     
     const emailUsername = email.split('@')[0];
