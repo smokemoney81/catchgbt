@@ -130,6 +130,7 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
   const recognitionRef = useRef(null);
   const messagesEndRef = useRef(null);
   const limiterRef = useRef([]);
+  const processingRef = useRef(false);
   const [wakeWordListener, setWakeWordListener] = useState(null);
 
   const { triggerHaptic } = useHaptic();
@@ -316,8 +317,9 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
 
   const handleSendMessage = useCallback(async (messageText) => {
     const text = (messageText || input).trim();
-    if (!text || isLoading) return;
+    if (!text || isLoading || processingRef.current) return;
     
+    processingRef.current = true;
     setInput("");
     setIsLoading(true);
     setError(null);
@@ -393,6 +395,7 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
       setTimeout(() => setError(null), 3000);
     } finally {
       setIsLoading(false);
+      processingRef.current = false;
     }
   }, [input, isLoading, playSound, triggerHaptic, currentPageName, handleSpeak, conversationId]);
 
