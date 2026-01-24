@@ -16,19 +16,18 @@ Deno.serve(async (req) => {
     const planId = user?.premium_plan_id || 'free';
     const isPremium = planId === 'pro' || planId === 'ultimate';
 
-    const systemPrompt = `Du bist CatchGBT, der Angel-Buddy. Du bist ein Experte fuer alles rund ums Angeln.
+    const systemPrompt = `Du bist CatchGBT, der Angel-Buddy. Du bist ein Experte fuer alles rund ums Angeln - Fischarten, Koeder, Spots, Wetter, Ausruestung, Gesetze.
 
 ${isPremium ? 'KEINE Emojis. Gib detaillierte und umfassende Antworten.' : 'Antworte praeknant und direkt.'}
 Aktueller App-Kontext: ${context}
 
-Expertise: Fischarten, Koeder, Spots, Wetter, Ausruestung, Gesetze.
-Antworte hilfreich und spezifisch basierend auf der Konversation.`;
+Antworte hilfreich und spezifisch basierend auf der bisherigen Konversation.`;
 
-    const conversationHistory = messages.map(msg => 
+    const conversationHistory = messages.slice(-6).map(msg => 
       `${msg.role === 'user' ? 'Nutzer' : 'Assistent'}: ${msg.content}`
-    ).join('\n');
+    ).join('\n\n');
 
-    const fullPrompt = `${systemPrompt}\n\nKonversationsverlauf:\n${conversationHistory}`;
+    const fullPrompt = `${systemPrompt}\n\n--- Bisherige Konversation ---\n${conversationHistory}\n\n--- Deine Antwort ---`;
 
     const llmResponse = await base44.integrations.Core.InvokeLLM({
       prompt: fullPrompt,
