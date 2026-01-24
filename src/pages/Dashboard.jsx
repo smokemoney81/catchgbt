@@ -53,9 +53,9 @@ export default function Dashboard() {
       setUser(currentUser);
 
       const [catches, spots, plans] = await Promise.all([
-        base44.entities.Catch.list('-catch_time', 10),
-        base44.entities.Spot.list('', 20),
-        base44.entities.FishingPlan.filter({ is_active: true })
+        base44.entities.Catch.list('-catch_time', 10).catch(() => []),
+        base44.entities.Spot.list('', 20).catch(() => []),
+        base44.entities.FishingPlan.filter({ is_active: true }).catch(() => [])
       ]);
 
       const oneWeekAgo = new Date();
