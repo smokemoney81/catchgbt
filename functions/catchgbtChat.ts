@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
@@ -16,18 +16,22 @@ Deno.serve(async (req) => {
     const planId = user?.premium_plan_id || 'free';
     const isPremium = planId === 'pro' || planId === 'ultimate';
 
-    const recentMessages = messages.slice(-4);
+    const systemPrompt = `Du bist CatchGBT, der Angel-Buddy. Du bist ein Experte fuer alles rund ums Angeln.
 
-    const systemPrompt = `Du bist CatchGBT, der Angel-Buddy.
+${isPremium ? 'KEINE Emojis. Gib detaillierte und umfassende Antworten.' : 'Antworte praeknant und direkt.'}
+Aktueller App-Kontext: ${context}
 
-${isPremium ? 'KEINE Emojis. Detailliert.' : 'Kompakt.'}
-Kontext: ${context}
+Expertise: Fischarten, Koeder, Spots, Wetter, Ausruestung, Gesetze.
+Antworte hilfreich und spezifisch basierend auf der Konversation.`;
 
-Expertise: Fischarten, Koeder, Spots, Wetter, Ausruestung.
-Antworte kurz und praktisch.`;
+    const conversationHistory = messages.map(msg => 
+      `${msg.role === 'user' ? 'Nutzer' : 'Assistent'}: ${msg.content}`
+    ).join('\n');
+
+    const fullPrompt = `${systemPrompt}\n\nKonversationsverlauf:\n${conversationHistory}`;
 
     const llmResponse = await base44.integrations.Core.InvokeLLM({
-      prompt: systemPrompt + "\n\nFrage: " + (recentMessages[recentMessages.length - 1]?.content || "Hallo"),
+      prompt: fullPrompt,
       add_context_from_internet: false
     });
 
@@ -41,7 +45,7 @@ Antworte kurz und praktisch.`;
     console.error('Error in catchgbtChat:', error.message);
     
     return Response.json({ 
-      reply: "Entschuldigung, ich bin gerade ueberlastet. Versuch's in 10 Sekunden nochmal!"
+      reply: "Entschuldigung, das hat zu lange gedauert. Versuchs nochmal!"
     });
   }
 });
