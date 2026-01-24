@@ -16,25 +16,24 @@ Deno.serve(async (req) => {
     const planId = user?.premium_plan_id || 'free';
     const isPremium = planId === 'pro' || planId === 'ultimate';
 
-    const systemPrompt = `Du bist CatchGBT, der Angel-Buddy. Du bist ein Experte fuer alles rund ums Angeln - Fischarten, Koeder, Spots, Wetter, Ausruestung, Gesetze.
+    const userMessage = messages[messages.length - 1]?.content || "";
+    
+    const systemPrompt = `Du bist CatchGBT, ein freundlicher Angel-Experte. Beantworte Fragen zu Angeln, Fischarten, Koeder, Wetter, Ausruestung.
 
-${isPremium ? 'KEINE Emojis. Gib detaillierte und umfassende Antworten.' : 'Antworte praeknant und direkt.'}
-Aktueller App-Kontext: ${context}
-
-Antworte hilfreich und spezifisch basierend auf der bisherigen Konversation.`;
+${isPremium ? 'Detailliert antworten. Keine Emojis.' : 'Kurz und praegnant antworten.'}`;
 
     const conversationHistory = messages.slice(-6).map(msg => 
-      `${msg.role === 'user' ? 'Nutzer' : 'Assistent'}: ${msg.content}`
-    ).join('\n\n');
+      `${msg.role === 'user' ? 'Nutzer' : 'Du'}: ${msg.content}`
+    ).join('\n');
 
-    const fullPrompt = `${systemPrompt}\n\n--- Bisherige Konversation ---\n${conversationHistory}\n\n--- Deine Antwort ---`;
+    const fullPrompt = `${systemPrompt}\n\nKonversation:\n${conversationHistory}\n\nAntworte jetzt auf die letzte Nachricht:`;
 
     const llmResponse = await base44.integrations.Core.InvokeLLM({
       prompt: fullPrompt,
       add_context_from_internet: false
     });
 
-    const reply = llmResponse || "Ups, da gab's ein Problem. Versuch's nochmal!";
+    const reply = typeof llmResponse === 'string' ? llmResponse : (llmResponse?.content || "Hey! Frag mich was zu Angeln!");
 
     console.log(`LLM Response OK`);
 
