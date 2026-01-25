@@ -474,9 +474,7 @@ function LandingPageContent() {
                     >
                         <h1 className="text-6xl sm:text-8xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400 drop-shadow-[0_0_20px_rgba(34,211,238,0.8)]">
                             CatchGbt
-                            <span className="block text-2xl sm:text-3xl font-semibold mt-2 text-green-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.6)]">
-                                Free for All
-                            </span>
+                            <span className="block text-2xl sm:text-3xl font-semibold mt-2 text-green-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.6)]">Free for All</span>
                         </h1>
                     </motion.div>
 
