@@ -6,14 +6,17 @@ import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
 import WakeWordIndicator from "@/components/header/WakeWordIndicator";
 import MiniWaterAnalysis from "@/components/home/MiniWaterAnalysis";
+import ActiveTripsCard from "../components/dashboard/ActiveTripsCard";
+import RecentCatchesCard from "../components/dashboard/RecentCatchesCard";
+import QuickStatsCard from "../components/dashboard/QuickStatsCard";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
-  const [stats, setStats] = useState({ catches: 0, spots: 0, weekCatches: 0, points: 0 });
+  const [stats, setStats] = useState({ catches: 0, spots: 0, weekCatches: 0, points: 0, totalCatches: 0, totalSpots: 0, activeTrips: 0, lastCatch: null });
   const [weather, setWeather] = useState(null);
   const [nearestSpot, setNearestSpot] = useState(null);
-  const [activeTrips, setActiveTrips] = useState(0);
-  const [lastCatch, setLastCatch] = useState(null);
+  const [trips, setTrips] = useState([]);
+  const [catches, setCatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [voiceStatus, setVoiceStatus] = useState({
     isActive: false,
@@ -66,13 +69,15 @@ export default function Dashboard() {
         catches: catches.length,
         spots: spots.length,
         weekCatches,
-        points: currentUser?.total_points || 0
+        points: currentUser?.total_points || 0,
+        totalCatches: catches.length,
+        totalSpots: spots.length,
+        activeTrips: plans.length,
+        lastCatch: catches.length > 0 ? catches[0] : null
       });
 
-      setActiveTrips(plans.length);
-      if (catches.length > 0) {
-        setLastCatch(catches[0]);
-      }
+      setTrips(plans);
+      setCatches(catches);
 
       const savedLocation = localStorage.getItem("fm_current_location");
       if (savedLocation) {
@@ -163,10 +168,39 @@ export default function Dashboard() {
   const getGreeting = () => {
     const hour = new Date().getHours();
     const name = user?.nickname || user?.full_name?.split(' ')[0] || "Angler";
-    if (hour >= 5 && hour < 12) return `Guten Morgen, ${name}`;
-    if (hour >= 12 && hour < 18) return `Guten Tag, ${name}`;
-    if (hour >= 18 && hour < 22) return `Guten Abend, ${name}`;
-    return `Hallo, ${name}`;
+    
+    const morningGreetings = [
+      `Guten Morgen, ${name}`,
+      `Moin ${name}`,
+      `Einen schoenen Morgen, ${name}`,
+      `Frueh auf den Beinen, ${name}`,
+      `Der fruehe Angler faengt den Fisch, ${name}`
+    ];
+    
+    const afternoonGreetings = [
+      `Guten Tag, ${name}`,
+      `Hallo ${name}`,
+      `Willkommen zurueck, ${name}`,
+      `Schoen dich zu sehen, ${name}`,
+      `Perfekt fuer eine Angelsession, ${name}`
+    ];
+    
+    const eveningGreetings = [
+      `Guten Abend, ${name}`,
+      `Nabend ${name}`,
+      `Zeit fuer die Abendaemmerung, ${name}`,
+      `Die besten Bisse kommen jetzt, ${name}`,
+      `Bereit fuer die Nachtangelei, ${name}`
+    ];
+    
+    let greetings;
+    if (hour >= 5 && hour < 12) greetings = morningGreetings;
+    else if (hour >= 12 && hour < 18) greetings = afternoonGreetings;
+    else if (hour >= 18 && hour < 22) greetings = eveningGreetings;
+    else greetings = [`Hallo, ${name}`];
+    
+    const randomIndex = Math.floor(Math.random() * greetings.length);
+    return greetings[randomIndex];
   };
 
   return (
@@ -264,32 +298,12 @@ export default function Dashboard() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <Card className="bg-gray-900/50 border-gray-800 p-4">
-                <CardContent className="p-0 space-y-2">
-                  <CardTitle className="text-sm text-purple-400">Aktive Trips</CardTitle>
-                  <div className="text-3xl font-bold text-white">{activeTrips}</div>
-                  <Link to={createPageUrl('TripPlanner')} className="text-xs text-cyan-400 hover:underline block">
-                    Planer öffnen
-                  </Link>
-                </CardContent>
-              </Card>
+              <ActiveTripsCard trips={trips} stats={stats} />
+              <RecentCatchesCard catches={catches} lastCatch={stats.lastCatch} />
+            </div>
 
-              <Card className="bg-gray-900/50 border-gray-800 p-4">
-                <CardContent className="p-0 space-y-2">
-                  <CardTitle className="text-sm text-amber-400">Letzter Fang</CardTitle>
-                  {lastCatch ? (
-                    <>
-                      <div className="text-base font-semibold text-white truncate">{lastCatch.species}</div>
-                      <div className="text-xs text-gray-400">{lastCatch.length_cm ? `${lastCatch.length_cm} cm` : 'Keine Länge'}</div>
-                      <Link to={createPageUrl('Logbook')} className="text-xs text-cyan-400 hover:underline block">
-                        Zum Fangbuch
-                      </Link>
-                    </>
-                  ) : (
-                    <div className="text-sm text-gray-500">Noch kein Fang registriert</div>
-                  )}
-                </CardContent>
-              </Card>
+            <div className="mb-2">
+              <QuickStatsCard stats={stats} user={user} />
             </div>
 
             <div className="mb-2">
