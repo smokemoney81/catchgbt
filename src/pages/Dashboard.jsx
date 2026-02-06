@@ -1,22 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { motion } from "framer-motion";
 import WakeWordIndicator from "@/components/header/WakeWordIndicator";
-import MiniWaterAnalysis from "@/components/home/MiniWaterAnalysis";
-import ActiveTripsCard from "../components/dashboard/ActiveTripsCard";
-import RecentCatchesCard from "../components/dashboard/RecentCatchesCard";
-import QuickStatsCard from "../components/dashboard/QuickStatsCard";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
-  const [stats, setStats] = useState({ catches: 0, spots: 0, weekCatches: 0, points: 0, totalCatches: 0, totalSpots: 0, activeTrips: 0, lastCatch: null });
+  const [stats, setStats] = useState({ catches: 0, spots: 0, weekCatches: 0, points: 0 });
   const [weather, setWeather] = useState(null);
   const [nearestSpot, setNearestSpot] = useState(null);
-  const [trips, setTrips] = useState([]);
-  const [catches, setCatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [voiceStatus, setVoiceStatus] = useState({
     isActive: false,
@@ -55,10 +47,9 @@ export default function Dashboard() {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
 
-      const [catches, spots, plans] = await Promise.all([
+      const [catches, spots] = await Promise.all([
         base44.entities.Catch.list('-catch_time', 10).catch(() => []),
-        base44.entities.Spot.list('', 20).catch(() => []),
-        base44.entities.FishingPlan.filter({ is_active: true }).catch(() => [])
+        base44.entities.Spot.list('', 20).catch(() => [])
       ]);
 
       const oneWeekAgo = new Date();
@@ -69,22 +60,14 @@ export default function Dashboard() {
         catches: catches.length,
         spots: spots.length,
         weekCatches,
-        points: currentUser?.total_points || 0,
-        totalCatches: catches.length,
-        totalSpots: spots.length,
-        activeTrips: plans.length,
-        lastCatch: catches.length > 0 ? catches[0] : null
+        points: currentUser?.total_points || 0
       });
-
-      setTrips(plans);
-      setCatches(catches);
 
       const savedLocation = localStorage.getItem("fm_current_location");
       if (savedLocation) {
         try {
           const location = JSON.parse(savedLocation);
           
-          // Null-safe location check
           if (location && location.lat != null && location.lon != null) {
             const weatherPromise = fetch(
               `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&current=temperature_2m,wind_speed_10m,weather_code&timezone=auto`
@@ -137,34 +120,6 @@ export default function Dashboard() {
     return "Wechselhaft";
   };
 
-  const allFeatures = [
-    { name: "Karte", path: "Map" },
-    { name: "Wetter", path: "Weather" },
-    { name: "Fangbuch", path: "Logbook" },
-    { name: "KI-Chat", path: "AIAssistant" },
-    { name: "KI-Cam", path: "AI" },
-    { name: "Gewaesser", path: "WaterAnalysis" },
-    { name: "Gear", path: "Gear" },
-    { name: "Trips", path: "TripPlanner" },
-    { name: "Community", path: "Community" },
-    { name: "Ranking", path: "Ranking" },
-    { name: "Regeln", path: "Rules" },
-    { name: "Pruefung", path: "ExamPrep" },
-    { name: "Lizenzen", path: "Licenses" },
-    { name: "Geraete", path: "Devices" },
-    { name: "Arcade", path: "Arcade" },
-    { name: "Premium", path: "PremiumPlans" },
-    { name: "Settings", path: "Settings" }
-  ];
-
-  if (loading) {
-    return (
-      <div className="h-screen bg-gray-950 flex items-center justify-center overflow-hidden">
-        <div className="text-cyan-400 text-sm">Laden...</div>
-      </div>
-    );
-  }
-
   const getGreeting = () => {
     const hour = new Date().getHours();
     const name = user?.nickname || user?.full_name?.split(' ')[0] || "Angler";
@@ -203,13 +158,21 @@ export default function Dashboard() {
     return greetings[randomIndex];
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <div className="text-cyan-400 text-sm">Laden...</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="h-screen bg-gray-950 overflow-hidden">
-      <div className="h-full max-w-[1600px] mx-auto px-2 py-2 flex flex-col gap-2">
+    <div className="min-h-screen bg-gray-950 overflow-y-auto">
+      <div className="max-w-7xl mx-auto px-4 py-6 space-y-8">
         
-        <div className="flex-shrink-0 flex items-center justify-between">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
+            <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
               {getGreeting()}
             </h1>
             {user && user.premium_plan_id && user.premium_plan_id !== 'free' && (
@@ -230,137 +193,86 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="flex-shrink-0 grid grid-cols-2 md:grid-cols-4 gap-3">
-          <Card className="bg-gray-900/50 border-gray-800 p-3">
-            <CardContent className="p-0 space-y-1">
-              <div className="text-xs text-gray-400">Fänge</div>
-              <div className="text-3xl font-bold text-cyan-400">{stats.catches}</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-gray-900/50 border-gray-800 p-3">
-            <CardContent className="p-0 space-y-1">
-              <div className="text-xs text-gray-400">Spots</div>
-              <div className="text-3xl font-bold text-emerald-400">{stats.spots}</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-gray-900/50 border-gray-800 p-3">
-            <CardContent className="p-0 space-y-1">
-              <div className="text-xs text-gray-400">Diese Woche</div>
-              <div className="text-3xl font-bold text-amber-400">{stats.weekCatches}</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-gray-900/50 border-gray-800 p-3">
-            <CardContent className="p-0 space-y-1">
-              <div className="text-xs text-gray-400">Punkte</div>
-              <div className="text-3xl font-bold text-purple-400">{stats.points}</div>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-gradient-to-br from-cyan-500/10 to-cyan-600/10 border border-cyan-500/20 rounded-xl p-6">
+            <div className="text-sm text-cyan-400 mb-2">Faenge</div>
+            <div className="text-4xl font-bold text-white">{stats.catches}</div>
+          </div>
+          
+          <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 border border-emerald-500/20 rounded-xl p-6">
+            <div className="text-sm text-emerald-400 mb-2">Spots</div>
+            <div className="text-4xl font-bold text-white">{stats.spots}</div>
+          </div>
+          
+          <div className="bg-gradient-to-br from-amber-500/10 to-amber-600/10 border border-amber-500/20 rounded-xl p-6">
+            <div className="text-sm text-amber-400 mb-2">Diese Woche</div>
+            <div className="text-4xl font-bold text-white">{stats.weekCatches}</div>
+          </div>
+          
+          <div className="bg-gradient-to-br from-purple-500/10 to-purple-600/10 border border-purple-500/20 rounded-xl p-6">
+            <div className="text-sm text-purple-400 mb-2">Punkte</div>
+            <div className="text-4xl font-bold text-white">{stats.points}</div>
+          </div>
         </div>
 
-        <div className="flex-1 grid grid-cols-12 gap-2 min-h-0">
-          
-          <div className="col-span-8 flex flex-col gap-2 min-h-0">
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <Card className="bg-gray-900/50 border-gray-800 p-4">
-                <CardContent className="p-0 space-y-2">
-                  <CardTitle className="text-sm text-cyan-400">Aktuelles Wetter</CardTitle>
-                  {weather ? (
-                    <>
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-4xl font-bold text-white">{Math.round(weather.temperature_2m)}°</span>
-                        <span className="text-sm text-gray-400">{getWeatherDesc(weather.weather_code)}</span>
-                      </div>
-                      <div className="text-xs text-gray-500">Wind: {Math.round(weather.wind_speed_10m)} m/s</div>
-                    </>
-                  ) : (
-                    <div className="text-sm text-gray-500">Keine Wetterdaten verfügbar</div>
-                  )}
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gray-900/50 border-gray-800 p-4">
-                <CardContent className="p-0 space-y-2">
-                  <CardTitle className="text-sm text-emerald-400">Nächster Spot</CardTitle>
-                  {nearestSpot ? (
-                    <>
-                      <div className="text-base font-semibold text-white truncate">{nearestSpot.name}</div>
-                      <div className="text-xs text-gray-400">{nearestSpot.water_type}</div>
-                      <Link to={createPageUrl('Map')} className="text-xs text-cyan-400 hover:underline block">
-                        Auf Karte anzeigen
-                      </Link>
-                    </>
-                  ) : (
-                    <div className="text-sm text-gray-500">Kein Spot in der Nähe</div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <ActiveTripsCard trips={trips} stats={stats} />
-              <RecentCatchesCard catches={catches} lastCatch={stats.lastCatch} />
-            </div>
-
-            <div className="mb-2">
-              <QuickStatsCard stats={stats} user={user} />
-            </div>
-
-            <div className="mb-2">
-              <MiniWaterAnalysis />
-            </div>
-
-            <Card className="bg-gray-900/50 border-gray-800 flex-1 min-h-0 flex flex-col">
-              <CardHeader className="p-3 flex-shrink-0">
-                <CardTitle className="text-sm text-white">Alle Funktionen</CardTitle>
-              </CardHeader>
-              <CardContent className="p-3 pt-0 flex-1 overflow-auto">
-                <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
-                  {allFeatures.map((feature) => (
-                    <Link
-                      key={feature.path}
-                      to={createPageUrl(feature.path)}
-                      className="bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 rounded-lg p-3 text-center transition-all"
-                    >
-                      <div className="text-xs font-semibold text-cyan-400">{feature.name}</div>
-                    </Link>
-                  ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-cyan-400 mb-4">Aktuelles Wetter</h3>
+            {weather ? (
+              <div className="space-y-3">
+                <div className="flex items-baseline gap-3">
+                  <span className="text-5xl font-bold text-white">{Math.round(weather.temperature_2m)}</span>
+                  <span className="text-2xl text-gray-400">C</span>
                 </div>
-              </CardContent>
-            </Card>
+                <div className="text-gray-400">{getWeatherDesc(weather.weather_code)}</div>
+                <div className="text-sm text-gray-500">Wind: {Math.round(weather.wind_speed_10m)} m/s</div>
+              </div>
+            ) : (
+              <div className="text-gray-500">Keine Wetterdaten verfuegbar</div>
+            )}
           </div>
 
-          <div className="col-span-4">
-            <Card className="bg-gray-900/50 border-gray-800 h-full flex flex-col">
-              <CardHeader className="p-3 flex-shrink-0">
-                <CardTitle className="text-sm text-cyan-400">KI-Assistent</CardTitle>
-              </CardHeader>
-              <CardContent className="p-3 pt-0 flex-1 flex flex-col gap-3">
-                <Link
-                  to={createPageUrl('AIAssistant')}
-                  className="flex-1 bg-gradient-to-br from-cyan-600/20 to-emerald-600/20 border border-cyan-500/30 rounded-xl p-4 hover:from-cyan-600/30 hover:to-emerald-600/30 transition-all flex items-center justify-center"
-                >
-                  <div className="text-center">
-                    <div className="text-base font-semibold text-white mb-1">Chat starten</div>
-                    <div className="text-xs text-gray-400">Frag mich etwas!</div>
-                  </div>
+          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-emerald-400 mb-4">Naechster Spot</h3>
+            {nearestSpot ? (
+              <div className="space-y-3">
+                <div className="text-xl font-semibold text-white">{nearestSpot.name}</div>
+                <div className="text-sm text-gray-400">{nearestSpot.water_type}</div>
+                <Link to={createPageUrl('Map')} className="inline-block text-sm text-cyan-400 hover:text-cyan-300">
+                  Auf Karte anzeigen
                 </Link>
-                
-                <div className="text-xs text-gray-500 text-center">Schnellfragen:</div>
-                
-                <Link to={createPageUrl('Weather')} className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-3 hover:bg-gray-700/50 transition-all">
-                  <div className="text-xs text-white text-center">Wie ist das Wetter?</div>
-                </Link>
-                
-                <Link to={createPageUrl('Map')} className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-3 hover:bg-gray-700/50 transition-all">
-                  <div className="text-xs text-white text-center">Zeig mir Spots</div>
-                </Link>
-                
-                <Link to={createPageUrl('WaterAnalysis')} className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-3 hover:bg-gray-700/50 transition-all">
-                  <div className="text-xs text-white text-center">Gewässer analysieren</div>
-                </Link>
-              </CardContent>
-            </Card>
+              </div>
+            ) : (
+              <div className="text-gray-500">Kein Spot in der Naehe</div>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-6">Schnellzugriff</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {[
+              { name: "Karte", path: "Map" },
+              { name: "Wetter", path: "Weather" },
+              { name: "Fangbuch", path: "Logbook" },
+              { name: "KI-Chat", path: "AIAssistant" },
+              { name: "KI-Cam", path: "AI" },
+              { name: "Gewaesser", path: "WaterAnalysis" },
+              { name: "Gear", path: "Gear" },
+              { name: "Trips", path: "TripPlanner" },
+              { name: "Community", path: "Community" },
+              { name: "Ranking", path: "Ranking" },
+              { name: "Regeln", path: "Rules" },
+              { name: "Pruefung", path: "ExamPrep" }
+            ].map((feature) => (
+              <Link
+                key={feature.path}
+                to={createPageUrl(feature.path)}
+                className="bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 rounded-lg p-4 text-center transition-all group"
+              >
+                <div className="text-sm font-medium text-cyan-400 group-hover:text-cyan-300">{feature.name}</div>
+              </Link>
+            ))}
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
@@ -44,16 +44,13 @@ Deno.serve(async (req) => {
     console.log('[getPlanStatus] User trial_end_date:', user.trial_end_date);
     console.log('[getPlanStatus] User has_had_trial:', user.has_had_trial);
 
-    // Prüfe auf aktiven Premium-Plan
     const planId = user.premium_plan_id || 'free';
     const expiresAt = user.premium_expires_at;
     
     let isActive = true;
     let remainingDays = null;
     
-    // Wenn User einen Plan außer "free" hat
     if (planId !== 'free') {
-      // Wenn ein Ablaufdatum gesetzt ist, prüfen ob noch gültig
       if (expiresAt) {
         const now = new Date();
         const expires = new Date(expiresAt);
@@ -66,12 +63,10 @@ Deno.serve(async (req) => {
         
         console.log('[getPlanStatus] Plan with expiry:', planId, 'isActive:', isActive, 'remainingDays:', remainingDays);
       } else {
-        // Kein Ablaufdatum = permanenter Plan oder noch nicht abgelaufen
         isActive = true;
         console.log('[getPlanStatus] Plan without expiry (permanent):', planId);
       }
       
-      // Wenn Premium-Plan aktiv ist, direkt zurückgeben
       if (isActive) {
         const response = {
           ok: true,
@@ -91,9 +86,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Nur wenn kein aktiver Premium-Plan: Prüfe auf Testphase
     if (planId === 'free' || !isActive) {
-      // Prüfe auf laufende Testphase
       if (user.trial_end_date) {
         const now = new Date();
         const trialEnd = new Date(user.trial_end_date);
@@ -112,13 +105,12 @@ Deno.serve(async (req) => {
               expires_at: user.trial_end_date,
               remaining_days: Math.ceil(remainingHours / 24),
               remaining_hours: remainingHours,
-              features: getPlanFeatures('ultimate') // Testphase hat alle Features
+              features: getPlanFeatures('ultimate')
             }
           });
         }
       }
       
-      // Testphase starten, wenn noch nicht gehabt
       if (!user.has_had_trial) {
         const now = new Date();
         const trialEnd = new Date(now.getTime() + 24 * 60 * 60 * 1000);
@@ -147,12 +139,10 @@ Deno.serve(async (req) => {
           });
         } catch (updateError) {
           console.error('[getPlanStatus] Fehler beim Aktivieren der Testphase:', updateError);
-          // Fallback auf kostenlosen Plan
         }
       }
     }
 
-    // Fallback auf free plan
     const response = {
       ok: true,
       plan: {
@@ -171,7 +161,6 @@ Deno.serve(async (req) => {
     return Response.json(response);
   } catch (error) {
     console.error('[getPlanStatus] Error:', error);
-    // Immer einen gültigen Response zurückgeben, nie 404
     return Response.json({ 
       ok: true,
       plan: {
@@ -247,7 +236,6 @@ function getPlanFeatures(planId) {
     ]
   };
   
-  // Sammle alle Features bis zum aktuellen Plan
   const hierarchy = ['free', 'basic', 'pro', 'ultimate'];
   const planIndex = hierarchy.indexOf(planId === 'trial' ? 'ultimate' : planId);
   
