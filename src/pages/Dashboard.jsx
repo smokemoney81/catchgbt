@@ -191,15 +191,15 @@ export default function Dashboard() {
         <div className="text-cyan-400 text-sm">Laden...</div>
       </div>
     );
-  }
+    }
 
-  return (
+    return (
     <div className="min-h-screen bg-gray-950 overflow-y-auto">
-      <div className="max-w-7xl mx-auto px-4 py-6 space-y-8">
-        
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400">
+      <div className="max-w-7xl mx-auto px-4 py-8 space-y-12">
+
+        <div className="flex items-end justify-between border-b border-gray-800/50 pb-6">
+          <div>
+            <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-500 mb-2">
               {getGreeting()}
             </h1>
             {user && user.premium_plan_id && user.premium_plan_id !== 'free' && (
@@ -208,7 +208,7 @@ export default function Dashboard() {
               </span>
             )}
           </div>
-          
+
           <div className="flex items-center gap-3">
             <div className="text-xs text-gray-500">KI-Voice:</div>
             <WakeWordIndicator 
@@ -220,72 +220,90 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-gradient-to-br from-cyan-500/10 to-cyan-600/10 border border-cyan-500/20 rounded-xl p-6">
-            <div className="text-sm text-cyan-400 mb-2">Faenge</div>
-            <div className="text-4xl font-bold text-white">{stats.catches}</div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
+          <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-500/5 via-cyan-500/10 to-cyan-600/5 p-6 transition-all hover:from-cyan-500/10 hover:via-cyan-500/15 hover:to-cyan-600/10">
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative">
+              <div className="text-xs font-medium text-cyan-400/70 mb-3">Faenge</div>
+              <div className="text-5xl font-bold text-white tracking-tight">{stats.catches}</div>
+            </div>
           </div>
-          
-          <div className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 border border-emerald-500/20 rounded-xl p-6">
-            <div className="text-sm text-emerald-400 mb-2">Spots</div>
-            <div className="text-4xl font-bold text-white">{stats.spots}</div>
+
+          <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500/5 via-emerald-500/10 to-emerald-600/5 p-6 transition-all hover:from-emerald-500/10 hover:via-emerald-500/15 hover:to-emerald-600/10">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 to-emerald-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative">
+              <div className="text-xs font-medium text-emerald-400/70 mb-3">Spots</div>
+              <div className="text-5xl font-bold text-white tracking-tight">{stats.spots}</div>
+            </div>
           </div>
-          
-          <div className="bg-gradient-to-br from-amber-500/10 to-amber-600/10 border border-amber-500/20 rounded-xl p-6">
-            <div className="text-sm text-amber-400 mb-2">Diese Woche</div>
-            <div className="text-4xl font-bold text-white">{stats.weekCatches}</div>
+
+          <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500/5 via-amber-500/10 to-amber-600/5 p-6 transition-all hover:from-amber-500/10 hover:via-amber-500/15 hover:to-amber-600/10">
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 to-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative">
+              <div className="text-xs font-medium text-amber-400/70 mb-3">Diese Woche</div>
+              <div className="text-5xl font-bold text-white tracking-tight">{stats.weekCatches}</div>
+            </div>
           </div>
-          
-          <div className="bg-gradient-to-br from-purple-500/10 to-purple-600/10 border border-purple-500/20 rounded-xl p-6">
-            <div className="text-sm text-purple-400 mb-2">Punkte</div>
-            <div className="text-4xl font-bold text-white">{stats.points}</div>
+
+          <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500/5 via-purple-500/10 to-purple-600/5 p-6 transition-all hover:from-purple-500/10 hover:via-purple-500/15 hover:to-purple-600/10">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative">
+              <div className="text-xs font-medium text-purple-400/70 mb-3">Punkte</div>
+              <div className="text-5xl font-bold text-white tracking-tight">{stats.points}</div>
+            </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-cyan-400 mb-4">Aktuelles Wetter</h3>
-            {weather ? (
-              <div className="space-y-3">
-                <div className="flex items-baseline gap-3">
-                  <span className="text-5xl font-bold text-white">{Math.round(weather.temperature_2m)}</span>
-                  <span className="text-2xl text-gray-400">C</span>
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-900/40 backdrop-blur-sm p-8 border border-gray-800/50">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl" />
+            <div className="relative">
+              <h3 className="text-sm font-semibold text-cyan-400/70 uppercase tracking-wider mb-6">Aktuelles Wetter</h3>
+              {weather ? (
+                <div className="space-y-4">
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-6xl font-bold text-white tracking-tight">{Math.round(weather.temperature_2m)}</span>
+                    <span className="text-3xl text-gray-400">C</span>
+                  </div>
+                  <div className="text-lg text-gray-300">{getWeatherDesc(weather.weather_code)}</div>
+                  <div className="text-sm text-gray-500 pt-2 border-t border-gray-800/50">Wind: {Math.round(weather.wind_speed_10m)} m/s</div>
                 </div>
-                <div className="text-gray-400">{getWeatherDesc(weather.weather_code)}</div>
-                <div className="text-sm text-gray-500">Wind: {Math.round(weather.wind_speed_10m)} m/s</div>
-              </div>
-            ) : (
-              <div className="text-gray-500">Keine Wetterdaten verfuegbar</div>
-            )}
+              ) : (
+                <div className="text-gray-500">Keine Wetterdaten verfuegbar</div>
+              )}
+            </div>
           </div>
 
-          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-emerald-400 mb-4">Naechster Spot</h3>
-            {nearestSpot ? (
-              <div className="space-y-3">
-                <div className="text-xl font-semibold text-white">{nearestSpot.name}</div>
-                <div className="text-sm text-gray-400">{nearestSpot.water_type}</div>
-                {nearestSpot.distance && (
-                  <div className="text-xs text-gray-500">
-                    {nearestSpot.distance < 1 
-                      ? `${Math.round(nearestSpot.distance * 1000)}m entfernt`
-                      : `${nearestSpot.distance.toFixed(1)}km entfernt`
-                    }
-                  </div>
-                )}
-                <Link to={createPageUrl('Map')} className="inline-block text-sm text-cyan-400 hover:text-cyan-300">
-                  Auf Karte anzeigen
-                </Link>
-              </div>
-            ) : (
-              <div className="text-gray-500">Spots auf Karte verfuegbar</div>
-            )}
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-900/40 backdrop-blur-sm p-8 border border-gray-800/50">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl" />
+            <div className="relative">
+              <h3 className="text-sm font-semibold text-emerald-400/70 uppercase tracking-wider mb-6">Naechster Spot</h3>
+              {nearestSpot ? (
+                <div className="space-y-4">
+                  <div className="text-2xl font-bold text-white">{nearestSpot.name}</div>
+                  <div className="text-sm text-gray-400 capitalize">{nearestSpot.water_type}</div>
+                  {nearestSpot.distance && (
+                    <div className="text-xs text-gray-500 pt-2 border-t border-gray-800/50">
+                      {nearestSpot.distance < 1 
+                        ? `${Math.round(nearestSpot.distance * 1000)}m entfernt`
+                        : `${nearestSpot.distance.toFixed(1)}km entfernt`
+                      }
+                    </div>
+                  )}
+                  <Link to={createPageUrl('Map')} className="inline-block text-sm text-cyan-400 hover:text-cyan-300 transition-colors pt-2">
+                    Auf Karte anzeigen
+                  </Link>
+                </div>
+              ) : (
+                <div className="text-gray-500">Spots auf Karte verfuegbar</div>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-6">Schnellzugriff</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div className="space-y-4">
+          <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Schnellzugriff</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
             {[
               { name: "Karte", path: "Map" },
               { name: "Wetter", path: "Weather" },
@@ -303,14 +321,15 @@ export default function Dashboard() {
               <Link
                 key={feature.path}
                 to={createPageUrl(feature.path)}
-                className="bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 rounded-lg p-4 text-center transition-all group"
+                className="group relative overflow-hidden rounded-xl bg-gray-900/50 hover:bg-gray-800/60 border border-gray-800/50 hover:border-gray-700/60 p-5 text-center transition-all"
               >
-                <div className="text-sm font-medium text-cyan-400 group-hover:text-cyan-300">{feature.name}</div>
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="relative text-sm font-medium text-gray-300 group-hover:text-cyan-400 transition-colors">{feature.name}</div>
               </Link>
             ))}
           </div>
         </div>
       </div>
     </div>
-  );
-}
+    );
+    }
