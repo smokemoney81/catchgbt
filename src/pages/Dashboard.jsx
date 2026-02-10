@@ -49,7 +49,7 @@ export default function Dashboard() {
 
       const [catches, spots] = await Promise.all([
         base44.entities.Catch.list('-catch_time', 10).catch(() => []),
-        base44.entities.Spot.list('', 20).catch(() => [])
+        base44.entities.Spot.list('', 100).catch(() => [])
       ]);
 
       const oneWeekAgo = new Date();
@@ -63,47 +63,74 @@ export default function Dashboard() {
         points: currentUser?.total_points || 0
       });
 
+      let userLocation = null;
       const savedLocation = localStorage.getItem("fm_current_location");
+      
       if (savedLocation) {
         try {
           const location = JSON.parse(savedLocation);
-          
           if (location && location.lat != null && location.lon != null) {
-            const weatherPromise = fetch(
-              `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&current=temperature_2m,wind_speed_10m,weather_code&timezone=auto`
-            ).then(res => res.json());
-
-            const [weatherData] = await Promise.all([weatherPromise]);
-            
-            if (weatherData && weatherData.current) {
-              setWeather(weatherData.current);
-            }
-
-            if (spots.length > 0) {
-              let nearest = spots[0];
-              let minDist = 999999;
-              
-              spots.forEach(spot => {
-                if (spot.latitude != null && spot.longitude != null && location.lat != null && location.lon != null) {
-                  const dist = Math.sqrt(
-                    Math.pow(spot.latitude - location.lat, 2) + 
-                    Math.pow(spot.longitude - location.lon, 2)
-                  );
-                  if (dist < minDist) {
-                    minDist = dist;
-                    nearest = spot;
-                  }
-                }
-              });
-              
-              if (nearest) {
-                setNearestSpot(nearest);
-              }
-            }
+            userLocation = { lat: location.lat, lon: location.lon };
           }
         } catch (parseError) {
           console.warn('Location parse error:', parseError);
         }
+      }
+
+      if (!userLocation && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            userLocation = {
+              lat: position.coords.latitude,
+              lon: position.coords.longitude
+            };
+            localStorage.setItem("fm_current_location", JSON.stringify(userLocation));
+          },
+          (error) => console.warn('Geolocation error:', error),
+          { timeout: 5000 }
+        );
+      }
+
+      if (userLocation) {
+        const weatherPromise = fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${userLocation.lat}&longitude=${userLocation.lon}&current=temperature_2m,wind_speed_10m,weather_code&timezone=auto`
+        ).then(res => res.json());
+
+        const [weatherData] = await Promise.all([weatherPromise]);
+        
+        if (weatherData && weatherData.current) {
+          setWeather(weatherData.current);
+        }
+
+        if (spots.length > 0) {
+          let nearest = null;
+          let minDist = 999999;
+          
+          spots.forEach(spot => {
+            if (spot.latitude != null && spot.longitude != null) {
+              const R = 6371;
+              const dLat = (spot.latitude - userLocation.lat) * Math.PI / 180;
+              const dLon = (spot.longitude - userLocation.lon) * Math.PI / 180;
+              const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(userLocation.lat * Math.PI / 180) * Math.cos(spot.latitude * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+              const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+              const dist = R * c;
+              
+              if (dist < minDist) {
+                minDist = dist;
+                nearest = { ...spot, distance: dist };
+              }
+            }
+          });
+          
+          if (nearest) {
+            setNearestSpot(nearest);
+          }
+        }
+      } else if (spots.length > 0) {
+        setNearestSpot(spots[0]);
       }
     } catch (error) {
       console.error("Fehler beim Laden:", error);
@@ -238,12 +265,20 @@ export default function Dashboard() {
               <div className="space-y-3">
                 <div className="text-xl font-semibold text-white">{nearestSpot.name}</div>
                 <div className="text-sm text-gray-400">{nearestSpot.water_type}</div>
+                {nearestSpot.distance && (
+                  <div className="text-xs text-gray-500">
+                    {nearestSpot.distance < 1 
+                      ? `${Math.round(nearestSpot.distance * 1000)}m entfernt`
+                      : `${nearestSpot.distance.toFixed(1)}km entfernt`
+                    }
+                  </div>
+                )}
                 <Link to={createPageUrl('Map')} className="inline-block text-sm text-cyan-400 hover:text-cyan-300">
                   Auf Karte anzeigen
                 </Link>
               </div>
             ) : (
-              <div className="text-gray-500">Kein Spot in der Naehe</div>
+              <div className="text-gray-500">Spots auf Karte verfuegbar</div>
             )}
           </div>
         </div>
