@@ -326,19 +326,34 @@ export default function TutorialModal({ isOpen, onClose }) {
   const steps = tutorialSteps[language] || tutorialSteps.de;
 
   const handleNext = () => {
+    if (isPlaying) {
+      window.speechSynthesis.cancel();
+      setIsPlaying(false);
+      setPlayingStep(null);
+    }
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     }
   };
 
   const handlePrev = () => {
+    if (isPlaying) {
+      window.speechSynthesis.cancel();
+      setIsPlaying(false);
+      setPlayingStep(null);
+    }
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
   };
 
   const handlePlayAudio = async (stepIndex) => {
-    if (isPlaying) return;
+    if (isPlaying) {
+      window.speechSynthesis.cancel();
+      setIsPlaying(false);
+      setPlayingStep(null);
+      return;
+    }
 
     setIsPlaying(true);
     setPlayingStep(stepIndex);
@@ -347,8 +362,9 @@ export default function TutorialModal({ isOpen, onClose }) {
       const step = steps[stepIndex];
       const text = `${step.title}. ${step.content}`;
 
-      console.log('[Tutorial TTS] Starting speech');
+      console.log('[Tutorial TTS] Starting speech for step:', stepIndex);
       await playTextWithBrowserTTS(text);
+      console.log('[Tutorial TTS] Speech completed');
     } catch (error) {
       console.error('[Tutorial TTS] Error:', error);
     } finally {
