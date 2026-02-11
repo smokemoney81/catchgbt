@@ -3,6 +3,8 @@ import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import WakeWordIndicator from "@/components/header/WakeWordIndicator";
+import MiniKarte from "@/components/home/MiniKarte";
+import MiniKiBuddy from "@/components/home/MiniKiBuddy";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -298,6 +300,16 @@ export default function Dashboard() {
                 <div className="text-gray-500">Spots auf Karte verfuegbar</div>
               )}
             </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-900/40 backdrop-blur-sm border border-gray-800/50">
+            <MiniKarte />
+          </div>
+
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-900/40 backdrop-blur-sm border border-gray-800/50">
+            <MiniKiBuddy />
           </div>
         </div>
 
