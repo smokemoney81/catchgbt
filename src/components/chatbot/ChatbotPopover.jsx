@@ -312,8 +312,12 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
           console.error("Failed to save greeting:", err);
         });
       }
+      
+      setTimeout(() => {
+        handleSpeak(greeting);
+      }, 500);
     }
-  }, [isOpen, user, conversation.messages.length, currentPageName, conversationId, hasGreeted]);
+  }, [isOpen, user, conversation.messages.length, currentPageName, conversationId, hasGreeted, handleSpeak]);
 
   const handleSendMessage = useCallback(async (messageText) => {
     const text = (messageText || input).trim();
