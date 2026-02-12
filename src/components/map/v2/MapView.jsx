@@ -30,6 +30,15 @@ const clubIcon = new L.Icon({
   shadowSize: [41, 41]
 });
 
+const parkIcon = new L.Icon({
+  iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
 const locationIcon = new L.Icon({
   iconUrl: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png",
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
@@ -147,7 +156,7 @@ export default function MapView({
         <Marker
           key={club.id}
           position={[club.coordinates.lat, club.coordinates.lng]}
-          icon={clubIcon}
+          icon={club.category === 'club' ? clubIcon : parkIcon}
           eventHandlers={{
             click: () => onClubClick(club)
           }}
@@ -155,12 +164,22 @@ export default function MapView({
           <Popup>
             <div className="text-sm">
               <strong>{club.name}</strong>
-              <p className="text-xs text-gray-600 mt-1">
+              <p className="text-xs font-semibold mt-1" style={{ color: club.category === 'club' ? '#22c55e' : '#a855f7' }}>
                 {club.category === 'club' ? 'Angelverein' : 'Angelpark'}
               </p>
               {club.address && (
                 <p className="text-xs text-gray-600">
                   {club.address.city}
+                </p>
+              )}
+              {club.phone && (
+                <p className="text-xs text-gray-600 mt-1">
+                  Tel: {club.phone}
+                </p>
+              )}
+              {club.email && (
+                <p className="text-xs text-gray-600">
+                  {club.email}
                 </p>
               )}
             </div>
