@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { User } from "@/entities/User";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -141,7 +140,7 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
   useEffect(() => {
     const loadUserAndConversation = async () => {
       try {
-        const currentUser = await User.me();
+        const currentUser = await base44.auth.me();
         setUser(currentUser);
         
         const newConvId = `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -225,7 +224,7 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
         return;
       }
 
-      const currentUser = await User.me();
+      const currentUser = await base44.auth.me();
       if (currentUser?.settings?.audio_enabled === false) {
         console.log('[TTS] Audio disabled in user settings');
         setIsSpeaking(false);
@@ -348,7 +347,7 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
     try {
       const contextInfo = currentPageName ? `${currentPageName}` : 'general';
       
-      const currentUser = await User.me();
+      const currentUser = await base44.auth.me();
       const planId = currentUser?.premium_plan_id || 'free';
       const detailLevel = (planId === 'pro' || planId === 'ultimate') ? 'detailed' : 'standard';
       
@@ -507,7 +506,7 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
     if (!isOpen) {
         onToggle();
     }
-    User.me().then(currentUser => {
+    base44.auth.me().then(currentUser => {
       if (currentUser?.settings?.audio_enabled !== false && !isRecording && recognitionRef.current) {
         setTimeout(() => {
           try {
@@ -528,7 +527,7 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
   useEffect(() => {
     const initializeWakeWord = async () => {
         try {
-            const currentUser = await User.me();
+            const currentUser = await base44.auth.me();
             const voiceSettings = currentUser?.settings || {};
 
             if (voiceSettings.wake_word_enabled && !wakeWordListener) {
