@@ -85,6 +85,26 @@ export default function LocationDetailPanel({ location, onClose, onSetAsLocation
     window.open(url, '_blank');
   };
 
+  const openDirectRoute = () => {
+    let toLat, toLon;
+    
+    if (location.type === 'spot') {
+      toLat = location.latitude;
+      toLon = location.longitude;
+    } else if (location.type === 'club') {
+      toLat = location.coordinates?.lat;
+      toLon = location.coordinates?.lng;
+    }
+
+    if (!toLat || !toLon) {
+      toast.error("Keine Koordinaten verfügbar");
+      return;
+    }
+
+    const url = `https://www.google.com/maps/dir/?api=1&destination=${toLat},${toLon}&travelmode=driving`;
+    window.open(url, '_blank');
+  };
+
   return (
     <div className="absolute bottom-4 left-4 right-4 z-[1000] max-w-md">
       <Card className="glass-morphism border-gray-700 bg-gray-900/95">
@@ -168,6 +188,15 @@ export default function LocationDetailPanel({ location, onClose, onSetAsLocation
                 Als Standort setzen
               </Button>
             )}
+            
+            <Button
+              onClick={openDirectRoute}
+              variant="outline"
+              className="flex-1"
+            >
+              <Navigation className="w-4 h-4 mr-2" />
+              Route festlegen
+            </Button>
             
             {!loading && !travelInfo && currentLocation && (
               <Button
