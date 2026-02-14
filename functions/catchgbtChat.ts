@@ -47,15 +47,11 @@ Verhalten:
 
   } catch (error) {
     console.error('Error in catchgbtChat:', error);
-    
-    const fallbackReplies = [
-      "Da ist etwas schiefgegangen. Was wolltest du wissen?",
-      "Ups, kurz abgelenkt! Kannst du das nochmal versuchen?",
-      "Sorry, hatte einen Aussetzer. Wie kann ich dir helfen?"
-    ];
+    console.error('Error details:', error.message, error.stack);
     
     return Response.json({ 
-      reply: fallbackReplies[Math.floor(Math.random() * fallbackReplies.length)]
-    });
+      error: 'Internal Server Error',
+      details: error.message
+    }, { status: 500 });
   }
 });
