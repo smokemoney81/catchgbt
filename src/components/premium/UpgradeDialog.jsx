@@ -3,24 +3,35 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Zap, Star, Crown } from "lucide-react";
+import { trackUpgradePromptShown, trackUpgradePromptClicked, trackUpgradePromptDismissed } from "@/components/utils/analyticsTracking";
 
 export default function UpgradeDialog({ isOpen, onClose, trigger }) {
+  React.useEffect(() => {
+    if (isOpen && trigger) {
+      trackUpgradePromptShown(trigger.targetPlan, trigger.reason, trigger.feature);
+    }
+  }, [isOpen, trigger]);
+  
   if (!trigger) return null;
   
   const { targetPlan, feature, reason } = trigger;
   
+  const handleUpgradeClick = () => {
+    trackUpgradePromptClicked(targetPlan, reason);
+  };
+  
+  const handleClose = () => {
+    trackUpgradePromptDismissed(targetPlan, reason);
+    onClose();
+  };
+  
   const planInfo = {
     premium: {
-      icon: Star,
-      color: "text-yellow-500",
       gradient: "from-yellow-500 to-orange-500",
       title: "Upgrade zu Premium",
       price: "9,99 EUR/Monat"
     },
     pro: {
-      icon: Crown,
-      color: "text-purple-500",
       gradient: "from-purple-500 to-pink-500",
       title: "Upgrade zu Pro",
       price: "19,99 EUR/Monat"
@@ -28,7 +39,6 @@ export default function UpgradeDialog({ isOpen, onClose, trigger }) {
   };
   
   const info = planInfo[targetPlan];
-  const Icon = info.icon;
   
   const getDescription = () => {
     if (reason === 'feature_locked' && feature === 'biteAI') {
@@ -50,13 +60,11 @@ export default function UpgradeDialog({ isOpen, onClose, trigger }) {
   };
   
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="bg-gray-900 border-gray-800 text-white">
         <DialogHeader>
           <div className="flex items-center gap-3 mb-2">
-            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${info.gradient} flex items-center justify-center`}>
-              <Icon className="w-6 h-6 text-white" />
-            </div>
+            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${info.gradient}`}></div>
             <div>
               <DialogTitle className="text-xl">{info.title}</DialogTitle>
               <p className="text-sm text-gray-400">{info.price}</p>
@@ -68,13 +76,12 @@ export default function UpgradeDialog({ isOpen, onClose, trigger }) {
         </DialogHeader>
         
         <div className="space-y-3 mt-4">
-          <Link to={createPageUrl('PremiumPlans')}>
+          <Link to={createPageUrl('PremiumPlans')} onClick={handleUpgradeClick}>
             <Button className={`w-full bg-gradient-to-r ${info.gradient} hover:opacity-90`}>
-              <Zap className="w-4 h-4 mr-2" />
               Jetzt upgraden
             </Button>
           </Link>
-          <Button variant="outline" className="w-full border-gray-700" onClick={onClose}>
+          <Button variant="outline" className="w-full border-gray-700" onClick={handleClose}>
             Spater
           </Button>
         </div>
