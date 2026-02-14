@@ -5,11 +5,15 @@ import { createPageUrl } from "@/utils";
 import WakeWordIndicator from "@/components/header/WakeWordIndicator";
 import MiniKarte from "@/components/home/MiniKarte";
 import MiniKiBuddy from "@/components/home/MiniKiBuddy";
+import CompetitionCard from "@/components/community/CompetitionCard";
+import VotingEventCard from "@/components/community/VotingEventCard";
+import ClanLeaderboardCard from "@/components/community/ClanLeaderboardCard";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [weather, setWeather] = useState(null);
   const [nearestSpot, setNearestSpot] = useState(null);
+  const [competitions, setCompetitions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [voiceStatus, setVoiceStatus] = useState({
     isActive: false,
@@ -49,6 +53,9 @@ export default function Dashboard() {
       setUser(currentUser);
 
       const spots = await base44.entities.Spot.list('', 100).catch(() => []);
+
+      const comps = await base44.entities.Competition.list('-created_date', 20).catch(() => []);
+      setCompetitions(comps.filter(c => c.is_active));
 
       let userLocation = null;
       const savedLocation = localStorage.getItem("fm_current_location");
@@ -253,6 +260,23 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        {competitions.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Aktive Wettbewerbe</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {competitions.filter(c => c.competition_type === 'photo_contest').map((comp) => (
+                <VotingEventCard key={comp.id} competition={comp} currentUser={user} />
+              ))}
+              {competitions.filter(c => c.competition_type === 'most_catches').map((comp) => (
+                <ClanLeaderboardCard key={comp.id} competition={comp} currentUser={user} />
+              ))}
+              {competitions.filter(c => c.competition_type !== 'photo_contest' && c.competition_type !== 'most_catches').map((comp) => (
+                <CompetitionCard key={comp.id} competition={comp} currentUser={user} onUpdate={loadData} />
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-900/40 backdrop-blur-sm border border-gray-800/50">
