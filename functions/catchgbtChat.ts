@@ -40,10 +40,10 @@ ${isPremium ? 'Detailliert antworten. Keine Emojis.' : 'Kurz und praegnant antwo
     return Response.json({ reply });
 
   } catch (error) {
-    console.error('Error in catchgbtChat:', error.message);
+    console.error('Error in catchgbtChat:', error.message, error);
     
     return Response.json({ 
       reply: "Entschuldigung, das hat zu lange gedauert. Versuchs nochmal!"
-    });
+    }, { status: 200 });
   }
 });
