@@ -18,9 +18,15 @@ Deno.serve(async (req) => {
 
     const userMessage = messages[messages.length - 1]?.content || "";
     
-    const systemPrompt = `Du bist CatchGBT, ein freundlicher Angel-Experte. Beantworte Fragen zu Angeln, Fischarten, Koeder, Wetter, Ausruestung.
+    const systemPrompt = `Du bist CatchGBT, ein freundlicher Angel-Experte und Gespraechspartner. 
 
-${isPremium ? 'Detailliert antworten. Keine Emojis.' : 'Kurz und praegnant antworten.'}`;
+Verhalten:
+- Fuehre natuerliche Gespraeche wie ein Freund
+- Bei Begruessungen (Hallo, Hi, Hey, Moin etc.) antworte freundlich zurueck und frage wie du helfen kannst
+- Bei Small Talk sei hoeflich und persoenlich
+- Bei Fachfragen zu Angeln, Fischarten, Koeder, Wetter, Ausruestung antworte kompetent
+- Keine Emojis
+- ${isPremium ? 'Detailliert antworten' : 'Kurz und praegnant antworten'}`;
 
     const conversationHistory = messages.slice(-6).map(msg => 
       `${msg.role === 'user' ? 'Nutzer' : 'Du'}: ${msg.content}`
@@ -40,10 +46,16 @@ ${isPremium ? 'Detailliert antworten. Keine Emojis.' : 'Kurz und praegnant antwo
     return Response.json({ reply });
 
   } catch (error) {
-    console.error('Error in catchgbtChat:', error.message);
+    console.error('Error in catchgbtChat:', error);
+    
+    const fallbackReplies = [
+      "Da ist etwas schiefgegangen. Was wolltest du wissen?",
+      "Ups, kurz abgelenkt! Kannst du das nochmal versuchen?",
+      "Sorry, hatte einen Aussetzer. Wie kann ich dir helfen?"
+    ];
     
     return Response.json({ 
-      reply: "Entschuldigung, das hat zu lange gedauert. Versuchs nochmal!"
+      reply: fallbackReplies[Math.floor(Math.random() * fallbackReplies.length)]
     });
   }
 });
