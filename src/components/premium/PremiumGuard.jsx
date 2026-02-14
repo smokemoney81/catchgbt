@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Crown, Lock, Loader2 } from 'lucide-react';
+import { Crown, Lock, Loader2, AlertTriangle } from 'lucide-react';
 import { createPageUrl } from "@/utils";
-import { hasFeatureAccess, getRequiredPlanForFeature } from "@/components/utils/featureFlags";
+import { checkFeatureAccess, getPaymentStatus, getRequiredPlanForFeature, PAYMENT_STATUS } from "@/components/utils/featureFlags";
 import { trackFeatureClick } from "@/components/utils/upgradeTriggers";
 import UpgradeDialog from "./UpgradeDialog";
 import { base44 } from "@/api/base44Client";
@@ -19,8 +19,10 @@ export default function PremiumGuard({
   const [isLoading, setIsLoading] = useState(true);
   const [hasAccess, setHasAccess] = useState(false);
   const [currentPlan, setCurrentPlan] = useState(null);
+  const [paymentStatus, setPaymentStatus] = useState(PAYMENT_STATUS.NONE);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const [upgradeTrigger, setUpgradeTrigger] = useState(null);
+  const [blockReason, setBlockReason] = useState(null);
 
   useEffect(() => {
     checkAccess();
@@ -32,22 +34,48 @@ export default function PremiumGuard({
     try {
       const currentUser = user || await base44.auth.me();
       const planId = currentUser?.premium_plan_id || 'free';
+      const status = getPaymentStatus(currentUser);
       
+      setPaymentStatus(status);
       setCurrentPlan({ 
         id: planId, 
-        name: planId === 'free' ? 'Kostenlos' : planId === 'premium' ? 'Premium' : 'Pro',
-        is_active: true 
+        name: planId === 'free' ? 'Kostenlos' : planId === 'premium' ? 'Premium' : planId === 'pro' ? 'Pro' : planId,
+        is_active: status === PAYMENT_STATUS.ACTIVE
       });
       
+      // STRIKTE PRÜFUNG
       if (featureName) {
-        const featureAccess = hasFeatureAccess(planId, featureName);
-        setHasAccess(featureAccess !== false);
+        const access = checkFeatureAccess(planId, status, featureName);
+        
+        if (access === false) {
+          if (status !== PAYMENT_STATUS.ACTIVE && planId !== 'free') {
+            setBlockReason('payment_expired');
+          } else if (planId === 'free') {
+            setBlockReason('requires_premium');
+          } else {
+            setBlockReason('requires_higher_plan');
+          }
+        }
+        
+        setHasAccess(access !== false);
       } else {
-        setHasAccess(planId === 'pro' || planId === 'ultimate' || planId === 'premium');
+        const isPremium = planId === 'pro' || planId === 'ultimate' || planId === 'premium' || planId === 'basic';
+        const hasActivePayment = status === PAYMENT_STATUS.ACTIVE;
+        
+        setHasAccess(isPremium && hasActivePayment);
+        
+        if (!hasAccess) {
+          if (!hasActivePayment && isPremium) {
+            setBlockReason('payment_expired');
+          } else {
+            setBlockReason('requires_premium');
+          }
+        }
       }
     } catch (error) {
       console.error('[PremiumGuard] Error checking access:', error);
       setHasAccess(false);
+      setBlockReason('error');
     }
     
     setIsLoading(false);
@@ -95,25 +123,65 @@ export default function PremiumGuard({
     return names[planId] || 'Premium Plan';
   };
 
+  const getBlockMessage = () => {
+    if (blockReason === 'payment_expired') {
+      return {
+        title: 'Zahlung abgelaufen',
+        message: 'Dein Premium-Plan ist abgelaufen. Erneuere jetzt, um weiterzumachen.',
+        icon: <AlertTriangle className="w-10 h-10 text-red-400" />,
+        color: 'red'
+      };
+    }
+    
+    if (blockReason === 'requires_higher_plan') {
+      return {
+        title: 'Upgrade erforderlich',
+        message: `${feature} ist nur im Pro-Plan verfuegbar.`,
+        icon: <Crown className="w-10 h-10 text-purple-400" />,
+        color: 'purple'
+      };
+    }
+    
+    return {
+      title: 'Premium Feature',
+      message: `${feature} ist nur fuer Premium-Nutzer verfuegbar.`,
+      icon: <Crown className="w-10 h-10 text-amber-400" />,
+      color: 'amber'
+    };
+  };
+
+  const blockMsg = getBlockMessage();
+  const colorClass = blockMsg.color === 'red' ? 'border-red-600/50 from-red-500/10 to-red-600/10' : 
+                     blockMsg.color === 'purple' ? 'border-purple-600/50 from-purple-500/10 to-purple-600/10' :
+                     'border-amber-600/50 from-amber-500/10 to-orange-500/10';
+
   return fallback || (
     <>
       <div className="min-h-screen bg-gray-950 p-6 flex items-center justify-center">
         <Card 
-          className="glass-morphism border-amber-600/50 bg-gradient-to-br from-amber-500/10 to-orange-500/10 max-w-md cursor-pointer hover:border-amber-500/70 transition-colors"
+          className={`glass-morphism ${colorClass} bg-gradient-to-br max-w-md cursor-pointer hover:opacity-90 transition-opacity`}
           onClick={handleFeatureClick}
         >
           <CardContent className="p-8 text-center space-y-6">
-            <div className="flex items-center justify-center gap-2 text-amber-400">
-              <Crown className="w-10 h-10" />
-              <Lock className="w-8 h-8" />
+            <div className="flex items-center justify-center gap-2">
+              {blockMsg.icon}
+              <Lock className="w-8 h-8 text-gray-400" />
             </div>
             
             <div>
-              <h3 className="text-2xl font-semibold text-white mb-2">Premium Feature</h3>
+              <h3 className="text-2xl font-semibold text-white mb-2">{blockMsg.title}</h3>
               <p className="text-gray-300 text-sm leading-relaxed">
-                {feature} ist nur fuer Premium-Nutzer verfuegbar.
+                {blockMsg.message}
               </p>
             </div>
+
+            {paymentStatus !== PAYMENT_STATUS.ACTIVE && currentPlan?.id !== 'free' && (
+              <div className="bg-red-900/30 border border-red-700/50 rounded-lg p-4">
+                <p className="text-red-300 text-xs font-semibold">
+                  Status: Zahlung abgelaufen
+                </p>
+              </div>
+            )}
 
             <div className="bg-gray-800/50 rounded-lg p-4">
               <p className="text-amber-400 font-semibold text-sm mb-2">
@@ -133,7 +201,7 @@ export default function PremiumGuard({
                 size="lg"
               >
                 <Crown className="w-5 h-5 mr-2" />
-                Jetzt upgraden
+                {blockReason === 'payment_expired' ? 'Plan erneuern' : 'Jetzt upgraden'}
               </Button>
               
               <Button

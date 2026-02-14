@@ -1,10 +1,17 @@
-// Feature-Flags System für CATCHGBT
-// Definiert Zugriff basierend auf Free/Premium/Pro
+// STRIKT: Feature-Flags System für CATCHGBT
+// KEINE Premium/Pro Nutzung ohne payment_status == "active"
 
 export const PLANS = {
   FREE: 'free',
   PREMIUM: 'premium',
   PRO: 'pro'
+};
+
+export const PAYMENT_STATUS = {
+  NONE: 'none',
+  PENDING: 'pending',
+  ACTIVE: 'active',
+  EXPIRED: 'expired'
 };
 
 export const FEATURES = {
@@ -97,28 +104,93 @@ const FEATURE_ACCESS = {
   }
 };
 
-// Prüft ob User Zugriff auf Feature hat
-export const hasFeatureAccess = (userPlan, featureName) => {
+// ZENTRALE ZUGRIFFSPRÜFUNG - STRIKT
+// Prüft: payment_status + plan + feature
+export const checkFeatureAccess = (userPlan, paymentStatus, featureName) => {
   const plan = userPlan || PLANS.FREE;
-  const access = FEATURE_ACCESS[featureName];
   
+  // REGEL 1: Free Features sind immer verfügbar
+  if (plan === PLANS.FREE) {
+    const access = FEATURE_ACCESS[featureName];
+    if (!access) return false;
+    return access[PLANS.FREE];
+  }
+  
+  // REGEL 2: Premium/Pro Features NUR mit payment_status == "active"
+  if (paymentStatus !== PAYMENT_STATUS.ACTIVE) {
+    // KEINE Premium/Pro Features ohne aktive Zahlung
+    return false;
+  }
+  
+  // REGEL 3: Mit aktivem Status - Plan-basierter Zugriff
+  const access = FEATURE_ACCESS[featureName];
   if (!access) return false;
   
   return access[plan];
 };
 
-// Gibt Feature Level zurück (false, 'basic', 'advanced', 'limited', 'unlimited', true)
-export const getFeatureLevel = (userPlan, featureName) => {
-  return hasFeatureAccess(userPlan, featureName);
+// LEGACY KOMPATIBILITÄT - verwendet Free als Fallback
+export const hasFeatureAccess = (userPlan, featureName) => {
+  const plan = userPlan || PLANS.FREE;
+  const access = FEATURE_ACCESS[featureName];
+  
+  if (!access) return false;
+  return access[plan];
 };
 
-// Prüft ob Feature vollständig freigeschaltet ist
-export const hasFullFeatureAccess = (userPlan, featureName) => {
-  const level = getFeatureLevel(userPlan, featureName);
+// Feature Level mit Payment Status
+export const getFeatureLevel = (userPlan, paymentStatus, featureName) => {
+  return checkFeatureAccess(userPlan, paymentStatus, featureName);
+};
+
+// Vollständiger Zugriff Check
+export const hasFullFeatureAccess = (userPlan, paymentStatus, featureName) => {
+  const level = checkFeatureAccess(userPlan, paymentStatus, featureName);
   return level === true || level === 'unlimited' || level === 'advanced';
 };
 
-// Gibt nächsthöheren Plan zurück der Feature freischaltet
+// Payment Status aus User Object extrahieren
+export const getPaymentStatus = (user) => {
+  if (!user) return PAYMENT_STATUS.NONE;
+  
+  const planId = user.premium_plan_id;
+  const expiresAt = user.premium_expires_at;
+  
+  // Free hat keinen Payment Status
+  if (!planId || planId === 'free') {
+    return PAYMENT_STATUS.NONE;
+  }
+  
+  // Trial gilt als ACTIVE
+  if (user.trial_end_date) {
+    const now = new Date();
+    const trialEnd = new Date(user.trial_end_date);
+    if (now < trialEnd) {
+      return PAYMENT_STATUS.ACTIVE;
+    }
+  }
+  
+  // Premium/Pro: Prüfe Ablaufdatum
+  if (expiresAt) {
+    const now = new Date();
+    const expires = new Date(expiresAt);
+    
+    if (expires > now) {
+      return PAYMENT_STATUS.ACTIVE;
+    } else {
+      return PAYMENT_STATUS.EXPIRED;
+    }
+  }
+  
+  // Kein Ablaufdatum = permanente Lizenz = ACTIVE
+  if (planId === 'premium' || planId === 'pro' || planId === 'ultimate' || planId === 'basic') {
+    return PAYMENT_STATUS.ACTIVE;
+  }
+  
+  return PAYMENT_STATUS.NONE;
+};
+
+// Nächsthöheren Plan ermitteln
 export const getRequiredPlanForFeature = (featureName) => {
   const access = FEATURE_ACCESS[featureName];
   if (!access) return null;
