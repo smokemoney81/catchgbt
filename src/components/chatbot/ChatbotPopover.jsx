@@ -351,7 +351,6 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
       const planId = currentUser?.premium_plan_id || 'free';
       const detailLevel = (planId === 'pro' || planId === 'ultimate') ? 'detailed' : 'standard';
       
-      const currentUser = await base44.auth.me();
       const authToken = localStorage.getItem('base44_token');
       
       const response = await fetch('/api/functions/catchgbtChat', {
