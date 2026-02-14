@@ -8,7 +8,6 @@ import MiniKiBuddy from "@/components/home/MiniKiBuddy";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
-  const [stats, setStats] = useState({ catches: 0, spots: 0, weekCatches: 0, points: 0 });
   const [weather, setWeather] = useState(null);
   const [nearestSpot, setNearestSpot] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -49,21 +48,7 @@ export default function Dashboard() {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
 
-      const [catches, spots] = await Promise.all([
-        base44.entities.Catch.list('-catch_time', 10).catch(() => []),
-        base44.entities.Spot.list('', 100).catch(() => [])
-      ]);
-
-      const oneWeekAgo = new Date();
-      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-      const weekCatches = catches.filter(c => new Date(c.catch_time) > oneWeekAgo).length;
-
-      setStats({
-        catches: catches.length,
-        spots: spots.length,
-        weekCatches,
-        points: currentUser?.total_points || 0
-      });
+      const spots = await base44.entities.Spot.list('', 100).catch(() => []);
 
       let userLocation = null;
       const savedLocation = localStorage.getItem("fm_current_location");
@@ -219,40 +204,6 @@ export default function Dashboard() {
               isListening={voiceStatus.isListening}
               error={voiceStatus.error}
             />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-          <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-500/5 via-cyan-500/10 to-cyan-600/5 p-6 transition-all hover:from-cyan-500/10 hover:via-cyan-500/15 hover:to-cyan-600/10">
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative">
-              <div className="text-xs font-medium text-cyan-400/70 mb-3">Faenge</div>
-              <div className="text-5xl font-bold text-white tracking-tight">{stats.catches}</div>
-            </div>
-          </div>
-
-          <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500/5 via-emerald-500/10 to-emerald-600/5 p-6 transition-all hover:from-emerald-500/10 hover:via-emerald-500/15 hover:to-emerald-600/10">
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 to-emerald-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative">
-              <div className="text-xs font-medium text-emerald-400/70 mb-3">Spots</div>
-              <div className="text-5xl font-bold text-white tracking-tight">{stats.spots}</div>
-            </div>
-          </div>
-
-          <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500/5 via-amber-500/10 to-amber-600/5 p-6 transition-all hover:from-amber-500/10 hover:via-amber-500/15 hover:to-amber-600/10">
-            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/0 to-amber-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative">
-              <div className="text-xs font-medium text-amber-400/70 mb-3">Diese Woche</div>
-              <div className="text-5xl font-bold text-white tracking-tight">{stats.weekCatches}</div>
-            </div>
-          </div>
-
-          <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500/5 via-purple-500/10 to-purple-600/5 p-6 transition-all hover:from-purple-500/10 hover:via-purple-500/15 hover:to-purple-600/10">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative">
-              <div className="text-xs font-medium text-purple-400/70 mb-3">Punkte</div>
-              <div className="text-5xl font-bold text-white tracking-tight">{stats.points}</div>
-            </div>
           </div>
         </div>
 
