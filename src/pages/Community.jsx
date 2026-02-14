@@ -5,11 +5,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
-import { Heart, MessageCircle, Send, Camera, AlertTriangle, User, Loader2, X, Globe, Facebook, Trophy, Users, Activity, Compass, Fish } from "lucide-react";
+import { Heart, MessageCircle, Send, Camera, AlertTriangle, User, Loader2, X, Globe, Facebook, Trophy, Users, Activity, Compass, Fish, TrendingUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CompetitionCard from "@/components/community/CompetitionCard";
 import VotingEventCard from "@/components/community/VotingEventCard";
 import ClanLeaderboardCard from "@/components/community/ClanLeaderboardCard";
+import LeaderboardCard from "@/components/community/LeaderboardCard";
 
 export default function Community() {
   const [posts, setPosts] = useState([]);
@@ -385,6 +386,31 @@ export default function Community() {
             </div>
           </div>
         )}
+
+        {/* Leaderboards */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Trophy className="w-5 h-5 text-cyan-400" />
+            <h2 className="text-xl font-bold text-cyan-400">Bestenlisten</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <LeaderboardCard 
+              type="points" 
+              title="Top Angler nach Punkten" 
+              icon={Trophy}
+            />
+            <LeaderboardCard 
+              type="catches" 
+              title="Top Angler nach Faengen" 
+              icon={Fish}
+            />
+            <LeaderboardCard 
+              type="biggest" 
+              title="Top Angler nach groesstem Fang" 
+              icon={TrendingUp}
+            />
+          </div>
+        </div>
 
         {/* Andere Wettbewerbe */}
         {otherCompetitions.length > 0 && (
