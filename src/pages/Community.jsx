@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
-import { Heart, MessageCircle, Send, Camera, AlertTriangle, User, Loader2, X, Globe, Facebook, Trophy, Users } from "lucide-react";
+import { Heart, MessageCircle, Send, Camera, AlertTriangle, User, Loader2, X, Globe, Facebook, Trophy, Users, Activity, Compass } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CompetitionCard from "@/components/community/CompetitionCard";
 import VotingEventCard from "@/components/community/VotingEventCard";
@@ -24,11 +24,13 @@ export default function Community() {
   const [userCache, setUserCache] = useState({});
   const [deletingPostId, setDeletingPostId] = useState(null);
   const [competitions, setCompetitions] = useState([]);
+  const [recentActivity, setRecentActivity] = useState([]);
 
   useEffect(() => {
     loadCurrentUser();
     loadPosts();
     loadCompetitions();
+    loadRecentActivity();
   }, []);
 
   const loadCurrentUser = async () => {
@@ -46,6 +48,32 @@ export default function Community() {
       setCompetitions(comps.filter(c => c.is_active));
     } catch (error) {
       console.error("Fehler beim Laden der Wettbewerbe:", error);
+    }
+  };
+
+  const loadRecentActivity = async () => {
+    try {
+      const catches = await base44.entities.Catch.list('-catch_time', 5);
+      const trips = await base44.entities.FishingPlan.filter({ is_active: true });
+      
+      const activities = [
+        ...catches.map(c => ({
+          type: 'catch',
+          user: c.created_by,
+          data: c,
+          time: c.catch_time || c.created_date
+        })),
+        ...trips.map(t => ({
+          type: 'trip',
+          user: t.created_by,
+          data: t,
+          time: t.created_date
+        }))
+      ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 5);
+      
+      setRecentActivity(activities);
+    } catch (error) {
+      console.error("Fehler beim Laden der Aktivitaten:", error);
     }
   };
 
@@ -302,6 +330,54 @@ export default function Community() {
             <p className="text-gray-400 mt-1">Tausche dich mit anderen Anglern aus</p>
           </div>
         </div>
+
+        {/* Aktuelle Aktivitaten */}
+        {recentActivity.length > 0 && (
+          <Card className="glass-morphism border-gray-800 rounded-2xl">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Activity className="w-5 h-5 text-cyan-400" />
+                Aktuelle Aktivitaten
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {recentActivity.map((activity, idx) => (
+                <div key={idx} className="flex items-center gap-3 p-3 bg-gray-800/30 rounded-lg">
+                  {activity.type === 'catch' ? (
+                    <>
+                      <div className="w-10 h-10 rounded-full bg-emerald-600/20 flex items-center justify-center">
+                        <Fish className="w-5 h-5 text-emerald-400" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-white text-sm">
+                          {getUserDisplayName(activity.user)} hat einen <span className="font-semibold text-emerald-400">{activity.data.species}</span> gefangen
+                        </p>
+                        <p className="text-gray-400 text-xs">
+                          {activity.data.length_cm && `${activity.data.length_cm} cm • `}
+                          {new Date(activity.time).toLocaleDateString('de-DE')}
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-10 h-10 rounded-full bg-purple-600/20 flex items-center justify-center">
+                        <Compass className="w-5 h-5 text-purple-400" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-white text-sm">
+                          {getUserDisplayName(activity.user)} ist auf einem <span className="font-semibold text-purple-400">{activity.data.target_fish}</span>-Trip
+                        </p>
+                        <p className="text-gray-400 text-xs">
+                          {new Date(activity.time).toLocaleDateString('de-DE')}
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Community-Voting Events */}
         {votingCompetitions.length > 0 && (
