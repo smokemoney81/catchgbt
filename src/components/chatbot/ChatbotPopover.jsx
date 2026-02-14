@@ -351,16 +351,33 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
       const planId = currentUser?.premium_plan_id || 'free';
       const detailLevel = (planId === 'pro' || planId === 'ultimate') ? 'detailed' : 'standard';
       
-      const response = await base44.functions.invoke('catchgbtChat', {
-        messages: [{
-          role: "user",
-          content: text
-        }],
-        context: contextInfo,
-        detailLevel
+      const currentUser = await base44.auth.me();
+      const authToken = localStorage.getItem('base44_token');
+      
+      const response = await fetch('/api/functions/catchgbtChat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+          'X-App-Id': '68bb3d3b9f83dc1f55ef532b',
+          'X-Origin-URL': window.location.href
+        },
+        body: JSON.stringify({
+          messages: [{
+            role: "user",
+            content: text
+          }],
+          context: contextInfo,
+          detailLevel
+        })
       });
 
-      const aiReply = response?.data?.reply || "Entschuldigung, ich konnte keine Antwort generieren.";
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      const aiReply = data?.reply || "Entschuldigung, ich konnte keine Antwort generieren.";
 
       const assistantMessage = { role: "assistant", content: String(aiReply) };
       setConversation(prev => ({ ...prev, messages: [...prev.messages, assistantMessage] }));
