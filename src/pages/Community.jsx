@@ -53,25 +53,8 @@ export default function Community() {
 
   const loadRecentActivity = async () => {
     try {
-      const catches = await base44.entities.Catch.list('-catch_time', 5);
-      const trips = await base44.entities.FishingPlan.filter({ is_active: true });
-      
-      const activities = [
-        ...catches.map(c => ({
-          type: 'catch',
-          user: c.created_by,
-          data: c,
-          time: c.catch_time || c.created_date
-        })),
-        ...trips.map(t => ({
-          type: 'trip',
-          user: t.created_by,
-          data: t,
-          time: t.created_date
-        }))
-      ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 5);
-      
-      setRecentActivity(activities);
+      const activeComps = await base44.entities.Competition.filter({ is_active: true });
+      setRecentActivity(activeComps);
     } catch (error) {
       console.error("Fehler beim Laden der Aktivitaten:", error);
     }
@@ -341,38 +324,24 @@ export default function Community() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {recentActivity.map((activity, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-3 bg-gray-800/30 rounded-lg">
-                  {activity.type === 'catch' ? (
-                    <>
-                      <div className="w-10 h-10 rounded-full bg-emerald-600/20 flex items-center justify-center">
-                        <Fish className="w-5 h-5 text-emerald-400" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-white text-sm">
-                          {getUserDisplayName(activity.user)} hat einen <span className="font-semibold text-emerald-400">{activity.data.species}</span> gefangen
-                        </p>
-                        <p className="text-gray-400 text-xs">
-                          {activity.data.length_cm && `${activity.data.length_cm} cm • `}
-                          {new Date(activity.time).toLocaleDateString('de-DE')}
-                        </p>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="w-10 h-10 rounded-full bg-purple-600/20 flex items-center justify-center">
-                        <Compass className="w-5 h-5 text-purple-400" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-white text-sm">
-                          {getUserDisplayName(activity.user)} ist auf einem <span className="font-semibold text-purple-400">{activity.data.target_fish}</span>-Trip
-                        </p>
-                        <p className="text-gray-400 text-xs">
-                          {new Date(activity.time).toLocaleDateString('de-DE')}
-                        </p>
-                      </div>
-                    </>
-                  )}
+              {recentActivity.map((comp, idx) => (
+                <div key={idx} className="flex items-center gap-3 p-3 bg-gray-800/30 rounded-lg hover:bg-gray-800/50 transition-colors">
+                  <div className="w-10 h-10 rounded-full bg-amber-600/20 flex items-center justify-center">
+                    <Trophy className="w-5 h-5 text-amber-400" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-white text-sm font-semibold">
+                      {comp.title}
+                    </p>
+                    <p className="text-gray-400 text-xs">
+                      {comp.competition_type === 'photo_contest' && 'Community Voting'}
+                      {comp.competition_type === 'most_catches' && 'Team Wettbewerb'}
+                      {comp.competition_type === 'biggest_catch' && 'Groesster Fang'}
+                      {comp.competition_type === 'specific_species' && `Spezies: ${comp.target_species || 'Alle'}`}
+                      {' • '}
+                      bis {new Date(comp.end_date).toLocaleDateString('de-DE')}
+                    </p>
+                  </div>
                 </div>
               ))}
             </CardContent>
