@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
-import { Heart, MessageCircle, Send, Camera, AlertTriangle, User, Loader2, X, Globe, Facebook, Trophy, Users, Activity, Compass } from "lucide-react";
+import { Heart, MessageCircle, Send, Camera, AlertTriangle, User, Loader2, X, Globe, Facebook, Trophy, Users, Activity, Compass, Fish } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CompetitionCard from "@/components/community/CompetitionCard";
 import VotingEventCard from "@/components/community/VotingEventCard";
