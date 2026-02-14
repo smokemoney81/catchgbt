@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -190,6 +189,16 @@ export default function Logbook() {
       } else {
         await base44.entities.Catch.create(catchData);
         toast.success("Fang gespeichert! 🎣");
+        
+        base44.analytics.track({
+          eventName: "fishing_catch_logged",
+          properties: {
+            species: species.trim(),
+            has_photo: !!photoUrl,
+            has_spot: !!spotId,
+            length_cm: lengthCm ? parseFloat(lengthCm) : null
+          }
+        });
       }
 
       resetForm();

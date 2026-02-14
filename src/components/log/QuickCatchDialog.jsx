@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useHaptic } from "@/components/utils/HapticFeedback";
 import { useSound } from "@/components/utils/SoundManager";
 import { useLanguage } from "@/components/i18n/LanguageContext";
+import { base44 } from "@/api/base44Client";
 
 export default function QuickCatchDialog() {
   const { t } = useLanguage();
@@ -357,6 +358,17 @@ export default function QuickCatchDialog() {
             duration: 4000
           }
         );
+        
+        base44.analytics.track({
+          eventName: "fishing_catch_logged",
+          properties: {
+            species: trimmedSpecies,
+            has_photo: !!form.photo_url,
+            has_spot: !!form.spot_id,
+            length_cm: form.length_cm ? parseFloat(form.length_cm) : null,
+            source: "quick_dialog"
+          }
+        });
         
         handleClose();
       } catch (creditError) {

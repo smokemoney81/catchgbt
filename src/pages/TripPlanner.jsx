@@ -104,6 +104,17 @@ function TripPlannerContent() {
       
       window.dispatchEvent(new Event('active-trips-updated'));
       
+      if (newActiveState) {
+        base44.analytics.track({
+          eventName: "fishing_trip_started",
+          properties: {
+            target_fish: plan.target_fish,
+            has_travel_info: !!travelInfo[plan.id],
+            plan_age_days: Math.floor((Date.now() - new Date(plan.created_date).getTime()) / (1000 * 60 * 60 * 24))
+          }
+        });
+      }
+      
       toast.success(newActiveState ? 'Trip aktiviert' : 'Trip deaktiviert');
     } catch (error) {
       console.error("Fehler beim Aktualisieren des Trip-Status:", error);
