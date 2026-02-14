@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { User } from "@/entities/User";
-import { catchgbtChat } from "@/functions/catchgbtChat";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -11,7 +10,6 @@ import MessageBubble from "./MessageBubble";
 import { useSound } from "@/components/utils/SoundManager";
 import { useLanguage } from "@/components/i18n/LanguageContext";
 import { Loader2, Mic, MicOff, Send, X, Volume2, VolumeX, Sparkles, Settings, AlertTriangle } from "lucide-react";
-import { backendTextToSpeech } from "@/functions/backendTextToSpeech";
 import { WakeWordDetector } from '@/components/utils/WakeWordDetector';
 import { base44 } from "@/api/base44Client";
 
@@ -335,6 +333,7 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
     if (limiterRef.current.length >= 10) {
       toast.error("Limit erreicht. Bitte warte 10 Sekunden.");
       setIsLoading(false);
+      processingRef.current = false;
       return;
     }
     limiterRef.current.push(now);
@@ -353,11 +352,7 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
       const planId = currentUser?.premium_plan_id || 'free';
       const detailLevel = (planId === 'pro' || planId === 'ultimate') ? 'detailed' : 'standard';
       
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Timeout')), 12000)
-      );
-      
-      const chatPromise = catchgbtChat({
+      const response = await base44.functions.invoke('catchgbtChat', {
         messages: [{
           role: "user",
           content: text
@@ -365,8 +360,6 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
         context: contextInfo,
         detailLevel
       });
-
-      const response = await Promise.race([chatPromise, timeoutPromise]);
 
       const aiReply = response?.data?.reply || "Entschuldigung, ich konnte keine Antwort generieren.";
 
@@ -383,10 +376,6 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
       console.error("AI request failed:", e);
 
       let errorMsg = "Entschuldigung, das hat zu lange gedauert. Versuchs nochmal!";
-      
-      if (e.message === 'Timeout') {
-        errorMsg = "Timeout - bitte nochmal versuchen!";
-      }
 
       setConversation(prev => ({ ...prev, messages: [...prev.messages, { role: "assistant", content: errorMsg }] }));
       
