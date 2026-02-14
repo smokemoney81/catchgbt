@@ -5,11 +5,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
-import { Heart, MessageCircle, Send, Camera, AlertTriangle, User, Loader2, X, Globe, Facebook, Trophy } from "lucide-react";
+import { Heart, MessageCircle, Send, Camera, AlertTriangle, User, Loader2, X, Globe, Facebook } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import CompetitionCard from "@/components/competitions/CompetitionCard";
-import CompetitionDetails from "@/components/competitions/CompetitionDetails";
-import { checkFeatureAccess, FEATURES, PLANS, getPaymentStatus } from "@/components/utils/featureFlags";
 
 export default function Community() {
   const [posts, setPosts] = useState([]);
@@ -23,32 +20,16 @@ export default function Community() {
   const [currentUser, setCurrentUser] = useState(null);
   const [userCache, setUserCache] = useState({});
   const [deletingPostId, setDeletingPostId] = useState(null);
-  const [competitions, setCompetitions] = useState([]);
-  const [loadingCompetitions, setLoadingCompetitions] = useState(false);
-  const [selectedCompetition, setSelectedCompetition] = useState(null);
-  const [hasBasicAccess, setHasBasicAccess] = useState(false);
-  const [hasProAccess, setHasProAccess] = useState(false);
-  const [userParticipations, setUserParticipations] = useState([]);
 
   useEffect(() => {
     loadCurrentUser();
     loadPosts();
-    loadCompetitions();
   }, []);
 
   const loadCurrentUser = async () => {
     try {
       const user = await base44.auth.me();
       setCurrentUser(user);
-      
-      const paymentStatus = getPaymentStatus(user);
-      const userPlan = user.premium_plan_id || PLANS.FREE;
-      
-      const basicAccess = checkFeatureAccess(userPlan, paymentStatus, FEATURES.COMPETITIONS);
-      const proAccess = checkFeatureAccess(userPlan, paymentStatus, FEATURES.PREMIUM_COMPETITIONS);
-      
-      setHasBasicAccess(!!basicAccess);
-      setHasProAccess(!!proAccess);
     } catch (error) {
       console.error("Fehler beim Laden des Users:", error);
     }
@@ -281,64 +262,6 @@ export default function Community() {
     }
   };
 
-  const loadCompetitions = async () => {
-    setLoadingCompetitions(true);
-    try {
-      const comps = await base44.entities.Competition.list("-created_date", 10);
-      setCompetitions(comps);
-      
-      if (currentUser) {
-        const participations = await base44.entities.CompetitionParticipant.filter({
-          user_id: currentUser.email
-        });
-        setUserParticipations(participations);
-      }
-    } catch (error) {
-      console.error("Fehler beim Laden der Wettbewerbe:", error);
-    } finally {
-      setLoadingCompetitions(false);
-    }
-  };
-
-  const handleJoinCompetition = async (competitionId) => {
-    if (!currentUser) {
-      toast.error("Bitte melde dich an, um teilzunehmen");
-      return;
-    }
-
-    try {
-      const competition = competitions.find(c => c.id === competitionId);
-      
-      if (competition.competition_type === 'premium' && !hasProAccess) {
-        toast.error("Premium-Wettbewerbe erfordern ein Pro-Abo");
-        return;
-      }
-
-      if (competition.participant_count >= competition.max_participants) {
-        toast.error("Wettbewerb ist voll");
-        return;
-      }
-
-      await base44.entities.CompetitionParticipant.create({
-        competition_id: competitionId,
-        user_id: currentUser.email,
-        total_score: 0,
-        catches_count: 0,
-        joined_at: new Date().toISOString()
-      });
-
-      await base44.entities.Competition.update(competitionId, {
-        participant_count: competition.participant_count + 1
-      });
-
-      toast.success("Erfolgreich angemeldet");
-      await loadCompetitions();
-    } catch (error) {
-      console.error("Fehler beim Beitreten:", error);
-      toast.error("Anmeldung fehlgeschlagen");
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
@@ -393,46 +316,6 @@ export default function Community() {
                 Zur Webseite
               </Button>
             </a>
-          </CardContent>
-        </Card>
-
-        {/* Wettbewerbe Sektion */}
-        <Card className="glass-morphism border-amber-600/30 bg-gradient-to-br from-amber-900/10 to-orange-900/10 rounded-2xl">
-          <CardHeader>
-            <CardTitle className="text-amber-400 drop-shadow-[0_0_12px_rgba(251,191,36,0.7)] flex items-center gap-2">
-              <Trophy className="w-5 h-5" />
-              Community-Wettbewerbe
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loadingCompetitions ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin text-amber-400" />
-              </div>
-            ) : competitions.length > 0 ? (
-              <div className="grid gap-4">
-                {competitions.slice(0, 3).map((competition) => {
-                  const isParticipating = userParticipations.some(
-                    p => p.competition_id === competition.id
-                  );
-                  
-                  return (
-                    <CompetitionCard
-                      key={competition.id}
-                      competition={competition}
-                      isParticipating={isParticipating}
-                      hasAccess={competition.competition_type === 'premium' ? hasProAccess : hasBasicAccess}
-                      onViewDetails={() => setSelectedCompetition(competition)}
-                      onJoin={() => handleJoinCompetition(competition.id)}
-                    />
-                  );
-                })}
-              </div>
-            ) : (
-              <p className="text-gray-400 text-center py-8">
-                Noch keine Wettbewerbe verfügbar
-              </p>
-            )}
           </CardContent>
         </Card>
 
@@ -689,17 +572,6 @@ export default function Community() {
           </Card>
         )}
       </div>
-
-      {selectedCompetition && (
-        <CompetitionDetails
-          competition={selectedCompetition}
-          onClose={() => setSelectedCompetition(null)}
-          onJoin={handleJoinCompetition}
-          isParticipating={userParticipations.some(
-            p => p.competition_id === selectedCompetition.id
-          )}
-        />
-      )}
     </div>
   );
 }

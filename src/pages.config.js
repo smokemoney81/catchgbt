@@ -57,7 +57,6 @@ import Arcade from './pages/Arcade';
 import BaitMixer from './pages/BaitMixer';
 import CatchCam from './pages/CatchCam';
 import Community from './pages/Community';
-import Competitions from './pages/Competitions';
 import Dashboard from './pages/Dashboard';
 import Datenschutz from './pages/Datenschutz';
 import DeviceIntegration from './pages/DeviceIntegration';
@@ -107,7 +106,6 @@ export const PAGES = {
     "BaitMixer": BaitMixer,
     "CatchCam": CatchCam,
     "Community": Community,
-    "Competitions": Competitions,
     "Dashboard": Dashboard,
     "Datenschutz": Datenschutz,
     "DeviceIntegration": DeviceIntegration,
@@ -146,7 +144,7 @@ export const PAGES = {
 }
 
 export const pagesConfig = {
-    mainPage: "Dashboard",
+    mainPage: "Home",
     Pages: PAGES,
     Layout: __Layout,
 };

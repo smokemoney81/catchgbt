@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import { User } from "@/entities/User";
+import { catchgbtChat } from "@/functions/catchgbtChat";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -9,6 +11,7 @@ import MessageBubble from "./MessageBubble";
 import { useSound } from "@/components/utils/SoundManager";
 import { useLanguage } from "@/components/i18n/LanguageContext";
 import { Loader2, Mic, MicOff, Send, X, Volume2, VolumeX, Sparkles, Settings, AlertTriangle } from "lucide-react";
+import { backendTextToSpeech } from "@/functions/backendTextToSpeech";
 import { WakeWordDetector } from '@/components/utils/WakeWordDetector';
 import { base44 } from "@/api/base44Client";
 
@@ -140,7 +143,7 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
   useEffect(() => {
     const loadUserAndConversation = async () => {
       try {
-        const currentUser = await base44.auth.me();
+        const currentUser = await User.me();
         setUser(currentUser);
         
         const newConvId = `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -224,7 +227,7 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
         return;
       }
 
-      const currentUser = await base44.auth.me();
+      const currentUser = await User.me();
       if (currentUser?.settings?.audio_enabled === false) {
         console.log('[TTS] Audio disabled in user settings');
         setIsSpeaking(false);
@@ -309,12 +312,8 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
           console.error("Failed to save greeting:", err);
         });
       }
-      
-      setTimeout(() => {
-        handleSpeak(greeting);
-      }, 500);
     }
-  }, [isOpen, user, conversation.messages.length, currentPageName, conversationId, hasGreeted, handleSpeak]);
+  }, [isOpen, user, conversation.messages.length, currentPageName, conversationId, hasGreeted]);
 
   const handleSendMessage = useCallback(async (messageText) => {
     const text = (messageText || input).trim();
@@ -332,7 +331,6 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
     if (limiterRef.current.length >= 10) {
       toast.error("Limit erreicht. Bitte warte 10 Sekunden.");
       setIsLoading(false);
-      processingRef.current = false;
       return;
     }
     limiterRef.current.push(now);
@@ -347,36 +345,26 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
     try {
       const contextInfo = currentPageName ? `${currentPageName}` : 'general';
       
-      const currentUser = await base44.auth.me();
+      const currentUser = await User.me();
       const planId = currentUser?.premium_plan_id || 'free';
       const detailLevel = (planId === 'pro' || planId === 'ultimate') ? 'detailed' : 'standard';
       
-      const authToken = localStorage.getItem('base44_token');
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Timeout')), 12000)
+      );
       
-      const response = await fetch('/api/functions/catchgbtChat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`,
-          'X-App-Id': '68bb3d3b9f83dc1f55ef532b',
-          'X-Origin-URL': window.location.href
-        },
-        body: JSON.stringify({
-          messages: [{
-            role: "user",
-            content: text
-          }],
-          context: contextInfo,
-          detailLevel
-        })
+      const chatPromise = catchgbtChat({
+        messages: [{
+          role: "user",
+          content: text
+        }],
+        context: contextInfo,
+        detailLevel
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
+      const response = await Promise.race([chatPromise, timeoutPromise]);
 
-      const data = await response.json();
-      const aiReply = data?.reply || "Entschuldigung, ich konnte keine Antwort generieren.";
+      const aiReply = response?.data?.reply || "Entschuldigung, ich konnte keine Antwort generieren.";
 
       const assistantMessage = { role: "assistant", content: String(aiReply) };
       setConversation(prev => ({ ...prev, messages: [...prev.messages, assistantMessage] }));
@@ -391,6 +379,10 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
       console.error("AI request failed:", e);
 
       let errorMsg = "Entschuldigung, das hat zu lange gedauert. Versuchs nochmal!";
+      
+      if (e.message === 'Timeout') {
+        errorMsg = "Timeout - bitte nochmal versuchen!";
+      }
 
       setConversation(prev => ({ ...prev, messages: [...prev.messages, { role: "assistant", content: errorMsg }] }));
       
@@ -522,7 +514,7 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
     if (!isOpen) {
         onToggle();
     }
-    base44.auth.me().then(currentUser => {
+    User.me().then(currentUser => {
       if (currentUser?.settings?.audio_enabled !== false && !isRecording && recognitionRef.current) {
         setTimeout(() => {
           try {
@@ -543,7 +535,7 @@ export default function ChatbotPopover({ isOpen, onToggle, currentPageName }) {
   useEffect(() => {
     const initializeWakeWord = async () => {
         try {
-            const currentUser = await base44.auth.me();
+            const currentUser = await User.me();
             const voiceSettings = currentUser?.settings || {};
 
             if (voiceSettings.wake_word_enabled && !wakeWordListener) {

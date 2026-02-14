@@ -18,15 +18,9 @@ Deno.serve(async (req) => {
 
     const userMessage = messages[messages.length - 1]?.content || "";
     
-    const systemPrompt = `Du bist CatchGBT, ein freundlicher Angel-Experte und Gespraechspartner. 
+    const systemPrompt = `Du bist CatchGBT, ein freundlicher Angel-Experte. Beantworte Fragen zu Angeln, Fischarten, Koeder, Wetter, Ausruestung.
 
-Verhalten:
-- Fuehre natuerliche Gespraeche wie ein Freund
-- Bei Begruessungen (Hallo, Hi, Hey, Moin etc.) antworte freundlich zurueck und frage wie du helfen kannst
-- Bei Small Talk sei hoeflich und persoenlich
-- Bei Fachfragen zu Angeln, Fischarten, Koeder, Wetter, Ausruestung antworte kompetent
-- Keine Emojis
-- ${isPremium ? 'Detailliert antworten' : 'Kurz und praegnant antworten'}`;
+${isPremium ? 'Detailliert antworten. Keine Emojis.' : 'Kurz und praegnant antworten.'}`;
 
     const conversationHistory = messages.slice(-6).map(msg => 
       `${msg.role === 'user' ? 'Nutzer' : 'Du'}: ${msg.content}`
@@ -46,12 +40,10 @@ Verhalten:
     return Response.json({ reply });
 
   } catch (error) {
-    console.error('Error in catchgbtChat:', error);
-    console.error('Error details:', error.message, error.stack);
+    console.error('Error in catchgbtChat:', error.message);
     
     return Response.json({ 
-      error: 'Internal Server Error',
-      details: error.message
-    }, { status: 500 });
+      reply: "Entschuldigung, das hat zu lange gedauert. Versuchs nochmal!"
+    });
   }
 });
