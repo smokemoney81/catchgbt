@@ -1,11 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import { Bell, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useHaptic } from "@/components/utils/HapticFeedback";
 import { useSound } from "@/components/utils/SoundManager";
-import { User } from "@/entities/User";
 import { FishingPlan } from "@/entities/FishingPlan";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -64,7 +62,7 @@ export default function Header({
   const loadUserAndPlan = async () => {
     setPlanLoading(true);
     try {
-      const currentUser = await User.me();
+      const currentUser = await base44.auth.me();
       setUser(currentUser);
 
       const planStatusResponse = await base44.functions.invoke('getPlanStatus');
@@ -81,7 +79,7 @@ export default function Header({
 
   const loadAlertStatus = async () => {
     try {
-      const user = await User.me();
+      const user = await base44.auth.me();
       const alerts = user?.settings?.weather_alerts || {};
       
       let count = 0;
