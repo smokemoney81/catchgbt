@@ -5,9 +5,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
-import { Heart, MessageCircle, Send, Camera, AlertTriangle, User, Loader2, X, Globe, Facebook, Trophy } from "lucide-react";
+import { Heart, MessageCircle, Send, Camera, AlertTriangle, User, Loader2, X, Globe, Facebook, Trophy, Users } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CompetitionCard from "@/components/community/CompetitionCard";
+import VotingEventCard from "@/components/community/VotingEventCard";
+import ClanLeaderboardCard from "@/components/community/ClanLeaderboardCard";
 
 export default function Community() {
   const [posts, setPosts] = useState([]);
@@ -46,6 +48,10 @@ export default function Community() {
       console.error("Fehler beim Laden der Wettbewerbe:", error);
     }
   };
+
+  const votingCompetitions = competitions.filter(c => c.competition_type === 'photo_contest');
+  const teamCompetitions = competitions.filter(c => c.competition_type === 'most_catches');
+  const otherCompetitions = competitions.filter(c => c.competition_type !== 'photo_contest' && c.competition_type !== 'most_catches');
 
   const loadPosts = async () => {
     setLoading(true);
@@ -297,15 +303,53 @@ export default function Community() {
           </div>
         </div>
 
-        {/* Wettbewerbe Sektion */}
-        {competitions.length > 0 && (
+        {/* Community-Voting Events */}
+        {votingCompetitions.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Heart className="w-5 h-5 text-purple-400" />
+              <h2 className="text-xl font-bold text-purple-400">Community-Voting Events</h2>
+            </div>
+            <div className="space-y-4">
+              {votingCompetitions.map((comp) => (
+                <VotingEventCard 
+                  key={comp.id} 
+                  competition={comp} 
+                  currentUser={currentUser}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Team-Wettbewerbe */}
+        {teamCompetitions.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-emerald-400" />
+              <h2 className="text-xl font-bold text-emerald-400">Team-Wettbewerbe</h2>
+            </div>
+            <div className="space-y-4">
+              {teamCompetitions.map((comp) => (
+                <ClanLeaderboardCard 
+                  key={comp.id} 
+                  competition={comp} 
+                  currentUser={currentUser}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Andere Wettbewerbe */}
+        {otherCompetitions.length > 0 && (
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Trophy className="w-5 h-5 text-amber-400" />
               <h2 className="text-xl font-bold text-amber-400">Aktuelle Wettbewerbe</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {competitions.map((comp) => (
+              {otherCompetitions.map((comp) => (
                 <CompetitionCard 
                   key={comp.id} 
                   competition={comp} 
