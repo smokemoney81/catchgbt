@@ -56,6 +56,7 @@ import Analysis from './pages/Analysis';
 import Arcade from './pages/Arcade';
 import BaitMixer from './pages/BaitMixer';
 import CatchCam from './pages/CatchCam';
+import Community from './pages/Community';
 import Dashboard from './pages/Dashboard';
 import Datenschutz from './pages/Datenschutz';
 import DeviceIntegration from './pages/DeviceIntegration';
@@ -91,7 +92,6 @@ import VoiceControl from './pages/VoiceControl';
 import WaterAnalysis from './pages/WaterAnalysis';
 import Weather from './pages/Weather';
 import WeatherAlerts from './pages/WeatherAlerts';
-import Community from './pages/Community';
 import __Layout from './Layout.jsx';
 
 
@@ -105,6 +105,7 @@ export const PAGES = {
     "Arcade": Arcade,
     "BaitMixer": BaitMixer,
     "CatchCam": CatchCam,
+    "Community": Community,
     "Dashboard": Dashboard,
     "Datenschutz": Datenschutz,
     "DeviceIntegration": DeviceIntegration,
@@ -140,7 +141,6 @@ export const PAGES = {
     "WaterAnalysis": WaterAnalysis,
     "Weather": Weather,
     "WeatherAlerts": WeatherAlerts,
-    "Community": Community,
 }
 
 export const pagesConfig = {
