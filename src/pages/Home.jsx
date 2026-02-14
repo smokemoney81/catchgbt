@@ -488,9 +488,16 @@ function LandingPageContent() {
                             <div className="flex items-center justify-center gap-2 mb-2">
                                 <span className="text-green-400 font-bold text-sm">Alle Funktionen kostenlos verfügbar</span>
                             </div>
-                            <p className="text-white text-sm leading-relaxed">
+                            <p className="text-white text-sm leading-relaxed mb-4">
                                 Nutze alle Premium-Features ohne Einschränkungen
                             </p>
+                            <Button
+                                onClick={handleLogin}
+                                size="lg"
+                                className="w-full bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700 text-white font-bold text-lg shadow-[0_0_20px_rgba(34,211,238,0.5)] hover:shadow-[0_0_30px_rgba(34,211,238,0.7)] transform transition-all hover:scale-105"
+                            >
+                                Jetzt anmelden
+                            </Button>
                         </div>
                     </motion.div>
                 </div>
