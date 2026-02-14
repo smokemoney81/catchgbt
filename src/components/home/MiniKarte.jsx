@@ -140,6 +140,9 @@ export default function MiniKarte() {
                 Zur Karte
               </button>
             </Link>
+            <div className="text-[10px] text-center text-gray-500 mt-2">
+              Tipp: Auf der Karte kannst du Routen zu Spots festlegen
+            </div>
           </>
         ) : (
           <div className="text-center py-2">
