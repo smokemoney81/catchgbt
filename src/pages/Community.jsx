@@ -5,8 +5,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
-import { Heart, MessageCircle, Send, Camera, AlertTriangle, User, Loader2, X, Globe, Facebook } from "lucide-react";
+import { Heart, MessageCircle, Send, Camera, AlertTriangle, User, Loader2, X, Globe, Facebook, Trophy } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import CompetitionCard from "@/components/community/CompetitionCard";
 
 export default function Community() {
   const [posts, setPosts] = useState([]);
@@ -20,10 +21,12 @@ export default function Community() {
   const [currentUser, setCurrentUser] = useState(null);
   const [userCache, setUserCache] = useState({});
   const [deletingPostId, setDeletingPostId] = useState(null);
+  const [competitions, setCompetitions] = useState([]);
 
   useEffect(() => {
     loadCurrentUser();
     loadPosts();
+    loadCompetitions();
   }, []);
 
   const loadCurrentUser = async () => {
@@ -32,6 +35,15 @@ export default function Community() {
       setCurrentUser(user);
     } catch (error) {
       console.error("Fehler beim Laden des Users:", error);
+    }
+  };
+
+  const loadCompetitions = async () => {
+    try {
+      const comps = await base44.entities.Competition.list('-created_date', 20);
+      setCompetitions(comps.filter(c => c.is_active));
+    } catch (error) {
+      console.error("Fehler beim Laden der Wettbewerbe:", error);
     }
   };
 
@@ -284,6 +296,26 @@ export default function Community() {
             <p className="text-gray-400 mt-1">Tausche dich mit anderen Anglern aus</p>
           </div>
         </div>
+
+        {/* Wettbewerbe Sektion */}
+        {competitions.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-amber-400" />
+              <h2 className="text-xl font-bold text-amber-400">Aktuelle Wettbewerbe</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {competitions.map((comp) => (
+                <CompetitionCard 
+                  key={comp.id} 
+                  competition={comp} 
+                  currentUser={currentUser}
+                  onUpdate={loadCompetitions}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Externe Links Sektion */}
         <Card className="glass-morphism border-cyan-600/30 bg-gradient-to-br from-cyan-900/10 to-blue-900/10 rounded-2xl">
