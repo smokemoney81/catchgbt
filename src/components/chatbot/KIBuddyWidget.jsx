@@ -10,7 +10,6 @@ import { useState } from "react";
 */
 
 export default function KIBuddyWidget() {
-  const [isOpen, setIsOpen] = useState(false);
   const [state, setState] = useState("idle"); // idle | listening | thinking | speaking
   const [input, setInput] = useState("");
   const [response, setResponse] = useState("");
@@ -47,16 +46,11 @@ export default function KIBuddyWidget() {
      TEXT → SPRACHE
   ======================= */
   function speak(text, language) {
-    if (typeof window === 'undefined' || !window.speechSynthesis) {
-      setState("idle");
-      return;
-    }
-    
     setState("speaking");
     const u = new SpeechSynthesisUtterance(text);
     u.lang = language;
     u.onend = () => setState("idle");
-    window.speechSynthesis.speak(u);
+    speechSynthesis.speak(u);
   }
 
   /* =======================
@@ -139,138 +133,73 @@ export default function KIBuddyWidget() {
 
   return (
     <>
-      {!isOpen && (
-        <button className="ki-buddy-btn" onClick={() => setIsOpen(true)}>
-          <span>KI Buddy</span>
-          <span className="beta-badge">BETA</span>
-        </button>
-      )}
-
-      {isOpen && (
-        <div className={`ki-widget ${state}`}>
-          <div className="header">
-            <span>KI Buddy — {plan === "free" ? "Free" : "Pro"}</span>
-            <button className="close-btn" onClick={() => setIsOpen(false)}>×</button>
-          </div>
-
-          <textarea
-            placeholder="Sprich oder schreibe…"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-          />
-
-          <button onClick={() => process(input, lang)}>Antworten</button>
-          <button className="secondary" onClick={listen}>
-            Sprechen
-          </button>
-
-          <button
-            className="toggle"
-            onClick={() => setPlan(plan === "free" ? "pro" : "free")}
-          >
-            Modus wechseln
-          </button>
-
-          <pre className="response">{response}</pre>
+      <div className={`ki-widget ${state}`}>
+        <div className="header">
+          KI Buddy — {plan === "free" ? "Free" : "Pro"}
         </div>
-      )}
+
+        <textarea
+          placeholder="Sprich oder schreibe…"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+
+        <button onClick={() => process(input, lang)}>Antworten</button>
+        <button className="secondary" onClick={listen}>
+          Sprechen
+        </button>
+
+        {/* Demo-Schalter für Plan */}
+        <button
+          className="toggle"
+          onClick={() => setPlan(plan === "free" ? "pro" : "free")}
+        >
+          Modus wechseln
+        </button>
+
+        <pre className="response">{response}</pre>
+      </div>
 
       <style>{`
-        .ki-buddy-btn{
-          position:fixed;
-          right:12px;
-          bottom:12px;
-          padding:8px 14px;
-          background:#00ffc6;
-          border:none;
-          border-radius:20px;
-          color:black;
-          font-weight:bold;
-          cursor:pointer;
-          box-shadow:0 4px 15px rgba(0,255,198,.4);
-          z-index:9999;
-          font-family:Arial, sans-serif;
-          display:flex;
-          align-items:center;
-          gap:6px;
-          font-size:13px;
-        }
-
-        .beta-badge{
-          background:#ff6b35;
-          color:white;
-          padding:2px 5px;
-          border-radius:6px;
-          font-size:9px;
-          font-weight:bold;
-        }
-
-        .ki-buddy-btn:hover{
-          background:#00e6b3;
-          box-shadow:0 6px 20px rgba(0,255,198,.6);
-        }
-
         .ki-widget{
           position:fixed;
-          right:12px;
-          bottom:12px;
-          width:240px;
-          padding:10px;
+          right:16px;
+          bottom:16px;
+          width:280px;
+          padding:14px;
           background:#0b1220;
-          border-radius:14px;
+          border-radius:18px;
           box-shadow:0 0 30px rgba(0,255,198,.4);
           color:white;
           font-family:Arial, sans-serif;
-          z-index:9999;
-          font-size:13px;
+          z-index:999;
         }
 
         .header{
-          display:flex;
-          justify-content:space-between;
-          align-items:center;
           font-weight:bold;
           margin-bottom:6px;
           color:#00ffc6;
         }
 
-        .close-btn{
-          background:transparent;
-          border:none;
-          color:#00ffc6;
-          font-size:24px;
-          cursor:pointer;
-          padding:0;
-          width:auto;
-          margin:0;
-          line-height:1;
-        }
-
-        .close-btn:hover{
-          color:white;
-        }
-
         textarea{
           width:100%;
-          height:60px;
-          padding:6px;
+          height:70px;
+          padding:8px;
           border-radius:8px;
           border:none;
-          margin-bottom:4px;
-          font-size:12px;
+          margin-bottom:6px;
         }
 
         button{
           width:100%;
-          padding:6px;
-          margin-top:4px;
+          padding:8px;
+          margin-top:6px;
           border:none;
-          border-radius:8px;
+          border-radius:10px;
           background:#00ffc6;
           color:black;
           font-weight:bold;
           cursor:pointer;
-          font-size:12px;
         }
 
         button.secondary{
@@ -284,8 +213,8 @@ export default function KIBuddyWidget() {
         }
 
         .response{
-          margin-top:8px;
-          font-size:11px;
+          margin-top:10px;
+          font-size:13px;
           white-space:pre-wrap;
           color:#00ffc6;
         }
