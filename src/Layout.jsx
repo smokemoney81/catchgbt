@@ -15,7 +15,6 @@ import { SoundProvider } from "@/components/utils/SoundManager";
 import { Toaster } from "sonner";
 import FeedbackManager from "@/components/feedback/FeedbackManager";
 import { LanguageProvider } from "@/components/i18n/LanguageContext";
-import KIBuddyWidget from "@/components/chatbot/KIBuddyWidget";
 
 export default function Layout({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -149,8 +148,6 @@ export default function Layout({ children, currentPageName }) {
                   </main>
 
                   <SupportAgentButton />
-
-                  <KIBuddyWidget />
 
                 <Toaster 
                   position="bottom-center"
