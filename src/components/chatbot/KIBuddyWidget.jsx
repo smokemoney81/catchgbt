@@ -178,12 +178,12 @@ export default function KIBuddyWidget() {
       <style>{`
         .ki-buddy-btn{
           position:fixed;
-          right:16px;
-          bottom:80px;
-          padding:12px 20px;
+          right:12px;
+          bottom:12px;
+          padding:8px 14px;
           background:#00ffc6;
           border:none;
-          border-radius:25px;
+          border-radius:20px;
           color:black;
           font-weight:bold;
           cursor:pointer;
@@ -192,15 +192,16 @@ export default function KIBuddyWidget() {
           font-family:Arial, sans-serif;
           display:flex;
           align-items:center;
-          gap:8px;
+          gap:6px;
+          font-size:13px;
         }
 
         .beta-badge{
           background:#ff6b35;
           color:white;
-          padding:2px 6px;
-          border-radius:8px;
-          font-size:10px;
+          padding:2px 5px;
+          border-radius:6px;
+          font-size:9px;
           font-weight:bold;
         }
 
@@ -211,16 +212,17 @@ export default function KIBuddyWidget() {
 
         .ki-widget{
           position:fixed;
-          right:16px;
-          bottom:80px;
-          width:280px;
-          padding:14px;
+          right:12px;
+          bottom:12px;
+          width:240px;
+          padding:10px;
           background:#0b1220;
-          border-radius:18px;
+          border-radius:14px;
           box-shadow:0 0 30px rgba(0,255,198,.4);
           color:white;
           font-family:Arial, sans-serif;
           z-index:999;
+          font-size:13px;
         }
 
         .header{
@@ -250,23 +252,25 @@ export default function KIBuddyWidget() {
 
         textarea{
           width:100%;
-          height:70px;
-          padding:8px;
+          height:60px;
+          padding:6px;
           border-radius:8px;
           border:none;
-          margin-bottom:6px;
+          margin-bottom:4px;
+          font-size:12px;
         }
 
         button{
           width:100%;
-          padding:8px;
-          margin-top:6px;
+          padding:6px;
+          margin-top:4px;
           border:none;
-          border-radius:10px;
+          border-radius:8px;
           background:#00ffc6;
           color:black;
           font-weight:bold;
           cursor:pointer;
+          font-size:12px;
         }
 
         button.secondary{
@@ -280,8 +284,8 @@ export default function KIBuddyWidget() {
         }
 
         .response{
-          margin-top:10px;
-          font-size:13px;
+          margin-top:8px;
+          font-size:11px;
           white-space:pre-wrap;
           color:#00ffc6;
         }
