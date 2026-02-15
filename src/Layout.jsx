@@ -6,6 +6,7 @@ import Sidebar from "@/components/layout/Sidebar";
 import EnhancedTicker from "@/components/layout/TipTicker";
 import QuickCatchDialog from "@/components/log/QuickCatchDialog";
 import SupportAgentButton from "@/components/layout/SupportAgentButton";
+import KIBuddyAR from "@/components/kibuddy/KIBuddyAR";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
 import UpdateNotification from "@/components/pwa/UpdateNotification";
 import OfflineIndicator from "@/components/pwa/OfflineIndicator";
@@ -145,9 +146,10 @@ export default function Layout({ children, currentPageName }) {
 
                 <main className="bg-gray-950" style={{ minHeight: 'calc(100vh - 200px)' }}>
                   {children}
-                  </main>
+                </main>
 
-                  <SupportAgentButton />
+                <KIBuddyAR />
+                <SupportAgentButton />
 
                 <Toaster 
                   position="bottom-center"
