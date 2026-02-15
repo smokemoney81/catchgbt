@@ -13,26 +13,8 @@ Deno.serve(async (req) => {
 
     console.log(`KI-Buddy Request: User=${user.email}, Messages=${messages.length}`);
 
-    const planResponse = await base44.functions.invoke('getPlanStatus');
-    const planId = planResponse?.data?.plan?.id || 'free';
-
-    const planLevels = {
-      'free': 'short',
-      'basic': 'standard',
-      'pro': 'detailed',
-      'ultimate': 'very_detailed'
-    };
-
-    const responseMode = planLevels[planId] || 'short';
-
-    const systemPrompts = {
-      'short': 'Du bist CatchGBT, ein Angel-Experte. Antworte kurz und praegnant (max 2-3 Saetze). Keine Emojis.',
-      'standard': 'Du bist CatchGBT, ein freundlicher Angel-Experte. Antworte informativ aber kompakt (3-5 Saetze). Keine Emojis.',
-      'detailed': 'Du bist CatchGBT, ein Angel-Experte. Antworte ausfuehrlich und detailliert mit praktischen Tipps. Keine Emojis.',
-      'very_detailed': 'Du bist CatchGBT, ein professioneller Angel-Experte. Gib sehr detaillierte, umfassende Antworten mit Hintergrundinformationen, Beispielen und Profi-Tipps. Keine Emojis.'
-    };
-
-    const systemPrompt = systemPrompts[responseMode];
+    // Alle Nutzer erhalten jetzt detaillierte Antworten
+    const systemPrompt = 'Du bist CatchGBT, ein professioneller Angel-Experte. Gib detaillierte, umfassende Antworten mit Hintergrundinformationen, Beispielen und Profi-Tipps. Keine Emojis.';
 
     const conversationHistory = messages.slice(-6).map(msg => 
       `${msg.role === 'user' ? 'Nutzer' : 'Du'}: ${msg.content || ''}`
