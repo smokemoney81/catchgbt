@@ -188,7 +188,7 @@ export default function KIBuddyWidget() {
           font-weight:bold;
           cursor:pointer;
           box-shadow:0 4px 15px rgba(0,255,198,.4);
-          z-index:999;
+          z-index:9999;
           font-family:Arial, sans-serif;
           display:flex;
           align-items:center;
@@ -221,7 +221,7 @@ export default function KIBuddyWidget() {
           box-shadow:0 0 30px rgba(0,255,198,.4);
           color:white;
           font-family:Arial, sans-serif;
-          z-index:999;
+          z-index:9999;
           font-size:13px;
         }
 
