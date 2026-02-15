@@ -15,14 +15,28 @@ export default function PremiumGuard({ user, children, fallback, feature = "Dies
 
   const checkAccess = async () => {
     setIsLoading(true);
-    // FREE FOR ALL - Alle Features sind jetzt frei zugänglich
-    console.log('[PremiumGuard] FREE FOR ALL MODE - granting access to everyone');
-    setHasAccess(true);
-    setCurrentPlan({ 
-      id: 'free_for_all', 
-      name: 'Free for All', 
-      is_active: true 
-    });
+    try {
+      const { base44 } = await import('@/api/base44Client');
+      const response = await base44.functions.invoke('getPlanStatus');
+      
+      if (response.data && response.data.plan) {
+        const userPlan = response.data.plan;
+        setCurrentPlan(userPlan);
+        
+        const planHierarchy = { 'free': 0, 'basic': 1, 'pro': 2, 'ultimate': 3 };
+        const userLevel = planHierarchy[userPlan.id] || 0;
+        const requiredLevel = planHierarchy[requiredPlan] || 0;
+        
+        setHasAccess(userLevel >= requiredLevel);
+      } else {
+        setHasAccess(false);
+        setCurrentPlan({ id: 'free', name: 'Kostenlos' });
+      }
+    } catch (error) {
+      console.error('[PremiumGuard] Error checking access:', error);
+      setHasAccess(false);
+      setCurrentPlan({ id: 'free', name: 'Kostenlos' });
+    }
     setIsLoading(false);
   };
 

@@ -15,6 +15,7 @@ import { SoundProvider } from "@/components/utils/SoundManager";
 import { Toaster } from "sonner";
 import FeedbackManager from "@/components/feedback/FeedbackManager";
 import { LanguageProvider } from "@/components/i18n/LanguageContext";
+import { PlanProvider } from "@/components/premium/PlanContext";
 
 export default function Layout({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -87,10 +88,11 @@ export default function Layout({ children, currentPageName }) {
   const isDemo = user?.is_demo_user === true;
 
   return (
-    <LanguageProvider>
-      <HapticProvider>
-        <SoundProvider>
-          <LocationProvider>
+    <PlanProvider>
+      <LanguageProvider>
+        <HapticProvider>
+          <SoundProvider>
+            <LocationProvider>
             <div className="min-h-screen bg-gray-950 text-slate-50 relative overflow-hidden">
               <SEO />
               
@@ -500,8 +502,9 @@ export default function Layout({ children, currentPageName }) {
               `}</style>
             </div>
           </LocationProvider>
-        </SoundProvider>
-      </HapticProvider>
-    </LanguageProvider>
-  );
+          </SoundProvider>
+          </HapticProvider>
+          </LanguageProvider>
+          </PlanProvider>
+          );
 }
