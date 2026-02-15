@@ -168,7 +168,6 @@ export default function KIBuddyWidget() {
           <pre className="response">{response}</pre>
         </div>
       )}
-    </>
 
       <style>{`
         .ki-buddy-btn{
