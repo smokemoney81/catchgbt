@@ -141,7 +141,8 @@ export default function KIBuddyWidget() {
     <>
       {!isOpen && (
         <button className="ki-buddy-btn" onClick={() => setIsOpen(true)}>
-          KI Buddy
+          <span>KI Buddy</span>
+          <span className="beta-badge">BETA</span>
         </button>
       )}
 
@@ -178,7 +179,7 @@ export default function KIBuddyWidget() {
         .ki-buddy-btn{
           position:fixed;
           right:16px;
-          bottom:16px;
+          bottom:80px;
           padding:12px 20px;
           background:#00ffc6;
           border:none;
@@ -189,6 +190,18 @@ export default function KIBuddyWidget() {
           box-shadow:0 4px 15px rgba(0,255,198,.4);
           z-index:999;
           font-family:Arial, sans-serif;
+          display:flex;
+          align-items:center;
+          gap:8px;
+        }
+
+        .beta-badge{
+          background:#ff6b35;
+          color:white;
+          padding:2px 6px;
+          border-radius:8px;
+          font-size:10px;
+          font-weight:bold;
         }
 
         .ki-buddy-btn:hover{
@@ -199,7 +212,7 @@ export default function KIBuddyWidget() {
         .ki-widget{
           position:fixed;
           right:16px;
-          bottom:16px;
+          bottom:80px;
           width:280px;
           padding:14px;
           background:#0b1220;
