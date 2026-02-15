@@ -47,11 +47,16 @@ export default function KIBuddyWidget() {
      TEXT → SPRACHE
   ======================= */
   function speak(text, language) {
+    if (typeof window === 'undefined' || !window.speechSynthesis) {
+      setState("idle");
+      return;
+    }
+    
     setState("speaking");
     const u = new SpeechSynthesisUtterance(text);
     u.lang = language;
     u.onend = () => setState("idle");
-    speechSynthesis.speak(u);
+    window.speechSynthesis.speak(u);
   }
 
   /* =======================
