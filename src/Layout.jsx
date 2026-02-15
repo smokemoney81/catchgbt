@@ -5,8 +5,6 @@ import Header from "@/components/layout/Header";
 import Sidebar from "@/components/layout/Sidebar";
 import EnhancedTicker from "@/components/layout/TipTicker";
 import QuickCatchDialog from "@/components/log/QuickCatchDialog";
-import ChatbotPopover from "@/components/chatbot/ChatbotPopover";
-import FloatingKiBuddyButton from "@/components/layout/FloatingKiBuddyButton";
 import SupportAgentButton from "@/components/layout/SupportAgentButton";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
 import UpdateNotification from "@/components/pwa/UpdateNotification";
@@ -20,7 +18,6 @@ import { LanguageProvider } from "@/components/i18n/LanguageContext";
 
 export default function Layout({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [user, setUser] = useState(null);
 
   const refreshUser = async () => {
@@ -43,16 +40,6 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     if (currentPageName !== 'Home') {
       refreshUser();
-
-      const handleToggleChatbot = () => {
-        setIsChatbotOpen((prev) => !prev);
-      };
-
-      window.addEventListener("toggleChatbot", handleToggleChatbot);
-
-      return () => {
-        window.removeEventListener("toggleChatbot", handleToggleChatbot);
-      };
     }
   }, [currentPageName]);
 
@@ -142,12 +129,7 @@ export default function Layout({ children, currentPageName }) {
                 )}
                 
                 <QuickCatchDialog />
-                <ChatbotPopover 
-                  isOpen={isChatbotOpen} 
-                  onToggle={() => setIsChatbotOpen(!isChatbotOpen)}
-                  currentPageName={currentPageName}
-                />
-                
+
                 <FeedbackManager />
 
                 <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} currentPageName={currentPageName} />
@@ -156,8 +138,6 @@ export default function Layout({ children, currentPageName }) {
                   <Header 
                     isSidebarOpen={isSidebarOpen}
                     setIsSidebarOpen={setIsSidebarOpen} 
-                    isChatbotOpen={isChatbotOpen}
-                    setIsChatbotOpen={setIsChatbotOpen}
                     isDemo={isDemo}
                   />
                   <EnhancedTicker />
@@ -165,13 +145,9 @@ export default function Layout({ children, currentPageName }) {
 
                 <main className="bg-gray-950" style={{ minHeight: 'calc(100vh - 200px)' }}>
                   {children}
-                </main>
+                  </main>
 
-                <FloatingKiBuddyButton 
-                  isChatbotOpen={isChatbotOpen}
-                  onToggle={() => setIsChatbotOpen(!isChatbotOpen)}
-                />
-                <SupportAgentButton />
+                  <SupportAgentButton />
 
                 <Toaster 
                   position="bottom-center"
