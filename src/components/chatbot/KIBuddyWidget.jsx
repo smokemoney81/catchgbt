@@ -10,6 +10,7 @@ import { useState } from "react";
 */
 
 export default function KIBuddyWidget() {
+  const [isOpen, setIsOpen] = useState(false);
   const [state, setState] = useState("idle"); // idle | listening | thinking | speaking
   const [input, setInput] = useState("");
   const [response, setResponse] = useState("");
@@ -133,34 +134,64 @@ export default function KIBuddyWidget() {
 
   return (
     <>
-      <div className={`ki-widget ${state}`}>
-        <div className="header">
-          KI Buddy — {plan === "free" ? "Free" : "Pro"}
+      {!isOpen && (
+        <button className="ki-buddy-btn" onClick={() => setIsOpen(true)}>
+          KI Buddy
+        </button>
+      )}
+
+      {isOpen && (
+        <div className={`ki-widget ${state}`}>
+          <div className="header">
+            <span>KI Buddy — {plan === "free" ? "Free" : "Pro"}</span>
+            <button className="close-btn" onClick={() => setIsOpen(false)}>×</button>
+          </div>
+
+          <textarea
+            placeholder="Sprich oder schreibe…"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          />
+
+          <button onClick={() => process(input, lang)}>Antworten</button>
+          <button className="secondary" onClick={listen}>
+            Sprechen
+          </button>
+
+          <button
+            className="toggle"
+            onClick={() => setPlan(plan === "free" ? "pro" : "free")}
+          >
+            Modus wechseln
+          </button>
+
+          <pre className="response">{response}</pre>
         </div>
-
-        <textarea
-          placeholder="Sprich oder schreibe…"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-        />
-
-        <button onClick={() => process(input, lang)}>Antworten</button>
-        <button className="secondary" onClick={listen}>
-          Sprechen
-        </button>
-
-        {/* Demo-Schalter für Plan */}
-        <button
-          className="toggle"
-          onClick={() => setPlan(plan === "free" ? "pro" : "free")}
-        >
-          Modus wechseln
-        </button>
-
-        <pre className="response">{response}</pre>
-      </div>
+      )}
+    </>
 
       <style>{`
+        .ki-buddy-btn{
+          position:fixed;
+          right:16px;
+          bottom:16px;
+          padding:12px 20px;
+          background:#00ffc6;
+          border:none;
+          border-radius:25px;
+          color:black;
+          font-weight:bold;
+          cursor:pointer;
+          box-shadow:0 4px 15px rgba(0,255,198,.4);
+          z-index:999;
+          font-family:Arial, sans-serif;
+        }
+
+        .ki-buddy-btn:hover{
+          background:#00e6b3;
+          box-shadow:0 6px 20px rgba(0,255,198,.6);
+        }
+
         .ki-widget{
           position:fixed;
           right:16px;
@@ -176,9 +207,28 @@ export default function KIBuddyWidget() {
         }
 
         .header{
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
           font-weight:bold;
           margin-bottom:6px;
           color:#00ffc6;
+        }
+
+        .close-btn{
+          background:transparent;
+          border:none;
+          color:#00ffc6;
+          font-size:24px;
+          cursor:pointer;
+          padding:0;
+          width:auto;
+          margin:0;
+          line-height:1;
+        }
+
+        .close-btn:hover{
+          color:white;
         }
 
         textarea{
