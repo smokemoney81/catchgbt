@@ -150,6 +150,8 @@ export default function Layout({ children, currentPageName }) {
 
                   <SupportAgentButton />
 
+                  <KIBuddyWidget />
+
                 <Toaster 
                   position="bottom-center"
                   offset="80px"
