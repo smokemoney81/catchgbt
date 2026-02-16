@@ -271,16 +271,12 @@ export class WakeWordDetector {
   cleanupOnline() {
     try {
       if (this.recognition) {
-        // Prüfe ob recognition existiert und cancel verfügbar ist
-        if (typeof this.recognition.stop === 'function') {
-          try {
-            this.recognition.stop();
-          } catch (e) {
-            console.warn('Error stopping recognition:', e);
-          }
+        try {
+          this.recognition.stop();
+        } catch (e) {
+          console.warn('Error stopping recognition:', e);
         }
         
-        // Entferne Event Listener
         this.recognition.onresult = null;
         this.recognition.onerror = null;
         this.recognition.onend = null;
