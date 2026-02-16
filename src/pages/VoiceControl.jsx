@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -641,13 +640,19 @@ function VoiceBuddy() {
 
   const stopListening = () => {
     if (recognitionRef.current) {
-      recognitionRef.current.stop();
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {
+        console.warn('Error stopping recognition:', e);
+      }
     }
     setIsListening(false);
     setStatus('idle');
     isWaitingForCommandRef.current = false;
     setTranscript('');
-    window.speechSynthesis.cancel();
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+    }
     toast.info('Voice Control beendet');
   };
 
