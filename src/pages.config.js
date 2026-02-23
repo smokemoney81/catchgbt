@@ -92,6 +92,7 @@ import VoiceControl from './pages/VoiceControl';
 import WaterAnalysis from './pages/WaterAnalysis';
 import Weather from './pages/Weather';
 import WeatherAlerts from './pages/WeatherAlerts';
+import FunctionRatings from './pages/FunctionRatings';
 import __Layout from './Layout.jsx';
 
 
@@ -141,6 +142,7 @@ export const PAGES = {
     "WaterAnalysis": WaterAnalysis,
     "Weather": Weather,
     "WeatherAlerts": WeatherAlerts,
+    "FunctionRatings": FunctionRatings,
 }
 
 export const pagesConfig = {
