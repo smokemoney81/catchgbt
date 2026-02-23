@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,6 +10,7 @@ import { User as UserIcon, Camera, Copy, Check, Edit3, Calendar, Clock, MessageS
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import RatingWidget from "@/components/feedback/RatingWidget";
 
 const generateReferralCode = () => {
   return Math.random().toString(36).substring(2, 10).toUpperCase();
@@ -607,6 +607,21 @@ export default function ProfilePage() {
             <p>💡 Teile diesen Link mit deinen Freunden über WhatsApp, E-Mail oder Social Media</p>
             <p>💡 Dein Premium wird automatisch verlängert, sobald sie sich registrieren</p>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Feedback Widget */}
+      <Card className="glass-morphism border-gray-800 rounded-2xl">
+        <CardHeader>
+          <CardTitle className="text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.7)]">
+            Feedback geben
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <RatingWidget 
+            functionName="Profile"
+            onComplete={() => {}}
+          />
         </CardContent>
       </Card>
     </div>
