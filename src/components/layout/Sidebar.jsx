@@ -121,14 +121,14 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
       {/* Backdrop */}
       {isOpen &&
         <div
-          className="fixed inset-0 bg-black/50 z-[100]"
+          className="fixed inset-0 bg-black/50 z-[9998]"
           onClick={handleClose}
           style={{ touchAction: 'none' }} />
       }
 
       {/* Sidebar */}
       <div className={`
-        fixed top-0 left-0 h-full w-80 bg-gray-950/95 backdrop-blur-xl border-r border-gray-800 z-[101]
+        fixed top-0 left-0 h-full w-80 bg-gray-950/95 backdrop-blur-xl border-r border-gray-800 z-[9999]
         transform transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
