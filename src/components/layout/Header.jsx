@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Bell, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -115,7 +114,12 @@ export default function Header({
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-gray-950/95 backdrop-blur-xl border-b border-gray-800 shadow-lg relative">
+    <header 
+      className="sticky top-0 z-50 bg-gray-950/95 backdrop-blur-xl border-b border-gray-800 shadow-lg relative"
+      style={{ 
+        paddingTop: 'env(safe-area-inset-top)',
+      }}
+    >
       <div className="px-4 h-16 flex items-center justify-between">
         
         {/* Animierter Plan-Name im Hintergrund */}

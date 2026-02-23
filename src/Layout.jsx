@@ -7,6 +7,8 @@ import EnhancedTicker from "@/components/layout/TipTicker";
 import QuickCatchDialog from "@/components/log/QuickCatchDialog";
 import SupportAgentButton from "@/components/layout/SupportAgentButton";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
+import BottomTabs from "@/components/layout/BottomTabs";
+import SubPageHeader from "@/components/layout/SubPageHeader";
 import UpdateNotification from "@/components/pwa/UpdateNotification";
 import OfflineIndicator from "@/components/pwa/OfflineIndicator";
 import { base44 } from "@/api/base44Client";
@@ -135,7 +137,7 @@ export default function Layout({ children, currentPageName }) {
                 <FeedbackManager />
 
                 <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} currentPageName={currentPageName} />
-                
+
                 <div className="bg-gray-950 flex-shrink-0">
                   <Header 
                     isSidebarOpen={isSidebarOpen}
@@ -145,9 +147,13 @@ export default function Layout({ children, currentPageName }) {
                   <EnhancedTicker />
                 </div>
 
-                <main className="bg-gray-950" style={{ minHeight: 'calc(100vh - 200px)' }}>
+                <SubPageHeader title={currentPageName} />
+
+                <main className="bg-gray-950 pb-20 md:pb-0" style={{ minHeight: 'calc(100vh - 200px)' }}>
                   {children}
                   </main>
+
+                  <BottomTabs />
 
                   <SupportAgentButton />
 

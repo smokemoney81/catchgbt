@@ -11,6 +11,18 @@ import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import RatingWidget from "@/components/feedback/RatingWidget";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Trash2 } from "lucide-react";
 
 const generateReferralCode = () => {
   return Math.random().toString(36).substring(2, 10).toUpperCase();
@@ -186,6 +198,13 @@ export default function ProfilePage() {
     toast.info('Abo-Kündigung', {
       description: 'Bitte kontaktiere den Support, um dein Abo zu kündigen.',
       duration: 5000
+    });
+  };
+
+  const handleAccountDeletion = () => {
+    toast.info('Account-Löschung angefordert', {
+      description: 'Bitte kontaktiere den Support unter support@catchgbt.com, um deinen Account zu löschen.',
+      duration: 8000
     });
   };
 
@@ -622,6 +641,54 @@ export default function ProfilePage() {
             functionName="Profile"
             onComplete={() => {}}
           />
+        </CardContent>
+      </Card>
+
+      {/* Account Deletion */}
+      <Card className="glass-morphism border-red-600/50 bg-gradient-to-br from-red-900/10 to-gray-900/10 rounded-2xl">
+        <CardHeader>
+          <CardTitle className="text-red-400 drop-shadow-[0_0_12px_rgba(239,68,68,0.7)] flex items-center gap-2">
+            <Trash2 className="w-5 h-5" />
+            Gefahrenzone
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="p-4 bg-red-900/20 rounded-lg border border-red-700/50">
+            <p className="text-sm text-gray-300">
+              Das Löschen deines Accounts ist permanent und kann nicht rückgängig gemacht werden. Alle deine Daten werden gelöscht.
+            </p>
+          </div>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full border-red-600/50 text-red-400 hover:bg-red-600/10 hover:text-red-300"
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                Account löschen
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="glass-morphism border-gray-800">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-red-400">Account wirklich löschen?</AlertDialogTitle>
+                <AlertDialogDescription className="text-gray-300">
+                  Diese Aktion kann nicht rückgängig gemacht werden. Alle deine Fänge, Spots, Einstellungen und persönlichen Daten werden permanent gelöscht.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700">
+                  Abbrechen
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleAccountDeletion}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  Löschung anfragen
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardContent>
       </Card>
     </div>

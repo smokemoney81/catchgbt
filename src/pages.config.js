@@ -62,6 +62,7 @@ import Datenschutz from './pages/Datenschutz';
 import DeviceIntegration from './pages/DeviceIntegration';
 import Devices from './pages/Devices';
 import ExamPrep from './pages/ExamPrep';
+import FunctionRatings from './pages/FunctionRatings';
 import Gear from './pages/Gear';
 import GearV1 from './pages/GearV1';
 import Home from './pages/Home';
@@ -92,7 +93,6 @@ import VoiceControl from './pages/VoiceControl';
 import WaterAnalysis from './pages/WaterAnalysis';
 import Weather from './pages/Weather';
 import WeatherAlerts from './pages/WeatherAlerts';
-import FunctionRatings from './pages/FunctionRatings';
 import __Layout from './Layout.jsx';
 
 
@@ -112,6 +112,7 @@ export const PAGES = {
     "DeviceIntegration": DeviceIntegration,
     "Devices": Devices,
     "ExamPrep": ExamPrep,
+    "FunctionRatings": FunctionRatings,
     "Gear": Gear,
     "GearV1": GearV1,
     "Home": Home,
@@ -142,7 +143,6 @@ export const PAGES = {
     "WaterAnalysis": WaterAnalysis,
     "Weather": Weather,
     "WeatherAlerts": WeatherAlerts,
-    "FunctionRatings": FunctionRatings,
 }
 
 export const pagesConfig = {

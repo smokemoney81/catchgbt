@@ -17,6 +17,9 @@ export default function Dashboard() {
     isListening: false,
     error: null
   });
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [pullStart, setPullStart] = useState(0);
+  const [pullDistance, setPullDistance] = useState(0);
 
   useEffect(() => {
     const cleanupSessions = async () => {
@@ -38,10 +41,42 @@ export default function Dashboard() {
 
     window.addEventListener('wake-word-status-change', handleVoiceStatusUpdate);
 
+    const handleTouchStart = (e) => {
+      if (window.scrollY === 0) {
+        setPullStart(e.touches[0].clientY);
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      if (pullStart > 0) {
+        const distance = e.touches[0].clientY - pullStart;
+        if (distance > 0 && distance < 150) {
+          setPullDistance(distance);
+        }
+      }
+    };
+
+    const handleTouchEnd = async () => {
+      if (pullDistance > 80) {
+        setIsRefreshing(true);
+        await loadData();
+        setIsRefreshing(false);
+      }
+      setPullStart(0);
+      setPullDistance(0);
+    };
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd);
+
     return () => {
       window.removeEventListener('wake-word-status-change', handleVoiceStatusUpdate);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
     };
-  }, []);
+  }, [pullStart]);
 
   const loadData = async () => {
     try {
@@ -182,6 +217,24 @@ export default function Dashboard() {
 
     return (
     <div className="min-h-screen bg-gray-950 overflow-y-auto">
+      {pullDistance > 0 && (
+        <div 
+          className="fixed top-0 left-0 right-0 flex items-center justify-center z-50 transition-opacity"
+          style={{ 
+            height: `${pullDistance}px`,
+            opacity: Math.min(pullDistance / 80, 1)
+          }}
+        >
+          <div className="w-8 h-8 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
+      
+      {isRefreshing && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-cyan-600 text-white px-4 py-2 rounded-full shadow-lg">
+          Aktualisiere...
+        </div>
+      )}
+      
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-12">
 
         <div className="flex items-end justify-between border-b border-gray-800/50 pb-6">
