@@ -64,7 +64,6 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
     { name: "Gebrauchtmarkt", path: "UsedGear", key: "Gebrauchtmarkt", isBeta: true },
     { name: "Meine Trips", path: "TripPlanner", key: "nav.trips" },
     { name: "Community", path: "Community", key: "nav.community", isBeta: true },
-    { name: "Regeln", path: "Rules", key: "nav.rules" },
     { name: "Prüfung & Schonzeiten", path: "AngelscheinPruefungSchonzeiten", key: "nav.exam" },
     { name: "Lizenzen", path: "Licenses", key: "nav.licenses" },
     { name: "Geräte", path: "Devices", key: "nav.devices", isBeta: true },
