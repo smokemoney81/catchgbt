@@ -17,6 +17,7 @@ export default function Dashboard() {
     isListening: false,
     error: null
   });
+  const [buttonPulse, setButtonPulse] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullStart, setPullStart] = useState(0);
   const [pullDistance, setPullDistance] = useState(0);
@@ -40,6 +41,13 @@ export default function Dashboard() {
     };
 
     window.addEventListener('wake-word-status-change', handleVoiceStatusUpdate);
+
+    const handleWakeWordDetected = () => {
+      setButtonPulse(true);
+      setTimeout(() => setButtonPulse(false), 1000);
+    };
+
+    window.addEventListener('wake-word-detected', handleWakeWordDetected);
 
     const handleTouchStart = (e) => {
       if (window.scrollY === 0) {
@@ -72,6 +80,7 @@ export default function Dashboard() {
 
     return () => {
       window.removeEventListener('wake-word-status-change', handleVoiceStatusUpdate);
+      window.removeEventListener('wake-word-detected', handleWakeWordDetected);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
@@ -254,7 +263,9 @@ export default function Dashboard() {
               const event = new CustomEvent('toggle-voice-control');
               window.dispatchEvent(event);
             }}
-            className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 border border-cyan-500/30 hover:border-cyan-400/50 transition-all min-h-[44px] min-w-[44px]"
+            className={`flex items-center gap-3 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 border border-cyan-500/30 hover:border-cyan-400/50 transition-all min-h-[44px] min-w-[44px] ${
+              buttonPulse ? 'animate-pulse ring-2 ring-cyan-400' : ''
+            }`}
           >
             <div className="text-xs text-gray-400 hidden sm:block">KI-Voice</div>
             <WakeWordIndicator 
@@ -262,6 +273,7 @@ export default function Dashboard() {
               mode={voiceStatus.mode}
               isListening={voiceStatus.isListening}
               error={voiceStatus.error}
+              showAlways={true}
             />
           </button>
         </div>

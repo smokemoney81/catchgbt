@@ -19,12 +19,20 @@ import FeedbackManager from "@/components/feedback/FeedbackManager";
 import { LanguageProvider } from "@/components/i18n/LanguageContext";
 import { PlanProvider } from "@/components/premium/PlanContext";
 import { AnimatePresence, motion } from "framer-motion";
+import { WakeWordDetector } from "@/components/utils/WakeWordDetector";
 
 export default function Layout({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [scrollPositions, setScrollPositions] = useState({});
   const [previousPage, setPreviousPage] = useState(null);
+  const [wakeWordDetector, setWakeWordDetector] = useState(null);
+  const [voiceStatus, setVoiceStatus] = useState({
+    isActive: false,
+    mode: null,
+    isListening: false,
+    error: null
+  });
 
   const refreshUser = async () => {
     try {
@@ -66,6 +74,61 @@ export default function Layout({ children, currentPageName }) {
 
     setPreviousPage(currentPageName);
   }, [currentPageName]);
+
+  useEffect(() => {
+    const handleToggleVoiceControl = () => {
+      if (!wakeWordDetector) {
+        const detector = new WakeWordDetector(
+          'Hey Buddy',
+          () => {
+            console.log('Wake word detected!');
+            window.dispatchEvent(new CustomEvent('wake-word-detected'));
+          },
+          (status, error) => {
+            setVoiceStatus({
+              isActive: true,
+              mode: detector.currentMode,
+              isListening: detector.isListening,
+              error: error
+            });
+          },
+          'auto'
+        );
+        setWakeWordDetector(detector);
+        detector.start();
+      } else {
+        if (wakeWordDetector.isListening) {
+          wakeWordDetector.stop();
+          setVoiceStatus({
+            isActive: false,
+            mode: null,
+            isListening: false,
+            error: null
+          });
+          setWakeWordDetector(null);
+        } else {
+          wakeWordDetector.start();
+        }
+      }
+    };
+
+    const handleWakeWordStatusChange = (event) => {
+      if (event.detail) {
+        setVoiceStatus(event.detail);
+      }
+    };
+
+    window.addEventListener('toggle-voice-control', handleToggleVoiceControl);
+    window.addEventListener('wake-word-status-change', handleWakeWordStatusChange);
+
+    return () => {
+      window.removeEventListener('toggle-voice-control', handleToggleVoiceControl);
+      window.removeEventListener('wake-word-status-change', handleWakeWordStatusChange);
+      if (wakeWordDetector) {
+        wakeWordDetector.stop();
+      }
+    };
+  }, [wakeWordDetector]);
 
   // Service Worker Registrierung - angepasst für Backend-Funktion
   useEffect(() => {
