@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MobileSelect } from "@/components/ui/mobile-select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Upload, X, Loader2 } from "lucide-react";
@@ -389,19 +390,34 @@ export default function Logbook() {
 
             <div className="space-y-2">
               <Label htmlFor="spot-select" className="text-white">Angelspot</Label>
-              <Select value={spotId} onValueChange={setSpotId}>
-                <SelectTrigger id="spot-select" className="bg-gray-800/50 border-gray-700 text-white">
-                  <SelectValue placeholder="Spot auswählen (optional)" />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-800 border-gray-700 text-white">
-                  <SelectItem value={null}>Kein Spot</SelectItem>
-                  {spots.map((spot) => (
-                    <SelectItem key={spot.id} value={spot.id}>
-                      {spot.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="md:hidden">
+                <MobileSelect
+                  value={spotId}
+                  onValueChange={setSpotId}
+                  placeholder="Spot auswählen (optional)"
+                  label="Angelspot"
+                  options={[
+                    { value: "", label: "Kein Spot" },
+                    ...spots.map(spot => ({ value: spot.id, label: spot.name }))
+                  ]}
+                  className="bg-gray-800/50 border-gray-700 text-white"
+                />
+              </div>
+              <div className="hidden md:block">
+                <Select value={spotId} onValueChange={setSpotId}>
+                  <SelectTrigger id="spot-select" className="bg-gray-800/50 border-gray-700 text-white">
+                    <SelectValue placeholder="Spot auswählen (optional)" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-800 border-gray-700 text-white">
+                    <SelectItem value={null}>Kein Spot</SelectItem>
+                    {spots.map((spot) => (
+                      <SelectItem key={spot.id} value={spot.id}>
+                        {spot.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

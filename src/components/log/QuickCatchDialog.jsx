@@ -4,6 +4,7 @@ import { UploadFile } from "@/integrations/Core";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MobileSelect } from "@/components/ui/mobile-select";
 import { Card } from "@/components/ui/card";
 import { RuleEntry } from "@/entities/RuleEntry";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -471,18 +472,36 @@ export default function QuickCatchDialog() {
             onBlur={e => { toast.info(`${t('catch.species')}: ${e.target.value}`); triggerHaptic('light'); playSound('pop'); }}
             onChange={(e) => { setForm({...form, species: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
             className="bg-gray-800/50 border-gray-700 text-white" />
-          <Select value={form.spot_id || ""} onValueChange={(v)=>{
-              setForm({...form, spot_id: v});
-              const spotName = spots.find(s => s.id === v)?.name || 'Kein Spot';
-              toast.info(`Spot: ${spotName}`);
-              triggerHaptic('light');
-              playSound('click');
-            }}>
-            <SelectTrigger className="bg-gray-800/50 border-gray-700 text-white"><SelectValue placeholder={t('catch.spot')} /></SelectTrigger>
-            <SelectContent>
-              {spots.map(s => s.id && <SelectItem value={s.id} key={s.id}>{s.name || 'Unbenannt'}</SelectItem>)}
-            </SelectContent>
-          </Select>
+          <div className="md:hidden">
+            <MobileSelect
+              value={form.spot_id || ""}
+              onValueChange={(v) => {
+                setForm({...form, spot_id: v});
+                const spotName = spots.find(s => s.id === v)?.name || 'Kein Spot';
+                toast.info(`Spot: ${spotName}`);
+                triggerHaptic('light');
+                playSound('click');
+              }}
+              placeholder={t('catch.spot')}
+              label={t('catch.spot')}
+              options={spots.map(s => s.id && ({ value: s.id, label: s.name || 'Unbenannt' })).filter(Boolean)}
+              className="bg-gray-800/50 border-gray-700 text-white"
+            />
+          </div>
+          <div className="hidden md:block">
+            <Select value={form.spot_id || ""} onValueChange={(v)=>{
+                setForm({...form, spot_id: v});
+                const spotName = spots.find(s => s.id === v)?.name || 'Kein Spot';
+                toast.info(`Spot: ${spotName}`);
+                triggerHaptic('light');
+                playSound('click');
+              }}>
+              <SelectTrigger className="bg-gray-800/50 border-gray-700 text-white"><SelectValue placeholder={t('catch.spot')} /></SelectTrigger>
+              <SelectContent>
+                {spots.map(s => s.id && <SelectItem value={s.id} key={s.id}>{s.name || 'Unbenannt'}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
           <Input type="number" placeholder={t('catch.length')} value={form.length_cm}
             onBlur={e => { toast.info(`${t('catch.length')}: ${e.target.value} cm`); triggerHaptic('light'); playSound('pop'); }}
             onChange={(e) => { setForm({...form, length_cm: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
