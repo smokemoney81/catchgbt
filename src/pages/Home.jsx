@@ -513,7 +513,7 @@ function LandingPageContent() {
             />
 
             <div className="fixed bottom-8 left-8 z-50 flex flex-col gap-3">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center justify-center">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -533,52 +533,10 @@ function LandingPageContent() {
                         </button>
                     </motion.div>
 
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: 0.5 }}
-                        className="flex items-center gap-2"
-                    >
-                        <motion.div
-                            animate={{
-                                x: [-5, 0, -5],
-                                scale: [1, 1.1, 1],
-                            }}
-                            transition={{
-                                duration: 1.5,
-                                repeat: Infinity,
-                                ease: "easeInOut"
-                            }}
-                        >
-                            <ArrowLeft className="w-6 h-6"
-                                style={{
-                                    filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.8))'
-                                }}
-                            />
-                        </motion.div>
-                        <motion.span
-                            animate={{
-                                color: [
-                                    '#22d3ee',
-                                    '#10b981',
-                                    '#fbbf24',
-                                    '#f59e0b',
-                                    '#22d3ee',
-                                ],
-                                opacity: [0.9, 1, 0.9],
-                            }}
-                            transition={{
-                                color: { duration: 4, repeat: Infinity, ease: "linear" },
-                                opacity: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-                            }}
-                            className="text-sm font-bold whitespace-nowrap drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] w-52"
-                        >
-                            Direkt Foto in das Fangbuch
-                        </motion.span>
-                    </motion.div>
+
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center justify-center">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -593,49 +551,7 @@ function LandingPageContent() {
                         </button>
                     </motion.div>
 
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: 0.7 }}
-                        className="flex items-center gap-2"
-                    >
-                        <motion.div
-                            animate={{
-                                x: [-5, 0, -5],
-                                scale: [1, 1.1, 1],
-                            }}
-                            transition={{
-                                duration: 1.5,
-                                repeat: Infinity,
-                                ease: "easeInOut"
-                            }}
-                        >
-                            <ArrowLeft className="w-6 h-6"
-                                style={{
-                                    filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.8))'
-                                }}
-                            />
-                        </motion.div>
-                        <motion.span
-                            animate={{
-                                color: [
-                                    '#22d3ee',
-                                    '#10b6d4',
-                                    '#fbbf24',
-                                    '#f59e0b',
-                                    '#22d3ee',
-                                ],
-                                opacity: [0.9, 1, 0.9],
-                            }}
-                            transition={{
-                                color: { duration: 4, repeat: Infinity, ease: "linear" },
-                                opacity: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-                            }}
-                            className="text-sm font-bold whitespace-nowrap drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] w-52"
-                        >
-                            Starte hier...
-                        </motion.span>
-                    </motion.div>
+
                 </div>
             </div>
 
