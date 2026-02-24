@@ -512,47 +512,39 @@ function LandingPageContent() {
                 onChange={handleFileSelect}
             />
 
-            <div className="fixed bottom-8 left-8 z-50 flex flex-col gap-3">
-                <div className="flex items-center justify-center">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.5, delay: 0.3 }}
+            <div className="fixed bottom-8 left-8 z-50 flex gap-3">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: 0.3 }}
+                >
+                    <button
+                        onClick={handleCameraClick}
+                        disabled={isUploading}
+                        className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-[0_0_30px_rgba(245,158,11,0.6)] hover:shadow-[0_0_40px_rgba(245,158,11,0.8)] transform transition-all hover:scale-110 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                        title={t('landing.cta.camera')}
                     >
-                        <button
-                            onClick={handleCameraClick}
-                            disabled={isUploading}
-                            className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-[0_0_30px_rgba(245,158,11,0.6)] hover:shadow-[0_0_40px_rgba(245,158,11,0.8)] transform transition-all hover:scale-110 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                            title={t('landing.cta.camera')}
-                        >
-                            {isUploading ? (
-                                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            ) : (
-                                <Camera className="w-7 h-7" />
-                            )}
-                        </button>
-                    </motion.div>
+                        {isUploading ? (
+                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                            <Camera className="w-7 h-7" />
+                        )}
+                    </button>
+                </motion.div>
 
-
-                </div>
-
-                <div className="flex items-center justify-center">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.5, delay: 0.5 }}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: 0.5 }}
+                >
+                    <button
+                        onClick={handleLogin}
+                        className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700 text-white text-lg font-bold shadow-[0_0_30px_rgba(34,211,238,0.6)] hover:shadow-[0_0_40px_rgba(34,211,238,0.8)] transform transition-all hover:scale-110 flex items-center justify-center"
+                        title={t('landing.cta.start')}
                     >
-                        <button
-                            onClick={handleLogin}
-                            className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700 text-white text-lg font-bold shadow-[0_0_30px_rgba(34,211,238,0.6)] hover:shadow-[0_0_40px_rgba(34,211,238,0.8)] transform transition-all hover:scale-110 flex items-center justify-center"
-                            title={t('landing.cta.start')}
-                        >
-                            Go
-                        </button>
-                    </motion.div>
-
-
-                </div>
+                        Go
+                    </button>
+                </motion.div>
             </div>
 
             <TutorialModal isOpen={tutorialOpen} onClose={() => setTutorialOpen(false)} />
