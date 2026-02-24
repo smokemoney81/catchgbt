@@ -1,16 +1,15 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, MapPin, ArrowLeft, Check, X, Trophy, Target, Clock, Sparkles, Wrench, BookOpen, AlertTriangle, Play } from "lucide-react";
+import { GraduationCap, MapPin, ArrowLeft, Check, X, Trophy, Target, Clock, Sparkles, Wrench, BookOpen, AlertTriangle, Play, Fish } from "lucide-react";
 import { motion } from "framer-motion";
 import RodBuilderGame from "@/components/exam/RodBuilderGame";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
-import PremiumGuard from "@/components/premium/PremiumGuard"; // Added import
+import PremiumGuard from "@/components/premium/PremiumGuard";
 
-export default function ExamPrep() {
+export default function AngelscheinPruefungSchonzeiten() {
   const [selectedRegion, setSelectedRegion] = useState("Deutschland");
   const [examStarted, setExamStarted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -18,10 +17,10 @@ export default function ExamPrep() {
   const [userAnswers, setUserAnswers] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(3600); // 60 Minuten
+  const [timeLeft, setTimeLeft] = useState(3600);
   const [showGame, setShowGame] = useState(false);
-  // Placeholder for user state, as PremiumGuard requires it. In a real app, this would come from auth context.
-  const [user, setUser] = useState({ plan: "pro" }); // Assuming user has 'pro' plan for testing purposes
+  const [rules, setRules] = useState([]);
+  const [user, setUser] = useState(null);
 
   const bundeslaender = [
     "Deutschland",
@@ -43,7 +42,10 @@ export default function ExamPrep() {
     "Thüringen"
   ];
 
-  // Timer für Prüfung
+  useEffect(() => {
+    base44.auth.me().then(setUser).catch(() => {});
+  }, []);
+
   useEffect(() => {
     if (examStarted && !showResults && timeLeft > 0) {
       const timer = setInterval(() => {
@@ -59,15 +61,25 @@ export default function ExamPrep() {
     }
   }, [examStarted, showResults, timeLeft]);
 
+  useEffect(() => {
+    const loadRules = async () => {
+      try {
+        const allRules = await base44.entities.RuleEntry.list();
+        const filteredRules = allRules.filter(r => 
+          r.region === selectedRegion || r.region === "Deutschland"
+        );
+        setRules(filteredRules);
+      } catch (error) {
+        console.error("Fehler beim Laden der Regeln:", error);
+      }
+    };
+    loadRules();
+  }, [selectedRegion]);
+
   const loadQuestions = async () => {
     setLoading(true);
     try {
-      console.log("Lade Prüfungsfragen für:", selectedRegion);
-      
-      // Lade alle Fragen aus der Datenbank
       const allQuestions = await base44.entities.ExamQuestion.list();
-      
-      console.log("Geladene Fragen:", allQuestions.length);
       
       if (!allQuestions || allQuestions.length === 0) {
         toast.error("Keine Prüfungsfragen in der Datenbank vorhanden!");
@@ -75,23 +87,17 @@ export default function ExamPrep() {
         return;
       }
 
-      // Filtere nach Region
       let regionQuestions = allQuestions.filter(q => 
         q.region === selectedRegion || q.region === "Deutschland"
       );
-
-      console.log("Gefilterte Fragen für Region:", regionQuestions.length);
 
       if (regionQuestions.length === 0) {
         toast.warning(`Keine Fragen für ${selectedRegion} gefunden. Verwende deutschlandweite Fragen.`);
         regionQuestions = allQuestions.filter(q => q.region === "Deutschland");
       }
 
-      // Wähle zufällig 30 Fragen aus
       const shuffled = regionQuestions.sort(() => 0.5 - Math.random());
       const selectedQuestions = shuffled.slice(0, Math.min(30, shuffled.length));
-
-      console.log("Ausgewählte Fragen für Prüfung:", selectedQuestions.length);
 
       if (selectedQuestions.length < 10) {
         toast.error("Nicht genügend Fragen für eine Prüfung vorhanden!");
@@ -103,7 +109,7 @@ export default function ExamPrep() {
       setUserAnswers(new Array(selectedQuestions.length).fill(null));
       setExamStarted(true);
       setCurrentQuestion(0);
-      setTimeLeft(3600); // Reset timer
+      setTimeLeft(3600);
       setShowResults(false);
 
       toast.success(`Prüfung gestartet mit ${selectedQuestions.length} Fragen!`);
@@ -136,7 +142,6 @@ export default function ExamPrep() {
   const handleFinishExam = () => {
     setShowResults(true);
     
-    // Berechne Ergebnis
     const correctAnswers = userAnswers.filter((answer, index) => 
       answer === questions[index]?.correct_answer_index
     ).length;
@@ -166,11 +171,32 @@ export default function ExamPrep() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const isCurrentlyClosedSeason = (closedFrom, closedTo) => {
+    if (!closedFrom || !closedTo) return false;
+    const today = new Date();
+    const currentYear = today.getFullYear();
+
+    const [fromMonth, fromDay] = closedFrom.split('-').slice(1).map(Number);
+    const [toMonth, toDay] = closedTo.split('-').slice(1).map(Number);
+
+    let fromDate = new Date(currentYear, fromMonth - 1, fromDay);
+    let toDate = new Date(currentYear, toMonth - 1, toDay);
+
+    if (fromDate > toDate) {
+        if (today < fromDate && today < toDate) {
+            fromDate = new Date(currentYear - 1, fromMonth - 1, fromDay);
+        } else if (today > fromDate && today > toDate) {
+            toDate = new Date(currentYear + 1, toMonth - 1, toDay);
+        }
+    }
+    return today >= fromDate && today <= toDate;
+  };
+
   return (
     <PremiumGuard 
       user={user} 
       requiredPlan="pro"
-      feature="Die Angelschein-Prüfungsvorbereitung ist ein Pro-Feature"
+      feature="Die Angelschein-Prüfung & Schonzeiten ist ein Pro-Feature"
     >
       {showGame && (
         <div className="container mx-auto px-4 py-8">
@@ -208,10 +234,10 @@ export default function ExamPrep() {
             <div className="text-center mb-8">
               <GraduationCap className="w-16 h-16 mx-auto mb-4 text-cyan-400" />
               <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-cyan-400 to-emerald-400 text-transparent bg-clip-text">
-                Angelschein-Prüfung
+                Angelschein-Prüfung & Schonzeiten
               </h1>
               <p className="text-gray-400">
-                Bereite dich optimal auf die Fischerprüfung vor
+                Bereite dich optimal auf die Fischerprüfung vor und kenne deine Regeln
               </p>
             </div>
 
@@ -301,7 +327,7 @@ export default function ExamPrep() {
               </Card>
             </div>
 
-            <Card className="glass-morphism border-gray-800">
+            <Card className="glass-morphism border-gray-800 mb-6">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-amber-400">
                   <BookOpen className="w-5 h-5" />
@@ -309,11 +335,53 @@ export default function ExamPrep() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3 text-gray-300">
-                <p>• Lies jede Frage sorgfältig durch, bevor du antwortest</p>
-                <p>• Du kannst zwischen den Fragen vor und zurück navigieren</p>
-                <p>• Achte auf die verbleibende Zeit im oberen Bereich</p>
-                <p>• Zum Bestehen benötigst du mindestens 60% richtige Antworten</p>
-                <p>• Nach der Prüfung erhältst du eine detaillierte Auswertung</p>
+                <p>Lies jede Frage sorgfältig durch, bevor du antwortest</p>
+                <p>Du kannst zwischen den Fragen vor und zurück navigieren</p>
+                <p>Achte auf die verbleibende Zeit im oberen Bereich</p>
+                <p>Zum Bestehen benötigst du mindestens 60% richtige Antworten</p>
+                <p>Nach der Prüfung erhältst du eine detaillierte Auswertung</p>
+              </CardContent>
+            </Card>
+
+            <Card className="glass-morphism border-gray-800">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-rose-400">
+                  <Fish className="w-5 h-5" />
+                  Angelregeln & Schonzeiten ({selectedRegion})
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {rules.length > 0 ? (
+                  rules.map((rule, index) => (
+                    <div key={index} className="bg-gray-900/50 p-4 rounded-lg border border-gray-700">
+                      <h4 className="text-white font-semibold text-lg mb-1">{rule.fish}</h4>
+                      <p className="text-gray-300 text-sm mb-1">
+                        Region: <span className="font-medium text-cyan-400">{rule.region}</span>
+                      </p>
+                      {rule.min_size_cm && (
+                        <p className="text-gray-300 text-sm">Mindestmaß: {rule.min_size_cm} cm</p>
+                      )}
+                      {rule.closed_from && rule.closed_to && (
+                        <p className="text-gray-300 text-sm">
+                          Schonzeit: {rule.closed_from} bis {rule.closed_to}
+                          {isCurrentlyClosedSeason(rule.closed_from, rule.closed_to) && (
+                            <span className="ml-2 px-2 py-0.5 bg-red-900/50 text-red-400 text-xs rounded-full">
+                              Aktuell Schonzeit
+                            </span>
+                          )}
+                        </p>
+                      )}
+                      {rule.hook_limit && (
+                        <p className="text-gray-300 text-sm">Hakenlimit: {rule.hook_limit}</p>
+                      )}
+                      {rule.notes && (
+                        <p className="text-gray-400 text-xs mt-2">{rule.notes}</p>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-400">Keine spezifischen Regeln für {selectedRegion} gefunden.</p>
+                )}
               </CardContent>
             </Card>
           </motion.div>
@@ -339,7 +407,7 @@ export default function ExamPrep() {
                     {passed ? (
                       <>
                         <Trophy className="w-8 h-8 text-emerald-400" />
-                        <span className="text-emerald-400">Herzlichen Glückwunsch!</span>
+                        <span className="text-emerald-400">Herzlichen Glückwunsch</span>
                       </>
                     ) : (
                       <>
@@ -469,7 +537,6 @@ export default function ExamPrep() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
             >
-              {/* Header mit Timer */}
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-2 text-gray-300">
                   <Target className="w-5 h-5 text-cyan-400" />
@@ -487,10 +554,8 @@ export default function ExamPrep() {
                 </div>
               </div>
 
-              {/* Progress Bar */}
               <Progress value={progress} className="mb-6 h-2" />
 
-              {/* Frage Card */}
               <Card className="glass-morphism border-gray-800 mb-6">
                 <CardHeader>
                   <div className="flex items-start justify-between">
@@ -553,7 +618,6 @@ export default function ExamPrep() {
                 </CardContent>
               </Card>
 
-              {/* Erklärung anzeigen wenn Antwort gewählt */}
               {userAnswers[currentQuestion] !== null && question.explanation && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -573,7 +637,6 @@ export default function ExamPrep() {
                 </motion.div>
               )}
 
-              {/* Navigation */}
               <div className="flex justify-between gap-3">
                 <Button
                   onClick={handlePrevious}

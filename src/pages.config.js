@@ -60,7 +60,6 @@ import Dashboard from './pages/Dashboard';
 import Datenschutz from './pages/Datenschutz';
 import DeviceIntegration from './pages/DeviceIntegration';
 import Devices from './pages/Devices';
-import ExamPrep from './pages/ExamPrep';
 import FunctionRatings from './pages/FunctionRatings';
 import Gear from './pages/Gear';
 import GearV1 from './pages/GearV1';
@@ -90,6 +89,7 @@ import UsedGear from './pages/UsedGear';
 import VoiceControl from './pages/VoiceControl';
 import WaterAnalysis from './pages/WaterAnalysis';
 import Weather from './pages/Weather';
+import AngelscheinPruefungSchonzeiten from './pages/AngelscheinPruefungSchonzeiten';
 import __Layout from './Layout.jsx';
 
 
@@ -107,7 +107,6 @@ export const PAGES = {
     "Datenschutz": Datenschutz,
     "DeviceIntegration": DeviceIntegration,
     "Devices": Devices,
-    "ExamPrep": ExamPrep,
     "FunctionRatings": FunctionRatings,
     "Gear": Gear,
     "GearV1": GearV1,
@@ -137,6 +136,7 @@ export const PAGES = {
     "VoiceControl": VoiceControl,
     "WaterAnalysis": WaterAnalysis,
     "Weather": Weather,
+    "AngelscheinPruefungSchonzeiten": AngelscheinPruefungSchonzeiten,
 }
 
 export const pagesConfig = {
