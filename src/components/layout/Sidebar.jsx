@@ -65,7 +65,7 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
     { name: "Meine Trips", path: "TripPlanner", key: "nav.trips" },
     { name: "Community", path: "Community", key: "nav.community", isBeta: true },
     { name: "Regeln", path: "Rules", key: "nav.rules" },
-    { name: "Prüfung", path: "ExamPrep", key: "nav.exam" },
+    { name: "Prüfung & Schonzeiten", path: "AngelscheinPruefungSchonzeiten", key: "nav.exam" },
     { name: "Lizenzen", path: "Licenses", key: "nav.licenses" },
     { name: "Geräte", path: "Devices", key: "nav.devices", isBeta: true },
     { name: "Premium", path: "PremiumPlans", key: "nav.premium" },
