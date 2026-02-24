@@ -18,6 +18,7 @@ import { Toaster } from "sonner";
 import FeedbackManager from "@/components/feedback/FeedbackManager";
 import { LanguageProvider } from "@/components/i18n/LanguageContext";
 import { PlanProvider } from "@/components/premium/PlanContext";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function Layout({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -149,9 +150,19 @@ export default function Layout({ children, currentPageName }) {
 
                 <SubPageHeader title={currentPageName} />
 
-                <main className="bg-gray-950 pb-20 md:pb-0" style={{ minHeight: 'calc(100vh - 200px)' }}>
-                  {children}
-                  </main>
+                <AnimatePresence mode="wait">
+                  <motion.main 
+                    key={currentPageName}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.2 }}
+                    className="bg-gray-950 pb-20 md:pb-0" 
+                    style={{ minHeight: 'calc(100vh - 200px)' }}
+                  >
+                    {children}
+                  </motion.main>
+                </AnimatePresence>
 
                   <BottomTabs />
 

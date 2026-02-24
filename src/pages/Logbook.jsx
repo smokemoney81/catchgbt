@@ -223,10 +223,22 @@ export default function Logbook() {
 
       if (editingCatch) {
         await base44.entities.Catch.update(editingCatch.id, catchData);
-        toast.success("Fang aktualisiert! 🎣");
+        toast.success("Fang aktualisiert!");
       } else {
-        await base44.entities.Catch.create(catchData);
-        toast.success("Fang gespeichert! 🎣");
+        // Optimistic update
+        const optimisticCatch = {
+          id: `temp-${Date.now()}`,
+          ...catchData,
+          created_date: new Date().toISOString(),
+          created_by: 'temp'
+        };
+        setCatches(prev => [optimisticCatch, ...prev]);
+        resetForm();
+        toast.success("Fang gespeichert!");
+
+        // Background save
+        const savedCatch = await base44.entities.Catch.create(catchData);
+        setCatches(prev => prev.map(c => c.id === optimisticCatch.id ? savedCatch : c));
         
         base44.analytics.track({
           eventName: "fishing_catch_logged",
@@ -238,12 +250,10 @@ export default function Logbook() {
           }
         });
       }
-
-      resetForm();
-      await loadData();
     } catch (error) {
       console.error("Fehler beim Speichern:", error);
       toast.error("Fehler beim Speichern des Fangs");
+      await loadData();
     } finally {
       setSaving(false);
     }
