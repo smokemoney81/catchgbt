@@ -249,15 +249,21 @@ export default function Dashboard() {
             )}
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="text-xs text-gray-500">KI-Voice:</div>
+          <button
+            onClick={() => {
+              const event = new CustomEvent('toggle-voice-control');
+              window.dispatchEvent(event);
+            }}
+            className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 border border-cyan-500/30 hover:border-cyan-400/50 transition-all min-h-[44px] min-w-[44px]"
+          >
+            <div className="text-xs text-gray-400 hidden sm:block">KI-Voice</div>
             <WakeWordIndicator 
               isActive={voiceStatus.isActive}
               mode={voiceStatus.mode}
               isListening={voiceStatus.isListening}
               error={voiceStatus.error}
             />
-          </div>
+          </button>
         </div>
 
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-900/40 backdrop-blur-sm border border-gray-800/50">

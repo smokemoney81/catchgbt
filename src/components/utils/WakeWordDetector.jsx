@@ -139,6 +139,12 @@ export class WakeWordDetector {
       let lastAnalysisTime = 0;
       const ANALYSIS_INTERVAL = 1000;
 
+      let silenceCount = 0;
+      const SILENCE_THRESHOLD = 0.02;
+      const SPEECH_THRESHOLD = 0.05;
+      const PATTERN_LENGTH = 5;
+      let audioPattern = [];
+
       this.processor.onaudioprocess = (e) => {
         const inputData = e.inputBuffer.getChannelData(0);
         audioBuffer.push(...inputData);
@@ -147,10 +153,27 @@ export class WakeWordDetector {
         if (now - lastAnalysisTime > ANALYSIS_INTERVAL && audioBuffer.length > 0) {
           const rms = Math.sqrt(audioBuffer.reduce((sum, val) => sum + val * val, 0) / audioBuffer.length);
           
-          if (rms > 0.01) {
-            console.log('Wake word detected (offline simulation, RMS:', rms.toFixed(4), ')');
-            if (this.onWakeWordDetected) {
-              this.onWakeWordDetected();
+          audioPattern.push(rms);
+          if (audioPattern.length > PATTERN_LENGTH) {
+            audioPattern.shift();
+          }
+
+          if (rms < SILENCE_THRESHOLD) {
+            silenceCount++;
+          } else {
+            silenceCount = 0;
+          }
+
+          if (rms > SPEECH_THRESHOLD && silenceCount === 0) {
+            const avgPattern = audioPattern.reduce((a, b) => a + b, 0) / audioPattern.length;
+            const variance = audioPattern.reduce((sum, val) => sum + Math.pow(val - avgPattern, 2), 0) / audioPattern.length;
+            
+            if (variance > 0.001 && avgPattern > SPEECH_THRESHOLD) {
+              console.log('Wake word pattern detected (RMS:', rms.toFixed(4), 'Variance:', variance.toFixed(5), ')');
+              if (this.onWakeWordDetected) {
+                this.onWakeWordDetected();
+              }
+              audioPattern = [];
             }
           }
           

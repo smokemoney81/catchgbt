@@ -2,8 +2,8 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Mic, MicOff, Wifi, AlertTriangle } from 'lucide-react';
 
-export default function WakeWordIndicator({ isActive, mode, isListening, error }) {
-  if (!isActive) return null;
+export default function WakeWordIndicator({ isActive, mode, isListening, error, showAlways = false }) {
+  if (!isActive && !showAlways) return null;
 
   const getIcon = () => {
     if (error) {
@@ -59,9 +59,9 @@ export default function WakeWordIndicator({ isActive, mode, isListening, error }
 
   return (
     <Badge variant="outline" {...badgeProps} className={`text-xs px-2 py-1 ${badgeProps.className}`}>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1.5">
         {getIcon()}
-        <span className="hidden sm:inline">
+        <span>
           {error ? 
             (error.includes('nicht verfügbar') || error.includes('not available') ? 'N/A' : 'Fehler') :
             isListening ? (mode === 'offline' ? 'Offline' : 'Online') : 'Aus'
