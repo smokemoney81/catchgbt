@@ -9,7 +9,7 @@ export default function TutorialButton({ onClick }) {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: 0.2 }}
       onClick={onClick}
-      className="fixed top-8 left-8 z-50 group"
+      className="fixed top-8 right-8 z-50 group"
       title="Tutorial starten"
     >
       {/* Dreieck-Form mit CSS */}
