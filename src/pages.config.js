@@ -90,7 +90,6 @@ import UsedGear from './pages/UsedGear';
 import VoiceControl from './pages/VoiceControl';
 import WaterAnalysis from './pages/WaterAnalysis';
 import Weather from './pages/Weather';
-import WeatherAlerts from './pages/WeatherAlerts';
 import __Layout from './Layout.jsx';
 
 
@@ -138,7 +137,6 @@ export const PAGES = {
     "VoiceControl": VoiceControl,
     "WaterAnalysis": WaterAnalysis,
     "Weather": Weather,
-    "WeatherAlerts": WeatherAlerts,
 }
 
 export const pagesConfig = {

@@ -50,7 +50,6 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
     { name: "Fangbuch", path: "Logbook", key: "nav.logbook" },
     { name: "Spots & Karte", path: "Map", key: "nav.map" },
     { name: "Wetter", path: "Weather", key: "nav.weather" },
-    { name: "Wetter-Alarme", path: "WeatherAlerts", key: "nav.weather_alerts" },
     
     // KI Tools Header
     { type: "header", key: "nav.ai_tools" },
