@@ -53,7 +53,6 @@ import AIAssistant from './pages/AIAssistant';
 import AIPage from './pages/AIPage';
 import ARView from './pages/ARView';
 import Analysis from './pages/Analysis';
-import Arcade from './pages/Arcade';
 import BaitMixer from './pages/BaitMixer';
 import CatchCam from './pages/CatchCam';
 import Community from './pages/Community';
@@ -103,7 +102,6 @@ export const PAGES = {
     "AIPage": AIPage,
     "ARView": ARView,
     "Analysis": Analysis,
-    "Arcade": Arcade,
     "BaitMixer": BaitMixer,
     "CatchCam": CatchCam,
     "Community": Community,
