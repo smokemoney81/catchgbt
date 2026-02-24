@@ -571,7 +571,7 @@ function LandingPageContent() {
                                 color: { duration: 4, repeat: Infinity, ease: "linear" },
                                 opacity: { duration: 2, repeat: Infinity, ease: "easeInOut" }
                             }}
-                            className="text-sm font-bold whitespace-nowrap drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+                            className="text-sm font-bold whitespace-nowrap drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] w-52"
                         >
                             Direkt Foto in das Fangbuch
                         </motion.span>
@@ -631,7 +631,7 @@ function LandingPageContent() {
                                 color: { duration: 4, repeat: Infinity, ease: "linear" },
                                 opacity: { duration: 2, repeat: Infinity, ease: "easeInOut" }
                             }}
-                            className="text-sm font-bold whitespace-nowrap drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+                            className="text-sm font-bold whitespace-nowrap drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] w-52"
                         >
                             Starte hier...
                         </motion.span>
