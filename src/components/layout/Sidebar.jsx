@@ -70,7 +70,6 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
     { name: "Prüfung", path: "ExamPrep", key: "nav.exam" },
     { name: "Lizenzen", path: "Licenses", key: "nav.licenses" },
     { name: "Geräte", path: "Devices", key: "nav.devices", isBeta: true },
-    { name: "Arcade", path: "Arcade", key: "nav.arcade", isBeta: true },
     { name: "Premium", path: "PremiumPlans", key: "nav.premium" },
     { name: "Einstellungen", path: "Settings", key: "nav.settings" },
     { name: "Profil", path: "Profile", key: "nav.profile" },
