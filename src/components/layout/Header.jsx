@@ -205,38 +205,36 @@ export default function Header({
           <AnimatePresence mode="wait">
             {!isSidebarOpen && (
               <motion.div
-                key={showMenuText ? 'text' : 'arrow'} // Unique key for each alternating element
-                initial={{ opacity: 0, x: showMenuText ? -10 : -5, scale: 0.8 }} // Slightly different initial for arrow vs text
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                exit={{ opacity: 0, x: showMenuText ? 10 : 5, scale: 0.8 }} // Opposite exit for smooth transition
-                transition={{ duration: 0.4 }}
-                className="flex items-center" // No gap here, elements alternate in the same space
+                key={showMenuText ? 'text' : 'arrow'}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.2 }}
+                className="absolute top-0 right-0 -mt-1 -mr-2 flex items-center justify-center pointer-events-none"
               >
                 {showMenuText ? (
                   <motion.span
                     animate={{
                       color: [
-                        '#22d3ee', // cyan
-                        '#10b981', // emerald
-                        '#fbbf24', // amber
-                        '#f59e0b', // orange
-                        '#22d3ee', // back to cyan
+                        '#22d3ee',
+                        '#10b981',
+                        '#fbbf24',
+                        '#f59e0b',
+                        '#22d3ee',
                       ],
-                      scale: [1, 1.08, 1], // Added scale animation for text
                     }}
                     transition={{
                       color: { duration: 4, repeat: Infinity, ease: "linear" },
-                      scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
                     }}
-                    className="text-xs font-bold whitespace-nowrap drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+                    className="text-[0.6rem] font-bold whitespace-nowrap drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
                   >
                     Menü
                   </motion.span>
                 ) : (
                   <motion.div
                     animate={{
-                      x: [0, -5, 0], // Changed arrow direction
-                      scale: [1, 1.1, 1],
+                      x: [0, -2, 0],
+                      scale: [0.8, 1, 0.8],
                     }}
                     transition={{
                       duration: 1.5,
@@ -244,7 +242,7 @@ export default function Header({
                       ease: "easeInOut"
                     }}
                   >
-                    <motion.div // Apply color animation to the container of ArrowLeft
+                    <motion.div
                       animate={{
                         color: [
                           '#22d3ee',
@@ -261,7 +259,7 @@ export default function Header({
                       }}
                     >
                       <ArrowLeft 
-                        className="w-6 h-6" // Increased size slightly for better visibility
+                        className="w-3 h-3"
                         style={{
                           filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.8))'
                         }}
