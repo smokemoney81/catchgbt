@@ -78,7 +78,6 @@ import PremiumPlans from './pages/PremiumPlans';
 import Profile from './pages/Profile';
 import Quiz from './pages/Quiz';
 import Rank from './pages/Rank';
-import Ranking from './pages/Ranking';
 import Rules from './pages/Rules';
 import RulesPage from './pages/RulesPage';
 import Settings from './pages/Settings';
@@ -127,7 +126,6 @@ export const PAGES = {
     "Profile": Profile,
     "Quiz": Quiz,
     "Rank": Rank,
-    "Ranking": Ranking,
     "Rules": Rules,
     "RulesPage": RulesPage,
     "Settings": Settings,
