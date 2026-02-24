@@ -26,13 +26,53 @@ export default function Community() {
   const [deletingPostId, setDeletingPostId] = useState(null);
   const [competitions, setCompetitions] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [pullStart, setPullStart] = useState(0);
+  const [pullDistance, setPullDistance] = useState(0);
 
   useEffect(() => {
     loadCurrentUser();
     loadPosts();
     loadCompetitions();
     loadRecentActivity();
-  }, []);
+
+    const handleTouchStart = (e) => {
+      if (window.scrollY === 0) {
+        setPullStart(e.touches[0].clientY);
+      }
+    };
+
+    const handleTouchMove = (e) => {
+      if (pullStart > 0) {
+        const distance = e.touches[0].clientY - pullStart;
+        if (distance > 0 && distance < 150) {
+          setPullDistance(distance);
+        }
+      }
+    };
+
+    const handleTouchEnd = async () => {
+      if (pullDistance > 80) {
+        setIsRefreshing(true);
+        await loadPosts();
+        await loadCompetitions();
+        await loadRecentActivity();
+        setIsRefreshing(false);
+      }
+      setPullStart(0);
+      setPullDistance(0);
+    };
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [pullStart]);
 
   const loadCurrentUser = async () => {
     try {
@@ -231,14 +271,19 @@ export default function Community() {
   };
 
   const handleLike = async (postId, currentLikes) => {
+    // Optimistic update
+    setPosts(posts.map(p => 
+      p.id === postId ? { ...p, likes: currentLikes + 1 } : p
+    ));
+
     try {
       await base44.entities.Post.update(postId, { likes: currentLikes + 1 });
-      setPosts(posts.map(p => 
-        p.id === postId ? { ...p, likes: currentLikes + 1 } : p
-      ));
-      toast.success("👍 Geliked!");
     } catch (error) {
       console.error("Fehler beim Liken:", error);
+      // Revert on error
+      setPosts(posts.map(p => 
+        p.id === postId ? { ...p, likes: currentLikes } : p
+      ));
       toast.error("Like fehlgeschlagen");
     }
   };
@@ -249,18 +294,43 @@ export default function Community() {
       return;
     }
 
+    // Optimistic update
+    const optimisticComment = {
+      id: `temp-${Date.now()}`,
+      post_id: postId,
+      text: commentText.trim(),
+      created_by: currentUser?.email,
+      created_date: new Date().toISOString()
+    };
+
+    setPosts(posts.map(p => 
+      p.id === postId 
+        ? { ...p, comments: [...(p.comments || []), optimisticComment] } 
+        : p
+    ));
+    setCommentText("");
+    setCommenting(null);
+
     try {
-      await base44.entities.Comment.create({
+      const newComment = await base44.entities.Comment.create({
         post_id: postId,
-        text: commentText.trim()
+        text: optimisticComment.text
       });
       
-      setCommentText("");
-      setCommenting(null);
-      toast.success("Kommentar hinzugefügt! 💬");
-      await loadPosts();
+      // Replace temp comment with real one
+      setPosts(posts.map(p => 
+        p.id === postId 
+          ? { ...p, comments: p.comments.map(c => c.id === optimisticComment.id ? newComment : c) } 
+          : p
+      ));
     } catch (error) {
       console.error("Fehler beim Kommentieren:", error);
+      // Revert on error
+      setPosts(posts.map(p => 
+        p.id === postId 
+          ? { ...p, comments: p.comments.filter(c => c.id !== optimisticComment.id) } 
+          : p
+      ));
       toast.error("Kommentar fehlgeschlagen");
     }
   };
@@ -305,6 +375,24 @@ export default function Community() {
 
   return (
     <div className="min-h-screen bg-gray-950">
+      {pullDistance > 0 && (
+        <div 
+          className="fixed top-0 left-0 right-0 flex items-center justify-center z-50 transition-opacity"
+          style={{ 
+            height: `${pullDistance}px`,
+            opacity: Math.min(pullDistance / 80, 1)
+          }}
+        >
+          <div className="w-8 h-8 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
+      
+      {isRefreshing && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-cyan-600 text-white px-4 py-2 rounded-full shadow-lg">
+          Aktualisiere...
+        </div>
+      )}
+      
       <div className="max-w-4xl mx-auto p-6 space-y-8 pb-32">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>

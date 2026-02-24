@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,9 +15,11 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { useHaptic } from "@/components/utils/HapticFeedback";
+import { FISH_SCENARIOS, EQUIPMENT } from "./rodBuilderData";
+import RodBuilderGameMobile from "./RodBuilderGameMobile";
 
-// Zielfische mit ihren optimalen Setups
-const FISH_SCENARIOS = {
+// Zielfische mit ihren optimalen Setups - MOVED TO rodBuilderData.js
+const OLD_FISH_SCENARIOS = {
   hecht: {
     name: "Hecht",
     icon: "🦈",
@@ -226,7 +228,19 @@ const EQUIPMENT = {
 };
 
 export default function RodBuilderGame() {
+  const [isMobile, setIsMobile] = useState(false);
   const [selectedFish, setSelectedFish] = useState(null);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  if (isMobile) {
+    return <RodBuilderGameMobile />;
+  }
   const [selectedEquipment, setSelectedEquipment] = useState({
     rod: null,
     reel: null,

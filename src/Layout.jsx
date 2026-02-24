@@ -23,6 +23,8 @@ import { AnimatePresence, motion } from "framer-motion";
 export default function Layout({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [scrollPositions, setScrollPositions] = useState({});
+  const [previousPage, setPreviousPage] = useState(null);
 
   const refreshUser = async () => {
     try {
@@ -45,6 +47,24 @@ export default function Layout({ children, currentPageName }) {
     if (currentPageName !== 'Home') {
       refreshUser();
     }
+
+    // Save scroll position when leaving a page
+    if (previousPage && previousPage !== currentPageName) {
+      setScrollPositions(prev => ({
+        ...prev,
+        [previousPage]: window.scrollY
+      }));
+    }
+
+    // Restore scroll position when entering a page
+    const savedPosition = scrollPositions[currentPageName];
+    if (savedPosition !== undefined) {
+      setTimeout(() => window.scrollTo(0, savedPosition), 50);
+    } else {
+      window.scrollTo(0, 0);
+    }
+
+    setPreviousPage(currentPageName);
   }, [currentPageName]);
 
   // Service Worker Registrierung - angepasst für Backend-Funktion

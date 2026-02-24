@@ -142,15 +142,23 @@ export default function CommunitySection() {
   };
 
   const handleLike = async (postId, currentLikes) => {
+    // Optimistic update
+    setPosts(posts.map(p => 
+      p.id === postId ? { ...p, likes: currentLikes + 1 } : p
+    ));
+    triggerHaptic('light');
+    playSound('selection');
+
     try {
       await base44.entities.Post.update(postId, {
         likes: currentLikes + 1
       });
-      await loadData();
-      triggerHaptic('light');
-      playSound('selection');
     } catch (error) {
       console.error("Fehler beim Liken:", error);
+      // Revert on error
+      setPosts(posts.map(p => 
+        p.id === postId ? { ...p, likes: currentLikes } : p
+      ));
       toast.error("Fehler beim Liken");
     }
   };
@@ -162,20 +170,45 @@ export default function CommunitySection() {
       return;
     }
 
+    // Optimistic update
+    const optimisticComment = {
+      id: `temp-${Date.now()}`,
+      post_id: postId,
+      text: commentText,
+      created_by: currentUser?.email,
+      created_date: new Date().toISOString()
+    };
+
+    const updatedComments = {
+      ...comments,
+      [postId]: [...(comments[postId] || []), optimisticComment]
+    };
+    setComments(updatedComments);
+    setNewComment({ ...newComment, [postId]: "" });
+    triggerHaptic('light');
+    playSound('click');
+
     try {
-      await base44.entities.Comment.create({
+      const newCommentData = await base44.entities.Comment.create({
         post_id: postId,
         text: commentText
       });
-
-      setNewComment({ ...newComment, [postId]: "" });
-      await loadData();
       
-      triggerHaptic('light');
-      playSound('click');
-      toast.success("Kommentar hinzugefügt!");
+      // Replace temp with real
+      setComments({
+        ...updatedComments,
+        [postId]: updatedComments[postId].map(c => 
+          c.id === optimisticComment.id ? newCommentData : c
+        )
+      });
     } catch (error) {
       console.error("Fehler beim Kommentieren:", error);
+      // Revert on error
+      setComments({
+        ...comments,
+        [postId]: (comments[postId] || []).filter(c => c.id !== optimisticComment.id)
+      });
+      setNewComment({ ...newComment, [postId]: commentText });
       toast.error("Fehler beim Kommentieren");
     }
   };
