@@ -246,18 +246,7 @@ export default function Dashboard() {
       
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-12">
 
-        <div className="flex items-end justify-between border-b border-gray-800/50 pb-6">
-          <div>
-            <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-500 mb-2">
-              {getGreeting()}
-            </h1>
-            {user && user.premium_plan_id && user.premium_plan_id !== 'free' && (
-              <span className="text-sm font-semibold text-amber-400">
-                {user.premium_plan_id === 'basic' ? 'Basic' : user.premium_plan_id === 'pro' ? 'Pro' : user.premium_plan_id === 'ultimate' ? 'Ultimate' : ''}
-              </span>
-            )}
-          </div>
-
+        <div className="flex items-end justify-end border-b border-gray-800/50 pb-6">
           <button
             onClick={() => {
               const event = new CustomEvent('toggle-voice-control');
