@@ -346,7 +346,7 @@ Verwende Emojis sparsam aber gezielt für bessere Lesbarkeit.`,
           </div>
         </div>
 
-        <div className="fixed bottom-0 left-0 right-0 bg-gray-950/95 backdrop-blur-xl border-t border-gray-800/50 pb-safe">
+        <div className="fixed bottom-20 left-0 right-0 bg-gray-950/95 backdrop-blur-xl border-t border-gray-800/50 z-30">
           <div className="max-w-5xl mx-auto px-6 py-4">
             <div className="flex items-end gap-3">
               <div className="flex-1 relative">
