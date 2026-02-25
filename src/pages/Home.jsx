@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
-import { Camera, Star, ArrowLeft } from 'lucide-react';
+import { Camera } from 'lucide-react';
 import { toast } from 'sonner';
 import LanguageSwitcher from '@/components/i18n/LanguageSwitcher';
 import { LanguageProvider, useLanguage } from '@/components/i18n/LanguageContext';
@@ -460,7 +460,7 @@ function LandingPageContent() {
             </div>
 
             <motion.div 
-                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40"
+                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 px-4"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
@@ -471,24 +471,38 @@ function LandingPageContent() {
                     rel="noopener noreferrer"
                     className="block text-center"
                 >
-                    <motion.span
+                    <motion.div
                         animate={{
-                            scale: [1, 1.05, 1],
-                            textShadow: [
-                                '0 0 20px rgba(34, 211, 238, 0.8)',
-                                '0 0 40px rgba(16, 185, 129, 0.8)',
-                                '0 0 20px rgba(34, 211, 238, 0.8)'
-                            ]
+                            scale: [1, 1.08, 1],
                         }}
                         transition={{
                             duration: 2,
                             repeat: Infinity,
                             ease: "easeInOut"
                         }}
-                        className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent"
                     >
-                        Catchgbt-q7scna.manus.space
-                    </motion.span>
+                        <motion.span
+                            animate={{
+                                textShadow: [
+                                    '0 0 30px rgba(34, 211, 238, 0.9), 0 0 60px rgba(34, 211, 238, 0.6)',
+                                    '0 0 50px rgba(16, 185, 129, 0.9), 0 0 80px rgba(16, 185, 129, 0.6)',
+                                    '0 0 30px rgba(34, 211, 238, 0.9), 0 0 60px rgba(34, 211, 238, 0.6)'
+                                ]
+                            }}
+                            transition={{
+                                duration: 3,
+                                repeat: Infinity,
+                                ease: "easeInOut"
+                            }}
+                            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-2xl"
+                            style={{ 
+                                backgroundSize: '200% auto',
+                                animation: 'gradient-wave 3s ease infinite'
+                            }}
+                        >
+                            Catchgbt-q7scna.manus.space
+                        </motion.span>
+                    </motion.div>
                 </a>
             </motion.div>
 
@@ -543,19 +557,20 @@ function LandingPageContent() {
                         }
                     }}
                     animate={{
-                        scale: [1, 1.1, 1],
+                        scale: [1, 1.12, 1],
                         boxShadow: [
-                            '0 0 20px rgba(239, 68, 68, 0.6)',
-                            '0 0 40px rgba(239, 68, 68, 0.8)',
-                            '0 0 20px rgba(239, 68, 68, 0.6)'
+                            '0 0 25px rgba(239, 68, 68, 0.7)',
+                            '0 0 50px rgba(239, 68, 68, 0.9)',
+                            '0 0 25px rgba(239, 68, 68, 0.7)'
                         ]
                     }}
                     transition={{
-                        duration: 1.5,
+                        duration: 1.2,
                         repeat: Infinity,
                         ease: "easeInOut"
                     }}
-                    className="w-20 h-20 rounded-full bg-gradient-to-br from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white font-bold text-2xl shadow-lg transform transition-all hover:scale-110 flex items-center justify-center"
+                    className="w-20 h-20 rounded-full bg-gradient-to-br from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white font-bold text-2xl transform transition-all hover:scale-110 flex items-center justify-center"
+                    title="Notruf 112"
                 >
                     SOS
                 </motion.button>
@@ -564,6 +579,18 @@ function LandingPageContent() {
             <TutorialModal isOpen={tutorialOpen} onClose={() => setTutorialOpen(false)} />
 
             <style>{`
+                @keyframes gradient-wave {
+                    0% {
+                        background-position: 0% 50%;
+                    }
+                    50% {
+                        background-position: 100% 50%;
+                    }
+                    100% {
+                        background-position: 0% 50%;
+                    }
+                }
+
                 @keyframes gradient-shift {
                     0%, 100% {
                         transform: translate(0, 0) rotate(var(--rotation, 0deg)) scale(1);
