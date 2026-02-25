@@ -456,41 +456,7 @@ function LandingPageContent() {
                     />
                 </div>
                 
-                <div className="mx-auto max-w-2xl text-center px-6">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
-                    >
-                        <h1 className="text-6xl sm:text-8xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-emerald-400 drop-shadow-[0_0_20px_rgba(34,211,238,0.8)]">
-                            CatchGbt
-                            <span className="block text-2xl sm:text-3xl font-semibold mt-2 text-green-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.6)]">Free for All</span>
-                        </h1>
-                    </motion.div>
 
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="mt-8 mx-auto max-w-md"
-                    >
-                        <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/40 rounded-2xl p-4 backdrop-blur-sm">
-                            <div className="flex items-center justify-center gap-2 mb-2">
-                                <span className="text-green-400 font-bold text-sm">Alle Funktionen kostenlos verfügbar</span>
-                            </div>
-                            <p className="text-white text-sm leading-relaxed mb-4">
-                                Nutze alle Premium-Features ohne Einschränkungen
-                            </p>
-                            <Button
-                                onClick={handleLogin}
-                                size="lg"
-                                className="w-full bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700 text-white font-bold text-lg shadow-[0_0_20px_rgba(34,211,238,0.5)] hover:shadow-[0_0_30px_rgba(34,211,238,0.7)] transform transition-all hover:scale-105"
-                            >
-                                Jetzt anmelden
-                            </Button>
-                        </div>
-                    </motion.div>
-                </div>
             </div>
 
             <div className="fixed bottom-8 left-8 z-50 flex gap-3">
