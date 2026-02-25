@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -109,53 +108,40 @@ Sei konkret, praktisch und detailliert!`;
         .replace(/\s+/g, ' ')
         .trim();
 
-      const response = await backendTextToSpeech({
+      const { data: response } = await backendTextToSpeech({
         text: cleanText,
         speechRate: 1.0,
         voiceId: "alloy",
         quality: "standard"
-      }, {
-        responseType: 'arraybuffer'
       });
 
-      const contentType = response.headers?.['content-type'] || '';
+      if (response.fallback_to_browser) {
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.lang = 'de-DE';
+        utterance.rate = 1.0;
+        utterance.pitch = 1;
+        utterance.volume = 0.8;
 
-      if (contentType.includes('application/json')) {
-        const decoder = new TextDecoder();
-        const jsonData = JSON.parse(decoder.decode(response.data));
+        utterance.onend = () => setIsReadingAloud(false);
+        utterance.onerror = (e) => {
+          console.error("Browser TTS error:", e);
+          setIsReadingAloud(false);
+          toast.error("Vorlesen via Browser fehlgeschlagen.");
+        };
 
-        if (jsonData.fallback_to_browser) {
-          const utterance = new SpeechSynthesisUtterance(cleanText);
-          utterance.lang = 'de-DE';
-          utterance.rate = 1.0;
-          utterance.pitch = 1;
-          utterance.volume = 0.8;
-
-          utterance.onend = () => setIsReadingAloud(false);
-          utterance.onerror = (e) => {
-            console.error("Browser TTS error:", e);
-            setIsReadingAloud(false);
-            toast.error("Vorlesen via Browser fehlgeschlagen.");
-          };
-
-          window.speechSynthesis.speak(utterance);
-          return;
-        }
+        window.speechSynthesis.speak(utterance);
+        return;
       }
 
-      if (response.data && response.data instanceof ArrayBuffer && response.data.byteLength > 0) {
-        const blob = new Blob([response.data], { type: 'audio/mpeg' });
-        const url = URL.createObjectURL(blob);
-        const audio = new Audio(url);
+      if (response.audio_url) {
+        const audio = new Audio(response.audio_url);
 
         audio.onended = () => {
-          URL.revokeObjectURL(url);
           setIsReadingAloud(false);
         };
 
         audio.onerror = (e) => {
           console.error("Audio playback error:", e);
-          URL.revokeObjectURL(url);
           setIsReadingAloud(false);
           toast.error("Abspielen der Sprachausgabe fehlgeschlagen.");
         };
