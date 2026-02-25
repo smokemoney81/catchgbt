@@ -494,7 +494,7 @@ function LandingPageContent() {
                                 repeat: Infinity,
                                 ease: "easeInOut"
                             }}
-                            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-2xl"
+                            className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-2xl break-words"
                             style={{ 
                                 backgroundSize: '200% auto',
                                 animation: 'gradient-wave 3s ease infinite'
