@@ -1,7 +1,8 @@
 import React from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, Polygon, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { base44 } from "@/api/base44Client";
 
 // Fix default marker icons
 delete L.Icon.Default.prototype._getIconUrl;
@@ -69,17 +70,70 @@ function RecenterMap({ center }) {
   return null;
 }
 
+function WaterBodiesLoader({ onWaterBodiesLoad }) {
+  const map = useMap();
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    const loadWaterBodies = async () => {
+      if (isLoading) return;
+      
+      const bounds = map.getBounds();
+      const payload = {
+        bounds: {
+          north: bounds.getNorth(),
+          south: bounds.getSouth(),
+          east: bounds.getEast(),
+          west: bounds.getWest()
+        }
+      };
+
+      setIsLoading(true);
+      try {
+        const { loadWaterBodies } = await import('@/functions/loadWaterBodies');
+        const response = await loadWaterBodies(payload);
+        if (response.data?.features) {
+          onWaterBodiesLoad(response.data.features);
+        }
+      } catch (error) {
+        console.error('Error loading water bodies:', error);
+      }
+      setIsLoading(false);
+    };
+
+    const handleMoveEnd = () => {
+      const zoom = map.getZoom();
+      if (zoom >= 11) {
+        loadWaterBodies();
+      } else {
+        onWaterBodiesLoad([]);
+      }
+    };
+
+    map.on('moveend', handleMoveEnd);
+    handleMoveEnd();
+
+    return () => {
+      map.off('moveend', handleMoveEnd);
+    };
+  }, [map, onWaterBodiesLoad]);
+
+  return null;
+}
+
 export default function MapView({
   center,
   zoom,
   spots,
   fishingClubs,
+  waterBodies = [],
   currentLocation,
   newSpotMarker,
   onMapClick,
   onLocationClick,
   onSpotClick,
-  onClubClick
+  onClubClick,
+  onWaterBodiesLoad
 }) {
   if (!center) {
     return (
@@ -103,6 +157,55 @@ export default function MapView({
 
       <MapEvents onMapClick={onMapClick} />
       <RecenterMap center={center} />
+      {onWaterBodiesLoad && <WaterBodiesLoader onWaterBodiesLoad={onWaterBodiesLoad} />}
+
+      {/* Water Bodies */}
+      {waterBodies.map((feature, idx) => {
+        const { geometry, properties } = feature;
+        const isRiver = properties.typ === 'river' || properties.typ === 'canal';
+        
+        if (isRiver && geometry.type === 'LineString') {
+          return (
+            <Polyline
+              key={`water_${idx}`}
+              positions={geometry.coordinates.map(c => [c[1], c[0]])}
+              color="#3b82f6"
+              weight={3}
+              opacity={0.6}
+            >
+              <Popup>
+                <div className="text-sm">
+                  <strong>{properties.name}</strong>
+                  <p className="text-xs text-gray-600 mt-1">
+                    {properties.typ === 'river' ? 'Fluss' : 'Kanal'}
+                  </p>
+                </div>
+              </Popup>
+            </Polyline>
+          );
+        } else if (geometry.type === 'Polygon') {
+          return (
+            <Polygon
+              key={`water_${idx}`}
+              positions={geometry.coordinates[0].map(c => [c[1], c[0]])}
+              color="#3b82f6"
+              fillColor="#3b82f6"
+              fillOpacity={0.3}
+              weight={2}
+            >
+              <Popup>
+                <div className="text-sm">
+                  <strong>{properties.name}</strong>
+                  <p className="text-xs text-gray-600 mt-1">
+                    {properties.typ === 'lake' ? 'See' : properties.typ === 'reservoir' ? 'Stausee' : 'Gewässer'}
+                  </p>
+                </div>
+              </Popup>
+            </Polygon>
+          );
+        }
+        return null;
+      })}
 
       {/* Current Location */}
       {currentLocation && currentLocation.lat != null && currentLocation.lon != null && (

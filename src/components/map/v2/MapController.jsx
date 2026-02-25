@@ -18,6 +18,7 @@ export default function MapController() {
 
   const [spots, setSpots] = useState([]);
   const [fishingClubs, setFishingClubs] = useState([]);
+  const [waterBodies, setWaterBodies] = useState([]);
   const [mapCenter, setMapCenter] = useState(null);
   const [mapZoom, setMapZoom] = useState(13);
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -30,7 +31,8 @@ export default function MapController() {
   const [filters, setFilters] = useState({
     spots: true,
     clubs: true,
-    parks: true
+    parks: true,
+    waters: true
   });
 
   useEffect(() => {
@@ -139,6 +141,7 @@ export default function MapController() {
     if (fc.category === 'spot') return filters.parks;
     return false;
   });
+  const filteredWaters = filters.waters ? waterBodies : [];
 
   if (loading || !isInitialized || !mapCenter) {
     return (
@@ -231,6 +234,15 @@ export default function MapController() {
               />
               <span className="text-xs text-white">Angelparks</span>
             </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={filters.waters}
+                onChange={(e) => setFilters({ ...filters, waters: e.target.checked })}
+                className="w-3.5 h-3.5"
+              />
+              <span className="text-xs text-white">Gewässer (OSM)</span>
+            </div>
           </div>
         )}
       </div>
@@ -292,12 +304,14 @@ export default function MapController() {
           zoom={mapZoom}
           spots={filteredSpots}
           fishingClubs={filteredClubs}
+          waterBodies={filteredWaters}
           currentLocation={currentLocation}
           newSpotMarker={newSpotCoords}
           onMapClick={handleMapClick}
           onLocationClick={handleLocationClick}
           onSpotClick={(spot) => handleLocationClick(spot, 'spot')}
           onClubClick={(club) => handleLocationClick(club, 'club')}
+          onWaterBodiesLoad={setWaterBodies}
         />
 
         {/* Location Detail Panel */}
