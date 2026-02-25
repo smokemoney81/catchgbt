@@ -5,6 +5,7 @@ Deno.serve((req) => {
         const iconBaseUrl = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68bb3d3b9f83dc1f55ef532b';
         
         const manifest = {
+            "id": "com.catchgbt.fishing.assistant.v3",
             "name": "CatchGBT - Dein KI Angel-Assistent von Sebastian Schorn",
             "short_name": "CatchGBT",
             "description": "Angel-App mit KI-Assistent. Finde die besten Angelplätze, erhalte intelligente Tipps und dokumentiere deine Fänge!",
