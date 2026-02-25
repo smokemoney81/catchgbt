@@ -36,7 +36,7 @@ function FeatureHints() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className="flex items-center justify-center gap-3 text-white/70"
+      className="flex items-center justify-start gap-3 text-white/70"
     >
       <Feature.icon className="w-5 h-5 text-cyan-400" />
       <p className="text-sm font-medium">{Feature.text}</p>
@@ -495,7 +495,7 @@ function LandingPageContent() {
             </div>
 
             <motion.div 
-                className="fixed top-[35%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 px-4 flex flex-col items-center gap-8 max-w-md w-full"
+                className="fixed top-[38%] left-[30%] -translate-x-1/2 -translate-y-1/2 z-40 px-4 flex flex-col items-start gap-8 max-w-md"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
