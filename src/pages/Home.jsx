@@ -3,11 +3,46 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
-import { Camera } from 'lucide-react';
+import { Camera, Fish, Map, Cloud, Brain, Award, Compass } from 'lucide-react';
 import { toast } from 'sonner';
 import LanguageSwitcher from '@/components/i18n/LanguageSwitcher';
 import { LanguageProvider, useLanguage } from '@/components/i18n/LanguageContext';
 import TutorialModal from '@/components/tutorial/TutorialModal';
+
+const features = [
+  { icon: Fish, text: 'KI-Fischidentifikation aus Fotos' },
+  { icon: Map, text: 'Interaktive Gewasserkarte mit Binnengewassern' },
+  { icon: Cloud, text: 'Echtzeit-Wetteranalyse fur Angelspots' },
+  { icon: Brain, text: 'KI-Fangberatung mit personlichen Tipps' },
+  { icon: Award, text: 'Ranglisten und Community-Wettbewerbe' },
+  { icon: Compass, text: 'GPS-Navigation zu deinen Lieblingsplatzen' },
+];
+
+function FeatureHints() {
+  const [currentFeature, setCurrentFeature] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentFeature(prev => (prev + 1) % features.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const Feature = features[currentFeature];
+
+  return (
+    <motion.div 
+      key={currentFeature}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      className="flex items-center justify-center gap-3 text-white/70"
+    >
+      <Feature.icon className="w-5 h-5 text-cyan-400" />
+      <p className="text-sm font-medium">{Feature.text}</p>
+    </motion.div>
+  );
+}
 
 function LandingPageContent() {
     const [tutorialOpen, setTutorialOpen] = useState(false);
@@ -504,6 +539,10 @@ function LandingPageContent() {
                         </motion.span>
                     </motion.div>
                 </a>
+
+                <div className="mt-8">
+                    <FeatureHints />
+                </div>
             </motion.div>
 
             <div className="fixed bottom-8 left-8 z-50 flex gap-3">
