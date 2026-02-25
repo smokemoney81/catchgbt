@@ -25,7 +25,7 @@ const playAudio = async (audioData) => {
   }
 };
 
-const playTextWithBrowserTTS = (text) => {
+const playTextWithBrowserTTS = (text, lang = 'de-DE') => {
   return new Promise((resolve) => {
     if (typeof window === "undefined" || !window.speechSynthesis) {
       console.log('[TTS] Browser TTS not available');
@@ -34,39 +34,56 @@ const playTextWithBrowserTTS = (text) => {
 
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'de-DE';
-    utterance.rate = 1.0;
-    utterance.pitch = 1;
-    utterance.volume = 1.0;
+    const chunks = text.match(/[^.!?]+[.!?]+/g) || [text];
+    let currentChunk = 0;
 
-    const setVoice = () => {
-      const voices = window.speechSynthesis.getVoices();
-      const germanVoice = voices.find(voice => voice.lang.startsWith('de'));
-      if (germanVoice) {
-        utterance.voice = germanVoice;
+    const speakChunk = () => {
+      if (currentChunk >= chunks.length) {
+        console.log('[TTS] All chunks completed');
+        return resolve();
       }
-    };
 
-    if (window.speechSynthesis.getVoices().length > 0) {
-      setVoice();
-    } else {
-      window.speechSynthesis.onvoiceschanged = setVoice;
-    }
+      const utterance = new SpeechSynthesisUtterance(chunks[currentChunk].trim());
+      utterance.lang = lang;
+      utterance.rate = 1.1;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
 
-    utterance.onend = () => {
-      console.log('[TTS] Browser TTS finished');
-      resolve();
-    };
-    utterance.onerror = (error) => {
-      console.error('[TTS] Browser TTS error:', error);
-      resolve();
-    };
+      const setVoice = () => {
+        const voices = window.speechSynthesis.getVoices();
+        const targetLang = lang.split('-')[0];
+        const preferredVoice = voices.find(voice => 
+          voice.lang.startsWith(targetLang) && 
+          (voice.name.includes('Google') || voice.name.includes('Enhanced'))
+        ) || voices.find(voice => voice.lang.startsWith(targetLang));
+        
+        if (preferredVoice) {
+          utterance.voice = preferredVoice;
+        }
+      };
 
-    setTimeout(() => {
-      console.log('[TTS] Starting browser TTS');
+      if (window.speechSynthesis.getVoices().length > 0) {
+        setVoice();
+      } else {
+        window.speechSynthesis.onvoiceschanged = setVoice;
+      }
+
+      utterance.onend = () => {
+        currentChunk++;
+        setTimeout(speakChunk, 200);
+      };
+
+      utterance.onerror = (error) => {
+        console.error('[TTS] Chunk error:', error);
+        currentChunk++;
+        setTimeout(speakChunk, 200);
+      };
+
+      console.log(`[TTS] Speaking chunk ${currentChunk + 1}/${chunks.length}`);
       window.speechSynthesis.speak(utterance);
-    }, 100);
+    };
+
+    speakChunk();
   });
 };
 
@@ -84,7 +101,7 @@ const tutorialSteps = {
     },
     {
       title: "Fangbuch mit KI-Analyse",
-      content: "Logge deine Fänge mit Fotos, GPS-Position, Größe und Gewicht. Die KI analysiert automatisch Fischart, Gesundheit und gibt Tipps. EXIF-Daten werden ausgelesen und der nächste Spot wird vorgeschlagen. Alle Fänge in deiner persönlichen Historie!",
+      content: "Logge deine Fänge direkt vom Homescreen mit der Kamera! Tippe auf den orangenen Kamera-Button, mache ein Foto und die KI analysiert automatisch Fischart, Größe und Gesundheit. EXIF-Daten werden ausgelesen, GPS-Position erkannt und der nächste Spot vorgeschlagen. Alle Fänge in deiner persönlichen Historie!",
       image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=1200&auto=format&fit=crop"
     },
     {
@@ -206,7 +223,7 @@ const tutorialSteps = {
     },
     {
       title: "Logbook with AI Analysis",
-      content: "Log your catches with photos, GPS position, size, and weight. AI automatically analyzes species, health, and gives tips. EXIF data is read out and the nearest spot is suggested. All catches in your personal history!",
+      content: "Log your catches directly from the homescreen with the camera! Tap the orange camera button, take a photo and AI automatically analyzes species, size, and health. EXIF data is read, GPS position detected, and nearest spot suggested. All catches in your personal history!",
       image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=1200&auto=format&fit=crop"
     },
     {
@@ -361,9 +378,10 @@ export default function TutorialModal({ isOpen, onClose }) {
     try {
       const step = steps[stepIndex];
       const text = `${step.title}. ${step.content}`;
+      const lang = language === 'en' ? 'en-US' : 'de-DE';
 
       console.log('[Tutorial TTS] Starting speech for step:', stepIndex);
-      await playTextWithBrowserTTS(text);
+      await playTextWithBrowserTTS(text, lang);
       console.log('[Tutorial TTS] Speech completed');
     } catch (error) {
       console.error('[Tutorial TTS] Error:', error);
