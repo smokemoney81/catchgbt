@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import PremiumGuard from "@/components/premium/PremiumGuard";
@@ -269,7 +268,7 @@ Sei konkret, praxisnah und berechne die optimale Mischung!`;
   }
 
   return (
-    <PremiumGuard user={user} requiredPlan="ultimate" feature="KI-Köder-Mischer">
+    <PremiumGuard user={user} requiredPlan="basic" feature="KI-Köder-Mischer">
       <div className="min-h-screen bg-gray-950 p-6 pb-32">
         <div className="max-w-7xl mx-auto space-y-6">
           

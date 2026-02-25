@@ -52,8 +52,8 @@ export default function WaterAnalysisPage() {
   return (
     <PremiumGuard 
       user={user} 
-      requiredPlan="ultimate"
-      feature="Satelliten-Gewässeranalyse ist ein Ultimate Feature"
+      requiredPlan="basic"
+      feature="Satelliten-Gewässeranalyse"
     >
       <div className="min-h-screen bg-gray-950 p-4 pb-32">
         <div className="max-w-7xl mx-auto">

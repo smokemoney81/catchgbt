@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import ARWater3D from '@/components/ar/ARWater3D';
 import ARTutorial from '@/components/ar/ARTutorial';
@@ -22,8 +21,8 @@ export default function ARView() {
   return (
     <PremiumGuard 
       user={user} 
-      requiredPlan="ultimate"
-      feature="Die AR-Gewässer-Analyse ist ein Ultimate-Feature"
+      requiredPlan="elite"
+      feature="AR-Gewässer-Analyse"
     >
       <div className="min-h-screen bg-gray-950">
         <ARWater3D />
