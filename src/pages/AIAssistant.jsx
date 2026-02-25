@@ -192,7 +192,7 @@ Verwende Emojis sparsam aber gezielt für bessere Lesbarkeit.`,
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 pb-32">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 pb-40">
       <div className="max-w-5xl mx-auto">
         
         <div className="sticky top-0 z-10 backdrop-blur-xl bg-gray-950/80 border-b border-gray-800/50">
