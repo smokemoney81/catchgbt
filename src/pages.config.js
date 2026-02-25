@@ -53,6 +53,7 @@ import AIAssistant from './pages/AIAssistant';
 import AIPage from './pages/AIPage';
 import ARView from './pages/ARView';
 import Analysis from './pages/Analysis';
+import AngelscheinPruefungSchonzeiten from './pages/AngelscheinPruefungSchonzeiten';
 import BaitMixer from './pages/BaitMixer';
 import CatchCam from './pages/CatchCam';
 import Community from './pages/Community';
@@ -87,7 +88,6 @@ import UsedGear from './pages/UsedGear';
 import VoiceControl from './pages/VoiceControl';
 import WaterAnalysis from './pages/WaterAnalysis';
 import Weather from './pages/Weather';
-import AngelscheinPruefungSchonzeiten from './pages/AngelscheinPruefungSchonzeiten';
 import __Layout from './Layout.jsx';
 
 
@@ -98,6 +98,7 @@ export const PAGES = {
     "AIPage": AIPage,
     "ARView": ARView,
     "Analysis": Analysis,
+    "AngelscheinPruefungSchonzeiten": AngelscheinPruefungSchonzeiten,
     "BaitMixer": BaitMixer,
     "CatchCam": CatchCam,
     "Community": Community,
@@ -132,7 +133,6 @@ export const PAGES = {
     "VoiceControl": VoiceControl,
     "WaterAnalysis": WaterAnalysis,
     "Weather": Weather,
-    "AngelscheinPruefungSchonzeiten": AngelscheinPruefungSchonzeiten,
 }
 
 export const pagesConfig = {
