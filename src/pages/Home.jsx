@@ -495,13 +495,20 @@ function LandingPageContent() {
             </div>
 
             <motion.div 
-                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 px-4 flex flex-col items-center gap-6"
+                className="fixed top-[35%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 px-4 flex flex-col items-center gap-8 max-w-md w-full"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
             >
                 <FeatureHints />
+            </motion.div>
 
+            <motion.div 
+                className="fixed bottom-[35%] left-1/2 -translate-x-1/2 z-40 px-4"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+            >
                 <a
                     href="https://catchgbt-q7scna.manus.space"
                     target="_blank"
