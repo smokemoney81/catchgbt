@@ -38,27 +38,48 @@ export function getRequiredPlan(featureId) {
     // Free
     'dashboard': 'free',
     'logbook': 'free',
-    'ranking': 'free',
-    'community': 'free',
+    'catch_book': 'free',
+    'maps_basic': 'free',
+    'ai_buddy_basic': 'free',
+    'weather_basic': 'free',
+    'species_marking': 'free',
+    'tutorials': 'free',
+    'notes_photos': 'free',
     
-    // Basic
-    'map_advanced': 'basic',
-    'rules': 'basic',
-    'trips': 'basic',
-    'ai_chat_standard': 'basic',
+    // Basic (4.99)
+    'weather_extended': 'basic',
+    'ai_buddy_ar_elements': 'basic',
+    'satellite_images': 'basic',
+    'hidden_hotspots': 'basic',
+    'bait_recommendations': 'basic',
+    'statistics_filter': 'basic',
+    'water_analysis': 'basic',
+    'bait_mixer': 'basic',
     
-    // Pro
+    // Pro (9.99)
+    'ar_buddy_full': 'pro',
+    'gps_heatmaps': 'pro',
+    'catch_predictions': 'pro',
+    'bluetooth_devices': 'pro',
+    'advanced_reports': 'pro',
+    'premium_tutorials': 'pro',
+    'offline_maps': 'pro',
+    'catch_export': 'pro',
+    'community_ranking': 'pro',
     'licenses': 'pro',
     'devices': 'pro',
-    'ai_chat_deluxe': 'pro',
     'exam_prep': 'pro',
     
-    // Elite
+    // Elite (19.99)
+    'ar_live_paths': 'elite',
+    'individual_spot_analysis': 'elite',
+    'shop_full': 'elite',
+    'boosts_events': 'elite',
+    'pro_statistics': 'elite',
+    'priority_sync': 'elite',
     'camera_analysis': 'elite',
     'bite_detector': 'elite',
-    'ai_chat_deluxe_detailed': 'elite',
-    'ar_full': 'elite',
-    'shop_full': 'elite'
+    'ar_water': 'elite'
   };
   
   return featureMap[featureId] || 'free';
