@@ -36,10 +36,12 @@ function FeatureHints() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className="flex items-center justify-start gap-3 text-white/70"
+      className="flex items-center justify-start gap-4"
     >
-      <Feature.icon className="w-5 h-5 text-cyan-400" />
-      <p className="text-sm font-medium">{Feature.text}</p>
+      <Feature.icon className="w-8 h-8 text-cyan-400" />
+      <p className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+        {Feature.text}
+      </p>
     </motion.div>
   );
 }
