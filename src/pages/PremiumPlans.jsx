@@ -146,65 +146,73 @@ export default function PremiumPlans() {
   const plans = [
     {
       id: 'free',
-      name: 'Kostenlos',
+      name: 'Free',
       price: 0,
       icon: Check,
       color: 'from-gray-600 to-gray-700',
       features: [
-        'Dashboard & Fangbuch',
-        'Ranking & Community',
-        'Wetter (Basis)',
-        'Arcade & Ausrüstung',
-        'Profil & Einstellungen'
+        'Digitales Fangbuch',
+        'GPS-Karten (Basisansicht)',
+        'KI-Buddy: Tipps zu Lieblingsplätzen',
+        'Wetteranzeige (1 Tag, 3h)',
+        'Markierung gefangener Arten',
+        'Tutorials & Knotentechniken',
+        'Offline-Lehrmaterialien',
+        'Personalisierte Notizen & Fotos'
       ]
     },
     {
       id: 'basic',
       name: 'Basic',
-      price: 10,
+      price: 4.99,
       icon: Zap,
       color: 'from-blue-600 to-blue-700',
       popular: false,
       features: [
-        'Alle Free-Funktionen',
-        'Spots & Karte (erweitert)',
-        'Regelwerk',
-        'Meine Trips',
-        'KI Chat-Buddy (Standard)',
-        'KI Sprache (Standard)'
+        'Alles aus Free Plan',
+        'Erweiterte Wetterdaten (3 Tage)',
+        'KI-Buddy AR-Elemente',
+        'Satellitenbilder & Angelkarten',
+        'Verborgene Hotspots',
+        'Köderwahl & Technikempfehlungen',
+        'Filterung von Statistiken'
       ]
     },
     {
       id: 'pro',
       name: 'Pro',
-      price: 19,
+      price: 9.99,
       icon: Star,
       color: 'from-purple-600 to-purple-700',
       popular: true,
       features: [
-        'Alle Basic-Funktionen',
-        'Angelschein-Verwaltung',
-        'Geräte-Integration',
-        'Angelschein-Prüfung',
-        'KI Chat-Buddy (Deluxe)',
-        'KI Sprache (Deluxe)'
+        'Alles aus Basic Plan',
+        'AR-KI-Buddy vollständig',
+        'GPS-Heatmaps & Fangprognosen',
+        'Bluetooth-Geräte verbinden',
+        'Erweiterte Fangberichte',
+        'Premium Tutorials & Videos',
+        'Offline-Karten & Hotspots',
+        'Fang-Export & Share',
+        'Community-Ranking & Punkte'
       ]
     },
     {
-      id: 'ultimate',
-      name: 'Ultimate',
-      price: 29,
+      id: 'elite',
+      name: 'Elite',
+      price: 19.99,
       icon: Crown,
       color: 'from-amber-600 to-orange-600',
       popular: false,
       features: [
-        'Alle Pro-Funktionen',
-        'AR-Gewässer-Analyse (3D)',
-        'KI Chat-Buddy (sehr ausführlich)',
-        'KI Sprache (Deluxe HD)',
-        'KI-Kamera-Analyse',
-        'Intelligenter Bissanzeiger',
-        'Prioritäts-Support'
+        'Alles aus Pro Plan',
+        'Voller AR-Buddy: Live-Pfad-Markierungen',
+        'Individuelle Spot-Analysen',
+        'Voller Zugriff auf Shop & Kosmetik',
+        'Boosts & Event-Boni',
+        'Profi-Statistiken: Zeitreihen, Trends',
+        'Priorisierte Cloud-Synchronisation',
+        'Exklusive Elite-Only Features'
       ]
     }
   ];
