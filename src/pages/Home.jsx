@@ -459,6 +459,39 @@ function LandingPageContent() {
 
             </div>
 
+            <motion.div 
+                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+            >
+                <a
+                    href="https://catchgbt-q7scna.manus.space"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-center"
+                >
+                    <motion.span
+                        animate={{
+                            scale: [1, 1.05, 1],
+                            textShadow: [
+                                '0 0 20px rgba(34, 211, 238, 0.8)',
+                                '0 0 40px rgba(16, 185, 129, 0.8)',
+                                '0 0 20px rgba(34, 211, 238, 0.8)'
+                            ]
+                        }}
+                        transition={{
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                        }}
+                        className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent"
+                    >
+                        Catchgbt-q7scna.manus.space
+                    </motion.span>
+                </a>
+            </motion.div>
+
             <div className="fixed bottom-8 left-8 z-50 flex gap-3">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
@@ -496,6 +529,37 @@ function LandingPageContent() {
                     </button>
                 </motion.div>
             </div>
+
+            <motion.div
+                className="fixed bottom-8 right-8 z-50"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+            >
+                <motion.button
+                    onClick={() => {
+                        if (confirm('Notruf 112 waehlen?')) {
+                            window.location.href = 'tel:112';
+                        }
+                    }}
+                    animate={{
+                        scale: [1, 1.1, 1],
+                        boxShadow: [
+                            '0 0 20px rgba(239, 68, 68, 0.6)',
+                            '0 0 40px rgba(239, 68, 68, 0.8)',
+                            '0 0 20px rgba(239, 68, 68, 0.6)'
+                        ]
+                    }}
+                    transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                    }}
+                    className="w-20 h-20 rounded-full bg-gradient-to-br from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white font-bold text-2xl shadow-lg transform transition-all hover:scale-110 flex items-center justify-center"
+                >
+                    SOS
+                </motion.button>
+            </motion.div>
 
             <TutorialModal isOpen={tutorialOpen} onClose={() => setTutorialOpen(false)} />
 
