@@ -108,49 +108,59 @@ Sei konkret, praktisch und detailliert!`;
         .replace(/\s+/g, ' ')
         .trim();
 
-      const { data: response } = await backendTextToSpeech({
+      const response = await backendTextToSpeech({
         text: cleanText,
         speechRate: 1.0,
         voiceId: "alloy",
         quality: "standard"
       });
 
-      if (response.fallback_to_browser) {
-        const utterance = new SpeechSynthesisUtterance(cleanText);
-        utterance.lang = 'de-DE';
-        utterance.rate = 1.0;
-        utterance.pitch = 1;
-        utterance.volume = 0.8;
+      const contentType = response.headers?.get?.('content-type') || response.headers?.['content-type'] || '';
 
-        utterance.onend = () => setIsReadingAloud(false);
-        utterance.onerror = (e) => {
-          console.error("Browser TTS error:", e);
-          setIsReadingAloud(false);
-          toast.error("Vorlesen via Browser fehlgeschlagen.");
-        };
+      if (contentType.includes('application/json')) {
+        const jsonData = response.data;
+        
+        if (jsonData.fallback_to_browser) {
+          const utterance = new SpeechSynthesisUtterance(cleanText);
+          utterance.lang = 'de-DE';
+          utterance.rate = 1.0;
+          utterance.pitch = 1;
+          utterance.volume = 0.8;
 
-        window.speechSynthesis.speak(utterance);
-        return;
+          utterance.onend = () => setIsReadingAloud(false);
+          utterance.onerror = (e) => {
+            console.error("Browser TTS error:", e);
+            setIsReadingAloud(false);
+            toast.error("Vorlesen fehlgeschlagen");
+          };
+
+          window.speechSynthesis.speak(utterance);
+          return;
+        }
       }
 
-      if (response.audio_url) {
-        const audio = new Audio(response.audio_url);
+      if (contentType.includes('audio/mpeg')) {
+        const blob = new Blob([response.data], { type: 'audio/mpeg' });
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
 
         audio.onended = () => {
+          URL.revokeObjectURL(url);
           setIsReadingAloud(false);
         };
 
         audio.onerror = (e) => {
           console.error("Audio playback error:", e);
+          URL.revokeObjectURL(url);
           setIsReadingAloud(false);
-          toast.error("Abspielen der Sprachausgabe fehlgeschlagen.");
+          toast.error("Abspielen fehlgeschlagen");
         };
 
         await audio.play();
       } else {
-        console.warn("No audio data received from backend.");
+        console.warn("Unexpected content type:", contentType);
         setIsReadingAloud(false);
-        toast.error("Keine Audiodaten erhalten.");
+        toast.error("Unerwartetes Datenformat");
       }
 
     } catch (error) {
