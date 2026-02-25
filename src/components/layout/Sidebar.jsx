@@ -61,7 +61,6 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
     { name: "KI-Köder-Mischer", path: "BaitMixer", key: "nav.bait_mixer", indent: true },
     
     { name: "Ausrüstung", path: "Gear", key: "nav.gear" },
-    { name: "Gebrauchtmarkt", path: "UsedGear", key: "Gebrauchtmarkt", isBeta: true },
     { name: "Meine Trips", path: "TripPlanner", key: "nav.trips" },
     { name: "Community", path: "Community", key: "nav.community", isBeta: true },
     { name: "Prüfung & Schonzeiten", path: "AngelscheinPruefungSchonzeiten", key: "nav.exam" },
