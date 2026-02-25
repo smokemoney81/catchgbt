@@ -70,6 +70,7 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
     { name: "Premium", path: "PremiumPlans", key: "nav.premium" },
     { name: "Einstellungen", path: "Settings", key: "nav.settings" },
     { name: "Profil", path: "Profile", key: "nav.profile" },
+    { name: "Datenschutz", path: "Datenschutz", key: "Datenschutz" },
   ];
 
   const handleClose = () => {
