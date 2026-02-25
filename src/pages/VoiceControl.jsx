@@ -569,7 +569,7 @@ function VoiceBuddy() {
       if (!isWaitingForCommandRef.current && fullText.includes(WAKE_WORD)) {
         isWaitingForCommandRef.current = true;
         setStatus('listening');
-        speak('Ja, bitte?', { rate: 1.2 });
+        await speak('Ja, bitte?', { rate: 1.2 });
         setTranscript('');
         return;
       }
@@ -588,23 +588,29 @@ function VoiceBuddy() {
         const tip = await generateTip(parsed);
         setLastTip(tip);
         
-        speak(tip, { rate: 1.0 }).then(() => {
-          setIsSpeaking(false);
-          setStatus('idle');
-          isWaitingForCommandRef.current = false;
-          setTranscript('');
-        });
+        await speak(tip, { rate: 1.0 });
+        setIsSpeaking(false);
+        setStatus('waiting');
+        isWaitingForCommandRef.current = false;
+        setTranscript('');
       }
     };
 
     recognition.onerror = (event) => {
       console.error('Speech recognition error:', event.error);
-      if (event.error === 'not-allowed') {
+      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
         setError('Mikrofon-Zugriff verweigert. Bitte erlaube den Zugriff in den Browser-Einstellungen.');
+        setIsListening(false);
       } else if (event.error === 'no-speech') {
-        setStatus('idle');
+        // Ignoriere "no-speech" Fehler, lass es einfach weiterlaufen
+        console.log('No speech detected, continuing...');
+      } else if (event.error === 'audio-capture') {
+        setError('Kein Mikrofon gefunden. Bitte verbinde ein Mikrofon.');
+        setIsListening(false);
+      } else if (event.error === 'network') {
+        console.log('Network error, restarting...');
       } else {
-        setError(`Fehler: ${event.error}`);
+        console.warn(`Speech recognition error: ${event.error}`);
       }
     };
 
@@ -626,6 +632,16 @@ function VoiceBuddy() {
   const startListening = async () => {
     try {
       setError(null);
+      
+      // Prüfe Mikrofon-Berechtigung
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(track => track.stop());
+      } catch (permError) {
+        setError('Mikrofon-Zugriff verweigert. Bitte erlaube den Zugriff.');
+        return;
+      }
+      
       recognitionRef.current.start();
       setIsListening(true);
       setStatus('waiting');
@@ -634,7 +650,21 @@ function VoiceBuddy() {
       });
     } catch (err) {
       console.error('Error starting recognition:', err);
-      setError('Konnte Spracherkennung nicht starten');
+      if (err.name === 'InvalidStateError') {
+        // Recognition läuft bereits, stoppe und starte neu
+        try {
+          recognitionRef.current.stop();
+          setTimeout(() => {
+            recognitionRef.current.start();
+            setIsListening(true);
+            setStatus('waiting');
+          }, 100);
+        } catch (restartErr) {
+          setError('Konnte Spracherkennung nicht neu starten');
+        }
+      } else {
+        setError('Konnte Spracherkennung nicht starten');
+      }
     }
   };
 

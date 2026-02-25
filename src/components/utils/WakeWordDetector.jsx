@@ -229,11 +229,20 @@ export class WakeWordDetector {
 
       this.recognition.onend = () => {
         if (this.isListening && this.currentMode === 'online') {
-          try {
-            this.recognition.start();
-          } catch (error) {
-            console.log('Could not restart recognition:', error.message);
-          }
+          setTimeout(() => {
+            try {
+              if (this.recognition && this.isListening) {
+                this.recognition.start();
+              }
+            } catch (error) {
+              console.log('Could not restart recognition:', error.message);
+              if (error.message.includes('already started')) {
+                // Recognition läuft bereits, ignoriere
+                return;
+              }
+              this.broadcastStatusChange('error', 'Recognition ended unexpectedly');
+            }
+          }, 100);
         }
       };
 
