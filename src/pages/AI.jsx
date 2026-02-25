@@ -18,17 +18,11 @@ export default function AI() {
     loadUser();
   }, []);
 
-  // Pro oder Ultimate Plan erforderlich
-  const hasAccess = user && (
-    user.premium_plan_id === 'pro' || 
-    user.premium_plan_id === 'ultimate'
-  );
-
   return (
     <PremiumGuard 
       user={user} 
-      requiredPlan="pro"
-      feature="KI-Kamera & Bissanzeiger sind Premium-Features"
+      requiredPlan="elite"
+      feature="KI-Kamera & Bissanzeiger"
     >
       <div className="min-h-screen bg-gray-950 p-6 pb-32">
         <div className="max-w-4xl mx-auto space-y-8">
