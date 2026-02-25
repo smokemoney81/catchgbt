@@ -5,6 +5,8 @@ import { createPageUrl } from "@/utils";
 import WakeWordIndicator from "@/components/header/WakeWordIndicator";
 import MiniKarte from "@/components/home/MiniKarte";
 import MiniKiBuddy from "@/components/home/MiniKiBuddy";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -21,6 +23,9 @@ export default function Dashboard() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullStart, setPullStart] = useState(0);
   const [pullDistance, setPullDistance] = useState(0);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [aiAnalysis, setAiAnalysis] = useState(null);
+  const [showAnalysis, setShowAnalysis] = useState(false);
 
   useEffect(() => {
     const cleanupSessions = async () => {
@@ -216,6 +221,69 @@ export default function Dashboard() {
     return greetings[randomIndex];
   };
 
+  const handleAiAnalysis = async () => {
+    setIsAnalyzing(true);
+    try {
+      const savedLocation = localStorage.getItem("fm_current_location");
+      let location = null;
+      
+      if (savedLocation) {
+        try {
+          location = JSON.parse(savedLocation);
+        } catch (e) {
+          console.error('Location parse error:', e);
+        }
+      }
+
+      if (!location || !location.lat || !location.lon) {
+        toast.error("Kein Standort verfuegbar. Bitte Standort aktivieren.");
+        setIsAnalyzing(false);
+        return;
+      }
+
+      const weatherData = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,surface_pressure,wind_speed_10m,wind_direction_10m,cloud_cover&hourly=temperature_2m,precipitation_probability&timezone=auto&forecast_days=1`
+      ).then(res => res.json());
+
+      const prompt = `Du bist ein erfahrener Angel-Experte. Analysiere die aktuellen Bedingungen am Standort und gib konkrete Angel-Tipps.
+
+Aktueller Standort: ${location.lat.toFixed(4)}, ${location.lon.toFixed(4)}
+
+Wetterbedingungen:
+- Temperatur: ${weatherData.current?.temperature_2m}°C
+- Luftfeuchtigkeit: ${weatherData.current?.relative_humidity_2m}%
+- Luftdruck: ${weatherData.current?.surface_pressure} hPa
+- Windgeschwindigkeit: ${weatherData.current?.wind_speed_10m} m/s
+- Windrichtung: ${weatherData.current?.wind_direction_10m}°
+- Bewoelkung: ${weatherData.current?.cloud_cover}%
+- Niederschlag: ${weatherData.current?.precipitation} mm
+
+Bitte gib folgende Analyse:
+1. Gesamteinschaetzung der Angelbedingungen (0-10 Punkte)
+2. Welche Fischarten sind jetzt aktiv?
+3. Empfohlene Angeltiefe und Spot-Charakteristik
+4. Beste Koederwahl fuer diese Bedingungen
+5. Taktik-Tipps (aktiv oder passiv angeln?)
+6. Optimale Tageszeit heute
+
+Antworte kurz und praegnant in max 6 Saetzen.`;
+
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: prompt,
+        add_context_from_internet: false
+      });
+
+      setAiAnalysis(response);
+      setShowAnalysis(true);
+      toast.success("KI-Analyse abgeschlossen");
+    } catch (error) {
+      console.error("KI-Analyse Fehler:", error);
+      toast.error("KI-Analyse fehlgeschlagen");
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
@@ -246,7 +314,22 @@ export default function Dashboard() {
       
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-12">
 
-        <div className="flex items-end justify-end border-b border-gray-800/50 pb-6">
+        <div className="flex items-center justify-between border-b border-gray-800/50 pb-6">
+          <Button
+            onClick={handleAiAnalysis}
+            disabled={isAnalyzing}
+            className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium shadow-lg hover:shadow-xl transition-all"
+          >
+            {isAnalyzing ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>Analysiere...</span>
+              </>
+            ) : (
+              <span>KI Standort-Analyse</span>
+            )}
+          </Button>
+          
           <button
             onClick={() => {
               const event = new CustomEvent('toggle-voice-control');
@@ -266,6 +349,21 @@ export default function Dashboard() {
             />
           </button>
         </div>
+
+        {showAnalysis && aiAnalysis && (
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-sm p-6 border border-purple-500/30 shadow-2xl">
+            <button
+              onClick={() => setShowAnalysis(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+            >
+              ✕
+            </button>
+            <h3 className="text-lg font-bold text-purple-300 mb-4">KI Angel-Analyse</h3>
+            <div className="text-gray-200 whitespace-pre-wrap leading-relaxed">
+              {aiAnalysis}
+            </div>
+          </div>
+        )}
 
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-900/40 backdrop-blur-sm border border-gray-800/50">
           <MiniKiBuddy />
