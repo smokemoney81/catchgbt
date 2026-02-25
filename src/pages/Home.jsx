@@ -504,7 +504,7 @@ function LandingPageContent() {
             </motion.div>
 
             <motion.div 
-                className="fixed bottom-[35%] left-1/2 -translate-x-1/2 z-40 px-4"
+                className="fixed bottom-[35%] left-[30%] -translate-x-1/2 z-40 px-4"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
@@ -513,7 +513,7 @@ function LandingPageContent() {
                     href="https://catchgbt-q7scna.manus.space"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-center"
+                    className="block text-left"
                 >
                     <motion.div
                         animate={{
