@@ -304,42 +304,23 @@ export default function PremiumPlans() {
                       Kostenlos nutzen
                     </Button>
                   ) : (
-                    <div className="space-y-3">
-                      <div className="text-xs text-gray-400 text-center font-semibold">
-                        Zahlungsmethode wählen:
-                      </div>
-
-                      {/* Stripe Button */}
-                      <Button
-                        onClick={() => handleStripeCheckout(plan.id)}
-                        disabled={isProcessing}
-                        className={`w-full bg-gradient-to-r ${plan.color} hover:opacity-90 flex items-center justify-center gap-2`}
-                      >
-                        {isProcessing ? (
-                          <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                            Weiterleitung...
-                          </>
-                        ) : (
-                          <>
-                            <CreditCard className="w-4 h-4" />
-                            Kreditkarte / SEPA
-                          </>
-                        )}
-                      </Button>
-
-                      {/* PayPal Button */}
-                      <div className="pt-2">
-                        <PayPalButton
-                          planId={plan.id}
-                          planName={plan.name}
-                          planPrice={plan.price}
-                          onSuccess={() => {
-                            loadData();
-                          }}
-                        />
-                      </div>
-                    </div>
+                    <Button
+                      onClick={() => handleStripeCheckout(plan.id)}
+                      disabled={isProcessing}
+                      className={`w-full bg-gradient-to-r ${plan.color} hover:opacity-90 flex items-center justify-center gap-2`}
+                    >
+                      {isProcessing ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Weiterleitung...
+                        </>
+                      ) : (
+                        <>
+                          <CreditCard className="w-4 h-4" />
+                          Mit Google Pay bezahlen
+                        </>
+                      )}
+                    </Button>
                   )}
                 </CardContent>
               </Card>
