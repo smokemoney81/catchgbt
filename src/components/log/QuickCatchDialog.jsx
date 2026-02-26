@@ -453,7 +453,7 @@ export default function QuickCatchDialog() {
       localStorage.setItem("fishmaster_catch_queue", JSON.stringify(q));
       
       toast.info(
-        "Offline gespeichert 📱", 
+        "Offline gespeichert", 
         {
           description: "Wird automatisch synchronisiert, sobald Internet verfügbar ist",
           duration: 5000
@@ -512,8 +512,8 @@ export default function QuickCatchDialog() {
         photo_url: file_url
       });
       
-      if (analysisResult?.data?.success && analysisResult?.data?.analysis) {
-        const analysis = analysisResult.data.analysis;
+      if (analysisResult?.data?.result_data) {
+        const analysis = analysisResult.data.result_data;
         setAiAnalysisData(analysis);
         setShowAiConfirmDialog(true);
         playSound('notification');
@@ -537,10 +537,9 @@ export default function QuickCatchDialog() {
     
     setForm(prev => ({
       ...prev,
-      species: aiAnalysisData.species || prev.species,
+      species: aiAnalysisData.species_name || prev.species,
       length_cm: aiAnalysisData.length_cm || prev.length_cm,
-      weight_kg: aiAnalysisData.weight_kg || prev.weight_kg,
-      spot_id: aiAnalysisData.spot_id || prev.spot_id
+      weight_kg: aiAnalysisData.weight_kg || prev.weight_kg
     }));
     
     toast.success("KI-Daten übernommen!");
@@ -659,10 +658,10 @@ export default function QuickCatchDialog() {
             
             {aiAnalysisData && (
               <div className="bg-gray-800/50 rounded-lg p-4 space-y-2">
-                {aiAnalysisData.species && (
+                {aiAnalysisData.species_name && (
                   <div className="flex justify-between">
                     <span className="text-gray-400">Fischart:</span>
-                    <span className="text-white font-semibold">{aiAnalysisData.species}</span>
+                    <span className="text-white font-semibold">{aiAnalysisData.species_name}</span>
                   </div>
                 )}
                 {aiAnalysisData.length_cm && (
