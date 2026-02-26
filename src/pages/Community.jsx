@@ -5,12 +5,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
-import { Heart, MessageCircle, Send, Camera, AlertTriangle, User, Loader2, X, Globe, Facebook, Trophy, Users, Activity, Compass, Fish, TrendingUp } from "lucide-react";
+import { Heart, MessageCircle, Send, Camera, AlertTriangle, User, Loader2, X, Globe, Facebook, Trophy, Users, Activity, Compass, Fish, TrendingUp, FileImage } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CompetitionCard from "@/components/community/CompetitionCard";
 import VotingEventCard from "@/components/community/VotingEventCard";
 import ClanLeaderboardCard from "@/components/community/ClanLeaderboardCard";
 import LeaderboardCard from "@/components/community/LeaderboardCard";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function Community() {
   const [posts, setPosts] = useState([]);
@@ -29,6 +30,9 @@ export default function Community() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [pullStart, setPullStart] = useState(0);
   const [pullDistance, setPullDistance] = useState(0);
+  const [showCatchSelector, setShowCatchSelector] = useState(false);
+  const [userCatches, setUserCatches] = useState([]);
+  const [loadingCatches, setLoadingCatches] = useState(false);
 
   useEffect(() => {
     loadCurrentUser();
@@ -210,6 +214,44 @@ export default function Community() {
     const user = userCache[email];
     if (!user) return null;
     return user.profile_picture_url || null;
+  };
+
+  const loadUserCatches = async () => {
+    if (!currentUser) return;
+    
+    setLoadingCatches(true);
+    try {
+      const catches = await base44.entities.Catch.filter(
+        { created_by: currentUser.email },
+        '-catch_time',
+        20
+      );
+      setUserCatches(catches.filter(c => c.photo_url));
+    } catch (error) {
+      console.error("Fehler beim Laden der Fänge:", error);
+      toast.error("Fänge konnten nicht geladen werden");
+    } finally {
+      setLoadingCatches(false);
+    }
+  };
+
+  const handleSelectCatch = async (catchData) => {
+    setShowCatchSelector(false);
+    
+    const catchText = `Mein Fang: ${catchData.species}${catchData.length_cm ? ` (${catchData.length_cm}cm)` : ''}${catchData.weight_kg ? `, ${catchData.weight_kg}kg` : ''}${catchData.bait_used ? `\nKöder: ${catchData.bait_used}` : ''}${catchData.notes ? `\n\n${catchData.notes}` : ''}`;
+    
+    setNewPostText(catchText);
+    setImagePreview(catchData.photo_url);
+    
+    try {
+      const response = await fetch(catchData.photo_url);
+      const blob = await response.blob();
+      const file = new File([blob], "catch.jpg", { type: blob.type });
+      setNewPostImage(file);
+    } catch (error) {
+      console.error("Fehler beim Laden des Bildes:", error);
+      toast.error("Bild konnte nicht geladen werden");
+    }
   };
 
   const handleImageSelect = (e) => {
@@ -608,6 +650,19 @@ export default function Community() {
                 <Camera className="w-4 h-4 mr-2" />
                 {newPostImage ? "Bild ändern" : "Bild hinzufügen"}
               </Button>
+
+              <Button
+                variant="outline"
+                onClick={() => {
+                  loadUserCatches();
+                  setShowCatchSelector(true);
+                }}
+                disabled={uploading}
+                className="flex-1 border-gray-700 text-gray-300"
+              >
+                <FileImage className="w-4 h-4 mr-2" />
+                Fang posten
+              </Button>
               
               <Button
                 onClick={handleCreatePost}
@@ -807,6 +862,51 @@ export default function Community() {
           </Card>
         )}
       </div>
+
+      <Dialog open={showCatchSelector} onOpenChange={setShowCatchSelector}>
+        <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-cyan-400">Wähle einen Fang zum Teilen</DialogTitle>
+          </DialogHeader>
+          
+          {loadingCatches ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-cyan-400" />
+            </div>
+          ) : userCatches.length === 0 ? (
+            <div className="text-center py-8 text-gray-400">
+              <p>Keine Fänge mit Fotos gefunden</p>
+              <p className="text-sm mt-2">Logge zuerst einen Fang mit Foto ein</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-4">
+              {userCatches.map((catchData) => (
+                <button
+                  key={catchData.id}
+                  onClick={() => handleSelectCatch(catchData)}
+                  className="relative group cursor-pointer rounded-lg overflow-hidden border-2 border-gray-700 hover:border-cyan-400 transition-all"
+                >
+                  <img 
+                    src={catchData.photo_url} 
+                    alt={catchData.species}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-3">
+                    <p className="text-white font-semibold">{catchData.species}</p>
+                    <p className="text-xs text-gray-300">
+                      {catchData.length_cm && `${catchData.length_cm}cm`}
+                      {catchData.weight_kg && ` • ${catchData.weight_kg}kg`}
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      {new Date(catchData.catch_time).toLocaleDateString('de-DE')}
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
