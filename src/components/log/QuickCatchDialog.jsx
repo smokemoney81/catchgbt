@@ -415,6 +415,8 @@ export default function QuickCatchDialog() {
           }
         });
         
+        window.dispatchEvent(new CustomEvent('catch-saved'));
+        
         setSavedCatchData(savedCatch);
         setOpen(false);
         setShowShareDialog(true);

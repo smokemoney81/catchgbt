@@ -153,13 +153,15 @@ export default function Logbook() {
     window.addEventListener('touchstart', handleTouchStart, { passive: true });
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
     window.addEventListener('touchend', handleTouchEnd);
+    window.addEventListener('catch-saved', loadData);
 
     return () => {
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('catch-saved', loadData);
     };
-  }, [pullStart]);
+  }, [pullStart, loadData]);
 
   const resetForm = useCallback(() => {
     setPhotoUrl("");
