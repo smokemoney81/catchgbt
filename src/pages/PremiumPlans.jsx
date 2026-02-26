@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Check, Crown, Zap, Star, Sparkles, Mail, CreditCard, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { base44 } from "@/api/base44Client";
-import PayPalButton from "@/components/premium/PayPalButton";
+
 
 export default function PremiumPlans() {
   const [user, setUser] = useState(null);
