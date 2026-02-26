@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import PremiumGuard from "@/components/premium/PremiumGuard";
 import CameraAnalysisSection from "@/components/ai/CameraAnalysisSection";
 import BiteDetectorSection from "@/components/ai/BiteDetectorSection";
-import { User } from "@/entities/User";
+import { base44 } from "@/api/base44Client";
 
 export default function AI() {
   const [user, setUser] = useState(null);
@@ -10,7 +10,8 @@ export default function AI() {
   useEffect(() => {
     const loadUser = async () => {
       try {
-        setUser(await User.me());
+        const currentUser = await base44.auth.me();
+        setUser(currentUser);
       } catch (e) {
         console.log("User not logged in:", e);
       }

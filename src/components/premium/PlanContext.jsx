@@ -41,7 +41,13 @@ export function PlanProvider({ children }) {
   const hasFeature = (requiredPlan) => {
     if (!plan) return false;
     
-    const planHierarchy = { 'free': 0, 'basic': 1, 'pro': 2, 'ultimate': 3 };
+    const planHierarchy = { 
+      'free': 0, 
+      'basic': 1, 
+      'pro': 2, 
+      'elite': 3, 
+      'ultimate': 4 
+    };
     const userLevel = planHierarchy[plan.id] || 0;
     const requiredLevel = planHierarchy[requiredPlan] || 0;
     
