@@ -159,7 +159,7 @@ export default function FeedbackDialog({ feature, onClose }) {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-center text-sm text-gray-400"
+                  className="text-center text-sm text-gray-300"
                 >
                   {rating === 1 && "😟 Schade, was können wir besser machen?"}
                   {rating === 2 && "😐 Okay, aber es gibt Verbesserungspotenzial"}
@@ -171,17 +171,17 @@ export default function FeedbackDialog({ feature, onClose }) {
 
               {/* Optionales Feedback-Textfeld */}
               <div className="space-y-2">
-                <label className="text-sm text-gray-400">
+                <label className="text-sm text-gray-300">
                   Möchtest du uns mehr erzählen? (optional)
                 </label>
                 <Textarea
                   value={feedback}
                   onChange={(e) => setFeedback(e.target.value)}
                   placeholder="Dein Feedback hilft uns sehr..."
-                  className="bg-gray-800/50 border-gray-700 text-white min-h-[100px] resize-none"
+                  className="bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 min-h-[100px] resize-none"
                   maxLength={500}
                 />
-                <div className="text-xs text-gray-500 text-right">
+                <div className="text-xs text-gray-400 text-right">
                   {feedback.length}/500
                 </div>
               </div>

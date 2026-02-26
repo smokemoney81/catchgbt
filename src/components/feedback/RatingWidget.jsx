@@ -45,8 +45,8 @@ export default function RatingWidget({ functionName, title, onComplete }) {
   return (
     <Card className="bg-gray-900/50 border-gray-800">
       <CardHeader>
-        <CardTitle className="text-lg">Bewerten Sie diese Funktion</CardTitle>
-        <CardDescription>{title}</CardDescription>
+        <CardTitle className="text-lg text-white">Bewerten Sie diese Funktion</CardTitle>
+        <CardDescription className="text-gray-300">{title}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex gap-2 justify-center">
@@ -74,7 +74,7 @@ export default function RatingWidget({ functionName, title, onComplete }) {
           placeholder="Optionaler Kommentar..."
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          className="bg-gray-950/50 border-gray-700"
+          className="bg-gray-950/50 border-gray-700 text-white placeholder:text-gray-500"
           rows={3}
         />
 
