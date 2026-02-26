@@ -10,7 +10,7 @@ Deno.serve((req) => {
             "short_name": "CatchGBT",
             "description": "Angel-App mit KI-Assistent. Finde die besten Angelplätze, erhalte intelligente Tipps und dokumentiere deine Fänge!",
             "start_url": "/",
-            "display": "standalone",
+            "display": "fullscreen",
             "background_color": "#0b1324",
             "theme_color": "#4285f4",
             "orientation": "portrait-primary",
