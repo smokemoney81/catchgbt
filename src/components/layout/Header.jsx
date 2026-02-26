@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Bell, ArrowLeft } from "lucide-react";
+import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useHaptic } from "@/components/utils/HapticFeedback";
@@ -24,7 +24,6 @@ export default function Header({
   const [user, setUser] = useState(null);
   const [currentPlan, setCurrentPlan] = useState(null);
   const [planLoading, setPlanLoading] = useState(true);
-  const [showMenuText, setShowMenuText] = useState(true); // Initialize to true to show "Menü" first
 
   useEffect(() => {
     loadAlertStatus();
@@ -47,16 +46,10 @@ export default function Header({
     };
     window.addEventListener('user-refresh-request', handleUserRefresh);
 
-    // Alternierende Animation zwischen Pfeil und "Menü"-Text
-    const interval = setInterval(() => {
-      setShowMenuText(prev => !prev);
-    }, 3000); // Toggle every 3 seconds
-
     return () => {
       window.removeEventListener('weather-alerts-updated', handleAlertsUpdate);
       window.removeEventListener('active-trips-updated', handleTripsUpdate);
       window.removeEventListener('user-refresh-request', handleUserRefresh);
-      clearInterval(interval);
     };
   }, []);
 
@@ -154,124 +147,16 @@ export default function Header({
           </motion.div>
         )}
 
-        {/* Left Side - Menu Button mit alternierenden Hinweisen */}
+        {/* Left Side - Menu Button */}
         <div className="flex items-center gap-3 relative z-20">
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={handleLeftSidebarToggle}
-            className="relative w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-gray-800"
+            className="text-gray-400 hover:text-white transition-colors text-base font-semibold"
           >
-            <AnimatePresence mode="wait">
-              {!isSidebarOpen ? (
-                <motion.div
-                  key="logo"
-                  initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
-                  animate={{ 
-                    opacity: 1, 
-                    scale: [0.8, 1.1, 0.8], 
-                    rotate: 0 
-                  }}
-                  exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
-                  transition={{
-                    opacity: { duration: 0.3 },
-                    scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                    rotate: { duration: 0.3 }
-                  }}
-                  className="absolute"
-                >
-                  <img 
-                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68bb3d3b9f83dc1f55ef532b/dcd615030_Screenshot_20250919_164159_Gallery.jpg" 
-                    alt="Menu" 
-                    className="w-5 h-5 rounded-lg object-cover"
-                  />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="x"
-                  initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                  exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
-                  transition={{ duration: 0.3 }}
-                  className="absolute"
-                >
-                  <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </button>
-
-          {/* Alternierender Hinweis - nur wenn Sidebar geschlossen */}
-          <AnimatePresence mode="wait">
-            {!isSidebarOpen && (
-              <motion.div
-                key={showMenuText ? 'text' : 'arrow'} // Unique key for each alternating element
-                initial={{ opacity: 0, x: showMenuText ? -10 : -5, scale: 0.8 }} // Slightly different initial for arrow vs text
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                exit={{ opacity: 0, x: showMenuText ? 10 : 5, scale: 0.8 }} // Opposite exit for smooth transition
-                transition={{ duration: 0.4 }}
-                className="flex items-center" // No gap here, elements alternate in the same space
-              >
-                {showMenuText ? (
-                  <motion.span
-                    animate={{
-                      color: [
-                        '#22d3ee', // cyan
-                        '#10b981', // emerald
-                        '#fbbf24', // amber
-                        '#f59e0b', // orange
-                        '#22d3ee', // back to cyan
-                      ],
-                      scale: [1, 1.08, 1], // Added scale animation for text
-                    }}
-                    transition={{
-                      color: { duration: 4, repeat: Infinity, ease: "linear" },
-                      scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-                    }}
-                    className="text-xs font-bold whitespace-nowrap drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"
-                  >
-                    Menü
-                  </motion.span>
-                ) : (
-                  <motion.div
-                    animate={{
-                      x: [0, -5, 0], // Changed arrow direction
-                      scale: [1, 1.1, 1],
-                    }}
-                    transition={{
-                      duration: 1.5,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  >
-                    <motion.div // Apply color animation to the container of ArrowLeft
-                      animate={{
-                        color: [
-                          '#22d3ee',
-                          '#10b981',
-                          '#fbbf24',
-                          '#f59e0b',
-                          '#22d3ee',
-                        ]
-                      }}
-                      transition={{
-                        duration: 4,
-                        repeat: Infinity,
-                        ease: "linear"
-                      }}
-                    >
-                      <ArrowLeft 
-                        className="w-6 h-6" // Increased size slightly for better visibility
-                        style={{
-                          filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.8))'
-                        }}
-                      />
-                    </motion.div>
-                  </motion.div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
+            Menü
+          </Button>
         </div>
 
         {/* Center - Logo/Title */}
