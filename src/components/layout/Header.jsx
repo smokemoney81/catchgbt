@@ -149,14 +149,37 @@ export default function Header({
 
         {/* Left Side - Menu Button */}
         <div className="flex items-center gap-3 relative z-20">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleLeftSidebarToggle}
-            className="text-gray-400 hover:text-white transition-colors text-base font-semibold"
+          <motion.div
+            animate={{ 
+              scale: [1, 1.05, 1],
+              boxShadow: [
+                '0 0 0 0 rgba(34, 211, 238, 0)',
+                '0 0 20px 5px rgba(34, 211, 238, 0.4)',
+                '0 0 0 0 rgba(34, 211, 238, 0)'
+              ]
+            }}
+            transition={{ 
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="rounded-lg"
           >
-            Menü
-          </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLeftSidebarToggle}
+              className="text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/20 transition-all duration-300 text-base font-bold relative overflow-hidden group"
+            >
+              <span className="relative z-10">Menü</span>
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-emerald-500/20"
+                initial={{ opacity: 0 }}
+                whileHover={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              />
+            </Button>
+          </motion.div>
         </div>
 
         {/* Center - Logo/Title */}
