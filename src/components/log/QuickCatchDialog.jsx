@@ -27,6 +27,9 @@ export default function QuickCatchDialog() {
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [savedCatchData, setSavedCatchData] = useState(null);
   const [isSharing, setIsSharing] = useState(false);
+  const [aiAnalysisData, setAiAnalysisData] = useState(null);
+  const [showAiConfirmDialog, setShowAiConfirmDialog] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const { triggerHaptic } = useHaptic();
   const { playSound } = useSound();
@@ -186,6 +189,8 @@ export default function QuickCatchDialog() {
     setOpen(false);
     setShowShareDialog(false);
     setSavedCatchData(null);
+    setAiAnalysisData(null);
+    setShowAiConfirmDialog(false);
     setForm({
       species: "",
       spot_id: "",
@@ -498,6 +503,56 @@ export default function QuickCatchDialog() {
     toast.success("Bild erfolgreich hochgeladen!");
     playSound('success');
     triggerHaptic('light');
+
+    toast.info("KI analysiert das Bild...");
+    setIsAnalyzing(true);
+    
+    try {
+      const analysisResult = await base44.functions.invoke('analyzeCatchPhoto', {
+        photo_url: file_url
+      });
+      
+      if (analysisResult?.data?.success && analysisResult?.data?.analysis) {
+        const analysis = analysisResult.data.analysis;
+        setAiAnalysisData(analysis);
+        setShowAiConfirmDialog(true);
+        playSound('notification');
+        triggerHaptic('medium');
+      } else {
+        toast.warning("KI-Analyse konnte nicht durchgeführt werden");
+      }
+    } catch (error) {
+      console.error("KI-Analyse-Fehler:", error);
+      toast.warning("KI-Analyse fehlgeschlagen");
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const handleAcceptAiAnalysis = () => {
+    if (!aiAnalysisData) return;
+    
+    triggerHaptic('medium');
+    playSound('success');
+    
+    setForm(prev => ({
+      ...prev,
+      species: aiAnalysisData.species || prev.species,
+      length_cm: aiAnalysisData.length_cm || prev.length_cm,
+      weight_kg: aiAnalysisData.weight_kg || prev.weight_kg,
+      spot_id: aiAnalysisData.spot_id || prev.spot_id
+    }));
+    
+    toast.success("KI-Daten übernommen!");
+    setShowAiConfirmDialog(false);
+    setAiAnalysisData(null);
+  };
+
+  const handleRejectAiAnalysis = () => {
+    triggerHaptic('light');
+    playSound('click');
+    setShowAiConfirmDialog(false);
+    setAiAnalysisData(null);
   };
 
   if (!open && !showShareDialog) return null;
@@ -590,6 +645,69 @@ export default function QuickCatchDialog() {
       </Card>
     </div>
       )}
+
+      <Dialog open={showAiConfirmDialog} onOpenChange={setShowAiConfirmDialog}>
+        <DialogContent className="bg-gray-900 border-gray-800 text-white">
+          <DialogHeader>
+            <DialogTitle className="text-cyan-400">KI-Analyse abgeschlossen</DialogTitle>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <p className="text-gray-300 mb-4">
+              Die KI hat dein Bild analysiert. Möchtest du die erkannten Daten automatisch übernehmen?
+            </p>
+            
+            {aiAnalysisData && (
+              <div className="bg-gray-800/50 rounded-lg p-4 space-y-2">
+                {aiAnalysisData.species && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Fischart:</span>
+                    <span className="text-white font-semibold">{aiAnalysisData.species}</span>
+                  </div>
+                )}
+                {aiAnalysisData.length_cm && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Länge:</span>
+                    <span className="text-white font-semibold">{aiAnalysisData.length_cm} cm</span>
+                  </div>
+                )}
+                {aiAnalysisData.weight_kg && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Gewicht:</span>
+                    <span className="text-white font-semibold">{aiAnalysisData.weight_kg} kg</span>
+                  </div>
+                )}
+                {aiAnalysisData.confidence && (
+                  <div className="flex justify-between mt-3 pt-3 border-t border-gray-700">
+                    <span className="text-gray-400 text-sm">Genauigkeit:</span>
+                    <span className="text-cyan-400 text-sm">{Math.round(aiAnalysisData.confidence * 100)}%</span>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            <p className="text-gray-400 text-xs mt-4">
+              Du kannst die Werte später noch manuell anpassen.
+            </p>
+          </div>
+          
+          <DialogFooter className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={handleRejectAiAnalysis}
+              className="border-gray-700 text-gray-300 hover:bg-gray-700"
+            >
+              Manuell eingeben
+            </Button>
+            <Button
+              onClick={handleAcceptAiAnalysis}
+              className="bg-cyan-600 hover:bg-cyan-700"
+            >
+              Daten übernehmen
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
         <DialogContent className="bg-gray-900 border-gray-800 text-white">
