@@ -556,28 +556,6 @@ function LandingPageContent() {
                 <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
-                >
-                    <label className="relative w-16 h-16 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-[0_0_30px_rgba(245,158,11,0.6)] hover:shadow-[0_0_40px_rgba(245,158,11,0.8)] transform transition-all hover:scale-110 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer">
-                        {isUploading ? (
-                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        ) : (
-                            <Camera className="w-7 h-7" />
-                        )}
-                        <input
-                            type="file"
-                            accept="image/*"
-                            capture="environment"
-                            className="absolute inset-0 opacity-0 cursor-pointer"
-                            onChange={handleFileSelect}
-                            disabled={isUploading}
-                        />
-                    </label>
-                </motion.div>
-
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.5, delay: 0.5 }}
                 >
                     <button
