@@ -658,6 +658,7 @@ export default function QuickCatchDialog() {
             )}
           </div>
         </div>
+        </div>
         <div className="flex justify-between gap-2 mt-4">
           <Button variant="outline" onClick={saveDraft}>{t('catch.save_draft')}</Button>
           <div className="flex gap-2">
