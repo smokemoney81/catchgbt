@@ -39,6 +39,7 @@ Deno.serve(async (req) => {
       'free': 'Free',
       'basic': 'Basic',
       'pro': 'Pro',
+      'elite': 'Elite',
       'ultimate': 'Ultimate'
     };
 
@@ -46,7 +47,8 @@ Deno.serve(async (req) => {
       'free': 0,
       'basic': 4.99,
       'pro': 9.99,
-      'ultimate': 19.99
+      'elite': 19.99,
+      'ultimate': 29.99
     };
 
     const response = {

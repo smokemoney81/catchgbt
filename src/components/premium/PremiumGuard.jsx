@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
 export default function PremiumGuard({ user, children, fallback, feature = "Diese Funktion", requiredPlan = "basic" }) {
-  const userPlan = user?.current_plan || 'free';
+  const userPlan = user?.premium_plan_id || 'free';
   const hasAccess = hasFeatureAccess(userPlan, requiredPlan);
 
   if (hasAccess) {
