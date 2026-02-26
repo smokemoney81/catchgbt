@@ -507,33 +507,9 @@ export default function QuickCatchDialog() {
     const f = new File([blob], fileName, { type: "image/jpeg" });
     const { file_url } = await UploadFile({ file: f });
     setForm(prev=>({ ...prev, photo_url: file_url }));
-    toast.success("Bild erfolgreich hochgeladen!");
+    toast.success("Bild hochgeladen. Klicke auf KI-Analyse zum automatischen Ausfüllen.");
     playSound('success');
     triggerHaptic('light');
-
-    toast.info("KI analysiert das Bild...");
-    setIsAnalyzing(true);
-    
-    try {
-      const analysisResult = await base44.functions.invoke('analyzeCatchPhoto', {
-        file_url: file_url
-      });
-      
-      const data = analysisResult?.data;
-      if (data?.result_data) {
-        setAiAnalysisData(data.result_data);
-        setShowAiConfirmDialog(true);
-        playSound('notification');
-        triggerHaptic('medium');
-      } else {
-        toast.warning("KI-Analyse konnte nicht durchgeführt werden");
-      }
-    } catch (error) {
-      console.error("KI-Analyse-Fehler:", error);
-      toast.warning("KI-Analyse fehlgeschlagen");
-    } finally {
-      setIsAnalyzing(false);
-    }
   };
 
   const handleAcceptAiAnalysis = () => {
