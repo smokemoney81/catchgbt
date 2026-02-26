@@ -105,7 +105,18 @@ Deno.serve((req) => {
       }
       
       // API Calls - Network First mit Cache Fallback
+      // WICHTIG: Auth-Endpunkte NIEMALS cachen
       if (/\\/api\\//.test(url.pathname) || url.hostname.includes('supabase.co')) {
+        const isAuthRequest = /\\/(auth|login|logout|token|session)/.test(url.pathname) || 
+                              url.pathname.includes('/auth/') ||
+                              request.headers.get('authorization');
+        
+        if (isAuthRequest) {
+          // Auth-Requests direkt durchleiten ohne Caching
+          event.respondWith(fetch(request));
+          return;
+        }
+        
         event.respondWith(
           fetch(request)
             .then((response) => {
