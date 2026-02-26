@@ -20,7 +20,6 @@ import { LanguageProvider } from "@/components/i18n/LanguageContext";
 import { PlanProvider } from "@/components/premium/PlanContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { WakeWordDetector } from "@/components/utils/WakeWordDetector";
-import ElevenLabsWidget from "@/components/elevenlabs/ElevenLabsWidget";
 
 export default function Layout({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
