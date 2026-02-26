@@ -555,6 +555,7 @@ export default function QuickCatchDialog() {
             </AlertDescription>
           </Alert>
         )}
+        <div className="max-h-[70vh] overflow-y-auto pr-1">
         <div className="grid sm:grid-cols-2 gap-3">
           <Input placeholder={t('catch.species')} value={form.species}
             onBlur={e => { toast.info(`${t('catch.species')}: ${e.target.value}`); triggerHaptic('light'); playSound('pop'); }}
