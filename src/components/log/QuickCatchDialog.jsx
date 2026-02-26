@@ -424,7 +424,14 @@ export default function QuickCatchDialog() {
         
         setSavedCatchData(savedCatch);
         setOpen(false);
-        setShowShareDialog(true);
+        if (form.shareInCommunity) {
+          // direkt teilen ohne Dialog
+          const catchText = `Mein Fang: ${catchData.species}${catchData.length_cm ? ` (${catchData.length_cm}cm)` : ''}${catchData.weight_kg ? `, ${catchData.weight_kg}kg` : ''}${catchData.bait_used ? `\nKöder: ${catchData.bait_used}` : ''}${catchData.notes ? `\n\n${catchData.notes}` : ''}`;
+          await base44.entities.Post.create({ text: catchText, photo_url: catchData.photo_url || null, likes: 0, reported: false });
+          toast.success("Fang gespeichert und in der Community geteilt!");
+        } else {
+          setShowShareDialog(true);
+        }
       } catch (creditError) {
         console.error("Credits konnten nicht gutgeschrieben werden:", creditError);
         playSound('warning');
