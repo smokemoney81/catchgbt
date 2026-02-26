@@ -657,51 +657,6 @@ export default function QuickCatchDialog() {
             onBlur={e => { toast.info(`Notiz hinzugefügt`); triggerHaptic('light'); playSound('pop'); }}
             onChange={(e) => { setForm({...form, notes: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
             className="bg-gray-800/50 border-gray-700 text-white sm:col-span-2" />
-          <div className="sm:col-span-2 space-y-2">
-            <input type="file" accept="image/*" onChange={(e)=>e.target.files[0] && upload(e.target.files[0])} />
-            {form.photo_url && (
-              <img src={form.photo_url} alt="Fang" className="h-24 rounded-xl object-cover" />
-            )}
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full border-cyan-600 text-cyan-400 hover:bg-cyan-900/30"
-              onClick={async () => {
-                if (!form.photo_url) { toast.warning("Bitte zuerst ein Foto hochladen"); return; }
-                toast.info("KI analysiert das Bild...");
-                setIsAnalyzing(true);
-                try {
-                  const analysisResult = await base44.functions.invoke('analyzeCatchPhoto', { file_url: form.photo_url });
-                  const data = analysisResult?.data;
-                  if (data?.result_data) {
-                    setAiAnalysisData(data.result_data);
-                    setShowAiConfirmDialog(true);
-                    playSound('notification');
-                    triggerHaptic('medium');
-                  } else {
-                    toast.warning("KI-Analyse konnte nicht durchgeführt werden");
-                  }
-                } catch (error) {
-                  console.error("KI-Analyse-Fehler:", error);
-                  toast.warning("KI-Analyse fehlgeschlagen");
-                } finally {
-                  setIsAnalyzing(false);
-                }
-              }}
-              disabled={isAnalyzing}
-            >
-              {isAnalyzing ? "Wird analysiert..." : "KI-Analyse und automatisch ausfüllen"}
-            </Button>
-            <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-300 select-none">
-              <input
-                type="checkbox"
-                checked={form.shareInCommunity || false}
-                onChange={(e) => setForm({ ...form, shareInCommunity: e.target.checked })}
-                className="w-4 h-4 rounded accent-cyan-500"
-              />
-              Nach dem Speichern auch in der Community posten
-            </label>
-          </div>
         </div>
         </div>
         <div className="flex justify-between gap-2 mt-4">
