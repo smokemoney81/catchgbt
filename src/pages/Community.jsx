@@ -632,55 +632,44 @@ export default function Community() {
               </div>
             )}
 
-            <div className="flex gap-2">
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                id="post-image-upload"
-                onChange={handleImageSelect}
-                disabled={uploading}
-              />
-              <Button
-                variant="outline"
-                onClick={() => document.getElementById("post-image-upload").click()}
-                disabled={uploading}
-                className="flex-1 border-gray-700 text-gray-300"
-              >
-                <Camera className="w-4 h-4 mr-2" />
-                {newPostImage ? "Bild ändern" : "Bild hinzufügen"}
-              </Button>
-
-              <Button
-                variant="outline"
-                onClick={() => {
-                  loadUserCatches();
-                  setShowCatchSelector(true);
-                }}
-                disabled={uploading}
-                className="flex-1 border-gray-700 text-gray-300"
-              >
-                <FileImage className="w-4 h-4 mr-2" />
-                Fang posten
-              </Button>
-              
-              <Button
-                onClick={handleCreatePost}
-                disabled={uploading || (!newPostText.trim() && !newPostImage)}
-                className="flex-1 bg-emerald-600 hover:bg-emerald-700"
-              >
-                {uploading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Wird hochgeladen...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-4 h-4 mr-2" />
-                    Posten
-                  </>
-                )}
-              </Button>
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  id="post-image-upload"
+                  onChange={handleImageSelect}
+                  disabled={uploading}
+                />
+                <Button
+                  variant="outline"
+                  onClick={() => document.getElementById("post-image-upload").click()}
+                  disabled={uploading}
+                  className="flex-1 border-gray-700 text-gray-300"
+                >
+                  <Camera className="w-4 h-4 mr-2" />
+                  {newPostImage ? "Bild ändern" : "Bild hinzufügen"}
+                </Button>
+                
+                <Button
+                  onClick={handleCreatePost}
+                  disabled={uploading || (!newPostText.trim() && !newPostImage)}
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-700"
+                >
+                  {uploading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Wird hochgeladen...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 mr-2" />
+                      Posten
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

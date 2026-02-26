@@ -8,11 +8,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MobileSelect } from "@/components/ui/mobile-select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { Upload, X, Loader2 } from "lucide-react";
+import { Upload, X, Loader2, Share2 } from "lucide-react";
 import CatchHistory from "@/components/log/CatchHistory";
 import { UploadFile } from "@/integrations/Core";
 import PendingPhotoCard from '@/components/log/PendingPhotoCard';
 import { AnimatePresence } from 'framer-motion';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 export default function Logbook() {
   const [catches, setCatches] = useState([]);
@@ -36,6 +37,9 @@ export default function Logbook() {
 
   const [editingCatch, setEditingCatch] = useState(null);
   const [pendingPhotos, setPendingPhotos] = useState([]);
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [savedCatchData, setSavedCatchData] = useState(null);
+  const [isSharing, setIsSharing] = useState(false);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -250,6 +254,9 @@ export default function Logbook() {
             length_cm: lengthCm ? parseFloat(lengthCm) : null
           }
         });
+
+        setSavedCatchData(savedCatch);
+        setShowShareDialog(true);
       }
     } catch (error) {
       console.error("Fehler beim Speichern:", error);
@@ -285,6 +292,31 @@ export default function Logbook() {
       toast.error("Fehler beim Löschen des Fangs");
     }
   }, [loadData]);
+
+  const handleShareToCommunity = async () => {
+    if (!savedCatchData) return;
+
+    setIsSharing(true);
+    try {
+      const catchText = `Mein Fang: ${savedCatchData.species}${savedCatchData.length_cm ? ` (${savedCatchData.length_cm}cm)` : ''}${savedCatchData.weight_kg ? `, ${savedCatchData.weight_kg}kg` : ''}${savedCatchData.bait_used ? `\nKöder: ${savedCatchData.bait_used}` : ''}${savedCatchData.notes ? `\n\n${savedCatchData.notes}` : ''}`;
+
+      await base44.entities.Post.create({
+        text: catchText,
+        photo_url: savedCatchData.photo_url || null,
+        likes: 0,
+        reported: false
+      });
+
+      toast.success("Fang in der Community geteilt!");
+      setShowShareDialog(false);
+      setSavedCatchData(null);
+    } catch (error) {
+      console.error("Fehler beim Teilen:", error);
+      toast.error("Fehler beim Teilen des Fangs");
+    } finally {
+      setIsSharing(false);
+    }
+  };
 
   if (loading && catches.length === 0 && spots.length === 0) {
     return (
@@ -542,6 +574,76 @@ export default function Logbook() {
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
+
+      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+        <DialogContent className="bg-gray-900 border-gray-800 text-white">
+          <DialogHeader>
+            <DialogTitle className="text-cyan-400">In Community teilen?</DialogTitle>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <p className="text-gray-300 mb-4">
+              Möchtest du diesen Fang mit der Community teilen?
+            </p>
+            
+            {savedCatchData?.photo_url && (
+              <div className="relative w-full h-48 rounded-lg overflow-hidden mb-4">
+                <img
+                  src={savedCatchData.photo_url}
+                  alt={savedCatchData.species}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            
+            {savedCatchData && (
+              <div className="bg-gray-800/50 rounded-lg p-4 space-y-2">
+                <p className="text-white font-semibold">{savedCatchData.species}</p>
+                {savedCatchData.length_cm && (
+                  <p className="text-gray-300 text-sm">Länge: {savedCatchData.length_cm}cm</p>
+                )}
+                {savedCatchData.weight_kg && (
+                  <p className="text-gray-300 text-sm">Gewicht: {savedCatchData.weight_kg}kg</p>
+                )}
+                {savedCatchData.bait_used && (
+                  <p className="text-gray-300 text-sm">Köder: {savedCatchData.bait_used}</p>
+                )}
+              </div>
+            )}
+          </div>
+          
+          <DialogFooter className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowShareDialog(false);
+                setSavedCatchData(null);
+              }}
+              disabled={isSharing}
+              className="border-gray-700 text-gray-300 hover:bg-gray-700"
+            >
+              Nein, danke
+            </Button>
+            <Button
+              onClick={handleShareToCommunity}
+              disabled={isSharing}
+              className="bg-cyan-600 hover:bg-cyan-700"
+            >
+              {isSharing ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Wird geteilt...
+                </>
+              ) : (
+                <>
+                  <Share2 className="w-4 h-4 mr-2" />
+                  Jetzt teilen
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

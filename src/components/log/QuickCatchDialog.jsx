@@ -13,6 +13,7 @@ import { useHaptic } from "@/components/utils/HapticFeedback";
 import { useSound } from "@/components/utils/SoundManager";
 import { useLanguage } from "@/components/i18n/LanguageContext";
 import { base44 } from "@/api/base44Client";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 export default function QuickCatchDialog() {
   const { t } = useLanguage();
@@ -23,6 +24,9 @@ export default function QuickCatchDialog() {
   });
   const [ruleWarnings, setRuleWarnings] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [savedCatchData, setSavedCatchData] = useState(null);
+  const [isSharing, setIsSharing] = useState(false);
 
   const { triggerHaptic } = useHaptic();
   const { playSound } = useSound();
@@ -180,6 +184,8 @@ export default function QuickCatchDialog() {
     triggerHaptic('light');
     playSound('click');
     setOpen(false);
+    setShowShareDialog(false);
+    setSavedCatchData(null);
     setForm({
       species: "",
       spot_id: "",
@@ -190,6 +196,44 @@ export default function QuickCatchDialog() {
       catch_time: new Date().toISOString().slice(0,16),
       photo_url: ""
     });
+  };
+
+  const handleShareToCommunity = async () => {
+    if (!savedCatchData) return;
+
+    setIsSharing(true);
+    try {
+      const catchText = `Mein Fang: ${savedCatchData.species}${savedCatchData.length_cm ? ` (${savedCatchData.length_cm}cm)` : ''}${savedCatchData.weight_kg ? `, ${savedCatchData.weight_kg}kg` : ''}${savedCatchData.bait_used ? `\nKöder: ${savedCatchData.bait_used}` : ''}${savedCatchData.notes ? `\n\n${savedCatchData.notes}` : ''}`;
+
+      await base44.entities.Post.create({
+        text: catchText,
+        photo_url: savedCatchData.photo_url || null,
+        likes: 0,
+        reported: false
+      });
+
+      playSound('success');
+      toast.success("Fang in der Community geteilt!");
+      setShowShareDialog(false);
+      setSavedCatchData(null);
+      
+      setForm({
+        species: "",
+        spot_id: "",
+        length_cm: "",
+        weight_kg: "",
+        bait_used: "",
+        notes: "",
+        catch_time: new Date().toISOString().slice(0,16),
+        photo_url: ""
+      });
+    } catch (error) {
+      console.error("Fehler beim Teilen:", error);
+      playSound('error');
+      toast.error("Fehler beim Teilen des Fangs");
+    } finally {
+      setIsSharing(false);
+    }
   };
 
   useEffect(() => {
@@ -340,7 +384,7 @@ export default function QuickCatchDialog() {
         points_earned: form.length_cm ? (1 + Math.floor(parseFloat(form.length_cm)/10)) : 1
       };
 
-      await Catch.create(catchData);
+      const savedCatch = await Catch.create(catchData);
 
       try {
         const user = await User.me();
@@ -353,9 +397,9 @@ export default function QuickCatchDialog() {
         playSound('success');
 
         toast.success(
-          `${trimmedSpecies} erfolgreich gespeichert! 🎣`,
+          `${trimmedSpecies} erfolgreich gespeichert!`,
           {
-            description: `${form.length_cm || 'unbekannt'} cm • +${credits} Credits erhalten`,
+            description: `${form.length_cm || 'unbekannt'} cm`,
             duration: 4000
           }
         );
@@ -371,7 +415,9 @@ export default function QuickCatchDialog() {
           }
         });
         
-        handleClose();
+        setSavedCatchData(savedCatch);
+        setOpen(false);
+        setShowShareDialog(true);
       } catch (creditError) {
         console.error("Credits konnten nicht gutgeschrieben werden:", creditError);
         playSound('warning');
@@ -452,10 +498,13 @@ export default function QuickCatchDialog() {
     triggerHaptic('light');
   };
 
-  if (!open) return null;
+  if (!open && !showShareDialog) return null;
+  
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4" onClick={handleClose}>
-      <Card className="w-full max-w-xl glass-morphism border-gray-800 rounded-2xl p-4" onClick={(e) => e.stopPropagation()}>
+    <>
+      {open && (
+        <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4" onClick={handleClose}>
+          <Card className="w-full max-w-xl glass-morphism border-gray-800 rounded-2xl p-4" onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-white text-lg font-semibold">{t('catch.title')}</h3>
           <Button variant="ghost" onClick={handleClose}>{t('common.close')}</Button>
@@ -538,5 +587,77 @@ export default function QuickCatchDialog() {
         </div>
       </Card>
     </div>
+      )}
+
+      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+        <DialogContent className="bg-gray-900 border-gray-800 text-white">
+          <DialogHeader>
+            <DialogTitle className="text-cyan-400">In Community teilen?</DialogTitle>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <p className="text-gray-300 mb-4">
+              Möchtest du diesen Fang mit der Community teilen?
+            </p>
+            
+            {savedCatchData?.photo_url && (
+              <div className="relative w-full h-48 rounded-lg overflow-hidden mb-4">
+                <img
+                  src={savedCatchData.photo_url}
+                  alt={savedCatchData.species}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            
+            {savedCatchData && (
+              <div className="bg-gray-800/50 rounded-lg p-4 space-y-2">
+                <p className="text-white font-semibold">{savedCatchData.species}</p>
+                {savedCatchData.length_cm && (
+                  <p className="text-gray-300 text-sm">Länge: {savedCatchData.length_cm}cm</p>
+                )}
+                {savedCatchData.weight_kg && (
+                  <p className="text-gray-300 text-sm">Gewicht: {savedCatchData.weight_kg}kg</p>
+                )}
+                {savedCatchData.bait_used && (
+                  <p className="text-gray-300 text-sm">Köder: {savedCatchData.bait_used}</p>
+                )}
+              </div>
+            )}
+          </div>
+          
+          <DialogFooter className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowShareDialog(false);
+                setSavedCatchData(null);
+                setForm({
+                  species: "",
+                  spot_id: "",
+                  length_cm: "",
+                  weight_kg: "",
+                  bait_used: "",
+                  notes: "",
+                  catch_time: new Date().toISOString().slice(0,16),
+                  photo_url: ""
+                });
+              }}
+              disabled={isSharing}
+              className="border-gray-700 text-gray-300 hover:bg-gray-700"
+            >
+              Nein, danke
+            </Button>
+            <Button
+              onClick={handleShareToCommunity}
+              disabled={isSharing}
+              className="bg-cyan-600 hover:bg-cyan-700"
+            >
+              {isSharing ? "Wird geteilt..." : "Jetzt teilen"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
