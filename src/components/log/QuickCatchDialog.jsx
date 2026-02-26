@@ -509,12 +509,12 @@ export default function QuickCatchDialog() {
     
     try {
       const analysisResult = await base44.functions.invoke('analyzeCatchPhoto', {
-        photo_url: file_url
+        file_url: file_url
       });
       
-      if (analysisResult?.data?.result_data) {
-        const analysis = analysisResult.data.result_data;
-        setAiAnalysisData(analysis);
+      const data = analysisResult?.data;
+      if (data?.result_data) {
+        setAiAnalysisData(data.result_data);
         setShowAiConfirmDialog(true);
         playSound('notification');
         triggerHaptic('medium');
