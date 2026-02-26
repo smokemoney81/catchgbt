@@ -9,76 +9,72 @@ Deno.serve(async (req) => {
       user = await base44.auth.me();
     } catch (authError) {
       console.log('[getPlanStatus] User not authenticated:', authError.message);
+      return Response.json({ 
+        ok: true,
+        plan: {
+          id: 'free',
+          name: 'Free',
+          price_eur: 0,
+          is_active: false,
+          expires_at: null,
+          remaining_days: null
+        }
+      });
     }
 
-    // Alle Features sind jetzt kostenlos verfügbar
-    const allFeatures = [
-      'dashboard',
-      'logbook',
-      'ranking',
-      'community',
-      'profile',
-      'settings',
-      'weather_basic',
-      'arcade',
-      'gear_basic',
-      'weather_alerts_basic',
-      'map_advanced',
-      'rules',
-      'trips',
-      'ai_chat_standard',
-      'ai_voice_standard',
-      'licenses',
-      'devices',
-      'ai_chat_deluxe',
-      'ai_voice_deluxe',
-      'exam_prep',
-      'ai_chat_deluxe_detailed',
-      'ai_voice_deluxe_hd',
-      'camera_analysis',
-      'bite_detector',
-      'ar_view',
-      'water_analysis'
-    ];
+    const planId = user.premium_plan_id || 'free';
+    const expiresAt = user.premium_expires_at;
+    
+    let isActive = true;
+    let remainingDays = null;
+    
+    if (expiresAt) {
+      const expiry = new Date(expiresAt);
+      const now = new Date();
+      remainingDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
+      isActive = remainingDays > 0;
+    }
+
+    const planNames = {
+      'free': 'Free',
+      'basic': 'Basic',
+      'pro': 'Pro',
+      'ultimate': 'Ultimate'
+    };
+
+    const planPrices = {
+      'free': 0,
+      'basic': 4.99,
+      'pro': 9.99,
+      'ultimate': 19.99
+    };
 
     const response = {
       ok: true,
       plan: {
-        id: 'free',
-        name: 'Kostenlos',
-        price_eur: 0,
-        is_active: true,
-        expires_at: null,
-        remaining_days: null,
-        features: allFeatures
+        id: planId,
+        name: planNames[planId] || 'Free',
+        price_eur: planPrices[planId] || 0,
+        is_active: isActive,
+        expires_at: expiresAt,
+        remaining_days: remainingDays
       }
     };
 
-    console.log('[getPlanStatus] All features are now free:', response);
-
+    console.log('[getPlanStatus] User plan:', response);
     return Response.json(response);
+    
   } catch (error) {
     console.error('[getPlanStatus] Error:', error);
-    
-    const allFeatures = [
-      'dashboard', 'logbook', 'ranking', 'community', 'profile', 'settings',
-      'weather_basic', 'arcade', 'gear_basic', 'weather_alerts_basic',
-      'map_advanced', 'rules', 'trips', 'ai_chat_standard', 'ai_voice_standard',
-      'licenses', 'devices', 'ai_chat_deluxe', 'ai_voice_deluxe', 'exam_prep',
-      'ai_chat_deluxe_detailed', 'ai_voice_deluxe_hd', 'camera_analysis',
-      'bite_detector', 'ar_view', 'water_analysis'
-    ];
-
     return Response.json({ 
       ok: true,
       plan: {
         id: 'free',
-        name: 'Kostenlos',
+        name: 'Free',
         price_eur: 0,
-        is_active: true,
+        is_active: false,
         expires_at: null,
-        remaining_days: null,
-        features: allFeatures
+        remaining_days: null
       }
     });
   }
