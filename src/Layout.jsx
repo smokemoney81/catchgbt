@@ -253,7 +253,6 @@ export default function Layout({ children, currentPageName }) {
                   <BottomTabs />
 
                   <SupportAgentButton />
-                <ElevenLabsWidget />
 
                 <Toaster 
                   position="bottom-center"
