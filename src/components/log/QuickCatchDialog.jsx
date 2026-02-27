@@ -555,117 +555,122 @@ export default function QuickCatchDialog() {
             </AlertDescription>
           </Alert>
         )}
-        <div className="max-h-[70vh] overflow-y-auto pr-1">
-        <div className="grid sm:grid-cols-2 gap-3">
-          <div className="sm:col-span-2 space-y-2">
-            <label className="text-sm text-gray-400">Foto hochladen</label>
-            <input type="file" accept="image/*" onChange={(e)=>e.target.files[0] && upload(e.target.files[0])} className="block w-full text-sm text-gray-300" />
-            {form.photo_url && (
-              <img src={form.photo_url} alt="Fang" className="h-24 rounded-xl object-cover w-full" />
-            )}
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full border-cyan-600 text-cyan-400 hover:bg-cyan-900/30"
-              onClick={async () => {
-                if (!form.photo_url) { toast.warning("Bitte zuerst ein Foto hochladen"); return; }
-                toast.info("KI analysiert das Bild...");
-                setIsAnalyzing(true);
-                try {
-                  const analysisResult = await base44.functions.invoke('analyzeCatchPhoto', { file_url: form.photo_url });
-                  const data = analysisResult?.data;
-                  if (data?.result_data) {
-                    setAiAnalysisData(data.result_data);
-                    setShowAiConfirmDialog(true);
-                    playSound('notification');
-                    triggerHaptic('medium');
-                  } else {
-                    toast.warning("KI-Analyse konnte nicht durchgeführt werden");
-                  }
-                } catch (error) {
-                  console.error("KI-Analyse-Fehler:", error);
-                  toast.warning("KI-Analyse fehlgeschlagen");
-                } finally {
-                  setIsAnalyzing(false);
-                }
-              }}
-              disabled={isAnalyzing}
-            >
-              {isAnalyzing ? "Wird analysiert..." : "KI-Analyse und automatisch ausfüllen"}
-            </Button>
-            <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-300 select-none">
-              <input
-                type="checkbox"
-                checked={form.shareInCommunity || false}
-                onChange={(e) => setForm({ ...form, shareInCommunity: e.target.checked })}
-                className="w-4 h-4 rounded accent-cyan-500"
+        <div className="overflow-y-auto pr-1" style={{maxHeight: 'calc(85vh - 160px)'}}>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div className="sm:col-span-2 space-y-2">
+              <label className="text-sm text-gray-400">Foto hochladen</label>
+              <label className="flex items-center justify-center gap-2 w-full py-2 px-4 rounded-lg border border-gray-700 bg-gray-800/50 text-gray-300 cursor-pointer text-sm">
+                Bild auswaehlen
+                <input type="file" accept="image/*" onChange={(e)=>e.target.files[0] && upload(e.target.files[0])} className="hidden" />
+              </label>
+              {form.photo_url && (
+                <img src={form.photo_url} alt="Fang" className="h-24 rounded-xl object-cover w-full" />
+              )}
+            </div>
+            <Input placeholder={t('catch.species')} value={form.species}
+              onBlur={e => { toast.info(`${t('catch.species')}: ${e.target.value}`); triggerHaptic('light'); playSound('pop'); }}
+              onChange={(e) => { setForm({...form, species: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
+              className="bg-gray-800/50 border-gray-700 text-white" />
+            <div className="md:hidden">
+              <MobileSelect
+                value={form.spot_id || ""}
+                onValueChange={(v) => {
+                  setForm({...form, spot_id: v});
+                  const spotName = spots.find(s => s.id === v)?.name || 'Kein Spot';
+                  toast.info(`Spot: ${spotName}`);
+                  triggerHaptic('light');
+                  playSound('click');
+                }}
+                placeholder={t('catch.spot')}
+                label={t('catch.spot')}
+                options={spots.map(s => s.id && ({ value: s.id, label: s.name || 'Unbenannt' })).filter(Boolean)}
+                className="bg-gray-800/50 border-gray-700 text-white"
               />
-              Nach dem Speichern auch in der Community posten
-            </label>
+            </div>
+            <div className="hidden md:block">
+              <Select value={form.spot_id || ""} onValueChange={(v)=>{
+                  setForm({...form, spot_id: v});
+                  const spotName = spots.find(s => s.id === v)?.name || 'Kein Spot';
+                  toast.info(`Spot: ${spotName}`);
+                  triggerHaptic('light');
+                  playSound('click');
+                }}>
+                <SelectTrigger className="bg-gray-800/50 border-gray-700 text-white"><SelectValue placeholder={t('catch.spot')} /></SelectTrigger>
+                <SelectContent>
+                  {spots.map(s => s.id && <SelectItem value={s.id} key={s.id}>{s.name || 'Unbenannt'}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <Input type="number" placeholder={t('catch.length')} value={form.length_cm}
+              onBlur={e => { toast.info(`${t('catch.length')}: ${e.target.value} cm`); triggerHaptic('light'); playSound('pop'); }}
+              onChange={(e) => { setForm({...form, length_cm: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
+              className="bg-gray-800/50 border-gray-700 text-white" />
+            <Input type="number" step="0.1" placeholder={t('catch.weight')} value={form.weight_kg}
+              onBlur={e => { toast.info(`${t('catch.weight')}: ${e.target.value} kg`); triggerHaptic('light'); playSound('pop'); }}
+              onChange={(e) => { setForm({...form, weight_kg: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
+              className="bg-gray-800/50 border-gray-700 text-white" />
+            <Input placeholder={t('catch.bait')} value={form.bait_used}
+              onBlur={e => { toast.info(`${t('catch.bait')}: ${e.target.value}`); triggerHaptic('light'); playSound('pop'); }}
+              onChange={(e) => { setForm({...form, bait_used: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
+              className="bg-gray-800/50 border-gray-700 text-white" />
+            <Input type="datetime-local" value={form.catch_time}
+              onBlur={e => { toast.info(`Fangzeit geändert`); triggerHaptic('light'); playSound('pop'); }}
+              onChange={(e) => { setForm({...form, catch_time: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
+              className="bg-gray-800/50 border-gray-700 text-white" />
+            <Input placeholder={t('catch.notes')} value={form.notes}
+              onBlur={e => { toast.info(`Notiz hinzugefügt`); triggerHaptic('light'); playSound('pop'); }}
+              onChange={(e) => { setForm({...form, notes: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
+              className="bg-gray-800/50 border-gray-700 text-white sm:col-span-2" />
           </div>
-          <Input placeholder={t('catch.species')} value={form.species}
-            onBlur={e => { toast.info(`${t('catch.species')}: ${e.target.value}`); triggerHaptic('light'); playSound('pop'); }}
-            onChange={(e) => { setForm({...form, species: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
-            className="bg-gray-800/50 border-gray-700 text-white" />
-          <div className="md:hidden">
-            <MobileSelect
-              value={form.spot_id || ""}
-              onValueChange={(v) => {
-                setForm({...form, spot_id: v});
-                const spotName = spots.find(s => s.id === v)?.name || 'Kein Spot';
-                toast.info(`Spot: ${spotName}`);
-                triggerHaptic('light');
-                playSound('click');
-              }}
-              placeholder={t('catch.spot')}
-              label={t('catch.spot')}
-              options={spots.map(s => s.id && ({ value: s.id, label: s.name || 'Unbenannt' })).filter(Boolean)}
-              className="bg-gray-800/50 border-gray-700 text-white"
+        </div>
+        <div className="mt-3 space-y-2">
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full border-cyan-600 text-cyan-400 hover:bg-cyan-900/30"
+            onClick={async () => {
+              if (!form.photo_url) { toast.warning("Bitte zuerst ein Foto hochladen"); return; }
+              toast.info("KI analysiert das Bild...");
+              setIsAnalyzing(true);
+              try {
+                const analysisResult = await base44.functions.invoke('analyzeCatchPhoto', { file_url: form.photo_url });
+                const data = analysisResult?.data;
+                if (data?.result_data) {
+                  setAiAnalysisData(data.result_data);
+                  setShowAiConfirmDialog(true);
+                  playSound('notification');
+                  triggerHaptic('medium');
+                } else {
+                  toast.warning("KI-Analyse konnte nicht durchgeführt werden");
+                }
+              } catch (error) {
+                console.error("KI-Analyse-Fehler:", error);
+                toast.warning("KI-Analyse fehlgeschlagen");
+              } finally {
+                setIsAnalyzing(false);
+              }
+            }}
+            disabled={isAnalyzing}
+          >
+            {isAnalyzing ? "Wird analysiert..." : "KI-Analyse"}
+          </Button>
+          <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-300 select-none">
+            <input
+              type="checkbox"
+              checked={form.shareInCommunity || false}
+              onChange={(e) => setForm({ ...form, shareInCommunity: e.target.checked })}
+              className="w-4 h-4 rounded accent-cyan-500"
             />
-          </div>
-          <div className="hidden md:block">
-            <Select value={form.spot_id || ""} onValueChange={(v)=>{
-                setForm({...form, spot_id: v});
-                const spotName = spots.find(s => s.id === v)?.name || 'Kein Spot';
-                toast.info(`Spot: ${spotName}`);
-                triggerHaptic('light');
-                playSound('click');
-              }}>
-              <SelectTrigger className="bg-gray-800/50 border-gray-700 text-white"><SelectValue placeholder={t('catch.spot')} /></SelectTrigger>
-              <SelectContent>
-                {spots.map(s => s.id && <SelectItem value={s.id} key={s.id}>{s.name || 'Unbenannt'}</SelectItem>)}
-              </SelectContent>
-            </Select>
-          </div>
-          <Input type="number" placeholder={t('catch.length')} value={form.length_cm}
-            onBlur={e => { toast.info(`${t('catch.length')}: ${e.target.value} cm`); triggerHaptic('light'); playSound('pop'); }}
-            onChange={(e) => { setForm({...form, length_cm: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
-            className="bg-gray-800/50 border-gray-700 text-white" />
-          <Input type="number" step="0.1" placeholder={t('catch.weight')} value={form.weight_kg}
-            onBlur={e => { toast.info(`${t('catch.weight')}: ${e.target.value} kg`); triggerHaptic('light'); playSound('pop'); }}
-            onChange={(e) => { setForm({...form, weight_kg: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
-            className="bg-gray-800/50 border-gray-700 text-white" />
-          <Input placeholder={t('catch.bait')} value={form.bait_used}
-            onBlur={e => { toast.info(`${t('catch.bait')}: ${e.target.value}`); triggerHaptic('light'); playSound('pop'); }}
-            onChange={(e) => { setForm({...form, bait_used: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
-            className="bg-gray-800/50 border-gray-700 text-white" />
-          <Input type="datetime-local" value={form.catch_time}
-            onBlur={e => { toast.info(`Fangzeit geändert`); triggerHaptic('light'); playSound('pop'); }}
-            onChange={(e) => { setForm({...form, catch_time: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
-            className="bg-gray-800/50 border-gray-700 text-white" />
-          <Input placeholder={t('catch.notes')} value={form.notes}
-            onBlur={e => { toast.info(`Notiz hinzugefügt`); triggerHaptic('light'); playSound('pop'); }}
-            onChange={(e) => { setForm({...form, notes: e.target.value || ""}); triggerHaptic('light'); playSound('pop'); }}
-            className="bg-gray-800/50 border-gray-700 text-white sm:col-span-2" />
-        </div>
-        </div>
-        <div className="flex justify-between gap-2 mt-4">
-          <Button variant="outline" onClick={saveDraft}>{t('catch.save_draft')}</Button>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleClose}>{t('common.cancel')}</Button>
-            <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={save} disabled={isSaving}>
-              {isSaving ? `${t('common.loading')}` : t('common.save')}
-            </Button>
+            In der Community posten
+          </label>
+          <div className="flex justify-between gap-2 pt-1">
+            <Button variant="outline" onClick={saveDraft}>{t('catch.save_draft')}</Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={handleClose}>{t('common.cancel')}</Button>
+              <Button className="bg-emerald-600 hover:bg-emerald-700" onClick={save} disabled={isSaving}>
+                {isSaving ? `${t('common.loading')}` : t('common.save')}
+              </Button>
+            </div>
           </div>
         </div>
       </Card>
