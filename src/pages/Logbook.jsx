@@ -41,6 +41,8 @@ export default function Logbook() {
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [savedCatchData, setSavedCatchData] = useState(null);
   const [isSharing, setIsSharing] = useState(false);
+  const [shareInCommunity, setShareInCommunity] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const loadData = useCallback(async () => {
     setLoading(true);
