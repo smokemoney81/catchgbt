@@ -564,8 +564,47 @@ export default function QuickCatchDialog() {
                 <input type="file" accept="image/*" onChange={(e)=>e.target.files[0] && upload(e.target.files[0])} className="hidden" />
               </label>
               {form.photo_url && (
-                <img src={form.photo_url} alt="Fang" className="h-24 rounded-xl object-cover w-full" />
+                <img src={form.photo_url} alt="Fang" className="h-36 rounded-xl object-cover w-full" />
               )}
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full border-cyan-600 text-cyan-400 hover:bg-cyan-900/30"
+                onClick={async () => {
+                  if (!form.photo_url) { toast.warning("Bitte zuerst ein Foto hochladen"); return; }
+                  toast.info("KI analysiert das Bild...");
+                  setIsAnalyzing(true);
+                  try {
+                    const analysisResult = await base44.functions.invoke('analyzeCatchPhoto', { file_url: form.photo_url });
+                    const data = analysisResult?.data;
+                    if (data?.result_data) {
+                      setAiAnalysisData(data.result_data);
+                      setShowAiConfirmDialog(true);
+                      playSound('notification');
+                      triggerHaptic('medium');
+                    } else {
+                      toast.warning("KI-Analyse konnte nicht durchgeführt werden");
+                    }
+                  } catch (error) {
+                    console.error("KI-Analyse-Fehler:", error);
+                    toast.warning("KI-Analyse fehlgeschlagen");
+                  } finally {
+                    setIsAnalyzing(false);
+                  }
+                }}
+                disabled={isAnalyzing}
+              >
+                {isAnalyzing ? "Wird analysiert..." : "KI-Analyse und automatisch ausfüllen"}
+              </Button>
+              <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-300 select-none py-1">
+                <input
+                  type="checkbox"
+                  checked={form.shareInCommunity || false}
+                  onChange={(e) => setForm({ ...form, shareInCommunity: e.target.checked })}
+                  className="w-4 h-4 rounded accent-cyan-500"
+                />
+                In der Community posten
+              </label>
             </div>
             <Input placeholder={t('catch.species')} value={form.species}
               onBlur={e => { toast.info(`${t('catch.species')}: ${e.target.value}`); triggerHaptic('light'); playSound('pop'); }}
