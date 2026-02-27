@@ -201,6 +201,29 @@ function parseCommand(text) {
   return { intent: 'ai_fallback', entities: { question: clean } };
 }
 
+// Konversation in DB speichern
+async function saveConversationMessage(role, content) {
+  try {
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    // Alte Nachrichten (älter als 1 Tag) löschen
+    const old = await base44.entities.ChatMessage.filter({ context: 'voice_control' });
+    for (const msg of old) {
+      if (msg.timestamp && msg.timestamp < oneDayAgo) {
+        await base44.entities.ChatMessage.delete(msg.id);
+      }
+    }
+    await base44.entities.ChatMessage.create({
+      conversation_id: SESSION_ID,
+      role,
+      content,
+      context: 'voice_control',
+      timestamp: new Date().toISOString()
+    });
+  } catch (e) {
+    console.warn('Could not save message:', e);
+  }
+}
+
 // Main Component
 function VoiceBuddy() {
   const [isListening, setIsListening] = useState(false);
@@ -213,8 +236,10 @@ function VoiceBuddy() {
   const [fishingConditions, setFishingConditions] = useState(null);
   const [nearestSpot, setNearestSpot] = useState(null);
   const [processingAI, setProcessingAI] = useState(false);
-  const [rules, setRules] = useState([]); // NEU: State für Angelregeln
-  const [loadingInitialData, setLoadingInitialData] = useState(true); // NEU: State für initiale Datenladung
+  const [rules, setRules] = useState([]);
+  const [loadingInitialData, setLoadingInitialData] = useState(true);
+  const [conversationHistory, setConversationHistory] = useState([]);
+  const [loadingHistory, setLoadingHistory] = useState(true);
   
   const { currentLocation } = useLocation();
   const recognitionRef = useRef(null);
