@@ -328,24 +328,29 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
             )}
           </Button>
           
-          <button
-            onClick={() => {
-              const event = new CustomEvent('toggle-voice-control');
-              window.dispatchEvent(event);
-            }}
-            className={`flex items-center gap-3 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 border border-cyan-500/30 hover:border-cyan-400/50 transition-all min-h-[44px] min-w-[44px] ${
-              buttonPulse ? 'animate-pulse ring-2 ring-cyan-400' : ''
-            }`}
-          >
-            <div className="text-xs text-gray-400 hidden sm:block">KI-Voice</div>
-            <WakeWordIndicator 
-              isActive={voiceStatus.isActive}
-              mode={voiceStatus.mode}
-              isListening={voiceStatus.isListening}
-              error={voiceStatus.error}
-              showAlways={true}
-            />
-          </button>
+          <div className="flex flex-col items-end gap-1">
+            <div className="text-xs text-gray-400 text-right leading-tight max-w-[140px]">
+              Sprachsteuerung aktivieren - dann "Hey Catch" sagen
+            </div>
+            <button
+              onClick={() => {
+                const event = new CustomEvent('toggle-voice-control');
+                window.dispatchEvent(event);
+              }}
+              className={`flex items-center gap-3 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 border border-cyan-500/30 hover:border-cyan-400/50 transition-all min-h-[44px] min-w-[44px] ${
+                buttonPulse ? 'animate-pulse ring-2 ring-cyan-400' : ''
+              }`}
+            >
+              <div className="text-xs text-gray-400 hidden sm:block">KI-Voice</div>
+              <WakeWordIndicator 
+                isActive={voiceStatus.isActive}
+                mode={voiceStatus.mode}
+                isListening={voiceStatus.isListening}
+                error={voiceStatus.error}
+                showAlways={true}
+              />
+            </button>
+          </div>
         </div>
 
         {showAnalysis && aiAnalysis && (

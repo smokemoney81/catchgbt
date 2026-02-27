@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,7 @@ import { useLocation } from "@/components/location/LocationManager";
 import { toast } from "sonner";
 import { Mic, Waves, Zap, AlertCircle, MapPin, Cloud, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { format } from "date-fns";
 
 // Config
 const WAKE_WORD = 'hey catch';
