@@ -261,7 +261,14 @@ export default function Logbook() {
         });
 
         setSavedCatchData(savedCatch);
-        setShowShareDialog(true);
+        if (shareInCommunity) {
+          const catchText = `Mein Fang: ${catchData.species}${catchData.length_cm ? ` (${catchData.length_cm}cm)` : ''}${catchData.weight_kg ? `, ${catchData.weight_kg}kg` : ''}${catchData.bait_used ? `\nKöder: ${catchData.bait_used}` : ''}${catchData.notes ? `\n\n${catchData.notes}` : ''}`;
+          await base44.entities.Post.create({ text: catchText, photo_url: catchData.photo_url || null, likes: 0, reported: false });
+          toast.success("Fang gespeichert und in Community geteilt!");
+          setShareInCommunity(false);
+        } else {
+          setShowShareDialog(true);
+        }
       }
     } catch (error) {
       console.error("Fehler beim Speichern:", error);
