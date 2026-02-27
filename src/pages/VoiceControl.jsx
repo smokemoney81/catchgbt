@@ -244,6 +244,7 @@ function VoiceBuddy() {
   const { currentLocation } = useLocation();
   const recognitionRef = useRef(null);
   const isWaitingForCommandRef = useRef(false);
+  const conversationEndRef = useRef(null);
 
   // Lade Wetter, Spot- und Regel-Daten
   const loadAllData = async () => {
