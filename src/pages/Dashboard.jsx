@@ -245,9 +245,11 @@ export default function Dashboard() {
         `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lon}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,surface_pressure,wind_speed_10m,wind_direction_10m,cloud_cover&hourly=temperature_2m,precipitation_probability&timezone=auto&forecast_days=1`
       ).then(res => res.json());
 
-      const prompt = `Du bist ein erfahrener Angel-Experte. Analysiere die aktuellen Bedingungen am Standort und gib konkrete Angel-Tipps.
+      const prompt = `Du bist ein erfahrener Angel-Experte und Geografie-Assistent.
 
-Aktueller Standort: ${location.lat.toFixed(4)}, ${location.lon.toFixed(4)}
+AUFGABE: Pruefe zuerst, ob sich der Angler an einem Gewaesser befindet oder ob sich in der naeheren Umgebung (bis ca. 1 km) ein Gewaesser (See, Fluss, Teich, Kanal, Bach, etc.) befindet. Nutze dazu das Internet und OpenStreetMap-Daten fuer die genauen Koordinaten.
+
+Standortkoordinaten: Breitengrad ${location.lat.toFixed(5)}, Laengengrad ${location.lon.toFixed(5)}
 
 Wetterbedingungen:
 - Temperatur: ${weatherData.current?.temperature_2m}°C
@@ -258,19 +260,15 @@ Wetterbedingungen:
 - Bewoelkung: ${weatherData.current?.cloud_cover}%
 - Niederschlag: ${weatherData.current?.precipitation} mm
 
-Bitte gib folgende Analyse:
-1. Gesamteinschaetzung der Angelbedingungen (0-10 Punkte)
-2. Welche Fischarten sind jetzt aktiv?
-3. Empfohlene Angeltiefe und Spot-Charakteristik
-4. Beste Koederwahl fuer diese Bedingungen
-5. Taktik-Tipps (aktiv oder passiv angeln?)
-6. Optimale Tageszeit heute
+WICHTIGE REGELN:
+- Wenn KEIN Gewaesser innerhalb von 1 km gefunden wird: Teile dem Angler klar mit, dass er aktuell NICHT an einem Gewaesser ist und daher keine sinnvollen Angel-Tipps gegeben werden koennen. Nenne die naechsten bekannten Gewaesser in der Region und deren ungefaehre Entfernung.
+- Wenn ein Gewaesser GEFUNDEN wird: Nenne den Namen des Gewaessers, die Entfernung, und gib dann konkrete Angel-Tipps fuer genau dieses Gewaesser basierend auf den aktuellen Wetterbedingungen (Fischarten, Koeder, Taktik, beste Uhrzeit).
 
-Antworte kurz und praegnant in max 6 Saetzen.`;
+Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
 
       const response = await base44.integrations.Core.InvokeLLM({
         prompt: prompt,
-        add_context_from_internet: false
+        add_context_from_internet: true
       });
 
       setAiAnalysis(response);
