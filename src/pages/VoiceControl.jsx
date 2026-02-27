@@ -246,6 +246,33 @@ function VoiceBuddy() {
   const isWaitingForCommandRef = useRef(false);
   const conversationEndRef = useRef(null);
 
+  // Lade gespeicherte Konversationshistorie (letzte 24h)
+  const loadHistory = useCallback(async () => {
+    setLoadingHistory(true);
+    try {
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const msgs = await base44.entities.ChatMessage.filter({ context: 'voice_control' });
+      const recent = msgs
+        .filter(m => m.timestamp && m.timestamp >= oneDayAgo)
+        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+      setConversationHistory(recent);
+    } catch (e) {
+      console.warn('Could not load history:', e);
+    } finally {
+      setLoadingHistory(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadHistory();
+  }, [loadHistory]);
+
+  useEffect(() => {
+    if (conversationEndRef.current) {
+      conversationEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [conversationHistory]);
+
   // Lade Wetter, Spot- und Regel-Daten
   const loadAllData = async () => {
     setLoadingInitialData(true);
