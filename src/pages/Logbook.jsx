@@ -356,6 +356,73 @@ export default function Logbook() {
       
       <Card className="glass-morphism border-gray-800 rounded-2xl">
         <CardHeader>
+          {!editingCatch && (
+            <div className="flex flex-wrap gap-2 mb-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShareInCommunity(prev => !prev)}
+                className={`text-sm border ${shareInCommunity ? "border-cyan-500 text-cyan-400 bg-cyan-950/40" : "border-gray-700 text-gray-300 hover:bg-gray-700"}`}
+              >
+                {shareInCommunity ? "In Community posten: An" : "In Community posten"}
+              </Button>
+              <label className="inline-flex items-center cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    setIsAnalyzing(true);
+                    try {
+                      const { file_url } = await UploadFile({ file });
+                      setPhotoUrl(file_url);
+                      toast.info("KI analysiert das Bild...");
+                      const extractionSchema = {
+                        type: "object",
+                        properties: {
+                          species: { type: "string" },
+                          length_cm: { type: "number" },
+                          weight_kg: { type: "number" },
+                          bait_used: { type: "string" },
+                          notes: { type: "string" },
+                          catch_time: { type: "string", format: "date-time" }
+                        },
+                        required: ["species"]
+                      };
+                      const { output } = await ExtractDataFromUploadedFile({ file_url, json_schema: extractionSchema });
+                      if (output) {
+                        if (output.species) setSpecies(output.species);
+                        if (output.length_cm) setLengthCm(String(output.length_cm));
+                        if (output.weight_kg) setWeightKg(String(output.weight_kg));
+                        if (output.bait_used) setBaitUsed(output.bait_used);
+                        if (output.notes) setNotes(output.notes);
+                        if (output.catch_time) setCatchTime(new Date(output.catch_time).toISOString().slice(0, 16));
+                        toast.success("Felder automatisch ausgefüllt!");
+                      } else {
+                        toast.warning("KI konnte keine Daten erkennen");
+                      }
+                    } catch (err) {
+                      toast.error("KI-Analyse fehlgeschlagen");
+                    } finally {
+                      setIsAnalyzing(false);
+                    }
+                  }}
+                  disabled={isAnalyzing}
+                />
+                <Button
+                  as="span"
+                  type="button"
+                  variant="outline"
+                  className="text-sm border-gray-700 text-gray-300 hover:bg-gray-700 cursor-pointer"
+                  disabled={isAnalyzing}
+                >
+                  {isAnalyzing ? "KI analysiert..." : "KI Fang-Analyse und automatisch ausfüllen"}
+                </Button>
+              </label>
+            </div>
+          )}
           <CardTitle className="text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.7)]">
             {editingCatch ? "Fang bearbeiten" : "Neuen Fang erfassen"}
           </CardTitle>
