@@ -571,10 +571,11 @@ function VoiceBuddy() {
       const fullText = (finalTranscript + interimTranscript).trim().toLowerCase();
       setTranscript(fullText);
 
-      if (!isWaitingForCommandRef.current && fullText.includes(WAKE_WORD)) {
+      const wakeWordDetected = WAKE_WORD_VARIANTS.some(variant => fullText.includes(variant));
+      if (!isWaitingForCommandRef.current && wakeWordDetected) {
         isWaitingForCommandRef.current = true;
         setStatus('listening');
-        await speak('Ja, bitte?', { rate: 1.2 });
+        await speak('Ja, bitte?', { rate: 1.1 });
         setTranscript('');
         return;
       }
