@@ -420,15 +420,15 @@ export default function Logbook() {
                   disabled={isAnalyzing}
                 />
                 <Button
-                  as="span"
                   type="button"
                   variant="outline"
                   className="text-sm border-gray-700 text-gray-300 hover:bg-gray-700 cursor-pointer"
                   disabled={isAnalyzing}
+                  onClick={() => document.getElementById('ai-analyze-upload').click()}
                 >
                   {isAnalyzing ? "KI analysiert..." : "KI Fang-Analyse und automatisch ausfüllen"}
                 </Button>
-              </label>
+              </div>
             </div>
           )}
           <CardTitle className="text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.7)]">
