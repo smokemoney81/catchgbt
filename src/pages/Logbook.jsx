@@ -9,6 +9,7 @@ import { MobileSelect } from "@/components/ui/mobile-select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Upload, X, Loader2, Share2 } from "lucide-react";
+import { ExtractDataFromUploadedFile } from "@/integrations/Core";
 import CatchHistory from "@/components/log/CatchHistory";
 import { UploadFile } from "@/integrations/Core";
 import PendingPhotoCard from '@/components/log/PendingPhotoCard';
