@@ -373,9 +373,10 @@ export default function Logbook() {
               >
                 {shareInCommunity ? "In Community posten: An" : "In Community posten"}
               </Button>
-              <label className="inline-flex items-center cursor-pointer">
+              <div className="inline-flex items-center cursor-pointer" onClick={(e) => e.stopPropagation()}>
                 <input
                   type="file"
+                  id="ai-analyze-upload"
                   accept="image/*"
                   className="hidden"
                   onChange={async (e) => {
