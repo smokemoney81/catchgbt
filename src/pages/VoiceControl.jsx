@@ -635,6 +635,7 @@ function VoiceBuddy() {
 
       if (isWaitingForCommandRef.current && event.results[event.resultIndex].isFinal) {
         const parsed = parseCommand(fullText);
+        const userQuestion = fullText.replace(/hey\s*ca?t?c?h?/gi, '').trim();
         
         if (parsed.intent === 'stop') {
           stopListening();
@@ -644,9 +645,31 @@ function VoiceBuddy() {
         setStatus('responding');
         setIsSpeaking(true);
         
+        // Nutzer-Nachricht speichern
+        if (userQuestion) {
+          await saveConversationMessage('user', userQuestion);
+          setConversationHistory(prev => [...prev, {
+            id: Date.now() + '_u',
+            role: 'user',
+            content: userQuestion,
+            timestamp: new Date().toISOString(),
+            context: 'voice_control'
+          }]);
+        }
+
         const tip = await generateTip(parsed);
         setLastTip(tip);
         
+        // KI-Antwort speichern
+        await saveConversationMessage('assistant', tip);
+        setConversationHistory(prev => [...prev, {
+          id: Date.now() + '_a',
+          role: 'assistant',
+          content: tip,
+          timestamp: new Date().toISOString(),
+          context: 'voice_control'
+        }]);
+
         await speak(tip, { rate: 1.0 });
         setIsSpeaking(false);
         setStatus('waiting');
