@@ -31,18 +31,21 @@ function FeatureHints() {
   const Feature = features[currentFeature];
 
   return (
-    <motion.div 
-      key={currentFeature}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      className="flex items-center justify-start gap-4"
-    >
-      <Feature.icon className="w-8 h-8 text-cyan-400" />
-      <p className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-        {Feature.text}
-      </p>
-    </motion.div>
+    <AnimatePresence mode="wait">
+      <motion.div 
+        key={currentFeature}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.4 }}
+        className="flex items-center justify-start gap-4"
+      >
+        <Feature.icon className="w-8 h-8 text-cyan-400" />
+        <p className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+          {Feature.text}
+        </p>
+      </motion.div>
+    </AnimatePresence>
   );
 }
 
