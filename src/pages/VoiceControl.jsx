@@ -12,7 +12,11 @@ import { format } from "date-fns";
 
 // Config
 const WAKE_WORD = 'hey catch';
+const WAKE_WORD_VARIANTS = ['hey catch', 'hei catch', 'hey ketch', 'hey ketsch', 'hey caech', 'heycat', 'hey cat', 'heycatch'];
 const LANGUAGE = 'de-DE';
+
+// Konversations-Session ID (pro App-Sitzung)
+const SESSION_ID = `voice_${Date.now()}`;
 
 // TTS Helper
 function speak(text, { rate = 1, pitch = 1, voiceName = null } = {}) {
