@@ -991,6 +991,57 @@ function VoiceBuddy() {
           </CardContent>
         </Card>
 
+        {/* Konversationshistorie */}
+        <Card className="glass-morphism border-gray-800">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between text-cyan-400 text-lg">
+              <span>Konversationsprotokoll</span>
+              <span className="text-xs text-gray-500 font-normal">letzte 24 Stunden</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loadingHistory ? (
+              <div className="flex items-center gap-2 text-gray-500 text-sm">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Lade Verlauf...
+              </div>
+            ) : conversationHistory.length === 0 ? (
+              <p className="text-gray-500 text-sm text-center py-4">Noch keine Konversationen. Starte Voice Control und sage "Hey Catch".</p>
+            ) : (
+              <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
+                {conversationHistory.map((msg) => (
+                  <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[80%] rounded-xl px-4 py-2 ${
+                      msg.role === 'user'
+                        ? 'bg-cyan-900/40 border border-cyan-500/30 text-cyan-100'
+                        : 'bg-gray-800/60 border border-gray-700 text-gray-200'
+                    }`}>
+                      <p className="text-xs text-gray-500 mb-1">
+                        {msg.role === 'user' ? 'Du' : 'CatchGBT'} - {msg.timestamp ? format(new Date(msg.timestamp), 'HH:mm') : ''}
+                      </p>
+                      <p className="text-sm leading-relaxed">{msg.content}</p>
+                    </div>
+                  </div>
+                ))}
+                <div ref={conversationEndRef} />
+              </div>
+            )}
+            {conversationHistory.length > 0 && (
+              <button
+                onClick={async () => {
+                  const all = await base44.entities.ChatMessage.filter({ context: 'voice_control' });
+                  for (const m of all) await base44.entities.ChatMessage.delete(m.id);
+                  setConversationHistory([]);
+                  toast.success('Verlauf gelöscht');
+                }}
+                className="mt-4 text-xs text-red-400 hover:text-red-300 transition-colors"
+              >
+                Verlauf löschen
+              </button>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Instructions */}
         <Card className="glass-morphism border-gray-800">
           <CardHeader>
