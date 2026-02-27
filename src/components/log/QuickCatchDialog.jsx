@@ -662,47 +662,8 @@ export default function QuickCatchDialog() {
               className="bg-gray-800/50 border-gray-700 text-white sm:col-span-2" />
           </div>
         </div>
-        <div className="mt-3 space-y-2">
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full border-cyan-600 text-cyan-400 hover:bg-cyan-900/30"
-            onClick={async () => {
-              if (!form.photo_url) { toast.warning("Bitte zuerst ein Foto hochladen"); return; }
-              toast.info("KI analysiert das Bild...");
-              setIsAnalyzing(true);
-              try {
-                const analysisResult = await base44.functions.invoke('analyzeCatchPhoto', { file_url: form.photo_url });
-                const data = analysisResult?.data;
-                if (data?.result_data) {
-                  setAiAnalysisData(data.result_data);
-                  setShowAiConfirmDialog(true);
-                  playSound('notification');
-                  triggerHaptic('medium');
-                } else {
-                  toast.warning("KI-Analyse konnte nicht durchgeführt werden");
-                }
-              } catch (error) {
-                console.error("KI-Analyse-Fehler:", error);
-                toast.warning("KI-Analyse fehlgeschlagen");
-              } finally {
-                setIsAnalyzing(false);
-              }
-            }}
-            disabled={isAnalyzing}
-          >
-            {isAnalyzing ? "Wird analysiert..." : "KI-Analyse"}
-          </Button>
-          <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-300 select-none">
-            <input
-              type="checkbox"
-              checked={form.shareInCommunity || false}
-              onChange={(e) => setForm({ ...form, shareInCommunity: e.target.checked })}
-              className="w-4 h-4 rounded accent-cyan-500"
-            />
-            In der Community posten
-          </label>
-          <div className="flex justify-between gap-2 pt-1">
+        <div className="mt-3">
+          <div className="flex justify-between gap-2">
             <Button variant="outline" onClick={saveDraft}>{t('catch.save_draft')}</Button>
             <div className="flex gap-2">
               <Button variant="outline" onClick={handleClose}>{t('common.cancel')}</Button>
