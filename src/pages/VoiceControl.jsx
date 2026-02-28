@@ -718,59 +718,53 @@ function VoiceBuddy() {
   }, []); // Only run once on mount
 
   const startListening = async () => {
+    setError(null);
+    
     try {
-      setError(null);
-      
-      // Prüfe Mikrofon-Berechtigung
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        stream.getTracks().forEach(track => track.stop());
-      } catch (permError) {
-        setError('Mikrofon-Zugriff verweigert. Bitte erlaube den Zugriff.');
-        return;
-      }
-      
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach(track => track.stop());
+    } catch (permError) {
+      setError('Mikrofon-Zugriff verweigert. Bitte erlaube den Zugriff.');
+      return;
+    }
+
+    if (!recognitionRef.current) {
+      setError('Spracherkennung nicht verfuegbar. Lade die Seite neu.');
+      return;
+    }
+
+    try {
+      isListeningRef.current = true;
       recognitionRef.current.start();
       setIsListening(true);
       setStatus('waiting');
-      toast.success('Voice Control gestartet', {
-        description: 'Sage "Hey Catch" um zu beginnen'
-      });
+      toast.success('Voice Control gestartet', { description: 'Sage "Hey Catch" um zu beginnen' });
     } catch (err) {
       console.error('Error starting recognition:', err);
       if (err.name === 'InvalidStateError') {
-        // Recognition läuft bereits, stoppe und starte neu
-        try {
-          recognitionRef.current.stop();
-          setTimeout(() => {
-            recognitionRef.current.start();
-            setIsListening(true);
-            setStatus('waiting');
-          }, 100);
-        } catch (restartErr) {
-          setError('Konnte Spracherkennung nicht neu starten');
-        }
+        // already running - treat as success
+        isListeningRef.current = true;
+        setIsListening(true);
+        setStatus('waiting');
       } else {
-        setError('Konnte Spracherkennung nicht starten');
+        isListeningRef.current = false;
+        setError('Konnte Spracherkennung nicht starten: ' + err.message);
       }
     }
   };
 
   const stopListening = () => {
+    isListeningRef.current = false;
     if (recognitionRef.current) {
       try {
         recognitionRef.current.stop();
-      } catch (e) {
-        console.warn('Error stopping recognition:', e);
-      }
+      } catch (e) {}
     }
     setIsListening(false);
     setStatus('idle');
     isWaitingForCommandRef.current = false;
     setTranscript('');
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
     toast.info('Voice Control beendet');
   };
 
