@@ -171,9 +171,16 @@ Registriere dich kostenlos, um personalisierte KI-Antworten basierend auf deinem
     setQuestion("");
 
     try {
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `Du bist ein erfahrener Angel-Experte und hilfst Anglern mit präzisen, praktischen Ratschlägen. 
-        
+      let responseContent;
+
+      if (isGuest) {
+        // Demo-Antwort fuer Gastmodus
+        await new Promise(resolve => setTimeout(resolve, 800)); // kurze Verzögerung simulieren
+        responseContent = getRandomDemoResponse(questionText) + '\n\n---\n*Dies ist eine Demo-Antwort. Registriere dich kostenlos fuer echte KI-Antworten!*';
+      } else {
+        const response = await base44.integrations.Core.InvokeLLM({
+          prompt: `Du bist ein erfahrener Angel-Experte und hilfst Anglern mit präzisen, praktischen Ratschlägen. 
+          
 Frage des Anglers: ${questionText}
 
 Gib eine detaillierte, hilfreiche Antwort mit konkreten Tipps. Strukturiere deine Antwort klar mit:
@@ -183,18 +190,19 @@ Gib eine detaillierte, hilfreiche Antwort mit konkreten Tipps. Strukturiere dein
 - Praktische Tipps
 
 Verwende Emojis sparsam aber gezielt für bessere Lesbarkeit.`,
-        add_context_from_internet: false
-      });
+          add_context_from_internet: false
+        });
+        responseContent = response;
+        await handleSpeak(responseContent);
+      }
 
       const aiMessage = {
         role: "assistant",
-        content: response || "Entschuldigung, ich konnte keine Antwort generieren. Bitte versuche es erneut.",
+        content: responseContent || "Entschuldigung, ich konnte keine Antwort generieren. Bitte versuche es erneut.",
         timestamp: new Date().toISOString()
       };
       
       setMessages(prev => [...prev, aiMessage]);
-      
-      await handleSpeak(response);
       
     } catch (error) {
       console.error("Fehler beim Abrufen der Antwort:", error);
