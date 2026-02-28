@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useState } from "react";
 import { Catch, Spot, User } from "@/entities/all"; // Added User import
 import { UploadFile, ExtractDataFromUploadedFile } from "@/integrations/Core";
@@ -8,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Camera, Edit2, Filter, MapPin, Ruler, Trash2, Upload, Weight, X, Loader2 } from "lucide-react";
+import { getGuestCatches, addGuestCatch, updateGuestCatch, deleteGuestCatch } from "@/components/utils/guestMode";
+import { base44 } from "@/api/base44Client";
 
 export default function LogSection() {
   const [catches, setCatches] = useState([]);
