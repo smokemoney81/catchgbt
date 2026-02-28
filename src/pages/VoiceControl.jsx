@@ -244,6 +244,7 @@ function VoiceBuddy() {
   const { currentLocation } = useLocation();
   const recognitionRef = useRef(null);
   const isWaitingForCommandRef = useRef(false);
+  const isListeningRef = useRef(false);
   const conversationEndRef = useRef(null);
 
   // Lade gespeicherte Konversationshistorie (letzte 24h)
