@@ -74,7 +74,7 @@ export default function MapController() {
     setLoading(true);
     try {
       const [spotsData, clubsData] = await Promise.all([
-        Spot.list(),
+        Spot.list().catch(() => []),
         FishingClub.list()
       ]);
       
