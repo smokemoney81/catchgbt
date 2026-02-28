@@ -174,7 +174,52 @@ export default function Layout({ children, currentPageName }) {
     );
   }
 
+  const isGuest = !user;
   const isDemo = user?.is_demo_user === true;
+
+  // Gastmodus: Weiterleitung falls Seite nicht erlaubt
+  if (isGuest && !isGuestAllowedPage(currentPageName) && currentPageName !== 'Home') {
+    return (
+      <PlanProvider>
+        <LanguageProvider>
+          <HapticProvider>
+            <SoundProvider>
+              <LocationProvider>
+                <div className="min-h-screen bg-gray-950 text-slate-50 flex items-center justify-center p-6">
+                  <SEO />
+                  <Toaster />
+                  <div className="max-w-md w-full text-center space-y-6">
+                    <div className="text-6xl mb-4">--</div>
+                    <h1 className="text-2xl font-bold text-white">Anmeldung erforderlich</h1>
+                    <p className="text-gray-400">
+                      Diese Funktion ist nur fuer angemeldete Nutzer verfuegbar.
+                    </p>
+                    <div className="flex flex-col gap-3">
+                      <button
+                        onClick={() => base44.auth.redirectToLogin()}
+                        className="w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-semibold transition-colors"
+                      >
+                        Jetzt anmelden
+                      </button>
+                      <Link
+                        to={createPageUrl('Dashboard')}
+                        className="w-full py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-semibold transition-colors text-center block"
+                      >
+                        Zurueck zum Dashboard
+                      </Link>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      Im Gastmodus verfuegbar: Dashboard, KI-Buddy (Demo), Fangbuch, Profil, Einstellungen, Tutorials
+                    </p>
+                  </div>
+                </div>
+              </LocationProvider>
+            </SoundProvider>
+          </HapticProvider>
+        </LanguageProvider>
+      </PlanProvider>
+    );
+  }
 
   return (
     <PlanProvider>
