@@ -225,29 +225,31 @@ export default function LogSection() {
             )}
           </div>
           <div className="flex flex-wrap gap-2">
-            <label className="inline-flex items-center">
-              <input 
-                type="file" 
-                accept="image/*" 
-                className="hidden" 
-                onChange={(e) => e.target.files[0] && importImageAndExtract(e.target.files[0])} 
-                disabled={isExtracting || uploading}
-              />
-              <Button 
-                as="span" 
-                variant="outline" 
-                size="sm" 
-                className="cursor-pointer flex items-center"
-                disabled={isExtracting || uploading}
-              >
-                {isExtracting ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                ) : (
-                  <Upload className="w-4 h-4 mr-2" />
-                )}
-                Bild importieren
-              </Button>
-            </label>
+            {!isGuest && (
+              <label className="inline-flex items-center">
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  className="hidden" 
+                  onChange={(e) => e.target.files[0] && importImageAndExtract(e.target.files[0])} 
+                  disabled={isExtracting || uploading}
+                />
+                <Button 
+                  as="span" 
+                  variant="outline" 
+                  size="sm" 
+                  className="cursor-pointer flex items-center"
+                  disabled={isExtracting || uploading}
+                >
+                  {isExtracting ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Upload className="w-4 h-4 mr-2" />
+                  )}
+                  Bild importieren
+                </Button>
+              </label>
+            )}
             <Button className="bg-emerald-600 hover:bg-emerald-700" size="sm" onClick={openNew}>Neuer Fang</Button>
           </div>
         </div>
