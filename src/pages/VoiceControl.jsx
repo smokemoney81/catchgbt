@@ -597,6 +597,7 @@ function VoiceBuddy() {
     return "Sorry, das habe ich nicht verstanden. Frag mich nach Köder, Spot oder Wetter.";
   };
 
+  // Setup speech recognition once on mount
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
@@ -608,6 +609,7 @@ function VoiceBuddy() {
     recognition.lang = LANGUAGE;
     recognition.continuous = true;
     recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
 
     recognition.onresult = async (event) => {
       let interimTranscript = '';
@@ -634,7 +636,7 @@ function VoiceBuddy() {
         return;
       }
 
-      if (isWaitingForCommandRef.current && event.results[event.resultIndex].isFinal) {
+      if (isWaitingForCommandRef.current && event.results[event.results.length - 1].isFinal) {
         const parsed = parseCommand(fullText);
         const userQuestion = fullText.replace(/hey\s*ca?t?c?h?/gi, '').trim();
         
@@ -645,8 +647,8 @@ function VoiceBuddy() {
 
         setStatus('responding');
         setIsSpeaking(true);
+        isWaitingForCommandRef.current = false;
         
-        // Nutzer-Nachricht speichern
         if (userQuestion) {
           await saveConversationMessage('user', userQuestion);
           setConversationHistory(prev => [...prev, {
@@ -661,7 +663,6 @@ function VoiceBuddy() {
         const tip = await generateTip(parsed);
         setLastTip(tip);
         
-        // KI-Antwort speichern
         await saveConversationMessage('assistant', tip);
         setConversationHistory(prev => [...prev, {
           id: Date.now() + '_a',
@@ -674,7 +675,6 @@ function VoiceBuddy() {
         await speak(tip, { rate: 1.0 });
         setIsSpeaking(false);
         setStatus('waiting');
-        isWaitingForCommandRef.current = false;
         setTranscript('');
       }
     };
@@ -684,33 +684,38 @@ function VoiceBuddy() {
       if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
         setError('Mikrofon-Zugriff verweigert. Bitte erlaube den Zugriff in den Browser-Einstellungen.');
         setIsListening(false);
+        isListeningRef.current = false;
       } else if (event.error === 'no-speech') {
-        // Ignoriere "no-speech" Fehler, lass es einfach weiterlaufen
-        console.log('No speech detected, continuing...');
+        // normal, keep going
       } else if (event.error === 'audio-capture') {
         setError('Kein Mikrofon gefunden. Bitte verbinde ein Mikrofon.');
         setIsListening(false);
+        isListeningRef.current = false;
       } else if (event.error === 'network') {
-        console.log('Network error, restarting...');
+        console.warn('Network error in speech recognition');
       } else {
         console.warn(`Speech recognition error: ${event.error}`);
       }
     };
 
     recognition.onend = () => {
-      if (isListening) {
-        recognition.start();
+      if (isListeningRef.current) {
+        try {
+          recognition.start();
+        } catch (e) {
+          console.warn('Could not restart recognition:', e.message);
+        }
       }
     };
 
     recognitionRef.current = recognition;
 
     return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
+      try {
+        recognition.stop();
+      } catch (e) {}
     };
-  }, [isListening, weather, fishingConditions, nearestSpot, lastTip, rules]); // Added `rules` to dependencies
+  }, []); // Only run once on mount
 
   const startListening = async () => {
     try {
