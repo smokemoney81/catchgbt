@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import { getPersonalizedGreeting } from "@/components/utils/greetings";
 import { Volume2 } from "lucide-react";
+import { getRandomDemoResponse } from "@/components/utils/guestMode";
 
 export default function AIAssistant() {
   const [user, setUser] = useState(null);

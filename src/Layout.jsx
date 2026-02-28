@@ -20,6 +20,9 @@ import { LanguageProvider } from "@/components/i18n/LanguageContext";
 import { PlanProvider } from "@/components/premium/PlanContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { WakeWordDetector } from "@/components/utils/WakeWordDetector";
+import { isGuestAllowedPage } from "@/components/utils/guestMode";
+import { createPageUrl } from "@/utils";
+import { Link } from "react-router-dom";
 
 export default function Layout({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
