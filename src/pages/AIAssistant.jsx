@@ -224,6 +224,18 @@ Verwende Emojis sparsam aber gezielt für bessere Lesbarkeit.`,
         
         <div className="sticky top-0 z-10 backdrop-blur-xl bg-gray-950/80 border-b border-gray-800/50">
           <div className="px-6 py-6">
+            {isGuest && (
+              <div className="mb-4 px-4 py-2 rounded-xl bg-amber-900/30 border border-amber-600/50 text-amber-300 text-sm text-center">
+                Gastmodus - Demo-Antworten aktiv.{' '}
+                <button
+                  onClick={() => base44.auth.redirectToLogin()}
+                  className="underline font-semibold hover:text-amber-200"
+                >
+                  Jetzt anmelden
+                </button>{' '}
+                fuer echte KI.
+              </div>
+            )}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
