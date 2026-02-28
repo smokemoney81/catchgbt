@@ -209,7 +209,21 @@ export default function LogSection() {
     <Card className="glass-morphism border-gray-800 rounded-2xl">
       <CardHeader>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <CardTitle className="text-white">Fangbuch</CardTitle>
+          <div>
+            <CardTitle className="text-white">Fangbuch</CardTitle>
+            {isGuest && (
+              <p className="text-xs text-amber-400 mt-1">
+                Gastmodus - Fänge werden 24 Stunden lokal gespeichert.{' '}
+                <button
+                  onClick={() => base44.auth.redirectToLogin()}
+                  className="underline font-semibold hover:text-amber-300"
+                >
+                  Anmelden
+                </button>{' '}
+                um Fänge dauerhaft zu speichern.
+              </p>
+            )}
+          </div>
           <div className="flex flex-wrap gap-2">
             <label className="inline-flex items-center">
               <input 
