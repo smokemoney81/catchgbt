@@ -80,6 +80,8 @@ export default function AIAssistant() {
     }
   };
 
+  const [isGuest, setIsGuest] = useState(false);
+
   const loadUser = async () => {
     try {
       const currentUser = await User.me();
