@@ -675,19 +675,14 @@ export default function Community() {
         </Card>
 
         {/* Posts Feed */}
-        <AnimatePresence>
+        <div className="space-y-4">
           {posts.map((post) => {
             const profilePic = getUserProfilePicture(post.created_by);
             const displayName = getUserDisplayName(post.created_by);
             const isOwnPost = currentUser && post.created_by === currentUser.email;
 
             return (
-              <motion.div
-                key={post.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-              >
+              <div key={post.id}>
                 <Card className="glass-morphism border-gray-800">
                   <CardHeader>
                     <div className="flex items-start justify-between">
