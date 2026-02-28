@@ -832,7 +832,7 @@ export default function Community() {
                     )}
                   </CardContent>
                 </Card>
-              </div>
+            </div>
             );
           })}
         </div>
