@@ -102,6 +102,22 @@ Was möchtest du wissen?`;
       setMessages([{ role: "assistant", content: greeting }]);
     } catch (error) {
       console.error("Fehler beim Laden des Users:", error);
+      // Gastmodus: Demo-Begruessung
+      setIsGuest(true);
+      setMessages([{
+        role: "assistant",
+        content: `Willkommen beim KI-Angel-Buddy!
+
+Dies ist eine Vorschau im Gastmodus. Du siehst hier Demo-Antworten ohne echte KI.
+
+**Verfuegbare Themen:**
+- Hecht, Zander, Karpfen, Forelle und mehr
+- Wetter und Angelzeiten
+- Koeder-Empfehlungen
+- Angelspots und Taktiken
+
+Registriere dich kostenlos, um personalisierte KI-Antworten basierend auf deinem Standort und Wetter zu erhalten!`
+      }]);
     }
   };
 
