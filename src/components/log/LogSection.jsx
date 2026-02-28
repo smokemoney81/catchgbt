@@ -96,10 +96,24 @@ export default function LogSection() {
     };
     
     try {
+      if (isGuest) {
+        if (editing === "new") {
+          const newCatch = addGuestCatch(payload);
+          setEditing(null);
+          setCatches(getGuestCatches());
+          alert("Fang gespeichert (Gastmodus - 24 Stunden gespeichert).");
+        } else {
+          updateGuestCatch(editing, payload);
+          setEditing(null);
+          setCatches(getGuestCatches());
+          alert("Fang aktualisiert.");
+        }
+        return;
+      }
+
       if (editing === "new") {
         await Catch.create(payload);
         
-        // Credits zum User hinzufügen mit neuer Berechnung
         try {
           const user = await User.me();
           const credits = calculateCatchCredits(form.species, parseFloat(form.length_cm));
@@ -107,17 +121,7 @@ export default function LogSection() {
             credits: (user.credits || 0) + credits,
             total_earned: (user.total_earned || 0) + credits
           });
-          
-          // Success Sound
-          try {
-            const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO9tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmEfAzuR0OzMgDEYHX29t15NEQ5Pp+HuulIeBTuOwOitB5qNkWE2NWSn0N2wYh4HP5nZ88V3JgYsgs/x2Ik3CRhpu+3noUwQDFC7UUVA');
-            audio.volume = 0.3;
-            audio.play();
-          } catch (soundError) {
-            // Sound fehler ignorieren
-          }
-          
-          alert(`Fang erfolgreich gespeichert!\n${form.species} (${form.length_cm || 'unbekannt'} cm)\n+${credits} Credits erhalten! 🎣`);
+          alert(`Fang erfolgreich gespeichert!\n${form.species} (${form.length_cm || 'unbekannt'} cm)\n+${credits} Credits erhalten!`);
         } catch (error) {
           alert("Fang gespeichert, aber Credits konnten nicht gutgeschrieben werden.");
         }
@@ -127,13 +131,18 @@ export default function LogSection() {
       }
       
       setEditing(null);
-      setCatches(await Catch.list("-catch_time")); // Replaced loadTasks()
+      setCatches(await Catch.list("-catch_time"));
     } catch (error) {
       alert("Fehler beim Speichern des Fangs.");
     }
   };
 
   const remove = async (c) => {
+    if (isGuest) {
+      deleteGuestCatch(c.id);
+      setCatches(getGuestCatches());
+      return;
+    }
     await Catch.delete(c.id);
     setCatches(await Catch.list("-catch_time"));
   };
