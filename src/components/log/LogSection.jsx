@@ -20,19 +20,25 @@ export default function LogSection() {
   });
   const [uploading, setUploading] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
+  const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
-    // KI-Buddy über Funktionsaufruf informieren
     window.dispatchEvent(new CustomEvent('kiBuddyFunctionCall', {
-      detail: {
-        functionName: 'logbook',
-        context: { timestamp: Date.now() }
-      }
+      detail: { functionName: 'logbook', context: { timestamp: Date.now() } }
     }));
     
     (async () => {
-      setCatches(await Catch.list("-catch_time"));
-      setSpots(await Spot.list());
+      try {
+        await base44.auth.me();
+        // Eingeloggter Nutzer
+        setCatches(await Catch.list("-catch_time"));
+        setSpots(await Spot.list());
+        setIsGuest(false);
+      } catch {
+        // Gastmodus
+        setIsGuest(true);
+        setCatches(getGuestCatches());
+      }
     })();
   }, []);
 
