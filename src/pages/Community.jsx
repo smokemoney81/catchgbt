@@ -832,10 +832,10 @@ export default function Community() {
                     )}
                   </CardContent>
                 </Card>
-              </motion.div>
+              </div>
             );
           })}
-        </AnimatePresence>
+        </div>
 
         {posts.length === 0 && (
           <Card className="glass-morphism border-gray-800">
