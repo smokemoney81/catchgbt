@@ -443,8 +443,7 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
               { name: "Trips", path: "TripPlanner" },
               { name: "Community", path: "Community" },
               { name: "Ranking", path: "Ranking" },
-              { name: "Regeln", path: "Rules" },
-              { name: "Pruefung", path: "ExamPrep" }
+              { name: "Angelschein", path: "AngelscheinPruefungSchonzeiten" }
             ].map((feature) => (
               <Link
                 key={feature.path}
