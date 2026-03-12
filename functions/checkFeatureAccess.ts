@@ -28,35 +28,33 @@ Deno.serve(async (req) => {
 
     const effectivePlan = isPlanActive ? planId : 'free';
     
+    const allPlans = ['free', 'basic', 'pro', 'elite', 'ultimate'];
     const featureAccess = {
-      'dashboard': ['free', 'basic', 'pro', 'ultimate'],
-      'logbook': ['free', 'basic', 'pro', 'ultimate'],
-      'ranking': ['free', 'basic', 'pro', 'ultimate'],
-      'community': ['free', 'basic', 'pro', 'ultimate'],
-      'profile': ['free', 'basic', 'pro', 'ultimate'],
-      'settings': ['free', 'basic', 'pro', 'ultimate'],
-      'weather_basic': ['free', 'basic', 'pro', 'ultimate'],
-      'arcade': ['free', 'basic', 'pro', 'ultimate'],
-      'gear': ['free', 'basic', 'pro', 'ultimate'],
-      'weather_alerts_basic': ['free', 'basic', 'pro', 'ultimate'],
-      
-      'map_advanced': ['basic', 'pro', 'ultimate'],
-      'rules': ['basic', 'pro', 'ultimate'],
-      'trips': ['basic', 'pro', 'ultimate'],
-      'ai_chat_standard': ['basic', 'pro', 'ultimate'],
-      'ai_voice_standard': ['basic', 'pro', 'ultimate'],
-      
-      'licenses': ['pro', 'ultimate'],
-      'devices': ['pro', 'ultimate'],
-      'ai_chat_deluxe': ['pro', 'ultimate'],
-      'ai_voice_deluxe': ['pro', 'ultimate'],
-      'exam_prep': ['pro', 'ultimate'],
-      
-      'ai_chat_deluxe_detailed': ['ultimate'],
-      'ai_voice_deluxe_hd': ['ultimate'],
-      'camera_analysis': ['ultimate'],
-      'bite_detector': ['ultimate'],
-      'ar_view': ['ultimate']
+      'dashboard': allPlans,
+      'logbook': allPlans,
+      'ranking': allPlans,
+      'community': allPlans,
+      'profile': allPlans,
+      'settings': allPlans,
+      'weather_basic': allPlans,
+      'arcade': allPlans,
+      'gear': allPlans,
+      'weather_alerts_basic': allPlans,
+      'map_advanced': allPlans,
+      'rules': allPlans,
+      'trips': allPlans,
+      'ai_chat_standard': allPlans,
+      'ai_voice_standard': allPlans,
+      'licenses': allPlans,
+      'devices': allPlans,
+      'ai_chat_deluxe': allPlans,
+      'ai_voice_deluxe': allPlans,
+      'exam_prep': allPlans,
+      'ai_chat_deluxe_detailed': allPlans,
+      'ai_voice_deluxe_hd': allPlans,
+      'camera_analysis': allPlans,
+      'bite_detector': allPlans,
+      'ar_view': allPlans
     };
 
     const allowedPlans = featureAccess[feature_id] || [];
