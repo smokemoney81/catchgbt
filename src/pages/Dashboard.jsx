@@ -5,6 +5,7 @@ import { createPageUrl } from "@/utils";
 import WakeWordIndicator from "@/components/header/WakeWordIndicator";
 import MiniKarte from "@/components/home/MiniKarte";
 import MiniKiBuddy from "@/components/home/MiniKiBuddy";
+import SchonzeitWarner from "@/components/dashboard/SchonzeitWarner";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
