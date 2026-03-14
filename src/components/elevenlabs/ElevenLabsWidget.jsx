@@ -9,7 +9,7 @@ export default function ElevenLabsWidget() {
     document.body.appendChild(script);
 
     const widget = document.createElement("elevenlabs-convai");
-    widget.setAttribute("agent-id", "agent_9001kjdqx3x5emwr3jf5dgk6et4v");
+    widget.setAttribute("agent-id", "agent_6801kjdd28qfe2paw3mhrfah95g7");
     document.body.appendChild(widget);
 
     return () => {
