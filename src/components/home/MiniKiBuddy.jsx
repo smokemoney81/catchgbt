@@ -1,7 +1,31 @@
 import React, { useState, useRef, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { backendTextToSpeech } from "@/functions/backendTextToSpeech";
 
 const SYSTEM_PROMPT = `Du bist CatchGBT, ein erfahrener Angel-Assistent. Du hilfst Anglern mit Tipps zu Fischarten, Koeder, Spots, Wetter, Ausruestung und Technik. Antworte auf Deutsch, freundlich und direkt. Halte Antworten kurz und praxisnah.`;
+
+async function speakText(text) {
+  try {
+    const response = await backendTextToSpeech({ text, voiceId: "alloy" });
+    if (response?.data?.fallback_to_browser) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = "de-DE";
+      window.speechSynthesis.speak(utterance);
+      return;
+    }
+    // response.data is an ArrayBuffer from the backend
+    const audioBlob = new Blob([response.data], { type: "audio/mpeg" });
+    const audioUrl = URL.createObjectURL(audioBlob);
+    const audio = new Audio(audioUrl);
+    audio.play();
+    audio.onended = () => URL.revokeObjectURL(audioUrl);
+  } catch {
+    // Browser fallback
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "de-DE";
+    window.speechSynthesis.speak(utterance);
+  }
+}
 
 export default function MiniKiBuddy() {
   const [messages, setMessages] = useState([
@@ -9,6 +33,7 @@ export default function MiniKiBuddy() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -34,6 +59,10 @@ export default function MiniKiBuddy() {
 
     setMessages(prev => [...prev, { role: "assistant", content: response }]);
     setIsLoading(false);
+
+    if (voiceEnabled && response) {
+      speakText(response);
+    }
   };
 
   const handleKeyDown = (e) => {
