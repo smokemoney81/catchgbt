@@ -76,7 +76,19 @@ export default function MiniKiBuddy() {
     <div className="flex flex-col bg-gray-800/30 rounded-xl border border-gray-700/50 overflow-hidden">
       <div className="px-4 py-3 border-b border-gray-700/50 flex items-center justify-between">
         <span className="text-cyan-400 font-medium text-sm">KI-Buddy</span>
-        <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setVoiceEnabled(v => !v)}
+            className={`text-xs px-2 py-1 rounded-lg border transition-colors ${
+              voiceEnabled
+                ? "bg-cyan-600/30 border-cyan-500/50 text-cyan-300"
+                : "bg-gray-700/50 border-gray-600/50 text-gray-400"
+            }`}
+          >
+            {voiceEnabled ? "Ton an" : "Ton aus"}
+          </button>
+          <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+        </div>
       </div>
 
       <div className="h-64 overflow-y-auto p-4 space-y-3 flex flex-col">
