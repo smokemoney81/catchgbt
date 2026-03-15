@@ -1,49 +1,238 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
+// Erkennt welche Daten der Nutzer braucht
+function detectIntent(text) {
+  const lower = text.toLowerCase();
+  return {
+    wantsCatches:    /fang|fänge|gefangen|fangbuch|logbuch|mein.*fisch|letzter fang/i.test(text),
+    wantsWeather:    /wetter|temperatur|wind|regen|luftdruck|klima|forecast/i.test(text),
+    wantsRules:      /schonzeit|mindestmaß|erlaubt|verboten|gesetz|regel|vorschrift|saison/i.test(text),
+    wantsSpots:      /spot|angelplatz|ort|stelle|wo angel|gewässer|see|fluss|teich/i.test(text),
+    wantsAnalysis:   /analyse|wassertemperatur|chlorophyll|trübung|algen|satelliten|qualität/i.test(text),
+  };
+}
+
+async function fetchContextData(base44, intent, userEmail, userLocation) {
+  const tasks = [];
+
+  // Fangbuch
+  if (intent.wantsCatches) {
+    tasks.push(
+      base44.asServiceRole.entities.Catch
+        .filter({ created_by: userEmail }, '-catch_time', 10)
+        .then(catches => ({ type: 'catches', data: catches }))
+        .catch(() => null)
+    );
+    tasks.push(
+      base44.asServiceRole.entities.Spot
+        .filter({ created_by: userEmail }, '-created_date', 20)
+        .then(spots => ({ type: 'spots', data: spots }))
+        .catch(() => null)
+    );
+  }
+
+  // Schonzeiten
+  if (intent.wantsRules) {
+    tasks.push(
+      base44.asServiceRole.entities.RuleEntry
+        .list('-created_date', 50)
+        .then(rules => ({ type: 'rules', data: rules }))
+        .catch(() => null)
+    );
+  }
+
+  // Spots ohne Fangbuch-Intent
+  if (intent.wantsSpots && !intent.wantsCatches) {
+    tasks.push(
+      base44.asServiceRole.entities.Spot
+        .filter({ created_by: userEmail }, '-created_date', 20)
+        .then(spots => ({ type: 'spots', data: spots }))
+        .catch(() => null)
+    );
+    tasks.push(
+      base44.asServiceRole.entities.FishingClub
+        .list('-created_date', 30)
+        .then(clubs => ({ type: 'clubs', data: clubs }))
+        .catch(() => null)
+    );
+  }
+
+  // Wetterdaten
+  if ((intent.wantsWeather || intent.wantsAnalysis) && userLocation?.latitude && userLocation?.longitude) {
+    const functionName = intent.wantsAnalysis ? 'getWaterData' : 'getWeatherForLocation';
+    tasks.push(
+      base44.asServiceRole.functions.invoke(functionName, {
+        latitude: userLocation.latitude,
+        longitude: userLocation.longitude,
+        spotName: userLocation.spotName || 'Aktueller Standort',
+        saveHistory: false
+      })
+      .then(res => ({ type: intent.wantsAnalysis ? 'waterAnalysis' : 'weather', data: res?.data || res }))
+      .catch(() => null)
+    );
+  }
+
+  const results = await Promise.allSettled(tasks);
+  const context = {};
+
+  for (const r of results) {
+    if (r.status === 'fulfilled' && r.value) {
+      context[r.value.type] = r.value.data;
+    }
+  }
+
+  return context;
+}
+
+function buildContextSection(ctx) {
+  const parts = [];
+
+  if (ctx.catches?.length) {
+    const summary = ctx.catches.map(c =>
+      `- ${c.species || 'Unbekannt'}, ${c.length_cm || '?'}cm, ${c.weight_kg || '?'}kg, Koeder: ${c.bait_used || '?'}, am ${c.catch_time ? new Date(c.catch_time).toLocaleDateString('de-DE') : '?'}${c.notes ? ', Notiz: ' + c.notes : ''}`
+    ).join('\n');
+    parts.push(`FANGBUCH DES NUTZERS (letzte 10 Fänge):\n${summary}`);
+  }
+
+  if (ctx.spots?.length) {
+    const summary = ctx.spots.map(s =>
+      `- ${s.name} (${s.water_type || '?'}), Koordinaten: ${s.latitude?.toFixed(4)}, ${s.longitude?.toFixed(4)}${s.notes ? ', Notiz: ' + s.notes : ''}`
+    ).join('\n');
+    parts.push(`ANGELPLAETZE DES NUTZERS:\n${summary}`);
+  }
+
+  if (ctx.clubs?.length) {
+    const summary = ctx.clubs.slice(0, 15).map(c =>
+      `- ${c.name} (${c.category || '?'}), ${c.address?.city || '?'}`
+    ).join('\n');
+    parts.push(`ANGELVEREINE UND ANGELPARKS IN DER DATENBANK:\n${summary}`);
+  }
+
+  if (ctx.rules?.length) {
+    const today = new Date();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${today.getFullYear()}-${mm}-${dd}`;
+
+    const activeRules = ctx.rules.filter(r => {
+      if (!r.closed_from || !r.closed_to) return false;
+      return todayStr >= r.closed_from && todayStr <= r.closed_to;
+    });
+
+    const upcomingRules = ctx.rules.filter(r => {
+      if (!r.closed_from) return false;
+      const diff = new Date(r.closed_from) - today;
+      return diff > 0 && diff < 30 * 24 * 60 * 60 * 1000;
+    });
+
+    if (activeRules.length) {
+      const s = activeRules.map(r =>
+        `- ${r.fish} (${r.region}): Schonzeit bis ${r.closed_to}${r.min_size_cm ? ', Mindestmass ' + r.min_size_cm + 'cm' : ''}`
+      ).join('\n');
+      parts.push(`AKTUELL AKTIVE SCHONZEITEN (heute: ${todayStr}):\n${s}`);
+    }
+
+    if (upcomingRules.length) {
+      const s = upcomingRules.map(r =>
+        `- ${r.fish} (${r.region}): Schonzeit beginnt ${r.closed_from}`
+      ).join('\n');
+      parts.push(`BALD BEGINNENDE SCHONZEITEN (naechste 30 Tage):\n${s}`);
+    }
+
+    if (!activeRules.length && !upcomingRules.length) {
+      parts.push(`SCHONZEITEN: Keine aktuell aktiven Schonzeiten in den Daten. Es gibt insgesamt ${ctx.rules.length} Regeleintraege in der Datenbank.`);
+    }
+  }
+
+  if (ctx.weather?.current) {
+    const w = ctx.weather.current;
+    const f = ctx.weather.fishing;
+    parts.push(
+      `AKTUELLES WETTER AM STANDORT:\n` +
+      `Temperatur: ${w.temperature}°C (gefühlt ${w.feels_like}°C)\n` +
+      `Wind: ${w.wind_speed} km/h aus ${w.wind_direction}°\n` +
+      `Luftdruck: ${w.pressure} hPa\n` +
+      `Bewölkung: ${w.cloud_cover}%, Niederschlag: ${w.precipitation}mm\n` +
+      `Wetterlage: ${w.weather_description}\n` +
+      `Angelbedingungen: ${f?.condition || '?'} (Score: ${f?.score || '?'})\n` +
+      `Empfehlung: ${f?.recommendation || ''}`
+    );
+  }
+
+  if (ctx.waterAnalysis) {
+    const a = ctx.waterAnalysis;
+    parts.push(
+      `WASSERANALYSE AM STANDORT:\n` +
+      `Wassertemperatur: ${a.temperature}°C\n` +
+      `Qualitätsscore: ${a.quality_score}/100\n` +
+      `Wetterlage: ${a.weather_condition}\n` +
+      `Prognose: ${a.fishing_forecast}\n` +
+      `Wind: ${a.wind_speed} m/s, Wellen: ${a.wave_height}m\n` +
+      `Chlorophyll-a: ${a.chlorophyll_a || 'nicht verfügbar'}, Trübung: ${a.turbidity_ntu || 'nicht verfügbar'}\n` +
+      `Algenrisiko: ${a.algae_risk || 'unbekannt'}`
+    );
+  }
+
+  return parts.length > 0
+    ? `\n\n--- AKTUELLE DATEN AUS DER APP ---\n${parts.join('\n\n')}\n--- ENDE DATEN ---\n`
+    : '';
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
 
     if (!user) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { messages = [], context = 'general', detailLevel = 'standard' } = await req.json();
+    const body = await req.json();
+    const { messages = [], context = 'general', userLocation = null } = body;
 
-    console.log(`KI-Buddy Request: User=${user.email}, Messages=${messages.length}`);
+    console.log(`KI-Buddy: User=${user.email}, Messages=${messages.length}`);
 
-    // Alle Nutzer erhalten jetzt detaillierte Antworten
-    const systemPrompt = 'Du bist CatchGBT, ein professioneller Angel-Experte. Gib detaillierte, umfassende Antworten mit Hintergrundinformationen, Beispielen und Profi-Tipps. Keine Emojis.';
+    // Letzte Nutzernachricht für Intent-Erkennung
+    const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
+    const intent = lastUserMsg ? detectIntent(lastUserMsg.content) : {};
 
-    const conversationHistory = messages.slice(-6).map(msg => 
+    // Paralleler Datenabruf
+    const contextData = await fetchContextData(base44, intent, user.email, userLocation);
+    const contextSection = buildContextSection(contextData);
+
+    const systemPrompt =
+      'Du bist CatchGBT, ein professioneller Angel-Experte und persoenlicher Assistent des Nutzers. ' +
+      'Du hast Zugriff auf die echten Daten des Nutzers aus der App (Fangbuch, Spots, Wetter, Schonzeiten). ' +
+      'Nutze diese Daten aktiv in deinen Antworten und beziehe dich konkret darauf. ' +
+      'Gib detaillierte, praxisnahe Antworten. Keine Emojis.';
+
+    const conversationHistory = messages.slice(-8).map(msg =>
       `${msg.role === 'user' ? 'Nutzer' : 'Du'}: ${msg.content || ''}`
     ).join('\n');
 
-    const fullPrompt = `${systemPrompt}\n\nKonversation:\n${conversationHistory}\n\nAntworte jetzt auf die letzte Nachricht:`;
+    const fullPrompt =
+      `${systemPrompt}` +
+      `${contextSection}` +
+      `\n\nKonversation:\n${conversationHistory}\n\nAntworte jetzt auf die letzte Nachricht:`;
 
-    let reply = "Entschuldigung, ich konnte keine Antwort generieren. Bitte versuche es spaeter nochmal.";
+    let reply = 'Entschuldigung, ich konnte keine Antwort generieren. Bitte versuche es spaeter nochmal.';
 
     try {
       const llmResponse = await base44.integrations.Core.InvokeLLM({
         prompt: fullPrompt,
         add_context_from_internet: false
       });
-
       reply = typeof llmResponse === 'string' ? llmResponse : (llmResponse?.content || reply);
     } catch (llmError) {
       console.error('LLM Error:', llmError.message);
     }
 
-    console.log(`Response ready`);
-
     return Response.json({ reply }, { status: 200 });
 
   } catch (error) {
     console.error('Critical error in catchgbtChat:', error.message, error);
-    
-    return Response.json({ 
-      reply: "Ein Fehler ist aufgetreten. Bitte versuche es nochmal."
+    return Response.json({
+      reply: 'Ein Fehler ist aufgetreten. Bitte versuche es nochmal.'
     }, { status: 200 });
   }
 });
