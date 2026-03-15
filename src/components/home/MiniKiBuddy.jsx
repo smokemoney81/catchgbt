@@ -35,7 +35,21 @@ export default function MiniKiBuddy() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const [userLocation, setUserLocation] = useState(null);
   const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('userLocation');
+    if (stored) {
+      try { setUserLocation(JSON.parse(stored)); } catch {}
+    } else if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        const loc = { latitude: pos.coords.latitude, longitude: pos.coords.longitude };
+        setUserLocation(loc);
+        localStorage.setItem('userLocation', JSON.stringify(loc));
+      }, () => {});
+    }
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
