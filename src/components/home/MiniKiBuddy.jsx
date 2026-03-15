@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { backendTextToSpeech } from "@/functions/backendTextToSpeech";
+import { catchgbtChat } from "@/functions/catchgbtChat";
 
 const SYSTEM_PROMPT = `Du bist CatchGBT, ein erfahrener Angel-Assistent. Du hilfst Anglern mit Tipps zu Fischarten, Koeder, Spots, Wetter, Ausruestung und Technik. Antworte auf Deutsch, freundlich und direkt. Halte Antworten kurz und praxisnah.`;
 
