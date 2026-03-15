@@ -64,14 +64,13 @@ export default function MiniKiBuddy() {
     setInput("");
     setIsLoading(true);
 
-    const conversationHistory = newMessages
-      .map(m => `${m.role === "user" ? "Angler" : "KI-Buddy"}: ${m.content}`)
-      .join("\n");
-
-    const response = await base44.integrations.Core.InvokeLLM({
-      prompt: `${SYSTEM_PROMPT}\n\nGespraechsverlauf:\n${conversationHistory}\n\nKI-Buddy:`
+    const res = await catchgbtChat({
+      messages: newMessages,
+      context: 'dashboard',
+      userLocation: userLocation || null
     });
 
+    const response = res?.data?.reply || "Ich konnte keine Antwort generieren.";
     setMessages(prev => [...prev, { role: "assistant", content: response }]);
     setIsLoading(false);
 
