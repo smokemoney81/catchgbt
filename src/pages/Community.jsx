@@ -117,6 +117,13 @@ export default function Community() {
   const teamCompetitions = competitions.filter(c => c.competition_type === 'most_catches');
   const otherCompetitions = competitions.filter(c => c.competition_type !== 'photo_contest' && c.competition_type !== 'most_catches');
 
+  const filteredPosts = posts.filter(post => {
+    const query = searchQuery.toLowerCase();
+    const matchesText = post.text.toLowerCase().includes(query);
+    const matchesCreator = getUserDisplayName(post.created_by).toLowerCase().includes(query);
+    return matchesText || matchesCreator;
+  });
+
   const loadPosts = async () => {
     setLoading(true);
     try {
