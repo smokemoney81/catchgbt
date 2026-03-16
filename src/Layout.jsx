@@ -98,6 +98,12 @@ export default function Layout({ children, currentPageName }) {
 
   useEffect(() => {
     const handleToggleVoiceControl = () => {
+      // Deaktiviere WakeWordDetector auf VoiceControl Seite
+      if (window.location.pathname.includes('VoiceControl')) {
+        console.log('On VoiceControl page - skipping WakeWordDetector');
+        return;
+      }
+
       if (!wakeWordDetector) {
         const detector = new WakeWordDetector(
           'Hey Buddy',
@@ -142,6 +148,12 @@ export default function Layout({ children, currentPageName }) {
     window.addEventListener('toggle-voice-control', handleToggleVoiceControl);
     window.addEventListener('wake-word-status-change', handleWakeWordStatusChange);
 
+    // Cleanup wenn auf VoiceControl Seite navigiert wird
+    if (window.location.pathname.includes('VoiceControl') && wakeWordDetector?.isListening) {
+      wakeWordDetector.stop();
+      setWakeWordDetector(null);
+    }
+
     return () => {
       window.removeEventListener('toggle-voice-control', handleToggleVoiceControl);
       window.removeEventListener('wake-word-status-change', handleWakeWordStatusChange);
@@ -149,7 +161,7 @@ export default function Layout({ children, currentPageName }) {
         wakeWordDetector.stop();
       }
     };
-  }, [wakeWordDetector]);
+  }, [wakeWordDetector, currentPageName]);
 
   // Service Worker Registrierung - angepasst für Backend-Funktion
   useEffect(() => {
