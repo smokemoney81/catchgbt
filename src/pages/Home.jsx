@@ -409,9 +409,7 @@ function LandingPageContent() {
 
     return (
         <div className="bg-black text-white h-screen overflow-hidden relative">
-            <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-3 bg-gradient-to-r from-orange-600/80 to-amber-600/80 backdrop-blur-sm border-b border-orange-500/30">
-                <p className="text-sm font-semibold text-white">Beta-Testphase - Diese App befindet sich noch in der Entwicklung</p>
-            </div>
+
 
             <div className="fixed top-16 left-8 z-50 flex flex-col items-center gap-2">
                 <motion.button
