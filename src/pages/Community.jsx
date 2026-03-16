@@ -39,6 +39,7 @@ export default function Community() {
   const [loadingCatches, setLoadingCatches] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [showChat, setShowChat] = useState(false);
+  const [activeUserCount, setActiveUserCount] = useState(0);
 
   useEffect(() => {
     loadCurrentUser();
