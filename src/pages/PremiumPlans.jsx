@@ -308,8 +308,17 @@ export default function PremiumPlans() {
                   <CardDescription>
                     <div className="text-3xl font-bold text-white mt-2">
                       {plan.price === 0 ? 'Gratis' : `${plan.price}€`}
-                      {plan.price > 0 && <span className="text-sm text-gray-400 font-normal">/Monat</span>}
+                      {plan.price > 0 && (
+                        <span className="text-sm text-gray-400 font-normal">
+                          {plan.yearly ? '/Jahr' : '/Monat'}
+                        </span>
+                      )}
                     </div>
+                    {plan.yearly && (
+                      <div className="mt-1">
+                        <Badge className="bg-emerald-700 text-white text-xs">Jahresplan</Badge>
+                      </div>
+                    )}
                   </CardDescription>
                 </CardHeader>
 
