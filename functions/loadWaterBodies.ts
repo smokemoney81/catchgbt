@@ -105,9 +105,8 @@ out geom;
     } catch (error) {
         console.error('Error loading water bodies:', error);
         return Response.json({ 
-            error: error.message || 'Internal error',
             type: 'FeatureCollection',
             features: []
-        }, { status: 500 });
+        }, { status: 200 });
     }
 });
