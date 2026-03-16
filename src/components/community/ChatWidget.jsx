@@ -11,6 +11,7 @@ export default function ChatWidget({ topic = "Allgemein" }) {
   const [user, setUser] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [activeUsers, setActiveUsers] = useState([]);
 
   useEffect(() => {
     const fetchUser = async () => {
