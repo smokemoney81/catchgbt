@@ -118,9 +118,16 @@ Deno.serve((req) => {
                     "icons": [{"src": `${iconBaseUrl}/e9d6eda08_icon_512.png`, "sizes": "512x512"}]
                 }
             ],
-            "screenshots": [],
             "related_applications": [],
-            "prefer_related_applications": false
+            "prefer_related_applications": false,
+            "share_target": {
+                "action": "/share",
+                "method": "POST",
+                "enctype": "multipart/form-data",
+                "params": {
+                    "files": [{"name": "photo", "accept": ["image/*"]}]
+                }
+            }
         };
 
         return new Response(JSON.stringify(manifest, null, 2), {
