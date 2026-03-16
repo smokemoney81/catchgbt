@@ -290,21 +290,15 @@ Sei konkret, praxisnah und berechne die optimale Mischung!`;
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-cyan-400">Modus & Zielfisch</CardTitle>
-                    <Select 
+                    <MobileSelect 
                       value={mode} 
-                      onValueChange={(val) => { 
-                        setMode(val); 
-                        // loadIngredients() is handled by useEffect when mode changes
-                      }}
-                    >
-                      <SelectTrigger className="w-40 bg-gray-800/50 border-gray-700">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="boilies">Boilies</SelectItem>
-                        <SelectItem value="bait">Anfütterung</SelectItem>
-                      </SelectContent>
-                    </Select>
+                      onChange={(val) => setMode(val)}
+                      options={[
+                        { value: 'boilies', label: 'Boilies' },
+                        { value: 'bait', label: 'Anfütterung' }
+                      ]}
+                      placeholder="Modus wählen"
+                    />
                   </div>
                 </CardHeader>
                 <CardContent>
