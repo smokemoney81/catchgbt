@@ -117,6 +117,16 @@ export default function Community() {
   const teamCompetitions = competitions.filter(c => c.competition_type === 'most_catches');
   const otherCompetitions = competitions.filter(c => c.competition_type !== 'photo_contest' && c.competition_type !== 'most_catches');
 
+  const getUserDisplayName = (email) => {
+    const user = userCache[email];
+    return user?.full_name || user?.nickname || email?.split('@')[0] || 'Anonym';
+  };
+
+  const getUserProfilePicture = (email) => {
+    const user = userCache[email];
+    return user?.profile_picture_url || null;
+  };
+
   const filteredPosts = posts.filter(post => {
     const query = searchQuery.toLowerCase();
     const matchesText = post.text.toLowerCase().includes(query);
