@@ -52,13 +52,14 @@ export default function MiniKiBuddy() {
     }
   }, []);
 
-  useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  // Disable auto-scroll on dashboard to prevent page scroll
+  // useEffect(() => {
+  //   if (isFirstRender.current) {
+  //     isFirstRender.current = false;
+  //     return;
+  //   }
+  //   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  // }, [messages]);
 
   const sendMessage = async () => {
     const text = input.trim();
@@ -110,7 +111,7 @@ export default function MiniKiBuddy() {
         </div>
       </div>
 
-      <div className="h-64 overflow-y-auto p-4 space-y-3 flex flex-col">
+      <div className="h-64 overflow-y-auto p-4 space-y-3 flex flex-col overflow-y-hidden">
         {messages.map((msg, i) => (
           <div
             key={i}
