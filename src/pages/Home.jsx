@@ -54,6 +54,7 @@ function LandingPageContent() {
     const [isUploading, setIsUploading] = useState(false);
     const [currentPlan, setCurrentPlan] = useState(null);
     const [isLoadingPlan, setIsLoadingPlan] = useState(true);
+    const [userName, setUserName] = useState(null);
     const { t } = useLanguage();
 
     useEffect(() => {
