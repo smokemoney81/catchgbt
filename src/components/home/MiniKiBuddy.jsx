@@ -37,6 +37,7 @@ export default function MiniKiBuddy() {
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [userLocation, setUserLocation] = useState(null);
   const messagesEndRef = useRef(null);
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     const stored = localStorage.getItem('userLocation');
