@@ -25,6 +25,9 @@ export default function Community() {
   const [currentUser, setCurrentUser] = useState(null);
   const [userCache, setUserCache] = useState({});
   const [deletingPostId, setDeletingPostId] = useState(null);
+  const [reportedPostIds, setReportedPostIds] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('reported_posts') || '[]'); } catch { return []; }
+  });
   const [competitions, setCompetitions] = useState([]);
   const [recentActivity, setRecentActivity] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
