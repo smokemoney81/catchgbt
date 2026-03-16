@@ -443,12 +443,11 @@ function LandingPageContent() {
                 >
                     <motion.span
                         animate={{
-                            color: [
-                                '#22d3ee',
-                                '#10b981',
-                                '#fbbf24',
-                                '#f59e0b',
-                                '#22d3ee',
+                            backgroundImage: [
+                                'linear-gradient(90deg, #a855f7, #3b82f6, #06b6d4)',
+                                'linear-gradient(90deg, #3b82f6, #06b6d4, #a855f7)',
+                                'linear-gradient(90deg, #06b6d4, #a855f7, #3b82f6)',
+                                'linear-gradient(90deg, #a855f7, #3b82f6, #06b6d4)'
                             ]
                         }}
                         transition={{
@@ -456,7 +455,7 @@ function LandingPageContent() {
                             repeat: Infinity,
                             ease: "linear"
                         }}
-                        className="text-xl font-bold drop-shadow-[0_0_12px_rgba(255,255,255,0.9)] hover:drop-shadow-[0_0_20px_rgba(255,255,255,1)] transition-all"
+                        className="text-xl font-bold bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(255,255,255,0.9)] hover:drop-shadow-[0_0_20px_rgba(255,255,255,1)] transition-all"
                     >
                         Tutorial
                     </motion.span>
