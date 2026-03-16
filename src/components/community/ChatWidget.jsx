@@ -28,14 +28,25 @@ export default function ChatWidget({ topic = "Allgemein" }) {
   useEffect(() => {
     if (isOpen) {
       loadMessages();
+      loadActiveUsers();
       const unsubscribe = base44.entities.ChatMessage.subscribe((event) => {
         if (event.type === 'create' && event.data?.context === topic) {
           setMessages(prev => [...prev, event.data]);
         }
       });
-      return unsubscribe;
+      const sessionInterval = setInterval(updateUserSession, 30000);
+      return () => {
+        unsubscribe();
+        clearInterval(sessionInterval);
+      };
     }
   }, [isOpen, topic]);
+
+  useEffect(() => {
+    if (user && isOpen) {
+      updateUserSession();
+    }
+  }, [user, isOpen]);
 
   const loadMessages = async () => {
     try {
