@@ -34,6 +34,7 @@ export default function MapController() {
     parks: true,
     waters: true
   });
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     loadAllData();
@@ -299,20 +300,21 @@ export default function MapController() {
         )}
 
         {/* Map View */}
-        <MapView
-          center={mapCenter}
-          zoom={mapZoom}
-          spots={filteredSpots}
-          fishingClubs={filteredClubs}
-          waterBodies={filteredWaters}
-          currentLocation={currentLocation}
-          newSpotMarker={newSpotCoords}
-          onMapClick={handleMapClick}
-          onLocationClick={handleLocationClick}
-          onSpotClick={(spot) => handleLocationClick(spot, 'spot')}
-          onClubClick={(club) => handleLocationClick(club, 'club')}
-          onWaterBodiesLoad={setWaterBodies}
-        />
+         <MapView
+           center={mapCenter}
+           zoom={mapZoom}
+           spots={filteredSpots}
+           fishingClubs={filteredClubs}
+           waterBodies={filteredWaters}
+           currentLocation={currentLocation}
+           newSpotMarker={newSpotCoords}
+           onMapClick={handleMapClick}
+           onLocationClick={handleLocationClick}
+           onSpotClick={(spot) => handleLocationClick(spot, 'spot')}
+           onClubClick={(club) => handleLocationClick(club, 'club')}
+           onWaterBodiesLoad={setWaterBodies}
+           onReviewsLoad={setReviews}
+         />
 
         {/* Location Detail Panel */}
         {selectedLocation && (
