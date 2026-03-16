@@ -486,7 +486,7 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
               { name: "Fangbuch", path: "Logbook" },
               { name: "KI-Chat", path: "AIAssistant" },
               { name: "KI-Cam", path: "AI" },
-              { name: "Gewaesser", path: "WaterAnalysis" },
+              { name: "Gewaesser (C)", path: "WaterAnalysis" },
               { name: "Gear", path: "Gear" },
               { name: "Trips", path: "TripPlanner" },
               { name: "Community", path: "Community" },
