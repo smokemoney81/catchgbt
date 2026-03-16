@@ -60,6 +60,14 @@ export default function Dashboard() {
 
     window.addEventListener('wake-word-detected', handleWakeWordDetected);
 
+    const handleVoiceTranscript = (event) => {
+      if (event.detail) {
+        setVoiceTranscript(event.detail);
+      }
+    };
+
+    window.addEventListener('voice-transcript', handleVoiceTranscript);
+
     const handleTouchStart = (e) => {
       if (window.scrollY === 0) {
         setPullStart(e.touches[0].clientY);
