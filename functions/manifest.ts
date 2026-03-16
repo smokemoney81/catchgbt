@@ -10,14 +10,28 @@ Deno.serve((req) => {
             "short_name": "CatchGBT",
             "description": "Angel-App mit KI-Assistent. Finde die besten Angelplätze, erhalte intelligente Tipps und dokumentiere deine Fänge!",
             "start_url": "/",
-            "display": "fullscreen",
+            "display": "standalone",
             "background_color": "#0b1324",
-            "theme_color": "#4285f4",
+            "theme_color": "#0b1324",
             "orientation": "portrait-primary",
             "scope": "/",
             "lang": "de-DE",
             "dir": "ltr",
             "categories": ["sports", "lifestyle", "utilities"],
+            "screenshots": [
+                {
+                    "src": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68bb3d3b9f83dc1f55ef532b/e9d6eda08_icon_512.png",
+                    "sizes": "540x720",
+                    "type": "image/png",
+                    "form_factor": "narrow"
+                },
+                {
+                    "src": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68bb3d3b9f83dc1f55ef532b/e9d6eda08_icon_512.png",
+                    "sizes": "1280x720",
+                    "type": "image/png",
+                    "form_factor": "wide"
+                }
+            ],
             "icons": [
                 {
                     "src": `${iconBaseUrl}/ee5d668e0_icon_32.png`,
