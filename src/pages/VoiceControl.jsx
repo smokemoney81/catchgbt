@@ -699,6 +699,7 @@ function VoiceBuddy() {
         }]);
 
         console.log('Voice Control: About to speak response:', tip.substring(0, 50) + '...');
+        // Sprich die Antwort
         await speak(tip, { rate: 0.95 });
         console.log('Voice Control: Speech finished');
         
