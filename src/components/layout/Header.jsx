@@ -104,6 +104,16 @@ export default function Header({
     }
   };
 
+  const loadRecentPosts = async () => {
+    try {
+      const posts = await base44.entities.Post.list('-created_date', 20);
+      const postsWithImages = posts.filter(p => p.photo_url);
+      setRecentPosts(postsWithImages);
+    } catch (error) {
+      console.error("Fehler beim Laden der Posts:", error);
+    }
+  };
+
   const handleLeftSidebarToggle = () => {
     triggerHaptic('selection');
     playSound('click');
