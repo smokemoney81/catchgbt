@@ -37,7 +37,7 @@ export default function Premium() {
               </div>
               
               <div className="p-4 bg-amber-600/20 rounded-lg border border-amber-500/30">
-                <h3 className="font-semibold text-amber-400 mb-2">👑 Elite Plan - 29€/Monat</h3>
+                <h3 className="font-semibold text-amber-400 mb-2">👑 Ultimate Plan - 29€/Monat</h3>
                 <p className="text-sm text-gray-400">Alle Pro-Features + KI-Kamera, Bissanzeiger, AR-Analyse, Priority Support</p>
               </div>
             </div>
