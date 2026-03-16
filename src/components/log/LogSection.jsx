@@ -139,9 +139,16 @@ export default function LogSection() {
       }
       
       setEditing(null);
-      setCatches(await Catch.list("-catch_time"));
+      const { data: freshCatches } = await fetchCatchesWithFallback(() => Catch.list("-catch_time"));
+      setCatches(freshCatches);
+      setIsFromCache(false);
     } catch (error) {
-      alert("Fehler beim Speichern des Fangs.");
+      // Offline: Fang in Queue einreihen
+      const q = JSON.parse(localStorage.getItem("fishmaster_catch_queue") || "[]");
+      q.push(payload);
+      localStorage.setItem("fishmaster_catch_queue", JSON.stringify(q));
+      alert("Offline gespeichert - wird synchronisiert, sobald Internet verfuegbar ist.");
+      setEditing(null);
     }
   };
 
