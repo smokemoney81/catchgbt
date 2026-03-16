@@ -25,7 +25,24 @@ function TripPlannerContent() {
 
   useEffect(() => {
     loadPlans();
+    loadOfflineNotes();
   }, []);
+
+  const loadOfflineNotes = () => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('trip_offline_notes') || '{}');
+      setOfflineNotes(saved);
+    } catch (error) {
+      console.error("Fehler beim Laden der Notizen:", error);
+    }
+  };
+
+  const saveOfflineNotes = (planId, notes) => {
+    const updated = { ...offlineNotes, [planId]: notes };
+    setOfflineNotes(updated);
+    localStorage.setItem('trip_offline_notes', JSON.stringify(updated));
+    toast.success("Notiz gespeichert");
+  };
 
   useEffect(() => {
     if (selectedPlan && currentLocation?.lat && currentLocation?.lon) {
