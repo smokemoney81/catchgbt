@@ -72,7 +72,7 @@ export default function Layout({ children, currentPageName }) {
     if (savedPosition !== undefined) {
       setTimeout(() => window.scrollTo(0, savedPosition), 50);
     } else {
-      window.scrollTo(0, 0);
+      setTimeout(() => window.scrollTo(0, 0), 50);
     }
 
     setPreviousPage(currentPageName);
