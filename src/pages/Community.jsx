@@ -188,6 +188,7 @@ export default function Community() {
       );
 
       setPosts(postsWithComments);
+      setUserCache(newCache);
     } catch (error) {
       console.error("Fehler beim Laden der Posts:", error);
       toast.error("Posts konnten nicht geladen werden");
