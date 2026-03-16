@@ -14,11 +14,21 @@ async function speakText(text) {
       body: JSON.stringify({ text, language: 'de' })
     });
     
-    if (!response.ok) throw new Error('TTS failed');
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'TTS failed');
+    }
     
     const blob = await response.blob();
+    if (blob.size === 0) throw new Error('Empty audio response');
+    
     const audio = new Audio(URL.createObjectURL(blob));
-    audio.play();
+    audio.volume = 1;
+    const playPromise = audio.play();
+    
+    if (playPromise !== undefined) {
+      playPromise.catch(err => console.error('Audio playback failed:', err));
+    }
   } catch (error) {
     console.error('TTS error:', error);
   }
