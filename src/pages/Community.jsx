@@ -12,6 +12,7 @@ import VotingEventCard from "@/components/community/VotingEventCard";
 import ClanLeaderboardCard from "@/components/community/ClanLeaderboardCard";
 import LeaderboardCard from "@/components/community/LeaderboardCard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import ChatWidget from "@/components/community/ChatWidget";
 
 export default function Community() {
   const [posts, setPosts] = useState([]);
