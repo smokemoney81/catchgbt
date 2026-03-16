@@ -32,10 +32,16 @@ export default function LogSection() {
     (async () => {
       try {
         await base44.auth.me();
-        // Eingeloggter Nutzer
-        setCatches(await Catch.list("-catch_time"));
-        setSpots(await Spot.list());
         setIsGuest(false);
+        // Faenge mit Offline-Fallback laden
+        const { data: catchData, fromCache: catchFromCache } = await fetchCatchesWithFallback(
+          () => Catch.list("-catch_time")
+        );
+        setCatches(catchData);
+        setIsFromCache(catchFromCache);
+        // Spots mit Offline-Fallback laden
+        const { data: spotData } = await fetchSpotsWithFallback(() => Spot.list());
+        setSpots(spotData);
       } catch {
         // Gastmodus
         setIsGuest(true);
