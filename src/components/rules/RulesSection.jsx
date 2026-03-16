@@ -191,22 +191,18 @@ export default function RulesSection() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-            <div className="space-y-1">
-              <label className="text-xs text-gray-400">Region</label>
-              <Select value={checkForm.region} onValueChange={v => setCheckForm({...checkForm, region: v})}>
-                <SelectTrigger className="bg-gray-800/50 border-gray-700">
-                  <SelectValue/>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Alle Bundesländer</SelectItem>
-                  {FEDERAL_STATES.map((stateObj) => (
-                    <SelectItem key={stateObj.id} value={stateObj.name}>
-                      {stateObj.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+           <div className="space-y-1">
+             <label className="text-xs text-gray-400">Region</label>
+             <MobileSelect 
+               value={checkForm.region} 
+               onChange={v => setCheckForm({...checkForm, region: v})}
+               options={[
+                 { value: 'all', label: 'Alle Bundesländer' },
+                 ...FEDERAL_STATES.map(stateObj => ({ value: stateObj.name, label: stateObj.name }))
+               ]}
+               placeholder="Region wählen"
+             />
+           </div>
             <div className="space-y-1">
               <label className="text-xs text-gray-400">Fischart</label>
               <Input 
