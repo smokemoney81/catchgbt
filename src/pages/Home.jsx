@@ -437,15 +437,7 @@ function LandingPageContent() {
                 }
               });
             }
-            
-            toast.success("Foto gespeichert", {
-                description: "Oeffne das Fangbuch, um es zu analysieren",
-                duration: 5000,
-                action: {
-                    label: "Zum Fangbuch",
-                    onClick: () => window.location.href = createPageUrl('Logbook')
-                }
-            });
+
             
         } catch (error) {
             console.error("Fehler beim Upload:", error);
