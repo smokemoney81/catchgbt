@@ -599,7 +599,7 @@ function LandingPageContent() {
                                 Catchgbt-q7scna.manus.space
                             </motion.span>
                             <span className="text-xs sm:text-sm font-semibold bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-                                lp catchgbt.com
+                                catchgbt.com
                             </span>
                         </div>
                     </motion.div>
