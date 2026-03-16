@@ -449,7 +449,7 @@ function LandingPageContent() {
                 </motion.button>
             </div>
 
-            <div className="fixed top-8 right-8 z-50">
+            <div className="fixed top-16 right-8 z-50">
                 <LanguageSwitcher />
             </div>
 
