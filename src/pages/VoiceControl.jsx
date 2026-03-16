@@ -33,33 +33,59 @@ async function speakWithBrowserFirst(text, { rate = 1, pitch = 1 } = {}) {
 }
 
 function speakBrowser(text, rate = 1, pitch = 1) {
-  if (!('speechSynthesis' in window)) return Promise.resolve();
+  if (!('speechSynthesis' in window)) {
+    console.warn('[TTS] Browser Speech Synthesis not available');
+    return Promise.resolve();
+  }
   if (!text || text.trim().length === 0) return Promise.resolve();
   
   return new Promise((resolve) => {
     try {
+      // Nutze deutsche Stimme wenn verfügbar
+      const voices = window.speechSynthesis.getVoices();
+      const germanVoice = voices.find(v => v.lang.startsWith('de'));
+      
+      // Cancel pending speech
       window.speechSynthesis.cancel();
       
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = LANGUAGE;
+      if (germanVoice) utter.voice = germanVoice;
       utter.rate = Math.max(0.5, Math.min(2, rate));
       utter.pitch = Math.max(0.5, Math.min(2, pitch));
       utter.volume = 1;
       
+      let hasEnded = false;
+      const timeout = setTimeout(() => {
+        if (!hasEnded) {
+          console.warn('[TTS] Speech did not end after 30s, forcing resolve');
+          hasEnded = true;
+          resolve();
+        }
+      }, 30000);
+      
       utter.onend = () => {
-        console.log('TTS: Speech ended');
-        resolve();
+        if (!hasEnded) {
+          hasEnded = true;
+          clearTimeout(timeout);
+          console.log('[TTS] Speech ended normally');
+          resolve();
+        }
       };
       
       utter.onerror = (event) => {
-        console.error('TTS Error:', event.error);
-        resolve();
+        if (!hasEnded) {
+          hasEnded = true;
+          clearTimeout(timeout);
+          console.error('[TTS] Speech error:', event.error);
+          resolve();
+        }
       };
       
-      console.log('TTS: Speaking -', text.substring(0, 50) + '...');
+      console.log('[TTS] Speaking:', text.substring(0, 60) + '...');
       window.speechSynthesis.speak(utter);
     } catch (error) {
-      console.error('TTS Exception:', error);
+      console.error('[TTS] Exception:', error);
       resolve();
     }
   });
