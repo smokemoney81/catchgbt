@@ -576,27 +576,32 @@ function LandingPageContent() {
                             ease: "easeInOut"
                         }}
                     >
-                        <motion.span
-                            animate={{
-                                textShadow: [
-                                    '0 0 30px rgba(34, 211, 238, 0.9), 0 0 60px rgba(34, 211, 238, 0.6)',
-                                    '0 0 50px rgba(16, 185, 129, 0.9), 0 0 80px rgba(16, 185, 129, 0.6)',
-                                    '0 0 30px rgba(34, 211, 238, 0.9), 0 0 60px rgba(34, 211, 238, 0.6)'
-                                ]
-                            }}
-                            transition={{
-                                duration: 3,
-                                repeat: Infinity,
-                                ease: "easeInOut"
-                            }}
-                            className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-2xl break-words"
-                            style={{ 
-                                backgroundSize: '200% auto',
-                                animation: 'gradient-wave 3s ease infinite'
-                            }}
-                        >
-                            Catchgbt-q7scna.manus.space
-                        </motion.span>
+                        <div className="flex flex-col items-start gap-1">
+                            <motion.span
+                                animate={{
+                                    textShadow: [
+                                        '0 0 30px rgba(34, 211, 238, 0.9), 0 0 60px rgba(34, 211, 238, 0.6)',
+                                        '0 0 50px rgba(16, 185, 129, 0.9), 0 0 80px rgba(16, 185, 129, 0.6)',
+                                        '0 0 30px rgba(34, 211, 238, 0.9), 0 0 60px rgba(34, 211, 238, 0.6)'
+                                    ]
+                                }}
+                                transition={{
+                                    duration: 3,
+                                    repeat: Infinity,
+                                    ease: "easeInOut"
+                                }}
+                                className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-2xl break-words"
+                                style={{ 
+                                    backgroundSize: '200% auto',
+                                    animation: 'gradient-wave 3s ease infinite'
+                                }}
+                            >
+                                Catchgbt-q7scna.manus.space
+                            </motion.span>
+                            <span className="text-xs sm:text-sm font-semibold bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+                                lp catchgbt.com
+                            </span>
+                        </div>
                     </motion.div>
                 </a>
             </motion.div>
