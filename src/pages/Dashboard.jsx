@@ -27,6 +27,7 @@ export default function Dashboard() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [aiAnalysis, setAiAnalysis] = useState(null);
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [voiceTranscript, setVoiceTranscript] = useState('');
 
   useEffect(() => {
     window.scrollTo(0, 0);
