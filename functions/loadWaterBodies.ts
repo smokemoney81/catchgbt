@@ -28,17 +28,22 @@ Deno.serve(async (req) => {
 out geom;
 `;
 
-        const response = await fetch('https://overpass-api.de/api/interpreter', {
-            method: 'POST',
-            body: overpassQuery,
-            headers: { 'Content-Type': 'text/plain' }
-        });
+        let data = { elements: [] };
+        try {
+            const response = await fetch('https://overpass-api.de/api/interpreter', {
+                method: 'POST',
+                body: overpassQuery,
+                headers: { 'Content-Type': 'text/plain' },
+                signal: AbortSignal.timeout(30000)
+            });
 
-        if (!response.ok) {
-            throw new Error('Overpass API error');
+            if (response.ok) {
+                data = await response.json();
+            }
+        } catch (err) {
+            console.warn('Overpass API unavailable:', err.message);
         }
-
-        const data = await response.json();
+        
         const elements = data.elements || [];
 
         const features = [];
