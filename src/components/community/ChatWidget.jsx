@@ -57,6 +57,40 @@ export default function ChatWidget({ topic = "Allgemein" }) {
     }
   };
 
+  const loadActiveUsers = async () => {
+    try {
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+      const sessions = await base44.entities.ChatSession.filter({ is_active: true });
+      const active = sessions.filter(s => new Date(s.last_activity) > new Date(fiveMinutesAgo));
+      setActiveUsers(active);
+    } catch (e) {
+      console.error("Error loading active users:", e);
+    }
+  };
+
+  const updateUserSession = async () => {
+    if (!user) return;
+    try {
+      const existing = await base44.entities.ChatSession.filter({ user_email: user.email });
+      if (existing.length > 0) {
+        await base44.entities.ChatSession.update(existing[0].id, {
+          last_activity: new Date().toISOString(),
+          is_active: true
+        });
+      } else {
+        await base44.entities.ChatSession.create({
+          user_email: user.email,
+          user_name: user.full_name || user.email.split('@')[0],
+          last_activity: new Date().toISOString(),
+          is_active: true
+        });
+      }
+      await loadActiveUsers();
+    } catch (e) {
+      console.error("Error updating session:", e);
+    }
+  };
+
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !user) return;
 
