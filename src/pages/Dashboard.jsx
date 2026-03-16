@@ -8,6 +8,7 @@ import MiniKiBuddy from "@/components/home/MiniKiBuddy";
 import SchonzeitWarner from "@/components/dashboard/SchonzeitWarner";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { cacheEntityData, cacheWeatherData, getCachedWeather, getOfflineData, initOfflineDB } from "@/components/utils/OfflineDataCache";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
