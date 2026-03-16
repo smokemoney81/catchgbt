@@ -70,6 +70,39 @@ function RecenterMap({ center }) {
   return null;
 }
 
+function ReviewsMarkerLoader({ onReviewsLoad }) {
+  const map = useMap();
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    const loadReviews = async () => {
+      if (isLoading) return;
+      
+      setIsLoading(true);
+      try {
+        const reviews = await base44.entities.WaterReview.list('-reviewed_at', 500);
+        onReviewsLoad(reviews);
+      } catch (error) {
+        console.error('Error loading reviews:', error);
+      }
+      setIsLoading(false);
+    };
+
+    const handleMoveEnd = () => {
+      loadReviews();
+    };
+
+    map.on('moveend', handleMoveEnd);
+    handleMoveEnd();
+
+    return () => {
+      map.off('moveend', handleMoveEnd);
+    };
+  }, [map, onReviewsLoad]);
+
+  return null;
+}
+
 function WaterBodiesLoader({ onWaterBodiesLoad }) {
   const map = useMap();
   const [isLoading, setIsLoading] = React.useState(false);
@@ -133,7 +166,8 @@ export default function MapView({
   onLocationClick,
   onSpotClick,
   onClubClick,
-  onWaterBodiesLoad
+  onWaterBodiesLoad,
+  onReviewsLoad
 }) {
   if (!center) {
     return (
@@ -157,6 +191,7 @@ export default function MapView({
 
       <MapEvents onMapClick={onMapClick} />
       <RecenterMap center={center} />
+      {onReviewsLoad && <ReviewsMarkerLoader onReviewsLoad={onReviewsLoad} />}
       {onWaterBodiesLoad && <WaterBodiesLoader onWaterBodiesLoad={onWaterBodiesLoad} />}
 
       {/* Water Bodies */}
