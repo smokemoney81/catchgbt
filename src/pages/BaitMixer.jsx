@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import MobileSelect from "@/components/ui/mobile-select";
+import { MobileSelect } from "@/components/ui/mobile-select";
 import { PieChart, Pie, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ResponsiveContainer } from "recharts";
 import { Loader2, Sparkles, Save, Trash2, Plus, Minus, TrendingUp, X } from "lucide-react";
 import { toast } from "sonner";
