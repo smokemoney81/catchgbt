@@ -385,7 +385,8 @@ function VoiceBuddy() {
           context: 'voice_control'
         });
         setProcessingAI(false);
-        return response.data.reply || "Tut mir leid, ich konnte keine Antwort generieren.";
+        const reply = response?.data?.reply || response?.reply || "Tut mir leid, ich konnte keine Antwort generieren.";
+        return reply;
       } catch (error) {
         console.error('AI fallback error:', error);
         setProcessingAI(false);
