@@ -18,7 +18,7 @@ export async function initOfflineDB() {
       const database = event.target.result;
       
       // Stores fuer verschiedene Entity-Typen
-      const stores = ['catches', 'spots', 'rules', 'bathymetric_maps'];
+      const stores = ['catches', 'spots', 'rules', 'bathymetric_maps', 'weather'];
       
       stores.forEach(store => {
         if (!database.objectStoreNames.contains(store)) {
@@ -64,7 +64,7 @@ export async function clearOfflineDB() {
   if (!db) await initOfflineDB();
   
   return new Promise((resolve, reject) => {
-    const transaction = db.transaction(['catches', 'spots', 'rules', 'bathymetric_maps'], 'readwrite');
+    const transaction = db.transaction(['catches', 'spots', 'rules', 'bathymetric_maps', 'weather'], 'readwrite');
     
     transaction.objectStoreNames.forEach((storeName) => {
       transaction.objectStore(storeName).clear();
@@ -72,6 +72,55 @@ export async function clearOfflineDB() {
     
     transaction.oncomplete = () => resolve();
     transaction.onerror = () => reject(transaction.error);
+  });
+}
+
+export async function cacheWeatherData(lat, lon, weatherData) {
+  if (!db) await initOfflineDB();
+  
+  const dataToCache = {
+    id: `${lat},${lon}`,
+    lat,
+    lon,
+    ...weatherData,
+    cached_at: new Date().toISOString()
+  };
+  
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(['weather'], 'readwrite');
+    const objectStore = transaction.objectStore('weather');
+    const request = objectStore.put(dataToCache);
+    
+    request.onsuccess = () => resolve();
+    request.onerror = () => reject(request.error);
+  });
+}
+
+export async function getCachedWeather(lat, lon) {
+  if (!db) await initOfflineDB();
+  
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(['weather'], 'readonly');
+    const objectStore = transaction.objectStore('weather');
+    const request = objectStore.get(`${lat},${lon}`);
+    
+    request.onsuccess = () => {
+      const result = request.result;
+      if (result) {
+        const cachedTime = new Date(result.cached_at).getTime();
+        const now = new Date().getTime();
+        const ageMinutes = (now - cachedTime) / (1000 * 60);
+        
+        if (ageMinutes < 180) {
+          resolve(result);
+        } else {
+          resolve(null);
+        }
+      } else {
+        resolve(null);
+      }
+    };
+    request.onerror = () => reject(request.error);
   });
 }
 
