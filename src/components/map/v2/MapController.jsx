@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Spot } from "@/entities/Spot";
 import { FishingClub } from "@/entities/FishingClub";
 import { Button } from "@/components/ui/button";
-import { MapPin, Plus, Layers, Navigation, X, Loader2, Info } from "lucide-react";
+import { MapPin, Plus, Layers, Navigation, X, Loader2, Info, Download } from "lucide-react";
 import { useLocation } from "@/components/location/LocationManager";
 import { toast } from "sonner";
 import { useHaptic } from "@/components/utils/HapticFeedback";
@@ -10,6 +10,7 @@ import { useSound } from "@/components/utils/SoundManager";
 import MapView from "./MapView";
 import AddSpotModal from "./AddSpotModal";
 import LocationDetailPanel from "./LocationDetailPanel";
+import MapDownloadDialog from "./MapDownloadDialog";
 
 export default function MapController() {
   const { currentLocation, requestGpsLocation, setSpotAsLocation } = useLocation();
@@ -35,10 +36,23 @@ export default function MapController() {
     waters: true
   });
   const [reviews, setReviews] = useState([]);
+  const [showDownloadDialog, setShowDownloadDialog] = useState(false);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {
     loadAllData();
     initializeMap();
+
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
   }, []);
 
   useEffect(() => {
@@ -192,18 +206,29 @@ export default function MapController() {
             </Button>
           </div>
 
-          {/* Rechter Button */}
-          {newSpotCoords && !showAddModal && (
-            <Button
-              onClick={handleAddSpotClick}
-              className="bg-emerald-600/90 hover:bg-emerald-700 border border-emerald-500/50 text-white h-8 px-2"
-              size="sm"
-            >
-              <Plus className="w-3.5 h-3.5 sm:mr-1.5" />
-              <span className="hidden sm:inline text-xs">Spot</span>
-            </Button>
-          )}
-        </div>
+          {/* Rechte Buttons */}
+           <div className="flex gap-1.5">
+             <Button
+               onClick={() => setShowDownloadDialog(true)}
+               className="bg-purple-700/90 hover:bg-purple-600 border border-purple-600/50 h-8 px-2"
+               size="sm"
+               title="Karte fuer offline Download"
+             >
+               <Download className="w-3.5 h-3.5 sm:mr-1.5 text-purple-300" />
+               <span className="hidden sm:inline text-xs">Download</span>
+             </Button>
+             {newSpotCoords && !showAddModal && (
+               <Button
+                 onClick={handleAddSpotClick}
+                 className="bg-emerald-600/90 hover:bg-emerald-700 border border-emerald-500/50 text-white h-8 px-2"
+                 size="sm"
+               >
+                 <Plus className="w-3.5 h-3.5 sm:mr-1.5" />
+                 <span className="hidden sm:inline text-xs">Spot</span>
+               </Button>
+             )}
+           </div>
+          </div>
 
         {/* Filter Panel */}
         {showFilters && (
@@ -331,18 +356,31 @@ export default function MapController() {
         )}
 
         {/* Add Spot Modal */}
-        {showAddModal && (
-          <AddSpotModal
-            isOpen={showAddModal}
-            coordinates={newSpotCoords}
-            onClose={() => {
-              setShowAddModal(false);
-              setNewSpotCoords(null);
-            }}
-            onSpotAdded={handleSpotAdded}
-          />
-        )}
-      </div>
-    </div>
-  );
-}
+         {showAddModal && (
+           <AddSpotModal
+             isOpen={showAddModal}
+             coordinates={newSpotCoords}
+             onClose={() => {
+               setShowAddModal(false);
+               setNewSpotCoords(null);
+             }}
+             onSpotAdded={handleSpotAdded}
+           />
+         )}
+
+        {/* Map Download Dialog */}
+         <MapDownloadDialog
+           isOpen={showDownloadDialog}
+           onClose={() => setShowDownloadDialog(false)}
+           bounds={mapCenter ? {
+             north: mapCenter.lat + 0.05,
+             south: mapCenter.lat - 0.05,
+             east: mapCenter.lng + 0.05,
+             west: mapCenter.lng - 0.05
+           } : null}
+           currentZoom={mapZoom}
+         />
+        </div>
+        </div>
+        );
+        }
