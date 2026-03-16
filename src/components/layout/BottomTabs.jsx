@@ -29,7 +29,7 @@ export default function BottomTabs() {
 
   const tabs = [
     { name: "Dashboard", path: "Dashboard", icon: Home },
-    { name: "Map", path: "CatchMap", icon: Map },
+    { name: "Map", path: "Map", icon: Map },
     { name: "Logbook", path: "Logbook", icon: BookOpen },
     { name: "Profile", path: "Profile", icon: User },
   ];
