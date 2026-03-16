@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Hands, Camera } from '@mediapipe/hands';
 
 const KNOTS = {
   "Palomar": {
