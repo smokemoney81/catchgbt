@@ -179,27 +179,53 @@ export default function LocationDetailPanel({ location, onClose, onSetAsLocation
             </div>
           )}
 
+          {/* Sports */}
+          {location.type === 'spot' && location.sports && location.sports.length > 0 && (
+            <div className="bg-gray-800/50 rounded-lg p-3">
+              <div className="text-sm text-gray-400 mb-2">Sportarten:</div>
+              <div className="flex flex-wrap gap-2">
+                {location.sports.map(sport => (
+                  <span key={sport} className="text-xs bg-cyan-600/30 text-cyan-300 px-2 py-1 rounded">
+                    {sport}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Actions */}
           <div className="flex gap-2 pt-2">
             {location.type === 'spot' && (
-              <Button
-                onClick={onSetAsLocation}
-                className="flex-1 bg-emerald-600 hover:bg-emerald-700"
-              >
-                <MapPin className="w-4 h-4 mr-2" />
-                Als Standort setzen
-              </Button>
+              <>
+                <Button
+                  onClick={onSetAsLocation}
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-700"
+                >
+                  <MapPin className="w-4 h-4 mr-2" />
+                  Als Standort
+                </Button>
+                <Button
+                  onClick={() => setShowSportSelector(true)}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  Sportarten
+                </Button>
+              </>
             )}
-            
-            <Button
-              onClick={openDirectRoute}
-              variant="outline"
-              className="flex-1"
-            >
-              <Navigation className="w-4 h-4 mr-2" />
-              Route festlegen
-            </Button>
-            
+
+            {!location.type || location.type === 'club' ? (
+              <Button
+                onClick={openDirectRoute}
+                variant="outline"
+                className="flex-1"
+              >
+                <Navigation className="w-4 h-4 mr-2" />
+                Route
+              </Button>
+            ) : null}
+
             {!loading && !travelInfo && currentLocation && (
               <Button
                 onClick={loadTravelTime}
@@ -207,12 +233,21 @@ export default function LocationDetailPanel({ location, onClose, onSetAsLocation
                 className="flex-1"
               >
                 <Clock className="w-4 h-4 mr-2" />
-                Fahrzeit berechnen
+                Fahrzeit
               </Button>
             )}
           </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
+
+          {/* Sport Selector Modal */}
+          {location.type === 'spot' && (
+            <SportSelectorModal
+              isOpen={showSportSelector}
+              onClose={() => setShowSportSelector(false)}
+              spot={location}
+            />
+          )}
+          </CardContent>
+          </Card>
+          </div>
+          );
+          }
