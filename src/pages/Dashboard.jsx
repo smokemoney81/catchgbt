@@ -481,17 +481,17 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
           <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Schnellzugriff</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
             {[
-              { name: "Karte", path: "Map" },
-              { name: "Wetter", path: "Weather" },
-              { name: "Fangbuch", path: "Logbook" },
+              { name: "Karte", path: "Map", offline: true },
+              { name: "Wetter", path: "Weather", offline: true },
+              { name: "Fangbuch", path: "Logbook", offline: true },
               { name: "KI-Chat", path: "AIAssistant" },
               { name: "KI-Cam", path: "AI" },
-              { name: "Gewaesser (C)", path: "WaterAnalysis" },
-              { name: "Gear", path: "Gear" },
+              { name: "Gewaesser (C)", path: "WaterAnalysis", offline: true },
+              { name: "Gear", path: "Gear", offline: true },
               { name: "Trips", path: "TripPlanner" },
               { name: "Community", path: "Community" },
               { name: "Ranking", path: "Ranking" },
-              { name: "Angelschein", path: "AngelscheinPruefungSchonzeiten" }
+              { name: "Angelschein", path: "AngelscheinPruefungSchonzeiten", offline: true }
             ].map((feature) => (
               <Link
                 key={feature.path}
@@ -499,7 +499,12 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
                 className="group relative overflow-hidden rounded-xl bg-gray-900/50 hover:bg-gray-800/60 border border-gray-800/50 hover:border-gray-700/60 p-5 text-center transition-all"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative text-sm font-medium text-gray-300 group-hover:text-cyan-400 transition-colors">{feature.name}</div>
+                <div className="relative">
+                  <div className="text-sm font-medium text-gray-300 group-hover:text-cyan-400 transition-colors">{feature.name}</div>
+                  {feature.offline && (
+                    <div className="text-xs text-emerald-400 mt-1">Offline verfuegbar</div>
+                  )}
+                </div>
               </Link>
             ))}
           </div>
