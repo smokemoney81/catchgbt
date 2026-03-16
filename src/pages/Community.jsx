@@ -465,6 +465,10 @@ export default function Community() {
             </h1>
             <p className="text-gray-400 mt-1">Tausche dich mit anderen Anglern aus</p>
           </div>
+          <div className="flex items-center gap-2 px-4 py-2 bg-gray-800/50 rounded-lg border border-gray-700">
+            <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+            <span className="text-sm text-gray-300">{activeUserCount} User online</span>
+          </div>
         </div>
 
         {/* Suchleiste */}
