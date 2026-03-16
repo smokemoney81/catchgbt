@@ -681,6 +681,12 @@ function VoiceBuddy() {
         }
 
         const tip = await generateTip(parsed);
+        if (!tip) {
+          setIsSpeaking(false);
+          setStatus('waiting');
+          return;
+        }
+        
         setLastTip(tip);
         
         await saveConversationMessage('assistant', tip);
@@ -692,7 +698,10 @@ function VoiceBuddy() {
           context: 'voice_control'
         }]);
 
-        await speak(tip, { rate: 1.0 });
+        console.log('Voice Control: About to speak response:', tip.substring(0, 50) + '...');
+        await speak(tip, { rate: 0.95 });
+        console.log('Voice Control: Speech finished');
+        
         setIsSpeaking(false);
         setStatus('waiting');
         setTranscript('');
