@@ -8,51 +8,10 @@ export default function OfflineMapLayer({ isOnline }) {
   const [tileLayer, setTileLayer] = useState(null);
 
   useEffect(() => {
-    if (!map) return;
+    if (!map || !L) return;
 
-    // Erstelle Custom Tile Layer mit Offline-Fallback
-    const createOfflineLayer = () => {
-      const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-      
-      const layer = L.tileLayer(tileUrl, {
-        attribution: 'OpenStreetMap',
-        maxZoom: 19,
-        async: true,
-        crossOrigin: true
-      });
-
-      // Override getTile fuer Offline-Support
-      const originalGetTile = layer.getTile.bind(layer);
-      layer.getTile = async function(coords, done) {
-        try {
-          if (!isOnline) {
-            // Versuche lokale Version zu laden
-            const cachedTile = await getCachedTile(coords.x, coords.y, coords.z);
-            if (cachedTile && cachedTile.blob) {
-              const url = URL.createObjectURL(cachedTile.blob);
-              const img = new Image();
-              img.onload = () => {
-                done(null, img);
-                URL.revokeObjectURL(url);
-              };
-              img.onerror = () => {
-                done(new Error('Failed to load cached tile'));
-              };
-              img.src = url;
-              return img;
-            }
-          }
-        } catch (error) {
-          console.warn('Offline tile error:', error);
-        }
-
-        // Fallback auf Online-Version
-        return originalGetTile(coords, done);
-      };
-
-      return layer;
-    };
-
+    const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    
     // Entferne alte Layer
     map.eachLayer(layer => {
       if (layer instanceof L.TileLayer) {
@@ -60,8 +19,13 @@ export default function OfflineMapLayer({ isOnline }) {
       }
     });
 
-    // Erstelle und fuege neue Layer hinzu
-    const newLayer = createOfflineLayer();
+    // Erstelle neue Layer
+    const newLayer = L.tileLayer(tileUrl, {
+      attribution: 'OpenStreetMap',
+      maxZoom: 19,
+      crossOrigin: true
+    });
+
     newLayer.addTo(map);
     setTileLayer(newLayer);
 
