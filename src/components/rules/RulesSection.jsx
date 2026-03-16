@@ -154,19 +154,15 @@ export default function RulesSection() {
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4 justify-between">
             <div className="flex gap-4">
-              <Select value={filterRegion} onValueChange={setFilterRegion}>
-                <SelectTrigger className="w-[180px] bg-gray-800/50 border-gray-700">
-                  <SelectValue placeholder="Region filtern" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Alle Bundesländer</SelectItem>
-                  {FEDERAL_STATES.map((stateObj) => (
-                    <SelectItem key={stateObj.id} value={stateObj.name}>
-                      {stateObj.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <MobileSelect 
+                value={filterRegion} 
+                onChange={setFilterRegion}
+                options={[
+                  { value: 'all', label: 'Alle Bundesländer' },
+                  ...FEDERAL_STATES.map(stateObj => ({ value: stateObj.name, label: stateObj.name }))
+                ]}
+                placeholder="Region filtern"
+              />
               <Input
                 placeholder="Fischart suchen..."
                 value={searchTerm}
