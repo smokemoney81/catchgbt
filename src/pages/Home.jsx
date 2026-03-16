@@ -628,10 +628,10 @@ function LandingPageContent() {
                 >
                     <button
                         onClick={handleLogin}
-                        className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700 text-white text-lg font-bold shadow-[0_0_30px_rgba(34,211,238,0.6)] hover:shadow-[0_0_40px_rgba(34,211,238,0.8)] transform transition-all hover:scale-110 flex items-center justify-center"
+                        className="px-8 py-4 rounded-full bg-gradient-to-br from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700 text-white text-sm font-bold shadow-[0_0_30px_rgba(34,211,238,0.6)] hover:shadow-[0_0_40px_rgba(34,211,238,0.8)] transform transition-all hover:scale-110 flex items-center justify-center whitespace-nowrap"
                         title={t('landing.cta.start')}
                     >
-                        Go
+                        Go Fisching
                     </button>
                 </motion.div>
             </div>
