@@ -65,6 +65,7 @@ const AuthenticatedApp = () => {
       ))}
       <Route path="/BathymetricCrowdsourcing" element={<LayoutWrapper currentPageName="BathymetricCrowdsourcing"><BathymetricCrowdsourcing /></LayoutWrapper>} />
       <Route path="/ARKnotenAssistent" element={<LayoutWrapper currentPageName="ARKnotenAssistent"><ARKnotenAssistent /></LayoutWrapper>} />
+      <Route path="/CatchMap" element={<LayoutWrapper currentPageName="CatchMap"><CatchMap /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
