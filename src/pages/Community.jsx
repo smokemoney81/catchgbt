@@ -232,32 +232,6 @@ export default function Community() {
     setLoading(false);
   };
 
-  const getUserDisplayName = (email) => {
-    if (!email) return "Unbekannt";
-    
-    const user = userCache[email];
-    if (!user) {
-      const emailUsername = email.split('@')[0];
-      return emailUsername || "Unbekannt";
-    }
-    
-    if (user.full_name && user.full_name.trim() !== '') {
-      return user.full_name.trim();
-    }
-    if (user.nickname && user.nickname.trim() !== '') {
-      return user.nickname.trim();
-    }
-    
-    const emailUsername = email.split('@')[0];
-    return emailUsername || "Angler";
-  };
-
-  const getUserProfilePicture = (email) => {
-    const user = userCache[email];
-    if (!user) return null;
-    return user.profile_picture_url || null;
-  };
-
   const loadUserCatches = async () => {
     if (!currentUser) return;
     
