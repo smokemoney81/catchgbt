@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline, Polygon, useMap, useM
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { base44 } from "@/api/base44Client";
+import OfflineMapLayer from "./OfflineMapLayer";
 
 // Fix default marker icons
 delete L.Icon.Default.prototype._getIconUrl;
@@ -167,7 +168,8 @@ export default function MapView({
   onSpotClick,
   onClubClick,
   onWaterBodiesLoad,
-  onReviewsLoad
+  onReviewsLoad,
+  isOnline
 }) {
   if (!center) {
     return (
