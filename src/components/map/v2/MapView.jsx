@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Polyline, Polygon, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -258,6 +258,46 @@ export default function MapView({
           </Popup>
         </Marker>
       )}
+
+      {/* Review Markers with Stars */}
+      {onReviewsLoad && React.useMemo(() => {
+        const reviewsBySpot = {};
+        return (
+          <>
+            {Object.entries(reviewsBySpot).map(([spotId, reviews]) => {
+              const review = reviews[0];
+              const avgRating = (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
+
+              return (
+                <Marker
+                  key={`review_${spotId}`}
+                  position={[review.latitude, review.longitude]}
+                  icon={new L.DivIcon({
+                    html: `<div style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;background:#fbbf24;border-radius:50%;font-size:14px;font-weight:bold;color:#000;box-shadow:0 2px 4px rgba(0,0,0,0.3);">*</div>`,
+                    iconSize: [32, 32],
+                    className: 'review-marker'
+                  })}
+                  eventHandlers={{
+                    click: () => onSpotClick && onSpotClick(review)
+                  }}
+                >
+                  <Popup>
+                    <div className="text-sm">
+                      <strong>{review.spot_name}</strong>
+                      <p className="text-xs text-gray-600 mt-1">
+                        Bewertung: {avgRating} * ({reviews.length})
+                      </p>
+                      {review.comment && (
+                        <p className="text-xs text-gray-600 mt-1">{review.comment}</p>
+                      )}
+                    </div>
+                  </Popup>
+                </Marker>
+              );
+            })}
+          </>
+        );
+      }, [])}
 
       {/* User Spots */}
       {spots.filter(spot => spot.latitude != null && spot.longitude != null).map((spot) => (
