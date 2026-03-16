@@ -17,12 +17,15 @@ import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { useLocation } from '@/components/location/LocationManager';
 import { motion } from 'framer-motion';
+import RatingForm from '@/components/water/RatingForm';
+import ReviewsList from '@/components/water/ReviewsList';
 
 export default function SpotDetailPanel({ spot, onClose, onUpdate }) {
   const { gpsLocation } = useLocation();
   const [travelData, setTravelData] = useState(null);
   const [loadingTravel, setLoadingTravel] = useState(false);
   const [isFavorite, setIsFavorite] = useState(spot?.is_favorite || false);
+  const [reviewsKey, setReviewsKey] = useState(0);
 
   // Koordinaten extrahieren (unterstützt beide Strukturen)
   const getCoordinates = () => {
@@ -301,19 +304,35 @@ export default function SpotDetailPanel({ spot, onClose, onUpdate }) {
             </div>
           )}
 
-          {/* Quick Actions */}
-          <div className="pt-4 space-y-2">
-            <Button 
-              className="w-full bg-cyan-600 hover:bg-cyan-700"
-              onClick={() => {
-                const url = `https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}`;
-                window.open(url, '_blank');
-              }}
-            >
-              <Navigation className="w-4 h-4 mr-2" />
-              Navigation starten
-            </Button>
+          {/* Bewertungen & Reviews */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">
+              Aktuelle Bewertungen
+            </h3>
+            <ReviewsList key={reviewsKey} spotId={spot.id} />
           </div>
+
+          {/* Bewertungsformular */}
+          {isUserSpot && spot.id && (
+            <RatingForm 
+              spot={spot}
+              onSuccess={() => setReviewsKey(prev => prev + 1)}
+            />
+          )}
+
+          {/* Quick Actions */}
+           <div className="pt-4 space-y-2">
+             <Button 
+               className="w-full bg-cyan-600 hover:bg-cyan-700"
+               onClick={() => {
+                 const url = `https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}`;
+                 window.open(url, '_blank');
+               }}
+             >
+               <Navigation className="w-4 h-4 mr-2" />
+               Navigation starten
+             </Button>
+           </div>
         </CardContent>
       </Card>
     </motion.div>
