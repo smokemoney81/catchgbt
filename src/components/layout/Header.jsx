@@ -25,6 +25,8 @@ export default function Header({
   const [user, setUser] = useState(null);
   const [currentPlan, setCurrentPlan] = useState(null);
   const [planLoading, setPlanLoading] = useState(true);
+  const [recentPosts, setRecentPosts] = useState([]);
+  const [postIndex, setPostIndex] = useState(0);
 
   useEffect(() => {
     loadAlertStatus();
