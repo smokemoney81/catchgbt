@@ -22,6 +22,7 @@ export default function LogSection() {
   const [uploading, setUploading] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
+  const [isFromCache, setIsFromCache] = useState(false);
 
   useEffect(() => {
     window.dispatchEvent(new CustomEvent('kiBuddyFunctionCall', {
