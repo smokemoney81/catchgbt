@@ -18,24 +18,43 @@ const LANGUAGE = 'de-DE';
 // Konversations-Session ID (pro App-Sitzung)
 const SESSION_ID = `voice_${Date.now()}`;
 
-// TTS Helper
+// TTS Helper - mit Error-Handling und Retry
 function speak(text, { rate = 1, pitch = 1, voiceName = null } = {}) {
   if (!('speechSynthesis' in window)) return Promise.resolve();
+  if (!text || text.trim().length === 0) return Promise.resolve();
+  
   return new Promise((resolve) => {
-    const utter = new SpeechSynthesisUtterance(text);
-    utter.lang = LANGUAGE;
-    utter.rate = rate;
-    utter.pitch = pitch;
-    
-    if (voiceName) {
-      const voices = window.speechSynthesis.getVoices();
-      const match = voices.find((v) => v.name === voiceName);
-      if (match) utter.voice = match;
+    try {
+      window.speechSynthesis.cancel();
+      
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = LANGUAGE;
+      utter.rate = Math.max(0.5, Math.min(2, rate)); // Clamp rate
+      utter.pitch = Math.max(0.5, Math.min(2, pitch)); // Clamp pitch
+      utter.volume = 1;
+      
+      if (voiceName) {
+        const voices = window.speechSynthesis.getVoices();
+        const match = voices.find((v) => v.name === voiceName);
+        if (match) utter.voice = match;
+      }
+      
+      utter.onend = () => {
+        console.log('TTS: Speech ended');
+        resolve();
+      };
+      
+      utter.onerror = (event) => {
+        console.error('TTS Error:', event.error);
+        resolve();
+      };
+      
+      console.log('TTS: Speaking -', text.substring(0, 50) + '...');
+      window.speechSynthesis.speak(utter);
+    } catch (error) {
+      console.error('TTS Exception:', error);
+      resolve();
     }
-    
-    utter.onend = () => resolve();
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utter);
   });
 }
 
