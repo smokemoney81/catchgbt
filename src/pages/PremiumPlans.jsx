@@ -284,6 +284,7 @@ export default function PremiumPlans() {
                   <CardTitle className="text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.7)]">
                     {plan.name}
                   </CardTitle>
+                  <p className="text-xs text-gray-400 mt-1">{plan.description}</p>
                   <CardDescription>
                     <div className="text-3xl font-bold text-white mt-2">
                       {plan.price === 0 ? 'Gratis' : `${plan.price}€`}
