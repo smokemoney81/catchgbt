@@ -737,11 +737,20 @@ export default function Community() {
           })}
         </div>
 
+        {filteredPosts.length === 0 && posts.length > 0 && (
+          <Card className="glass-morphism border-gray-800">
+            <CardContent className="text-center py-12">
+              <p className="text-gray-400 mb-4">Keine Beitraege gefunden</p>
+              <p className="text-sm text-gray-500">Versuche einen anderen Suchbegriff</p>
+            </CardContent>
+          </Card>
+        )}
+
         {posts.length === 0 && (
           <Card className="glass-morphism border-gray-800">
             <CardContent className="text-center py-12">
               <p className="text-gray-400 mb-4">Noch keine Posts vorhanden</p>
-              <p className="text-sm text-gray-500">Sei der Erste und teile deinen Fang! 🎣</p>
+              <p className="text-sm text-gray-500">Sei der Erste und teile deinen Fang</p>
             </CardContent>
           </Card>
         )}
