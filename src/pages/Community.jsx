@@ -117,6 +117,17 @@ export default function Community() {
     }
   };
 
+  const loadActiveUserCount = async () => {
+    try {
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+      const sessions = await base44.entities.ChatSession.filter({ is_active: true });
+      const active = sessions.filter(s => new Date(s.last_activity) > new Date(fiveMinutesAgo));
+      setActiveUserCount(active.length);
+    } catch (error) {
+      console.error("Fehler beim Laden aktiver User:", error);
+    }
+  };
+
   const votingCompetitions = competitions.filter(c => c.competition_type === 'photo_contest');
   const teamCompetitions = competitions.filter(c => c.competition_type === 'most_catches');
   const otherCompetitions = competitions.filter(c => c.competition_type !== 'photo_contest' && c.competition_type !== 'most_catches');
