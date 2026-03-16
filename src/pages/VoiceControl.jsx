@@ -880,14 +880,7 @@ function VoiceBuddy() {
           <p className="text-gray-400">Sprachgesteuerte Angel-Tipps mit Echtzeit-Daten</p>
         </div>
 
-        {/* Navigation Info Banner */}
-        <Card className="glass-morphism border-cyan-500/30 bg-cyan-900/10">
-          <CardContent className="p-4">
-            <p className="text-cyan-300 text-sm text-center">
-              💡 <strong>Tipp:</strong> Du kannst diese Seite über die URL <code className="bg-black/30 px-2 py-1 rounded">/VoiceControl</code> direkt aufrufen
-            </p>
-          </CardContent>
-        </Card>
+
 
         {/* Error Alert */}
         <AnimatePresence>
