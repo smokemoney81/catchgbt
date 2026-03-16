@@ -504,7 +504,35 @@ function LandingPageContent() {
             </div>
 
             <motion.div 
-                className="fixed top-[38%] left-[30%] -translate-x-1/2 -translate-y-1/2 z-40 px-4 flex flex-col items-start gap-8 max-w-md"
+                className="fixed top-[30%] left-[30%] -translate-x-1/2 -translate-y-1/2 z-40 px-4 flex flex-col items-start gap-4 max-w-md"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+            >
+                <motion.div
+                    animate={{
+                        scale: [1, 1.05, 1],
+                    }}
+                    transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                    }}
+                >
+                    <p className="text-lg sm:text-xl md:text-2xl font-semibold text-cyan-300">
+                        {(() => {
+                            const hour = new Date().getHours();
+                            if (hour >= 5 && hour < 12) return 'Guten Morgen, Angler';
+                            if (hour >= 12 && hour < 17) return 'Guten Tag, Angler';
+                            if (hour >= 17 && hour < 21) return 'Guten Abend, Angler';
+                            return 'Gute Nacht, Angler';
+                        })()}
+                    </p>
+                </motion.div>
+            </motion.div>
+
+            <motion.div 
+                className="fixed top-[42%] left-[30%] -translate-x-1/2 -translate-y-1/2 z-40 px-4 flex flex-col items-start gap-8 max-w-md"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
