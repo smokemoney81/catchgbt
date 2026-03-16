@@ -343,10 +343,15 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
             )}
           </Button>
           
-          <div className="flex flex-col items-end gap-1">
+          <div className="flex flex-col items-end gap-2">
             <div className="text-xs text-gray-400 text-right leading-tight max-w-[140px]">
               Sprachsteuerung aktivieren - dann "Hey Catch" sagen
             </div>
+            {voiceTranscript && (
+              <div className="bg-gray-800/60 rounded-lg px-3 py-1.5 border border-cyan-500/30 max-w-xs">
+                <p className="text-xs text-cyan-300 break-words">{voiceTranscript}</p>
+              </div>
+            )}
             <button
               onClick={() => {
                 const event = new CustomEvent('toggle-voice-control');
