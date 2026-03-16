@@ -1,15 +1,23 @@
 // CatchGBT Service Worker fuer optimales Caching und Performance
-const CACHE_VERSION = 'catchgbt-v1.4.0';
+const CACHE_VERSION = 'catchgbt-v1.5.0';
 const CACHE_NAMES = {
   static: `${CACHE_VERSION}-static`,
   dynamic: `${CACHE_VERSION}-dynamic`,
   images: `${CACHE_VERSION}-images`,
   api: `${CACHE_VERSION}-api`,
+  mediapipe: `${CACHE_VERSION}-mediapipe`,
 };
 
 const PRECACHE_ASSETS = [
   '/',
   '/manifest.json',
+];
+
+const MEDIAPIPE_ASSETS = [
+  'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js',
+  'https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js',
+  'https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js',
+  'https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.wasm',
 ];
 
 Deno.serve((req) => {
@@ -18,13 +26,28 @@ Deno.serve((req) => {
     const CACHE_NAMES = ${JSON.stringify(CACHE_NAMES)};
     const PRECACHE_ASSETS = ${JSON.stringify(PRECACHE_ASSETS)};
 
-    // Install Event - Precache wichtige Assets
+    // Install Event - Precache wichtige Assets und MediaPipe
     self.addEventListener('install', (event) => {
       console.log('[SW] Installing Service Worker v' + CACHE_VERSION);
       event.waitUntil(
-        caches.open(CACHE_NAMES.static).then((cache) => {
-          return cache.addAll(PRECACHE_ASSETS);
-        }).then(() => self.skipWaiting())
+        Promise.all([
+          caches.open(CACHE_NAMES.static).then((cache) => {
+            return cache.addAll(PRECACHE_ASSETS);
+          }),
+          caches.open(CACHE_NAMES.mediapipe).then((cache) => {
+            return Promise.allSettled(
+              ${JSON.stringify(MEDIAPIPE_ASSETS)}.map((url) =>
+                fetch(url).then((response) => {
+                  if (response.status === 200) {
+                    return cache.put(url, response);
+                  }
+                }).catch((e) => {
+                  console.log('[SW] Could not precache:', url, e.message);
+                })
+              )
+            );
+          })
+        ]).then(() => self.skipWaiting())
       );
     });
 
@@ -64,6 +87,26 @@ Deno.serve((req) => {
 
       if (isAuthRequest) {
         event.respondWith(fetch(request));
+        return;
+      }
+
+      // MediaPipe Assets - Cache First
+      if (url.hostname.includes('cdn.jsdelivr.net') && url.pathname.includes('mediapipe')) {
+        event.respondWith(
+          caches.match(request).then((cached) => {
+            if (cached) return cached;
+            return fetch(request).then((response) => {
+              if (response.status === 200) {
+                const clone = response.clone();
+                caches.open(CACHE_NAMES.mediapipe).then((c) => c.put(request, clone));
+              }
+              return response;
+            }).catch(() => new Response(
+              'MediaPipe asset offline',
+              { status: 503, statusText: 'Service Unavailable' }
+            ));
+          })
+        );
         return;
       }
 
