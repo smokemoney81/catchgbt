@@ -738,10 +738,15 @@ function VoiceBuddy() {
           context: 'voice_control'
         }]);
 
-        console.log('Voice Control: About to speak response:', tip.substring(0, 50) + '...');
-        // Sprich die Antwort
-        await speak(tip, { rate: 0.95 });
-        console.log('Voice Control: Speech finished');
+        console.log('[VoiceControl] About to speak:', tip.substring(0, 60) + '...');
+        // Sprich die Antwort - mit garantiertem Fallback
+        try {
+          await speak(tip, { rate: 0.95 });
+        } catch (speechError) {
+          console.error('[VoiceControl] Speech playback error:', speechError);
+          toast.warning('Audio konnte nicht abgespielt werden. Antwort ist sichtbar.');
+        }
+        console.log('[VoiceControl] Speech finished');
         
         setIsSpeaking(false);
         setStatus('waiting');
