@@ -1,21 +1,33 @@
 import React, { useState, useRef, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { backendTextToSpeech } from "@/functions/backendTextToSpeech";
+import { geminiTextToSpeech } from "@/functions/geminiTextToSpeech";
 import { catchgbtChat } from "@/functions/catchgbtChat";
 
 const SYSTEM_PROMPT = `Du bist CatchGBT, ein erfahrener Angel-Assistent. Du hilfst Anglern mit Tipps zu Fischarten, Koeder, Spots, Wetter, Ausruestung und Technik. Antworte auf Deutsch, freundlich und direkt. Halte Antworten kurz und praxisnah.`;
 
 async function speakText(text) {
   try {
-    const response = await backendTextToSpeech({ text, voiceId: "alloy" });
-    if (response?.data?.fallback_to_browser) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "de-DE";
-      window.speechSynthesis.speak(utterance);
+    // Try Gemini TTS first
+    const geminiResponse = await geminiTextToSpeech({ text });
+    if (geminiResponse?.data?.fallback_to_browser) {
+      // Fallback to OpenAI TTS
+      const openaiResponse = await backendTextToSpeech({ text, voiceId: "alloy" });
+      if (openaiResponse?.data?.fallback_to_browser) {
+        // Final fallback to browser TTS
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "de-DE";
+        window.speechSynthesis.speak(utterance);
+        return;
+      }
+      const audioBlob = new Blob([openaiResponse.data], { type: "audio/mpeg" });
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      audio.play();
+      audio.onended = () => URL.revokeObjectURL(audioUrl);
       return;
     }
-    // response.data is an ArrayBuffer from the backend
-    const audioBlob = new Blob([response.data], { type: "audio/mpeg" });
+    const audioBlob = new Blob([geminiResponse.data], { type: "audio/mpeg" });
     const audioUrl = URL.createObjectURL(audioBlob);
     const audio = new Audio(audioUrl);
     audio.play();

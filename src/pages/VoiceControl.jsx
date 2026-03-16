@@ -18,8 +18,50 @@ const LANGUAGE = 'de-DE';
 // Konversations-Session ID (pro App-Sitzung)
 const SESSION_ID = `voice_${Date.now()}`;
 
-// TTS Helper - mit Error-Handling und Retry
-function speak(text, { rate = 1, pitch = 1, voiceName = null } = {}) {
+// TTS Helper - mit Gemini und Browser Fallback
+async function speakWithGemini(text, { rate = 1, pitch = 1 } = {}) {
+  if (!text || text.trim().length === 0) return Promise.resolve();
+  
+  try {
+    const response = await fetch('/api/functions/geminiTextToSpeech', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, speechRate: rate })
+    });
+    
+    const data = await response.json();
+    
+    if (data.fallback_to_browser) {
+      console.log('Gemini TTS unavailable, using browser TTS');
+      return speakBrowser(text, rate, pitch);
+    }
+    
+    // Play Gemini audio
+    const audioBlob = new Blob([data], { type: 'audio/mpeg' });
+    const audioUrl = URL.createObjectURL(audioBlob);
+    const audio = new Audio(audioUrl);
+    
+    return new Promise((resolve) => {
+      audio.onended = () => {
+        URL.revokeObjectURL(audioUrl);
+        resolve();
+      };
+      audio.onerror = () => {
+        URL.revokeObjectURL(audioUrl);
+        resolve();
+      };
+      audio.play().catch(() => {
+        URL.revokeObjectURL(audioUrl);
+        resolve();
+      });
+    });
+  } catch (error) {
+    console.error('Gemini TTS error:', error);
+    return speakBrowser(text, rate, pitch);
+  }
+}
+
+function speakBrowser(text, rate = 1, pitch = 1) {
   if (!('speechSynthesis' in window)) return Promise.resolve();
   if (!text || text.trim().length === 0) return Promise.resolve();
   
@@ -29,15 +71,9 @@ function speak(text, { rate = 1, pitch = 1, voiceName = null } = {}) {
       
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = LANGUAGE;
-      utter.rate = Math.max(0.5, Math.min(2, rate)); // Clamp rate
-      utter.pitch = Math.max(0.5, Math.min(2, pitch)); // Clamp pitch
+      utter.rate = Math.max(0.5, Math.min(2, rate));
+      utter.pitch = Math.max(0.5, Math.min(2, pitch));
       utter.volume = 1;
-      
-      if (voiceName) {
-        const voices = window.speechSynthesis.getVoices();
-        const match = voices.find((v) => v.name === voiceName);
-        if (match) utter.voice = match;
-      }
       
       utter.onend = () => {
         console.log('TTS: Speech ended');
@@ -56,6 +92,10 @@ function speak(text, { rate = 1, pitch = 1, voiceName = null } = {}) {
       resolve();
     }
   });
+}
+
+async function speak(text, options = {}) {
+  return speakWithGemini(text, options);
 }
 
 // Wetterdaten von Open-Meteo abrufen
