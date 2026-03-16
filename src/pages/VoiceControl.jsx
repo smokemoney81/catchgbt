@@ -18,46 +18,17 @@ const LANGUAGE = 'de-DE';
 // Konversations-Session ID (pro App-Sitzung)
 const SESSION_ID = `voice_${Date.now()}`;
 
-// TTS Helper - mit Gemini und Browser Fallback
-async function speakWithGemini(text, { rate = 1, pitch = 1 } = {}) {
+// TTS Helper - mit Browser und Gemini Fallback
+async function speakWithBrowserFirst(text, { rate = 1, pitch = 1 } = {}) {
   if (!text || text.trim().length === 0) return Promise.resolve();
   
   try {
-    const response = await fetch('/api/functions/geminiTextToSpeech', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, speechRate: rate })
-    });
-    
-    const data = await response.json();
-    
-    if (data.fallback_to_browser) {
-      console.log('Gemini TTS unavailable, using browser TTS');
-      return speakBrowser(text, rate, pitch);
-    }
-    
-    // Play Gemini audio
-    const audioBlob = new Blob([data], { type: 'audio/mpeg' });
-    const audioUrl = URL.createObjectURL(audioBlob);
-    const audio = new Audio(audioUrl);
-    
-    return new Promise((resolve) => {
-      audio.onended = () => {
-        URL.revokeObjectURL(audioUrl);
-        resolve();
-      };
-      audio.onerror = () => {
-        URL.revokeObjectURL(audioUrl);
-        resolve();
-      };
-      audio.play().catch(() => {
-        URL.revokeObjectURL(audioUrl);
-        resolve();
-      });
-    });
+    console.log('[TTS] Browser Speech Synthesis: Starting...');
+    return await speakBrowser(text, rate, pitch);
   } catch (error) {
-    console.error('Gemini TTS error:', error);
-    return speakBrowser(text, rate, pitch);
+    console.error('[TTS] Browser TTS failed:', error);
+    // Kein Gemini Fallback - Browser ist zuverlässiger
+    return Promise.resolve();
   }
 }
 
