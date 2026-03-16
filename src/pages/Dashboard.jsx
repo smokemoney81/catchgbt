@@ -489,7 +489,7 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
               { name: "Gewaesser (C)", path: "WaterAnalysis", offline: true },
               { name: "Gear", path: "Gear", offline: true },
               { name: "Trips", path: "TripPlanner" },
-              { name: "Community", path: "Community" },
+              { name: "Community (C)", path: "Community" },
               { name: "Ranking", path: "Ranking" },
               { name: "Angelschein", path: "AngelscheinPruefungSchonzeiten", offline: true }
             ].map((feature) => (
