@@ -327,11 +327,12 @@ function VoiceBuddy() {
     loadHistory();
   }, [loadHistory]);
 
-  useEffect(() => {
-    if (conversationEndRef.current) {
-      conversationEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [conversationHistory]);
+  // Disabled auto-scroll on conversation history
+  // useEffect(() => {
+  //   if (conversationEndRef.current) {
+  //     conversationEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  //   }
+  // }, [conversationHistory]);
 
   // Lade Wetter, Spot- und Regel-Daten
   const loadAllData = async () => {
