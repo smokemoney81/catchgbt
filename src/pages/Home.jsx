@@ -602,15 +602,15 @@ function LandingPageContent() {
                 </a>
             </motion.div>
 
-            <div className="fixed bottom-20 left-0 right-0 z-40 w-full h-12 bg-gray-900 overflow-hidden flex items-center border-b border-gray-800">
+            <div className="fixed top-32 left-0 right-0 z-10 w-full overflow-hidden flex items-center pointer-events-none">
                 <div 
-                    className="whitespace-nowrap flex items-center h-full text-amber-400 text-xl font-bold pl-4" 
+                    className="whitespace-nowrap flex items-center text-amber-400 text-4xl font-bold opacity-20 pl-4" 
                     style={{
-                        animation: `scroll 25s linear infinite`,
+                        animation: `scroll 40s linear infinite`,
                     }}
                 >
-                    <span className="mr-12">CatchGBT wünscht dir viel Erfolg und Petri Heil</span>
-                    <span className="mr-12">CatchGBT wünscht dir viel Erfolg und Petri Heil</span>
+                    <span className="mr-24">CatchGBT wünscht dir viel Erfolg und Petri Heil</span>
+                    <span className="mr-24">CatchGBT wünscht dir viel Erfolg und Petri Heil</span>
                 </div>
                 <style>{`
                     @keyframes scroll {
