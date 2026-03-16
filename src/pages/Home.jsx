@@ -536,10 +536,11 @@ function LandingPageContent() {
                     <p className="text-lg sm:text-xl md:text-2xl font-semibold text-cyan-300">
                         {(() => {
                             const hour = new Date().getHours();
-                            if (hour >= 5 && hour < 12) return 'Guten Morgen, Angler';
-                            if (hour >= 12 && hour < 17) return 'Guten Tag, Angler';
-                            if (hour >= 17 && hour < 21) return 'Guten Abend, Angler';
-                            return 'Gute Nacht, Angler';
+                            const greeting = hour >= 5 && hour < 12 ? 'Guten Morgen' : 
+                                           hour >= 12 && hour < 17 ? 'Guten Tag' : 
+                                           hour >= 17 && hour < 21 ? 'Guten Abend' : 
+                                           'Gute Nacht';
+                            return userName ? `${greeting}, ${userName}` : `${greeting}, Angler`;
                         })()}
                     </p>
                 </motion.div>
