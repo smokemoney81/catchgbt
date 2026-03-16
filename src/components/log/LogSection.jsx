@@ -238,6 +238,11 @@ export default function LogSection() {
                 um Fänge dauerhaft zu speichern.
               </p>
             )}
+            {isFromCache && !isGuest && (
+              <p className="text-xs text-orange-400 mt-1">
+                Offline-Modus - Zeige zuletzt gespeicherte Faenge. Neue Eintraege werden automatisch synchronisiert.
+              </p>
+            )}
           </div>
           <div className="flex flex-wrap gap-2">
             {!isGuest && (
