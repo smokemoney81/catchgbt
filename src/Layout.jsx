@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import SEO from "@/components/pwa/SEO";
 import { LocationProvider } from "@/components/location/LocationManager";
+import OfflineWrapper from "@/components/utils/OfflineWrapper";
 import Header from "@/components/layout/Header";
 import Sidebar from "@/components/layout/Sidebar";
 import EnhancedTicker from "@/components/layout/TipTicker";
@@ -257,6 +258,7 @@ export default function Layout({ children, currentPageName }) {
         <HapticProvider>
           <SoundProvider>
             <LocationProvider>
+              <OfflineWrapper>
             <div className="min-h-screen bg-gray-950 text-slate-50 relative overflow-hidden">
               <SEO />
               
@@ -682,6 +684,7 @@ export default function Layout({ children, currentPageName }) {
                 }
               `}</style>
             </div>
+              </OfflineWrapper>
           </LocationProvider>
           </SoundProvider>
           </HapticProvider>
