@@ -100,6 +100,7 @@ export default function Dashboard() {
     return () => {
       window.removeEventListener('wake-word-status-change', handleVoiceStatusUpdate);
       window.removeEventListener('wake-word-detected', handleWakeWordDetected);
+      window.removeEventListener('voice-transcript', handleVoiceTranscript);
       window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
