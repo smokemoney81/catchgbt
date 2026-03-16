@@ -373,14 +373,6 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
           
           <div className="flex flex-col items-end gap-2">
             <OfflineCacheIndicator />
-            <div className="text-xs text-gray-400 text-right leading-tight max-w-[140px]">
-              Sprachsteuerung aktivieren - dann "Hey Catch" sagen
-            </div>
-            {voiceTranscript && (
-              <div className="bg-gray-800/60 rounded-lg px-3 py-1.5 border border-cyan-500/30 max-w-xs">
-                <p className="text-xs text-cyan-300 break-words">{voiceTranscript}</p>
-              </div>
-            )}
             <button
               onClick={() => {
                 const event = new CustomEvent('toggle-voice-control');
@@ -399,6 +391,11 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
                 showAlways={true}
               />
             </button>
+            {voiceTranscript && (
+              <div className="bg-gradient-to-br from-cyan-900/50 to-cyan-900/30 rounded-lg px-4 py-2 border-2 border-cyan-500/60 shadow-lg shadow-cyan-500/20 w-full max-w-sm">
+                <p className="text-sm text-cyan-200 font-medium break-words">{voiceTranscript}</p>
+              </div>
+            )}
           </div>
         </div>
 
