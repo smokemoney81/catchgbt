@@ -641,15 +641,22 @@ function LandingPageContent() {
                     animate={{ 
                         opacity: 1, 
                         scale: 1,
+                        backgroundImage: [
+                            'linear-gradient(135deg, #a855f7, #3b82f6, #06b6d4)',
+                            'linear-gradient(135deg, #3b82f6, #06b6d4, #a855f7)',
+                            'linear-gradient(135deg, #06b6d4, #a855f7, #3b82f6)',
+                            'linear-gradient(135deg, #a855f7, #3b82f6, #06b6d4)'
+                        ],
                         boxShadow: [
                             '0 0 20px rgba(168, 85, 247, 0.8)',
                             '0 0 40px rgba(59, 130, 246, 1)',
+                            '0 0 40px rgba(6, 182, 212, 1)',
                             '0 0 20px rgba(168, 85, 247, 0.8)'
                         ]
                     }}
                     transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
                     onClick={handleLogin}
-                    className="px-8 py-4 rounded-full text-white text-sm font-bold transform hover:scale-110 flex items-center justify-center whitespace-nowrap bg-gradient-to-br from-purple-600 to-blue-600"
+                    className="px-8 py-4 rounded-full text-white text-sm font-bold transform hover:scale-110 flex items-center justify-center whitespace-nowrap"
                     title={t('landing.cta.start')}
                 >
                     Go Fisching
