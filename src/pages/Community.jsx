@@ -776,7 +776,8 @@ export default function Community() {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleReport(post.id)}
-                          className="text-gray-400 hover:text-amber-400 ml-auto"
+                          className={`ml-auto ${reportedPostIds.includes(post.id) ? 'text-amber-400 cursor-default' : 'text-gray-400 hover:text-amber-400'}`}
+                          title={reportedPostIds.includes(post.id) ? 'Bereits gemeldet' : 'Post melden'}
                         >
                           <AlertTriangle className="w-4 h-4" />
                         </Button>
