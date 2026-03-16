@@ -150,15 +150,16 @@ export default function PremiumPlans() {
       price: 0,
       icon: Check,
       color: 'from-gray-600 to-gray-700',
+      description: 'Alles Wichtige zum Einstieg',
       features: [
-        'Digitales Fangbuch',
-        'GPS-Karten (Basisansicht)',
-        'KI-Buddy: Tipps zu Lieblingsplätzen',
-        'Wetteranzeige (1 Tag, 3h)',
-        'Markierung gefangener Arten',
+        'Digitales Fangbuch (unbegrenzt)',
+        'KI-Foto-Analyse (3x pro Monat)',
+        'Interaktive Karte mit Community-Spots',
+        'Wetter aktuell + 1 Tag',
+        'Schonzeiten & Mindestmasse',
+        'Angelschein-Pruefungsvorbereitung',
         'Tutorials & Knotentechniken',
-        'Offline-Lehrmaterialien',
-        'Personalisierte Notizen & Fotos'
+        'Offline-Fangbuch'
       ]
     },
     {
@@ -166,16 +167,19 @@ export default function PremiumPlans() {
       name: 'Basic',
       price: 4.99,
       icon: Zap,
-      color: 'from-blue-600 to-blue-700',
+      color: 'from-blue-600 to-cyan-600',
+      description: 'Mehr KI, mehr Daten',
       popular: false,
       features: [
-        'Alles aus Free Plan',
-        'Erweiterte Wetterdaten (3 Tage)',
-        'KI-Buddy AR-Elemente',
-        'Satellitenbilder & Angelkarten',
-        'Verborgene Hotspots',
-        'Köderwahl & Technikempfehlungen',
-        'Filterung von Statistiken'
+        'Alles aus Free',
+        'KI-Foto-Analyse (unbegrenzt)',
+        'KI-Buddy Chat (unbegrenzt)',
+        'Wetter 5 Tage + Wetter-Alarme',
+        'Eigene Spots speichern (unbegrenzt)',
+        'KI-Koeder-Mischer',
+        'Gewaesser-Wasseranalyse (Basis)',
+        'Trip-Planer mit KI',
+        'Fang-Statistiken & Filter'
       ]
     },
     {
@@ -183,18 +187,20 @@ export default function PremiumPlans() {
       name: 'Pro',
       price: 9.99,
       icon: Star,
-      color: 'from-purple-600 to-purple-700',
+      color: 'from-purple-600 to-violet-600',
+      description: 'Vollstaendige KI-Power',
       popular: true,
       features: [
-        'Alles aus Basic Plan',
-        'AR-KI-Buddy vollständig',
-        'GPS-Heatmaps & Fangprognosen',
-        'Bluetooth-Geräte verbinden',
-        'Erweiterte Fangberichte',
-        'Premium Tutorials & Videos',
-        'Offline-Karten & Hotspots',
-        'Fang-Export & Share',
-        'Community-Ranking & Punkte'
+        'Alles aus Basic',
+        'Satelliten-Gewaesseranalyse (Echtdaten)',
+        'KI-Fangprognosen & Hotspot-Erkennung',
+        'AR-Gewaesser-Ansicht (3D)',
+        'Tiefenkarten & Crowdsourcing-Daten',
+        'Geraete-Integration (Bissanzeiger, Echolot)',
+        'Voice Control: Hey Buddy',
+        'Community-Ranking, Clans & Events',
+        'Fang-Export (PDF & CSV)',
+        'Digitale Lizenzverwaltung'
       ]
     },
     {
@@ -202,17 +208,18 @@ export default function PremiumPlans() {
       name: 'Elite',
       price: 19.99,
       icon: Crown,
-      color: 'from-amber-600 to-orange-600',
+      color: 'from-amber-500 to-orange-600',
+      description: 'Profi-Angler Level',
       popular: false,
       features: [
-        'Alles aus Pro Plan',
-        'Voller AR-Buddy: Live-Pfad-Markierungen',
-        'Individuelle Spot-Analysen',
-        'Voller Zugriff auf Shop & Kosmetik',
-        'Boosts & Event-Boni',
-        'Profi-Statistiken: Zeitreihen, Trends',
-        'Priorisierte Cloud-Synchronisation',
-        'Exklusive Elite-Only Features'
+        'Alles aus Pro',
+        'Live-Bissanzeiger per Smartphone-Kamera',
+        'KI-Kamera Echtzeit-Fischerkennung',
+        'Individuelle Spot-Tiefenanalysen',
+        'Profi-Statistiken: Zeitreihen & Trends',
+        'Detaillierte KI-Trip-Berichte (Premium)',
+        'Prioritaets-Synchronisation & Backup',
+        'Exklusive Elite-Features & fruehzeitiger Zugang'
       ]
     }
   ];
