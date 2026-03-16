@@ -575,7 +575,7 @@ export default function Community() {
 
         {/* Posts Feed */}
         <div className="space-y-4">
-          {posts.map((post) => {
+          {filteredPosts.map((post) => {
             const profilePic = getUserProfilePicture(post.created_by);
             const displayName = getUserDisplayName(post.created_by);
             const isOwnPost = currentUser && post.created_by === currentUser.email;
