@@ -534,6 +534,179 @@ export default function Community() {
           </Card>
         )}
 
+        {/* Posts Feed */}
+        <div className="space-y-4">
+          {posts.map((post) => {
+            const profilePic = getUserProfilePicture(post.created_by);
+            const displayName = getUserDisplayName(post.created_by);
+            const isOwnPost = currentUser && post.created_by === currentUser.email;
+
+            return (
+              <div key={post.id}>
+                <Card className="glass-morphism border-gray-800">
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-3">
+                        {profilePic ? (
+                          <img 
+                            src={profilePic} 
+                            alt={displayName}
+                            className="w-10 h-10 rounded-full object-cover border-2 border-emerald-400"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center border-2 border-emerald-400">
+                            <User className="w-5 h-5 text-white" />
+                          </div>
+                        )}
+                        <div>
+                          <p className="font-semibold text-white">{displayName}</p>
+                          <p className="text-xs text-gray-400">
+                            {new Date(post.created_date).toLocaleDateString('de-DE', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </p>
+                        </div>
+                      </div>
+
+                      {isOwnPost && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeletePost(post.id)}
+                          disabled={deletingPostId === post.id}
+                          className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                        >
+                          {deletingPostId === post.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <X className="w-4 h-4" />
+                          )}
+                        </Button>
+                      )}
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="space-y-4">
+                    <p className="text-gray-200 whitespace-pre-wrap">{post.text}</p>
+
+                    {post.photo_url && (
+                      <img 
+                        src={post.photo_url} 
+                        alt="Post" 
+                        className="w-full rounded-lg max-h-96 object-cover"
+                      />
+                    )}
+
+                    <div className="flex items-center gap-4 pt-2 border-t border-gray-800">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleLike(post.id, post.likes || 0)}
+                        className="text-gray-400 hover:text-red-400"
+                      >
+                        <Heart className="w-4 h-4 mr-1" />
+                        {post.likes || 0}
+                      </Button>
+
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setCommenting(commenting === post.id ? null : post.id)}
+                        className="text-gray-400 hover:text-cyan-400"
+                      >
+                        <MessageCircle className="w-4 h-4 mr-1" />
+                        {post.comments?.length || 0}
+                      </Button>
+
+                      {!isOwnPost && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleReport(post.id)}
+                          className={`ml-auto ${reportedPostIds.includes(post.id) ? 'text-amber-400 cursor-default' : 'text-gray-400 hover:text-amber-400'}`}
+                          title={reportedPostIds.includes(post.id) ? 'Bereits gemeldet' : 'Post melden'}
+                        >
+                          <AlertTriangle className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+
+                    {/* Kommentare */}
+                    {post.comments && post.comments.length > 0 && (
+                      <div className="space-y-2 pt-2 border-t border-gray-800">
+                        {post.comments.map((comment) => {
+                          const commentProfilePic = getUserProfilePicture(comment.created_by);
+                          const commentDisplayName = getUserDisplayName(comment.created_by);
+
+                          return (
+                            <div key={comment.id} className="flex gap-2">
+                              {commentProfilePic ? (
+                                <img 
+                                  src={commentProfilePic} 
+                                  alt={commentDisplayName}
+                                  className="w-8 h-8 rounded-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center flex-shrink-0">
+                                  <User className="w-4 h-4 text-white" />
+                                </div>
+                              )}
+                              <div className="flex-1 bg-gray-800/50 rounded-lg p-2">
+                                <p className="text-xs font-semibold text-emerald-400 mb-1">
+                                  {commentDisplayName}
+                                </p>
+                                <p className="text-sm text-gray-300">{comment.text}</p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Kommentar-Eingabe */}
+                    {commenting === post.id && (
+                      <div className="flex gap-2 pt-2">
+                        <Input
+                          value={commentText}
+                          onChange={(e) => setCommentText(e.target.value)}
+                          placeholder="Dein Kommentar..."
+                          className="bg-gray-800/50 border-gray-700 text-white"
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                              e.preventDefault();
+                              handleComment(post.id);
+                            }
+                          }}
+                        />
+                        <Button
+                          onClick={() => handleComment(post.id)}
+                          size="sm"
+                          className="bg-emerald-600 hover:bg-emerald-700"
+                        >
+                          <Send className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+            </div>
+            );
+          })}
+        </div>
+
+        {posts.length === 0 && (
+          <Card className="glass-morphism border-gray-800">
+            <CardContent className="text-center py-12">
+              <p className="text-gray-400 mb-4">Noch keine Posts vorhanden</p>
+              <p className="text-sm text-gray-500">Sei der Erste und teile deinen Fang! 🎣</p>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Aktuelle Aktivitaten */}
          {recentActivity.length > 0 && (
           <Card className="glass-morphism border-gray-800 rounded-2xl">
@@ -685,178 +858,7 @@ export default function Community() {
           </CardContent>
         </Card>
 
-        {/* Posts Feed */}
-        <div className="space-y-4">
-          {posts.map((post) => {
-            const profilePic = getUserProfilePicture(post.created_by);
-            const displayName = getUserDisplayName(post.created_by);
-            const isOwnPost = currentUser && post.created_by === currentUser.email;
 
-            return (
-              <div key={post.id}>
-                <Card className="glass-morphism border-gray-800">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3">
-                        {profilePic ? (
-                          <img 
-                            src={profilePic} 
-                            alt={displayName}
-                            className="w-10 h-10 rounded-full object-cover border-2 border-emerald-400"
-                          />
-                        ) : (
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center border-2 border-emerald-400">
-                            <User className="w-5 h-5 text-white" />
-                          </div>
-                        )}
-                        <div>
-                          <p className="font-semibold text-white">{displayName}</p>
-                          <p className="text-xs text-gray-400">
-                            {new Date(post.created_date).toLocaleDateString('de-DE', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </p>
-                        </div>
-                      </div>
-
-                      {isOwnPost && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeletePost(post.id)}
-                          disabled={deletingPostId === post.id}
-                          className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                        >
-                          {deletingPostId === post.id ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <X className="w-4 h-4" />
-                          )}
-                        </Button>
-                      )}
-                    </div>
-                  </CardHeader>
-                  
-                  <CardContent className="space-y-4">
-                    <p className="text-gray-200 whitespace-pre-wrap">{post.text}</p>
-                    
-                    {post.photo_url && (
-                      <img 
-                        src={post.photo_url} 
-                        alt="Post" 
-                        className="w-full rounded-lg max-h-96 object-cover"
-                      />
-                    )}
-
-                    <div className="flex items-center gap-4 pt-2 border-t border-gray-800">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleLike(post.id, post.likes || 0)}
-                        className="text-gray-400 hover:text-red-400"
-                      >
-                        <Heart className="w-4 h-4 mr-1" />
-                        {post.likes || 0}
-                      </Button>
-
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setCommenting(commenting === post.id ? null : post.id)}
-                        className="text-gray-400 hover:text-cyan-400"
-                      >
-                        <MessageCircle className="w-4 h-4 mr-1" />
-                        {post.comments?.length || 0}
-                      </Button>
-
-                      {!isOwnPost && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleReport(post.id)}
-                          className={`ml-auto ${reportedPostIds.includes(post.id) ? 'text-amber-400 cursor-default' : 'text-gray-400 hover:text-amber-400'}`}
-                          title={reportedPostIds.includes(post.id) ? 'Bereits gemeldet' : 'Post melden'}
-                        >
-                          <AlertTriangle className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
-
-                    {/* Kommentare */}
-                    {post.comments && post.comments.length > 0 && (
-                      <div className="space-y-2 pt-2 border-t border-gray-800">
-                        {post.comments.map((comment) => {
-                          const commentProfilePic = getUserProfilePicture(comment.created_by);
-                          const commentDisplayName = getUserDisplayName(comment.created_by);
-
-                          return (
-                            <div key={comment.id} className="flex gap-2">
-                              {commentProfilePic ? (
-                                <img 
-                                  src={commentProfilePic} 
-                                  alt={commentDisplayName}
-                                  className="w-8 h-8 rounded-full object-cover"
-                                />
-                              ) : (
-                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500 flex items-center justify-center flex-shrink-0">
-                                  <User className="w-4 h-4 text-white" />
-                                </div>
-                              )}
-                              <div className="flex-1 bg-gray-800/50 rounded-lg p-2">
-                                <p className="text-xs font-semibold text-emerald-400 mb-1">
-                                  {commentDisplayName}
-                                </p>
-                                <p className="text-sm text-gray-300">{comment.text}</p>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {/* Kommentar-Eingabe */}
-                    {commenting === post.id && (
-                      <div className="flex gap-2 pt-2">
-                        <Input
-                          value={commentText}
-                          onChange={(e) => setCommentText(e.target.value)}
-                          placeholder="Dein Kommentar..."
-                          className="bg-gray-800/50 border-gray-700 text-white"
-                          onKeyPress={(e) => {
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                              e.preventDefault();
-                              handleComment(post.id);
-                            }
-                          }}
-                        />
-                        <Button
-                          onClick={() => handleComment(post.id)}
-                          size="sm"
-                          className="bg-emerald-600 hover:bg-emerald-700"
-                        >
-                          <Send className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-            </div>
-            );
-          })}
-        </div>
-
-        {posts.length === 0 && (
-          <Card className="glass-morphism border-gray-800">
-            <CardContent className="text-center py-12">
-              <p className="text-gray-400 mb-4">Noch keine Posts vorhanden</p>
-              <p className="text-sm text-gray-500">Sei der Erste und teile deinen Fang! 🎣</p>
-            </CardContent>
-          </Card>
-        )}
       </div>
 
       <Dialog open={showCatchSelector} onOpenChange={setShowCatchSelector}>
