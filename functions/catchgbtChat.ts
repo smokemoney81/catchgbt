@@ -190,47 +190,61 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { messages = [], context = 'general', userLocation = null } = body;
 
-    console.log(`KI-Buddy: User=${user.email}, Messages=${messages.length}`);
+    console.log(`[catchgbtChat] User=${user.email}, Messages=${messages.length}`);
 
     // Letzte Nutzernachricht für Intent-Erkennung
     const lastUserMsg = [...messages].reverse().find(m => m.role === 'user');
     const intent = lastUserMsg ? detectIntent(lastUserMsg.content) : {};
 
-    // Paralleler Datenabruf
-    const contextData = await fetchContextData(base44, intent, user.email, userLocation);
+    // Schneller Datenabruf mit Timeout (max 2 Sekunden)
+    let contextData = {};
+    try {
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Context fetch timeout')), 2000)
+      );
+      contextData = await Promise.race([
+        fetchContextData(base44, intent, user.email, userLocation),
+        timeoutPromise
+      ]);
+    } catch (timeoutError) {
+      console.warn('[catchgbtChat] Context data fetch timed out, using fallback');
+      // Fortsetzen ohne Daten ist besser als Timeout
+    }
+
     const contextSection = buildContextSection(contextData);
 
     const systemPrompt =
-      'Du bist CatchGBT, ein professioneller Angel-Experte und persoenlicher Assistent des Nutzers. ' +
-      'Du hast Zugriff auf die echten Daten des Nutzers aus der App (Fangbuch, Spots, Wetter, Schonzeiten). ' +
-      'Nutze diese Daten aktiv in deinen Antworten und beziehe dich konkret darauf. ' +
-      'Gib detaillierte, praxisnahe Antworten. Keine Emojis.';
+      'Du bist CatchGBT, ein professioneller Angel-Experte. ' +
+      'Gib kurze, hilfreiche Antworten. Keine Emojis.';
 
-    const conversationHistory = messages.slice(-8).map(msg =>
+    const conversationHistory = messages.slice(-6).map(msg =>
       `${msg.role === 'user' ? 'Nutzer' : 'Du'}: ${msg.content || ''}`
     ).join('\n');
 
     const fullPrompt =
       `${systemPrompt}` +
       `${contextSection}` +
-      `\n\nKonversation:\n${conversationHistory}\n\nAntworte jetzt auf die letzte Nachricht:`;
+      `\n\nKonversation:\n${conversationHistory}\n\nAntworte kurz und praezise:`;
 
-    let reply = 'Entschuldigung, ich konnte keine Antwort generieren. Bitte versuche es spaeter nochmal.';
+    let reply = 'Entschuldigung, ich konnte deine Frage verarbeiten. Versuche es nochmal.';
 
     try {
+      console.log('[catchgbtChat] Invoking LLM...');
       const llmResponse = await base44.integrations.Core.InvokeLLM({
         prompt: fullPrompt,
-        add_context_from_internet: false
+        add_context_from_internet: false,
+        model: 'gemini_3_flash'
       });
       reply = typeof llmResponse === 'string' ? llmResponse : (llmResponse?.content || reply);
+      console.log('[catchgbtChat] LLM Response OK:', reply.substring(0, 50) + '...');
     } catch (llmError) {
-      console.error('LLM Error:', llmError.message);
+      console.error('[catchgbtChat] LLM Error:', llmError.message);
     }
 
     return Response.json({ reply }, { status: 200 });
 
   } catch (error) {
-    console.error('Critical error in catchgbtChat:', error.message, error);
+    console.error('[catchgbtChat] Critical error:', error.message, error);
     return Response.json({
       reply: 'Ein Fehler ist aufgetreten. Bitte versuche es nochmal.'
     }, { status: 200 });
