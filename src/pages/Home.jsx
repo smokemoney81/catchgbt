@@ -620,34 +620,21 @@ function LandingPageContent() {
                 `}</style>
             </div>
 
-            <div className="fixed bottom-32 left-8 z-50 flex gap-3">
+            <div className="fixed bottom-40 left-8 z-50">
                 <motion.button
                     initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5, delay: 0.5 }}
-                    onClick={handleLogin}
-                    className="px-8 py-4 rounded-full text-white text-sm font-bold transform hover:scale-110 flex items-center justify-center whitespace-nowrap"
-                    style={{
-                        background: 'linear-gradient(135deg, #a855f7, #3b82f6)',
-                        boxShadow: '0 0 20px rgba(168, 85, 247, 0.8)'
-                    }}
-                    animate={{
+                    animate={{ 
+                        opacity: 1, 
+                        scale: 1,
                         boxShadow: [
                             '0 0 20px rgba(168, 85, 247, 0.8)',
                             '0 0 40px rgba(59, 130, 246, 1)',
                             '0 0 20px rgba(168, 85, 247, 0.8)'
-                        ],
-                        background: [
-                            'linear-gradient(135deg, #a855f7, #3b82f6)',
-                            'linear-gradient(135deg, #3b82f6, #a855f7)',
-                            'linear-gradient(135deg, #a855f7, #3b82f6)'
                         ]
                     }}
-                    transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: 'easeInOut'
-                    }}
+                    transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                    onClick={handleLogin}
+                    className="px-8 py-4 rounded-full text-white text-sm font-bold transform hover:scale-110 flex items-center justify-center whitespace-nowrap bg-gradient-to-br from-purple-600 to-blue-600"
                     title={t('landing.cta.start')}
                 >
                     Go Fisching
