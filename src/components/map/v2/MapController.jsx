@@ -339,6 +339,7 @@ export default function MapController() {
            onClubClick={(club) => handleLocationClick(club, 'club')}
            onWaterBodiesLoad={setWaterBodies}
            onReviewsLoad={setReviews}
+           isOnline={isOnline}
          />
 
         {/* Location Detail Panel */}

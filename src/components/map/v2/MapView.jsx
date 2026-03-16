@@ -186,10 +186,7 @@ export default function MapView({
       style={{ width: "100%", height: "100%" }}
       className="rounded-2xl"
     >
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      />
+      <OfflineMapLayer isOnline={isOnline} />
 
       <MapEvents onMapClick={onMapClick} />
       <RecenterMap center={center} />
