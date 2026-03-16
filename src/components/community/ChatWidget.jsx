@@ -52,6 +52,23 @@ export default function ChatWidget({ topic = "Allgemein" }) {
   const loadMessages = async () => {
     try {
       const data = await base44.entities.ChatMessage.filter({ context: topic }, '-timestamp', 30);
+      
+      const newCache = { ...userCache };
+      const uniqueEmails = [...new Set(data.map(m => m.created_by))];
+      
+      for (const email of uniqueEmails) {
+        if (!newCache[email]) {
+          try {
+            const allUsers = await base44.entities.User.list('', 1000);
+            const foundUser = allUsers.find(u => u.email === email);
+            newCache[email] = foundUser?.full_name || email.split('@')[0];
+          } catch {
+            newCache[email] = email.split('@')[0];
+          }
+        }
+      }
+      
+      setUserCache(newCache);
       setMessages(data);
     } catch (e) {
       console.error("Error loading messages:", e);
