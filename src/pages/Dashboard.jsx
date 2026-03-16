@@ -113,7 +113,15 @@ export default function Dashboard() {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
 
-      const spots = await base44.entities.Spot.list('', 100).catch(() => []);
+      let spots = await base44.entities.Spot.list('', 100).catch(() => []);
+      
+      // Cache Spots wenn online
+      if (spots.length > 0 && navigator.onLine) {
+        await cacheEntityData('spots', spots);
+      } else if (spots.length === 0) {
+        // Fallback zu gecachten Spots wenn offline
+        spots = await getOfflineData('spots');
+      }
 
       let userLocation = null;
       const savedLocation = localStorage.getItem("fm_current_location");
@@ -144,14 +152,32 @@ export default function Dashboard() {
       }
 
       if (userLocation) {
-        const weatherPromise = fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${userLocation.lat}&longitude=${userLocation.lon}&current=temperature_2m,wind_speed_10m,weather_code&timezone=auto`
-        ).then(res => res.json());
+        let weatherData = null;
+        
+        // Versuche gecachtes Wetter zu laden
+        if (!navigator.onLine) {
+          const cachedWeather = await getCachedWeather(userLocation.lat, userLocation.lon);
+          if (cachedWeather) {
+            weatherData = cachedWeather;
+          }
+        } else {
+          // Hole frische Daten online
+          const weatherPromise = fetch(
+            `https://api.open-meteo.com/v1/forecast?latitude=${userLocation.lat}&longitude=${userLocation.lon}&current=temperature_2m,wind_speed_10m,weather_code&timezone=auto`
+          ).then(res => res.json()).catch(() => null);
 
-        const [weatherData] = await Promise.all([weatherPromise]);
+          weatherData = await weatherPromise;
+          
+          // Cache frische Wetterdaten
+          if (weatherData && weatherData.current) {
+            await cacheWeatherData(userLocation.lat, userLocation.lon, weatherData.current);
+          }
+        }
         
         if (weatherData && weatherData.current) {
           setWeather(weatherData.current);
+        } else if (weatherData && weatherData.temperature_2m !== undefined) {
+          setWeather(weatherData);
         }
 
         if (spots.length > 0) {
