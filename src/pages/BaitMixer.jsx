@@ -305,16 +305,15 @@ Sei konkret, praxisnah und berechne die optimale Mischung!`;
                   <div className="space-y-4">
                     <div>
                       <label className="text-sm text-gray-400 mb-2 block">Zielfisch</label>
-                      <Select value={targetFish} onValueChange={setTargetFish}>
-                        <SelectTrigger className="bg-gray-800/50 border-gray-700">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {["Karpfen", "Brassen", "Rotauge", "Hecht", "Zander", "Barsch", "Forelle", "Aal"].map(fish => (
-                            <SelectItem key={fish} value={fish}>{fish}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <MobileSelect 
+                        value={targetFish} 
+                        onChange={setTargetFish}
+                        options={["Karpfen", "Brassen", "Rotauge", "Hecht", "Zander", "Barsch", "Forelle", "Aal"].map(fish => ({
+                          value: fish,
+                          label: fish
+                        }))}
+                        placeholder="Zielfisch wählen"
+                      />
                     </div>
                   </div>
                 </CardContent>
