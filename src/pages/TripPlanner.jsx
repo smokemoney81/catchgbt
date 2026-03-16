@@ -401,6 +401,64 @@ function TripPlannerContent() {
                       </ul>
                     </div>
 
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-semibold text-cyan-400 drop-shadow-[0_0_6px_rgba(34,211,238,0.5)]">Meine Notizen (Offline)</h4>
+                        <Badge className="text-xs bg-emerald-600/20 border-emerald-600 text-emerald-300">
+                          Lokal gespeichert
+                        </Badge>
+                      </div>
+                      {editingNotes[selectedPlan.id] ? (
+                        <div className="space-y-2">
+                          <Textarea
+                            value={offlineNotes[selectedPlan.id] || ''}
+                            onChange={(e) => {
+                              const newNotes = e.target.value;
+                              setOfflineNotes(prev => ({
+                                ...prev,
+                                [selectedPlan.id]: newNotes
+                              }));
+                            }}
+                            placeholder="Schreibe deine Notizen und Beobachtungen..."
+                            className="bg-gray-800/50 border-gray-700 text-white min-h-[120px]"
+                          />
+                          <Button
+                            onClick={() => {
+                              saveOfflineNotes(selectedPlan.id, offlineNotes[selectedPlan.id] || '');
+                              setEditingNotes(prev => ({
+                                ...prev,
+                                [selectedPlan.id]: false
+                              }));
+                            }}
+                            className="w-full bg-emerald-600 hover:bg-emerald-700"
+                            size="sm"
+                          >
+                            <Save className="w-4 h-4 mr-2" />
+                            Speichern
+                          </Button>
+                        </div>
+                      ) : (
+                        <div>
+                          <div className="bg-gray-800/50 rounded-lg p-3 min-h-[100px] max-h-[200px] overflow-y-auto mb-2">
+                            <p className="text-gray-300 text-sm whitespace-pre-wrap">
+                              {offlineNotes[selectedPlan.id] || 'Noch keine Notizen. Klicke auf Bearbeiten um zu schreiben.'}
+                            </p>
+                          </div>
+                          <Button
+                            onClick={() => setEditingNotes(prev => ({
+                              ...prev,
+                              [selectedPlan.id]: true
+                            }))}
+                            variant="outline"
+                            className="w-full"
+                            size="sm"
+                          >
+                            Bearbeiten
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+
                     <div className="flex gap-2 pt-4">
                       <Button
                         variant="outline"
