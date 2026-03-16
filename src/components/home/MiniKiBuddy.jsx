@@ -4,13 +4,24 @@ import { catchgbtChat } from "@/functions/catchgbtChat";
 
 const SYSTEM_PROMPT = `Du bist CatchGBT, ein erfahrener Angel-Assistent. Du hilfst Anglern mit Tipps zu Fischarten, Koeder, Spots, Wetter, Ausruestung und Technik. Antworte auf Deutsch, freundlich und direkt. Halte Antworten kurz und praxisnah.`;
 
-function speakText(text) {
-  if (!text || !window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
+async function speakText(text) {
+  if (!text) return;
   
-  const utterance = new window.SpeechSynthesisUtterance(text);
-  utterance.lang = "de-DE";
-  utterance.rate = 0.95;
-  window.speechSynthesis.speak(utterance);
+  try {
+    const response = await fetch('/api/functions/textToSpeech', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, language: 'de' })
+    });
+    
+    if (!response.ok) throw new Error('TTS failed');
+    
+    const blob = await response.blob();
+    const audio = new Audio(URL.createObjectURL(blob));
+    audio.play();
+  } catch (error) {
+    console.error('TTS error:', error);
+  }
 }
 
 export default function MiniKiBuddy() {
