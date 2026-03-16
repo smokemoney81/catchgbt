@@ -205,7 +205,7 @@ export default function PremiumPlans() {
     },
     {
       id: 'elite',
-      name: 'Elite',
+      name: 'Ultimate',
       price: 19.99,
       icon: Crown,
       color: 'from-amber-500 to-orange-600',
@@ -219,7 +219,7 @@ export default function PremiumPlans() {
         'Profi-Statistiken: Zeitreihen & Trends',
         'Detaillierte KI-Trip-Berichte (Premium)',
         'Prioritaets-Synchronisation & Backup',
-        'Exklusive Elite-Features & fruehzeitiger Zugang'
+        'Exklusive Ultimate-Features & fruehzeitiger Zugang'
       ]
     },
     {
