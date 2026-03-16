@@ -20,9 +20,11 @@ export default function MiniKiBuddy() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const [isListening, setIsListening] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
   const messagesEndRef = useRef(null);
   const isFirstRender = useRef(true);
+  const recognitionRef = useRef(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('userLocation');
@@ -34,6 +36,34 @@ export default function MiniKiBuddy() {
         setUserLocation(loc);
         localStorage.setItem('userLocation', JSON.stringify(loc));
       }, () => {});
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.lang = 'de-DE';
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = true;
+
+      recognitionRef.current.onresult = (event) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        setInput(transcript);
+
+        if (event.results[event.results.length - 1].isFinal) {
+          setIsListening(false);
+        }
+      };
+
+      recognitionRef.current.onerror = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
     }
   }, []);
 
@@ -74,6 +104,18 @@ export default function MiniKiBuddy() {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
+    }
+  };
+
+  const toggleListening = () => {
+    if (!recognitionRef.current) return;
+    
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      recognitionRef.current.start();
+      setIsListening(true);
     }
   };
 
@@ -123,10 +165,22 @@ export default function MiniKiBuddy() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Frage stellen..."
+          placeholder="Frage stellen oder sprechen..."
           disabled={isLoading}
           className="flex-1 bg-gray-900/60 border border-gray-600/50 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 disabled:opacity-50"
         />
+        <button
+          onClick={toggleListening}
+          disabled={isLoading}
+          className={`px-3 py-2 rounded-lg text-white text-sm font-medium transition-colors ${
+            isListening
+              ? 'bg-red-600 hover:bg-red-500'
+              : 'bg-gray-700 hover:bg-gray-600 disabled:opacity-40'
+          }`}
+          title={isListening ? 'Hoere zu...' : 'Sprechen'}
+        >
+          {isListening ? 'Hore' : 'Mic'}
+        </button>
         <button
           onClick={sendMessage}
           disabled={isLoading || !input.trim()}
