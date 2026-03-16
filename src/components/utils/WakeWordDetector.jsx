@@ -102,6 +102,11 @@ export class WakeWordDetector {
     }
   }
 
+  // Check if we're on VoiceControl page to avoid conflicts
+  isVoiceControlPageActive() {
+    return window.location.pathname.includes('VoiceControl');
+  }
+
   async tryStartOffline() {
     try {
       if (!this.browserCapabilities.audioContext) {
