@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { X, MapPin, Navigation, Clock, ExternalLink, Loader2 } from "lucide-react";
+import { X, MapPin, Navigation, Clock, ExternalLink, Loader2, Zap } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useLocation } from "@/components/location/LocationManager";
 import { toast } from "sonner";
+import SportSelectorModal from "./SportSelectorModal";
 
 export default function LocationDetailPanel({ location, onClose, onSetAsLocation }) {
   const { currentLocation } = useLocation();
