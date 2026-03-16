@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import BathymetricCrowdsourcing from './pages/BathymetricCrowdsourcing';
 import ARKnotenAssistent from './pages/ARKnotenAssistent';
+import CatchMap from './pages/CatchMap';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
