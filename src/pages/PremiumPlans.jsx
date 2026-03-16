@@ -221,6 +221,26 @@ export default function PremiumPlans() {
         'Prioritaets-Synchronisation & Backup',
         'Exklusive Elite-Features & fruehzeitiger Zugang'
       ]
+    },
+    {
+      id: 'friends',
+      name: 'Freundschaft',
+      price: 54.99,
+      priceLabel: '54,99 / Jahr',
+      icon: Sparkles,
+      color: 'from-emerald-600 to-teal-600',
+      description: 'Jahresplan mit Einladungen',
+      popular: false,
+      yearly: true,
+      features: [
+        'Alles aus Elite (12 Monate)',
+        '3 Freundes-Einladungen inklusive (Basic)',
+        'Gemeinsame Spot-Gruppen mit Freunden',
+        'Geteilte Fangbuecher & Statistiken',
+        'Freunde zu Clans & Events einladen',
+        'Gruppen-Ranking & Team-Challenges',
+        'Spar 20% gegenueber monatlichem Elite-Plan'
+      ]
     }
   ];
 
