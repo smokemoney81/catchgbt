@@ -273,6 +273,74 @@ export default function Header({
             </Link>
           )}
 
+          {recentPosts.length > 0 && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/10"
+                  onClick={() => {
+                    triggerHaptic('light');
+                    playSound('click');
+                  }}
+                >
+                  <motion.div
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-emerald-500 to-cyan-500" />
+                  </motion.div>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 bg-gray-900 border-gray-800">
+                <div className="space-y-3">
+                  <h3 className="text-sm font-semibold text-cyan-400">Neueste Beitraege</h3>
+                  {recentPosts[postIndex] && (
+                    <div className="space-y-2">
+                      <img 
+                        src={recentPosts[postIndex].photo_url}
+                        alt="Post"
+                        className="w-full rounded-lg max-h-48 object-cover"
+                      />
+                      <p className="text-xs text-gray-300 line-clamp-2">
+                        {recentPosts[postIndex].text}
+                      </p>
+                      <Link to={createPageUrl('Community')}>
+                        <Button size="sm" className="w-full bg-cyan-600 hover:bg-cyan-700 text-xs">
+                          Zur Community
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
+                  {recentPosts.length > 1 && (
+                    <div className="flex justify-between items-center">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setPostIndex(Math.max(0, postIndex - 1))}
+                        disabled={postIndex === 0}
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </Button>
+                      <span className="text-xs text-gray-400">
+                        {postIndex + 1} / {recentPosts.length}
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setPostIndex(Math.min(recentPosts.length - 1, postIndex + 1))}
+                        disabled={postIndex === recentPosts.length - 1}
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
+          )}
+
           <WakeWordIndicator />
         </div>
       </div>
