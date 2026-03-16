@@ -11,6 +11,7 @@ export default function LocationDetailPanel({ location, onClose, onSetAsLocation
   const { currentLocation } = useLocation();
   const [travelInfo, setTravelInfo] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showSportSelector, setShowSportSelector] = useState(false);
 
   useEffect(() => {
     if (currentLocation?.lat && currentLocation?.lon) {
