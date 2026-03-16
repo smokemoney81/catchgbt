@@ -9,6 +9,7 @@ import SchonzeitWarner from "@/components/dashboard/SchonzeitWarner";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { cacheEntityData, cacheWeatherData, getCachedWeather, getOfflineData, initOfflineDB } from "@/components/utils/OfflineDataCache";
+import OfflineCacheIndicator from "@/components/dashboard/OfflineCacheIndicator";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -371,6 +372,7 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
           </Button>
           
           <div className="flex flex-col items-end gap-2">
+            <OfflineCacheIndicator />
             <div className="text-xs text-gray-400 text-right leading-tight max-w-[140px]">
               Sprachsteuerung aktivieren - dann "Hey Catch" sagen
             </div>
