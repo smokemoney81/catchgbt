@@ -42,7 +42,9 @@ export default function Community() {
     loadPosts();
     loadCompetitions();
     loadRecentActivity();
+  }, []);
 
+  useEffect(() => {
     const handleTouchStart = (e) => {
       if (window.scrollY === 0) {
         setPullStart(e.touches[0].clientY);
@@ -79,7 +81,7 @@ export default function Community() {
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [pullStart]);
+  }, [pullStart, pullDistance]);
 
   const loadCurrentUser = async () => {
     try {
