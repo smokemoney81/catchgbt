@@ -8,6 +8,7 @@ import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import BathymetricCrowdsourcing from './pages/BathymetricCrowdsourcing';
+import ARKnotenAssistent from './pages/ARKnotenAssistent';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
@@ -62,6 +63,7 @@ const AuthenticatedApp = () => {
         />
       ))}
       <Route path="/BathymetricCrowdsourcing" element={<LayoutWrapper currentPageName="BathymetricCrowdsourcing"><BathymetricCrowdsourcing /></LayoutWrapper>} />
+      <Route path="/ARKnotenAssistent" element={<LayoutWrapper currentPageName="ARKnotenAssistent"><ARKnotenAssistent /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
