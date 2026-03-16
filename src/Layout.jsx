@@ -37,6 +37,24 @@ export default function Layout({ children, currentPageName }) {
     error: null
   });
 
+  // Dark mode detection
+  useEffect(() => {
+    const darkModeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const applyDarkMode = (isDark) => {
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    };
+
+    applyDarkMode(darkModeQuery.matches);
+    darkModeQuery.addEventListener('change', (e) => applyDarkMode(e.matches));
+
+    return () => darkModeQuery.removeEventListener('change', (e) => applyDarkMode(e.matches));
+  }, []);
+
   const refreshUser = async () => {
     try {
       let currentUser = await base44.auth.me();
