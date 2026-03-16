@@ -646,6 +646,8 @@ function VoiceBuddy() {
 
       const fullText = (finalTranscript + interimTranscript).trim().toLowerCase();
       setTranscript(fullText);
+      // Broadcast transcript to other components
+      window.dispatchEvent(new CustomEvent('voice-transcript', { detail: fullText }));
 
       const wakeWordDetected = WAKE_WORD_VARIANTS.some(variant => fullText.includes(variant));
       if (!isWaitingForCommandRef.current && wakeWordDetected) {
