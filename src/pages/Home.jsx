@@ -601,12 +601,27 @@ function LandingPageContent() {
                 </motion.div>
             </div>
 
-            <motion.div
-                className="fixed bottom-8 right-8 z-50"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.7 }}
-            >
+            <div className="fixed bottom-8 right-8 z-50 flex flex-col items-end gap-4">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, delay: 0.6 }}
+                >
+                    <motion.p
+                        animate={{
+                            opacity: [0.5, 1, 0.5],
+                        }}
+                        transition={{
+                            duration: 2.5,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                        }}
+                        className="text-xs sm:text-sm font-light tracking-widest text-gray-400 uppercase"
+                    >
+                        Beta-Testphase
+                    </motion.p>
+                </motion.div>
+
                 <motion.button
                     onClick={() => {
                         if (confirm('Notruf 112 waehlen?')) {
@@ -631,7 +646,7 @@ function LandingPageContent() {
                 >
                     SOS
                 </motion.button>
-            </motion.div>
+            </div>
 
             <TutorialModal isOpen={tutorialOpen} onClose={() => setTutorialOpen(false)} />
 
