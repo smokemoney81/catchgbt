@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Text ist erforderlich' }, { status: 400 });
     }
 
-    const apiKey = Deno.env.get('Elevenlaps2.0');
+    const apiKey = Deno.env.get('ELEVENLABS_API_KEY');
     if (!apiKey) {
       console.error('TTS: ElevenLabs API Key nicht gefunden');
       return Response.json({ error: 'ElevenLabs API Key nicht konfiguriert' }, { status: 500 });
