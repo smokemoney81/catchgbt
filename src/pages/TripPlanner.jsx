@@ -20,6 +20,8 @@ function TripPlannerContent() {
   const [travelInfo, setTravelInfo] = useState({});
   const [loadingTravel, setLoadingTravel] = useState({});
   const { currentLocation } = useLocation();
+  const [offlineNotes, setOfflineNotes] = useState({});
+  const [editingNotes, setEditingNotes] = useState({});
 
   useEffect(() => {
     loadPlans();
