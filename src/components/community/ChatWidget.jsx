@@ -169,7 +169,7 @@ export default function ChatWidget({ topic = "Allgemein" }) {
                     : "bg-slate-800 text-slate-200 mr-4"
                 }`}
               >
-                <p className="text-xs opacity-75 mb-1">{msg.created_by}</p>
+                <p className="text-xs opacity-75 mb-1">{userCache[msg.created_by] || msg.created_by}</p>
                 <p>{msg.content}</p>
               </div>
             ))
