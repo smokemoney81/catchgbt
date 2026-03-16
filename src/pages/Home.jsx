@@ -602,15 +602,31 @@ function LandingPageContent() {
             </motion.div>
 
             <div className="fixed top-32 left-0 right-0 z-10 w-full overflow-hidden flex items-center pointer-events-none">
-                <div 
-                    className="whitespace-nowrap flex items-center text-amber-400 text-4xl font-bold opacity-20 pl-4" 
+                <motion.div 
+                    className="whitespace-nowrap flex items-center text-4xl font-bold opacity-20 pl-4" 
+                    animate={{
+                        backgroundImage: [
+                            'linear-gradient(90deg, #a855f7, #3b82f6, #06b6d4)',
+                            'linear-gradient(90deg, #3b82f6, #06b6d4, #a855f7)',
+                            'linear-gradient(90deg, #06b6d4, #a855f7, #3b82f6)',
+                            'linear-gradient(90deg, #a855f7, #3b82f6, #06b6d4)'
+                        ]
+                    }}
+                    transition={{
+                        duration: 5,
+                        repeat: Infinity,
+                        ease: "linear"
+                    }}
                     style={{
                         animation: `scroll 40s linear infinite`,
+                        backgroundClip: 'text',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent'
                     }}
                 >
                     <span className="mr-24">CatchGBT wünscht dir viel Erfolg und Petri Heil</span>
                     <span className="mr-24">CatchGBT wünscht dir viel Erfolg und Petri Heil</span>
-                </div>
+                </motion.div>
                 <style>{`
                     @keyframes scroll {
                         from { transform: translateX(0); }
