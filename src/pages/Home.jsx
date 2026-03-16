@@ -382,16 +382,61 @@ function LandingPageContent() {
             const uploadFile = new File([blob], fileName, { type: "image/jpeg" });
             const { file_url } = await UploadFile({ file: uploadFile });
             
+            const photoId = `pending_${Date.now()}`;
             const pendingPhotos = JSON.parse(localStorage.getItem('catchgbt_pending_photos') || '[]');
             pendingPhotos.push({
-                id: `pending_${Date.now()}`,
+                id: photoId,
                 photo_url: file_url,
                 captured_at: (exifData && exifData.dateTimeOriginal) ? exifData.dateTimeOriginal : new Date().toISOString(),
                 gps_lat: (exifData && exifData.gpsLat != null) ? exifData.gpsLat : null,
                 gps_lon: (exifData && exifData.gpsLon != null) ? exifData.gpsLon : null,
-                status: 'pending'
+                status: 'analyzing',
+                ai_report: null
             });
             localStorage.setItem('catchgbt_pending_photos', JSON.stringify(pendingPhotos));
+            
+            toast.info("Analysiere Fangfoto mit KI...");
+            try {
+              const { generateCatchReport } = await import('@/functions/generateCatchReport');
+              const analysisResponse = await generateCatchReport({
+                photo_url: file_url,
+                exif_data: exifData
+              });
+              
+              const updatedPhotos = JSON.parse(localStorage.getItem('catchgbt_pending_photos') || '[]');
+              const photoIndex = updatedPhotos.findIndex(p => p.id === photoId);
+              if (photoIndex !== -1) {
+                updatedPhotos[photoIndex].status = 'ready';
+                updatedPhotos[photoIndex].ai_report = analysisResponse.analysis;
+              }
+              localStorage.setItem('catchgbt_pending_photos', JSON.stringify(updatedPhotos));
+              
+              toast.success("KI-Analyse abgeschlossen", {
+                description: "Öffne das Fangbuch zum Bearbeiten",
+                duration: 5000,
+                action: {
+                  label: "Zum Fangbuch",
+                  onClick: () => window.location.href = createPageUrl('Logbook')
+                }
+              });
+            } catch (analysisError) {
+              console.error('KI-Analyse Fehler:', analysisError);
+              const updatedPhotos = JSON.parse(localStorage.getItem('catchgbt_pending_photos') || '[]');
+              const photoIndex = updatedPhotos.findIndex(p => p.id === photoId);
+              if (photoIndex !== -1) {
+                updatedPhotos[photoIndex].status = 'ready';
+              }
+              localStorage.setItem('catchgbt_pending_photos', JSON.stringify(updatedPhotos));
+              
+              toast.success("Foto gespeichert", {
+                description: "KI-Analyse nicht verfügbar, öffne das Fangbuch zum Bearbeiten",
+                duration: 5000,
+                action: {
+                  label: "Zum Fangbuch",
+                  onClick: () => window.location.href = createPageUrl('Logbook')
+                }
+              });
+            }
             
             toast.success("Foto gespeichert", {
                 description: "Oeffne das Fangbuch, um es zu analysieren",
