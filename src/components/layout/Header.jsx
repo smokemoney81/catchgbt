@@ -32,6 +32,7 @@ export default function Header({
     loadAlertStatus();
     loadActiveTrips();
     loadUserAndPlan();
+    loadRecentPosts();
     
     const handleAlertsUpdate = () => {
       loadAlertStatus();
