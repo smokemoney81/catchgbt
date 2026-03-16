@@ -307,6 +307,7 @@ export default function Community() {
       setImagePreview(null);
       toast.success("Post erstellt! 🎣");
       await loadPosts();
+      window.scrollTo(0, 0);
     } catch (error) {
       console.error("Fehler beim Erstellen des Posts:", error);
       toast.error("Fehler: " + (error.message || "Post konnte nicht erstellt werden"));
