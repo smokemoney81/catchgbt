@@ -107,7 +107,7 @@ export default function MiniKiBuddy() {
     setIsLoading(false);
 
     if (voiceEnabled && response) {
-      speakText(response);
+      await speakText(response);
     }
   };
 
