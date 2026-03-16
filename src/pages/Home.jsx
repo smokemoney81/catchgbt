@@ -59,7 +59,22 @@ function LandingPageContent() {
 
     useEffect(() => {
         loadUserPlan();
+        loadUserName();
     }, []);
+
+    const loadUserName = async () => {
+        try {
+            const isAuth = await base44.auth.isAuthenticated();
+            if (isAuth) {
+                const user = await base44.auth.me();
+                if (user && user.full_name) {
+                    setUserName(user.full_name.split(' ')[0]);
+                }
+            }
+        } catch (error) {
+            console.warn('Could not load user name:', error);
+        }
+    };
 
     const loadUserPlan = async () => {
         setIsLoadingPlan(true);
