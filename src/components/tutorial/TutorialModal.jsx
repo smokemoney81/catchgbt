@@ -421,7 +421,7 @@ export default function TutorialModal({ isOpen, onClose }) {
             />
           </div>
 
-          <div className="p-6">
+          <div className="p-4">
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentStep}
@@ -430,82 +430,82 @@ export default function TutorialModal({ isOpen, onClose }) {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
               >
-                <div className="mb-6 rounded-2xl overflow-hidden shadow-xl">
+                <div className="mb-3 rounded-xl overflow-hidden shadow-lg">
                   <img
                     src={currentStepData.image}
                     alt={currentStepData.title}
-                    className="w-full h-64 object-cover"
+                    className="w-full h-36 object-cover"
                   />
                 </div>
 
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-3xl font-bold text-white">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-lg font-bold text-white leading-tight">
                     {currentStepData.title}
                   </h2>
                   <button
                     onClick={() => handlePlayAudio(currentStep)}
                     disabled={isPlaying}
-                    className="ml-4 p-3 rounded-full bg-cyan-600/20 hover:bg-cyan-600/30 transition-all disabled:opacity-50 border border-cyan-500/30"
+                    className="ml-3 p-2 rounded-full bg-cyan-600/20 hover:bg-cyan-600/30 transition-all disabled:opacity-50 border border-cyan-500/30 flex-shrink-0"
                     title="Text vorlesen"
                   >
                     {isPlaying && playingStep === currentStep ? (
-                      <Loader2 className="w-6 h-6 text-cyan-400 animate-spin" />
+                      <Loader2 className="w-4 h-4 text-cyan-400 animate-spin" />
                     ) : (
-                      <Volume2 className="w-6 h-6 text-cyan-400" />
+                      <Volume2 className="w-4 h-4 text-cyan-400" />
                     )}
                   </button>
                 </div>
 
-                <p className="text-gray-200 text-lg leading-relaxed mb-6 min-h-[120px]">
+                <p className="text-gray-300 text-sm leading-relaxed mb-3 min-h-[72px]">
                   {currentStepData.content}
                 </p>
 
-                <div className="flex items-center justify-center gap-2 mb-6">
+                <div className="flex items-center justify-center gap-1 mb-2">
                   {steps.map((_, index) => (
                     <div
                       key={index}
-                      className={`h-2 rounded-full transition-all ${
+                      className={`h-1.5 rounded-full transition-all ${
                         index === currentStep 
-                          ? 'w-8 bg-cyan-500' 
+                          ? 'w-5 bg-cyan-500' 
                           : index < currentStep
-                          ? 'w-2 bg-emerald-500'
-                          : 'w-2 bg-gray-700'
+                          ? 'w-1.5 bg-emerald-500'
+                          : 'w-1.5 bg-gray-700'
                       }`}
                     />
                   ))}
                 </div>
 
-                <div className="text-center text-sm text-gray-400 mb-4">
+                <div className="text-center text-xs text-gray-500 mb-2">
                   {currentStep + 1} / {steps.length}
                 </div>
               </motion.div>
             </AnimatePresence>
 
-            <div className="flex items-center justify-between pt-4 gap-4">
+            <div className="flex items-center justify-between pt-2 gap-3">
               <Button
                 onClick={handlePrev}
                 disabled={currentStep === 0}
                 variant="outline"
-                className="flex-1 h-12 text-base border-gray-700 hover:bg-gray-800 disabled:opacity-30"
+                className="flex-1 h-9 text-sm border-gray-700 hover:bg-gray-800 disabled:opacity-30"
               >
-                <ChevronLeft className="w-5 h-5 mr-2" />
+                <ChevronLeft className="w-4 h-4 mr-1" />
                 Zurück
               </Button>
 
               {currentStep === steps.length - 1 ? (
                 <Button
                   onClick={onClose}
-                  className="flex-1 h-12 text-base bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-700 hover:to-cyan-700 shadow-lg"
+                  className="flex-1 h-9 text-sm bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-700 hover:to-cyan-700 shadow-lg"
                 >
                   Tutorial beenden
                 </Button>
               ) : (
                 <Button
                   onClick={handleNext}
-                  className="flex-1 h-12 text-base bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700 shadow-lg"
+                  className="flex-1 h-9 text-sm bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700 shadow-lg"
                 >
                   Weiter
-                  <ChevronRight className="w-5 h-5 ml-2" />
+                  <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               )}
             </div>
