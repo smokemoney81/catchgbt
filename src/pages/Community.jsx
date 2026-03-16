@@ -468,8 +468,33 @@ export default function Community() {
           </div>
         </div>
 
+        {/* Suchleiste */}
+        <Card className="glass-morphism border-gray-800">
+          <CardContent className="p-4">
+            <div className="flex gap-2">
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Suche nach Beitraegen, Erstellern..."
+                className="bg-gray-800/50 border-gray-700 text-white flex-1"
+              />
+              <Button
+                onClick={() => setShowChat(!showChat)}
+                className="bg-emerald-600 hover:bg-emerald-700"
+              >
+                Chat
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Chat Widget */}
+        {showChat && (
+          <ChatWidget />
+        )}
+
         {/* Neuer Post */}
-        {currentUser && (
+         {currentUser && (
           <Card className="glass-morphism border-gray-800">
             <CardHeader>
               <h3 className="text-lg font-semibold text-cyan-400">Neuer Post</h3>
