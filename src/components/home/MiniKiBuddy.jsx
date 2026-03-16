@@ -1,48 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { backendTextToSpeech } from "@/functions/backendTextToSpeech";
-import { geminiTextToSpeech } from "@/functions/geminiTextToSpeech";
 import { catchgbtChat } from "@/functions/catchgbtChat";
 
 const SYSTEM_PROMPT = `Du bist CatchGBT, ein erfahrener Angel-Assistent. Du hilfst Anglern mit Tipps zu Fischarten, Koeder, Spots, Wetter, Ausruestung und Technik. Antworte auf Deutsch, freundlich und direkt. Halte Antworten kurz und praxisnah.`;
 
-async function speakText(text) {
-  if (!text || !window.speechSynthesis) return;
-  
-  try {
-    // Try Gemini TTS first
-    const geminiResponse = await geminiTextToSpeech({ text });
-    if (geminiResponse?.data?.fallback_to_browser) {
-      // Fallback to OpenAI TTS
-      const openaiResponse = await backendTextToSpeech({ text, voiceId: "alloy" });
-      if (openaiResponse?.data?.fallback_to_browser) {
-        // Final fallback to browser TTS
-        useBrowserTTS(text);
-        return;
-      }
-      const audioBlob = new Blob([openaiResponse.data], { type: "audio/mpeg" });
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      audio.play();
-      audio.onended = () => URL.revokeObjectURL(audioUrl);
-      return;
-    }
-    const audioBlob = new Blob([geminiResponse.data], { type: "audio/mpeg" });
-    const audioUrl = URL.createObjectURL(audioBlob);
-    const audio = new Audio(audioUrl);
-    audio.play();
-    audio.onended = () => URL.revokeObjectURL(audioUrl);
-  } catch {
-    // Browser fallback on error
-    useBrowserTTS(text);
-  }
-}
-
-function useBrowserTTS(text) {
-  if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
+function speakText(text) {
+  if (!text || !window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
   
   const utterance = new window.SpeechSynthesisUtterance(text);
   utterance.lang = "de-DE";
+  utterance.rate = 0.95;
   window.speechSynthesis.speak(utterance);
 }
 
