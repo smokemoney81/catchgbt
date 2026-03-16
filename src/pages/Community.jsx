@@ -454,8 +454,88 @@ export default function Community() {
           </div>
         </div>
 
+        {/* Neuer Post */}
+        {currentUser && (
+          <Card className="glass-morphism border-gray-800">
+            <CardHeader>
+              <h3 className="text-lg font-semibold text-cyan-400">Neuer Post</h3>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Textarea
+                value={newPostText}
+                onChange={(e) => setNewPostText(e.target.value)}
+                placeholder="Was möchtest du teilen?"
+                className="bg-gray-800/50 border-gray-700 text-white min-h-[100px]"
+                disabled={uploading}
+              />
+
+              {imagePreview && (
+                <div className="relative">
+                  <img 
+                    src={imagePreview} 
+                    alt="Preview" 
+                    className="w-full rounded-lg max-h-64 object-cover"
+                  />
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    className="absolute top-2 right-2"
+                    onClick={() => {
+                      setNewPostImage(null);
+                      setImagePreview(null);
+                    }}
+                    disabled={uploading}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              )}
+
+              <div className="flex flex-col gap-2">
+                <div className="flex gap-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    id="post-image-upload"
+                    onChange={handleImageSelect}
+                    disabled={uploading}
+                  />
+                  <Button
+                    variant="outline"
+                    onClick={() => document.getElementById("post-image-upload").click()}
+                    disabled={uploading}
+                    className="flex-1 border-gray-700 text-gray-300"
+                  >
+                    <Camera className="w-4 h-4 mr-2" />
+                    {newPostImage ? "Bild ändern" : "Bild hinzufügen"}
+                  </Button>
+
+                  <Button
+                    onClick={handleCreatePost}
+                    disabled={uploading || (!newPostText.trim() && !newPostImage)}
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-700"
+                  >
+                    {uploading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Wird hochgeladen...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4 mr-2" />
+                        Posten
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Aktuelle Aktivitaten */}
-        {recentActivity.length > 0 && (
+         {recentActivity.length > 0 && (
           <Card className="glass-morphism border-gray-800 rounded-2xl">
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
@@ -602,84 +682,6 @@ export default function Community() {
                 Zur Webseite
               </Button>
             </a>
-          </CardContent>
-        </Card>
-
-        {/* Neuer Post */}
-        <Card className="glass-morphism border-gray-800">
-          <CardHeader>
-            <h3 className="text-lg font-semibold text-cyan-400">Neuer Post</h3>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Textarea
-              value={newPostText}
-              onChange={(e) => setNewPostText(e.target.value)}
-              placeholder="Was möchtest du teilen?"
-              className="bg-gray-800/50 border-gray-700 text-white min-h-[100px]"
-              disabled={uploading}
-            />
-
-            {imagePreview && (
-              <div className="relative">
-                <img 
-                  src={imagePreview} 
-                  alt="Preview" 
-                  className="w-full rounded-lg max-h-64 object-cover"
-                />
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  className="absolute top-2 right-2"
-                  onClick={() => {
-                    setNewPostImage(null);
-                    setImagePreview(null);
-                  }}
-                  disabled={uploading}
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-              </div>
-            )}
-
-            <div className="flex flex-col gap-2">
-              <div className="flex gap-2">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  id="post-image-upload"
-                  onChange={handleImageSelect}
-                  disabled={uploading}
-                />
-                <Button
-                  variant="outline"
-                  onClick={() => document.getElementById("post-image-upload").click()}
-                  disabled={uploading}
-                  className="flex-1 border-gray-700 text-gray-300"
-                >
-                  <Camera className="w-4 h-4 mr-2" />
-                  {newPostImage ? "Bild ändern" : "Bild hinzufügen"}
-                </Button>
-                
-                <Button
-                  onClick={handleCreatePost}
-                  disabled={uploading || (!newPostText.trim() && !newPostImage)}
-                  className="flex-1 bg-emerald-600 hover:bg-emerald-700"
-                >
-                  {uploading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Wird hochgeladen...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4 mr-2" />
-                      Posten
-                    </>
-                  )}
-                </Button>
-              </div>
-            </div>
           </CardContent>
         </Card>
 
