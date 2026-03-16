@@ -638,7 +638,7 @@ function LandingPageContent() {
             </div>
 
             <motion.div 
-                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40"
+                className="fixed top-[15%] left-1/2 -translate-x-1/2 z-40"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.5 }}
