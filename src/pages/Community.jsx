@@ -46,6 +46,9 @@ export default function Community() {
     loadPosts();
     loadCompetitions();
     loadRecentActivity();
+    loadActiveUserCount();
+    const interval = setInterval(loadActiveUserCount, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
