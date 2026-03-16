@@ -105,7 +105,7 @@ export default function Dashboard() {
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [pullStart]);
+  }, []);
 
   const loadData = async () => {
     try {
