@@ -233,7 +233,7 @@ export default function PremiumPlans() {
       popular: false,
       yearly: true,
       features: [
-        'Alles aus Elite (12 Monate)',
+        'Alles aus Ultimate (12 Monate)',
         '3 Freundes-Einladungen inklusive (Basic)',
         'Gemeinsame Spot-Gruppen mit Freunden',
         'Geteilte Fangbuecher & Statistiken',
