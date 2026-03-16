@@ -381,10 +381,16 @@ export default function Community() {
   };
 
   const handleReport = async (postId) => {
+    if (reportedPostIds.includes(postId)) {
+      toast.info("Du hast diesen Post bereits gemeldet");
+      return;
+    }
     try {
       await base44.entities.Post.update(postId, { reported: true });
+      const updated = [...reportedPostIds, postId];
+      setReportedPostIds(updated);
+      localStorage.setItem('reported_posts', JSON.stringify(updated));
       toast.success("Post gemeldet");
-      await loadPosts();
     } catch (error) {
       console.error("Fehler beim Melden:", error);
       toast.error("Melden fehlgeschlagen");
