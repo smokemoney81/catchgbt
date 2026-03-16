@@ -1167,8 +1167,8 @@ export default function VoiceControlPage() {
   return (
     <PremiumGuard 
       user={user} 
-      requiredPlan="pro"
-      feature="Die KI-Sprachsteuerung mit Echtzeit-Daten ist ein Pro-Feature"
+      requiredPlan="ultimate"
+      feature="Die KI-Sprachsteuerung mit Echtzeit-Daten ist ein Ultimate-Feature"
     >
       <VoiceBuddy />
     </PremiumGuard>
