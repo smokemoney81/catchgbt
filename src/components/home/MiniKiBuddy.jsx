@@ -7,6 +7,8 @@ import { catchgbtChat } from "@/functions/catchgbtChat";
 const SYSTEM_PROMPT = `Du bist CatchGBT, ein erfahrener Angel-Assistent. Du hilfst Anglern mit Tipps zu Fischarten, Koeder, Spots, Wetter, Ausruestung und Technik. Antworte auf Deutsch, freundlich und direkt. Halte Antworten kurz und praxisnah.`;
 
 async function speakText(text) {
+  if (!text || !window.speechSynthesis) return;
+  
   try {
     // Try Gemini TTS first
     const geminiResponse = await geminiTextToSpeech({ text });
@@ -15,9 +17,7 @@ async function speakText(text) {
       const openaiResponse = await backendTextToSpeech({ text, voiceId: "alloy" });
       if (openaiResponse?.data?.fallback_to_browser) {
         // Final fallback to browser TTS
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = "de-DE";
-        window.speechSynthesis.speak(utterance);
+        useBrowserTTS(text);
         return;
       }
       const audioBlob = new Blob([openaiResponse.data], { type: "audio/mpeg" });
@@ -33,11 +33,17 @@ async function speakText(text) {
     audio.play();
     audio.onended = () => URL.revokeObjectURL(audioUrl);
   } catch {
-    // Browser fallback
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "de-DE";
-    window.speechSynthesis.speak(utterance);
+    // Browser fallback on error
+    useBrowserTTS(text);
   }
+}
+
+function useBrowserTTS(text) {
+  if (!window.speechSynthesis || typeof window.SpeechSynthesisUtterance === 'undefined') return;
+  
+  const utterance = new window.SpeechSynthesisUtterance(text);
+  utterance.lang = "de-DE";
+  window.speechSynthesis.speak(utterance);
 }
 
 export default function MiniKiBuddy() {
