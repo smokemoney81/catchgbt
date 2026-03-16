@@ -92,7 +92,7 @@ function speakBrowser(text, rate = 1, pitch = 1) {
 }
 
 async function speak(text, options = {}) {
-  return speakWithGemini(text, options);
+  return speakWithBrowserFirst(text, options);
 }
 
 // Wetterdaten von Open-Meteo abrufen
