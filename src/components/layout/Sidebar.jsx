@@ -56,6 +56,7 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
     { name: "KI Chat-Buddy", path: "AIAssistant", key: "nav.ai_chat", indent: true },
     { name: "KI-Kamera & Biss", path: "AI", key: "nav.ai_camera", indent: true },
     { name: "AR-Gewässer", path: "ARView", key: "nav.ar_view", indent: true },
+    { name: "AR Knoten AI", path: "ARKnotenAssistent", key: "nav.ar_knoten", indent: true },
     { name: "KI Voice Control", path: "VoiceControl", key: "nav.ai_voice", indent: true },
     { name: "Satelliten-Analyse", path: "WaterAnalysis", key: "nav.water_analysis", indent: true },
     { name: "KI-Köder-Mischer", path: "BaitMixer", key: "nav.bait_mixer", indent: true },
