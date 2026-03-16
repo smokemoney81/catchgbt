@@ -29,6 +29,10 @@ export default function Dashboard() {
   const [showAnalysis, setShowAnalysis] = useState(false);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     const cleanupSessions = async () => {
       try {
         await base44.functions.invoke('cleanupOldSessions');
