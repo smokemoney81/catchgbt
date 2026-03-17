@@ -52,6 +52,10 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
     { name: "Spots & Karte", path: "Map", key: "nav.map" },
     { name: "Wetter", path: "Weather", key: "nav.weather" },
     
+    // Event Section
+    { type: "header", key: "nav.event_section" },
+    { name: "Event", path: "Events", key: "nav.events", isLive: true },
+    
     // KI Tools Header
     { type: "header", key: "nav.ai_tools" },
     { name: "KI Chat-Buddy", path: "AIAssistant", key: "nav.ai_chat", indent: true },
@@ -190,12 +194,17 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
                     const label = item.label || t(item.key);
                     return (
                       <div key={idx} className="pt-4 pb-2 px-4 flex items-center justify-between">
-                        <span className="text-xs font-bold uppercase tracking-wider text-cyan-400">
+                        <span className={`text-xs font-bold uppercase tracking-wider ${item.key === "nav.event_section" ? "text-amber-400" : "text-cyan-400"}`}>
                           {label}
                         </span>
                         {item.key === "nav.ai_tools" && (
                           <span className="ml-2 px-2 py-0.5 text-[10px] font-bold rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-[0_0_10px_rgba(168,85,247,0.3)]">
                             BETA
+                          </span>
+                        )}
+                        {item.key === "nav.event_section" && (
+                          <span className="ml-2 px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                            LIVE
                           </span>
                         )}
                       </div>
