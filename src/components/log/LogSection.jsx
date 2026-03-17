@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Catch, Spot, User } from "@/entities/all"; // Added User import
+import { Catch, Spot, User } from "@/entities/all";
 import { UploadFile, ExtractDataFromUploadedFile } from "@/integrations/Core";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

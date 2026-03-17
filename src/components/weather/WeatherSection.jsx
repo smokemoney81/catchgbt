@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback } from "react";
 import { useLocation } from "@/components/location/LocationManager";
 import LocationSelector from "@/components/location/LocationSelector";
@@ -6,16 +5,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RefreshCw, Cloud, Sun, CloudRain, Wind, Activity, MapPin } from "lucide-react";
 
+const cacheKey = (lat, lon) => {
+  const hour = new Date().toISOString().slice(0, 13);
+  return `openmeteo_${lat.toFixed(2)}_${lon.toFixed(2)}_${hour}`;
+};
+
 export default function WeatherSection() {
   const { currentLocation } = useLocation();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [lastUpdate, setLastUpdate] = useState(null);
-
-  const cacheKey = (lat, lon) => {
-    const hour = new Date().toISOString().slice(0,13);
-    return `openmeteo_${lat.toFixed(2)}_${lon.toFixed(2)}_${hour}`;
-  };
 
   const load = useCallback(async (lat, lon) => {
     setLoading(true);
