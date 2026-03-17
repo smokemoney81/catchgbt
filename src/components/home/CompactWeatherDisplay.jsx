@@ -150,7 +150,7 @@ export default function CompactWeatherDisplay() {
 
   const load = useCallback(async (lat, lon) => {
     setLoading(true);
-    const key = cacheKey(lat, lon);
+    const key = compactCacheKey(lat, lon);
     const cached = localStorage.getItem(key);
     
     if (cached) { 

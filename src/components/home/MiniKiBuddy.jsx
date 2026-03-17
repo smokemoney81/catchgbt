@@ -106,18 +106,24 @@ export default function MiniKiBuddy() {
     setInput("");
     setIsLoading(true);
 
-    const res = await catchgbtChat({
-      messages: newMessages,
-      context: 'dashboard',
-      userLocation: userLocation || null
-    });
+    try {
+      const res = await catchgbtChat({
+        messages: newMessages,
+        context: 'dashboard',
+        userLocation: userLocation || null
+      });
 
-    const response = res?.data?.reply || "Ich konnte keine Antwort generieren.";
-    setMessages(prev => [...prev, { role: "assistant", content: response }]);
-    setIsLoading(false);
+      const response = res?.data?.reply || "Ich konnte keine Antwort generieren.";
+      setMessages(prev => [...prev, { role: "assistant", content: response }]);
 
-    if (voiceEnabled && response) {
-      await speakText(response);
+      if (voiceEnabled && response) {
+        await speakText(response);
+      }
+    } catch (error) {
+      console.error("Fehler bei KI-Anfrage:", error);
+      setMessages(prev => [...prev, { role: "assistant", content: "Entschuldigung, ich habe gerade technische Probleme. Bitte versuche es erneut." }]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
