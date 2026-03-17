@@ -35,6 +35,13 @@ async function speakText(text) {
 }
 
 export default function MiniKiBuddy() {
+  const EXAMPLE_QUESTIONS = [
+    "Welcher Koeoder ist jetzt gut?",
+    "Beste Angelzeit heute?",
+    "Tipps fuer Anfaenger",
+    "Hecht oder Zander angeln?"
+  ];
+
   const [messages, setMessages] = useState([
     { role: "assistant", content: "Hallo! Ich bin dein KI-Buddy. Stelle mir eine Angel-Frage!" }
   ]);
