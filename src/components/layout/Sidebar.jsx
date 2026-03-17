@@ -52,10 +52,6 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
     { name: "Spots & Karte", path: "Map", key: "nav.map" },
     { name: "Wetter", path: "Weather", key: "nav.weather" },
     
-    // Event Section
-    { type: "header", key: "nav.event_section" },
-    { name: "Event", path: "Events", key: "nav.events", isLive: true },
-    
     // KI Tools Header
     { type: "header", key: "nav.ai_tools" },
     { name: "KI Chat-Buddy", path: "AIAssistant", key: "nav.ai_chat", indent: true },
