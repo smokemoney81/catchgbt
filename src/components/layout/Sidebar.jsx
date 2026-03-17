@@ -245,21 +245,25 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
             </nav>
           </div>
 
-          <div className="p-6 border-t border-gray-800 flex-shrink-0 space-y-3">
-            <button
-              onClick={() => {
-                triggerHaptic('medium');
-                playSound('click');
-                base44.auth.logout(createPageUrl('Home'));
-              }}
-              className="flex items-center gap-3 w-full text-left px-4 py-2 rounded-lg transition-colors text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10"
-            >
-              <LogOut className="w-4 h-4" />
-              Abmelden
-            </button>
+          <div className="flex-shrink-0">
+            <EventLeaderboard />
             
-            <div className="text-xs text-gray-500 text-center">
-              &copy; 2024 CatchGbt
+            <div className="p-6 border-t border-gray-800 space-y-3">
+              <button
+                onClick={() => {
+                  triggerHaptic('medium');
+                  playSound('click');
+                  base44.auth.logout(createPageUrl('Home'));
+                }}
+                className="flex items-center gap-3 w-full text-left px-4 py-2 rounded-lg transition-colors text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10"
+              >
+                <LogOut className="w-4 h-4" />
+                Abmelden
+              </button>
+              
+              <div className="text-xs text-gray-500 text-center">
+                &copy; 2024 CatchGbt
+              </div>
             </div>
           </div>
         </div>
