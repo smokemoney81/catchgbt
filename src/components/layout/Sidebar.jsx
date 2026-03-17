@@ -71,6 +71,7 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
     { name: "Einstellungen", path: "Settings", key: "nav.settings" },
     { name: "Profil", path: "Profile", key: "nav.profile" },
     { name: "Datenschutz", path: "Datenschutz", key: "Datenschutz" },
+    { type: "header", key: "nav.event_section", label: "Events" },
     { name: "Beta-Tester Event", path: "Events", key: "nav.events", isLive: true },
   ];
 
