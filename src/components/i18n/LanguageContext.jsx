@@ -761,6 +761,8 @@ export const translations = {
     'nav.ar_view': 'Νερά AR',
     'nav.weather': 'Καιρός',
     'nav.weather_alerts': 'Ειδοποιήσεις καιρού',
+    'nav.event_section': 'Εκδήλωση',
+    'nav.events': 'Εκδήλωση',
     'nav.ai_tools': 'Εργαλεία AI',
     'nav.ai_chat': 'AI Chat-Buddy',
     'nav.ai_camera': 'AI Κάμερα & Δάγκωμα',
