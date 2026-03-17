@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -37,6 +36,8 @@ export default function BiteDetectorSection() {
   const [kLine, setKLine] = useState(3.0);
   const [kTip, setKTip] = useState(3.0);
   const [lockTime, setLockTime] = useState(3.0);
+
+  const runningRef = useRef(false);
 
   // Internal state für die Bite Detection
   const stateRef = useRef({

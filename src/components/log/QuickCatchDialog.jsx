@@ -30,6 +30,7 @@ export default function QuickCatchDialog() {
   const [aiAnalysisData, setAiAnalysisData] = useState(null);
   const [showAiConfirmDialog, setShowAiConfirmDialog] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showBiteDetectorPrompt, setShowBiteDetectorPrompt] = useState(false);
 
   const { triggerHaptic } = useHaptic();
   const { playSound } = useSound();
