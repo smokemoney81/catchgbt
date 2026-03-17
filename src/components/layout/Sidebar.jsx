@@ -246,8 +246,6 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
           </div>
 
           <div className="flex-shrink-0">
-            <EventLeaderboard />
-            
             <div className="p-6 border-t border-gray-800 space-y-3">
               <button
                 onClick={() => {
