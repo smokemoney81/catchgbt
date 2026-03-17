@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { User } from "@/entities/User";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -151,7 +151,7 @@ function TextAIMode() {
     } catch (error) {
       console.error("Fehler bei der KI-Anfrage:", error);
       
-      const errorMessage = "Antwort vom KI-Buddy fehlgeschlagen. Bitte versuchen Sie es später erneut. 🎣";
+      const errorMessage = "Antwort vom KI-Buddy fehlgeschlagen. Bitte versuche es spaeter erneut.";
       toast.error(errorMessage);
       setHistory(prev => [...prev, { role: 'assistant', content: "Entschuldigung, ich habe gerade technische Probleme." }]);
     } finally {
@@ -216,7 +216,7 @@ function TextAIMode() {
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Deine Frage an den KI-Buddy..."
               className="flex-grow bg-gray-800/50 border-gray-700 rounded-xl"
-              onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
+              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
               disabled={isLoading}
             />
             <Button
