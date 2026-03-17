@@ -193,6 +193,20 @@ export default function MiniKiBuddy() {
         <div ref={messagesEndRef} />
       </div>
 
+      {messages.length === 1 && (
+        <div className="px-3 pb-2 flex flex-wrap gap-2">
+          {EXAMPLE_QUESTIONS.map((q, i) => (
+            <button
+              key={i}
+              onClick={() => setInput(q)}
+              className="text-xs px-3 py-1.5 rounded-full bg-gray-700/60 border border-gray-600/50 text-gray-300 hover:bg-gray-600/60 hover:text-white transition-colors"
+            >
+              {q}
+            </button>
+          ))}
+        </div>
+      )}
+
       <div className="p-3 border-t border-gray-700/50 flex gap-2 items-center">
         <input
           type="text"
