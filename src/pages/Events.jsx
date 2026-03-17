@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { RefreshCw } from "lucide-react";
 
 function formatTime(totalSeconds) {
   const h = Math.floor(totalSeconds / 3600);
@@ -25,6 +26,8 @@ export default function Events() {
   const [countdown, setCountdown] = useState("");
   const [loading, setLoading] = useState(true);
   const [topUsers, setTopUsers] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastRefresh, setLastRefresh] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -39,17 +42,25 @@ export default function Events() {
     return () => clearInterval(interval);
   }, [event]);
 
+  useEffect(() => {
+    const refreshInterval = setInterval(() => {
+      loadData();
+    }, 3600000);
+    return () => clearInterval(refreshInterval);
+  }, []);
+
   const loadData = async () => {
     try {
+      setRefreshing(true);
       const events = await base44.entities.AppEvent.filter({ is_active: true });
-      if (!events || events.length === 0) { setLoading(false); return; }
+      if (!events || events.length === 0) { setLoading(false); setRefreshing(false); return; }
 
       const activeEvent = events[0];
       setEvent(activeEvent);
       setCountdown(getCountdown(activeEvent.end_date));
 
       const isAuth = await base44.auth.isAuthenticated();
-      if (!isAuth) { setLoading(false); return; }
+      if (!isAuth) { setLoading(false); setRefreshing(false); return; }
 
       const user = await base44.auth.me();
       const sessions = await base44.entities.UsageSession.filter({ user_id: user.email });
@@ -85,10 +96,21 @@ export default function Events() {
         .slice(0, 3)
         .map(([userId, secs]) => ({ userId, seconds: secs }));
       setTopUsers(sorted);
+      setLastRefresh(new Date());
     } catch (error) {
       console.error("Fehler beim Laden des Events:", error);
     }
     setLoading(false);
+    setRefreshing(false);
+  };
+
+  const handleManualRefresh = () => {
+    loadData();
+  };
+
+  const getMedalEmoji = (position) => {
+    const medals = ["", "", ""];
+    return medals[position] || "";
   };
 
   if (loading) {
@@ -159,21 +181,61 @@ export default function Events() {
 
       {/* Top 3 */}
       {topUsers.length > 0 && (
-        <div className="bg-gray-900 border border-amber-500/20 rounded-2xl p-5 space-y-3">
-          <div className="text-xs font-bold text-amber-400 uppercase tracking-widest">Top 3 Tester</div>
-          <div className="space-y-2">
-            {topUsers.map((u, i) => (
-              <div key={u.userId} className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-3">
-                  <span className={`font-bold text-base w-5 ${i === 0 ? 'text-amber-400' : i === 1 ? 'text-gray-300' : 'text-amber-700'}`}>
-                    {i + 1}.
-                  </span>
-                  <span className="text-gray-200 truncate max-w-[160px]">{u.userId}</span>
-                </div>
-                <span className="font-mono text-cyan-400 font-semibold">{formatTime(u.seconds)}</span>
-              </div>
-            ))}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <h3 className="text-xs font-bold text-amber-400 uppercase tracking-widest">Top 3 Tester</h3>
+            </div>
+            <button
+              onClick={handleManualRefresh}
+              disabled={refreshing}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 rounded-lg transition text-xs text-gray-300"
+              title="Top 3 aktualisieren"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+              Aktualisieren
+            </button>
           </div>
+
+          <div className="grid gap-3">
+            {topUsers.map((u, i) => {
+              const medals = ["", "", ""];
+              const podiumHeights = ["h-32", "h-28", "h-24"];
+              const borderColors = ["border-amber-500/40", "border-gray-400/40", "border-amber-700/40"];
+              const bgColors = ["bg-gradient-to-b from-amber-500/20 to-amber-500/5", "bg-gradient-to-b from-gray-400/15 to-gray-400/5", "bg-gradient-to-b from-amber-700/15 to-amber-700/5"];
+              
+              return (
+                <div
+                  key={u.userId}
+                  className={`${bgColors[i]} border ${borderColors[i]} rounded-xl p-4 space-y-3 transform transition`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <span className="text-3xl font-bold leading-none">{medals[i]}</span>
+                      <div className="min-w-0 flex-1">
+                        <div className={`text-sm font-bold ${i === 0 ? 'text-amber-300' : i === 1 ? 'text-gray-200' : 'text-amber-800'}`}>
+                          Platz {i + 1}
+                        </div>
+                        <div className="text-xs text-gray-400 truncate">{u.userId}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="pt-2 border-t border-gray-700/50">
+                    <div className="text-2xl font-mono font-bold text-cyan-400 tracking-tight">
+                      {formatTime(u.seconds)}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">Online-Zeit</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {lastRefresh && (
+            <div className="text-center text-xs text-gray-600 pt-2">
+              Aktualisiert: {lastRefresh.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}
+            </div>
+          )}
         </div>
       )}
 
