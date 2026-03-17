@@ -24,6 +24,7 @@ export default function Events() {
   const [mySeconds, setMySeconds] = useState(0);
   const [countdown, setCountdown] = useState("");
   const [loading, setLoading] = useState(true);
+  const [topUsers, setTopUsers] = useState([]);
 
   useEffect(() => {
     loadData();
