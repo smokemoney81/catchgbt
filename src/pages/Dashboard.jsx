@@ -335,7 +335,7 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
     }
 
     return (
-    <div className="min-h-screen bg-gray-950 overflow-y-auto">
+    <div className="min-h-screen bg-gray-950">
       {pullDistance > 0 && (
         <div 
           className="fixed top-0 left-0 right-0 flex items-center justify-center z-50 transition-opacity"
