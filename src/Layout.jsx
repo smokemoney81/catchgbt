@@ -341,16 +341,15 @@ export default function Layout({ children, currentPageName }) {
 
                 <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} currentPageName={currentPageName} />
 
-                <div className="bg-gray-950 flex-shrink-0">
+                <div className="sticky top-0 z-40 bg-gray-950">
                   <Header 
                     isSidebarOpen={isSidebarOpen}
                     setIsSidebarOpen={setIsSidebarOpen} 
                     isDemo={isDemo}
                   />
                   <EnhancedTicker />
+                  <SubPageHeader title={currentPageName} />
                 </div>
-
-                <SubPageHeader title={currentPageName} />
 
                 <AnimatePresence mode="wait">
                   <motion.main 
