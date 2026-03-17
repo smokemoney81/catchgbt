@@ -368,6 +368,17 @@ export default function LogSection() {
             </div>
           ))}
           {filtered.length === 0 && <div className="text-gray-400">Keine Fänge gefunden.</div>}
+          {hasMore && !filters.species && !filters.from && !filters.to && filters.spot === "all" && (
+            <Button
+              onClick={loadMore}
+              variant="outline"
+              className="w-full border-gray-700 text-gray-300 hover:text-white"
+              disabled={loadingMore}
+            >
+              {loadingMore ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+              Mehr laden
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

@@ -43,8 +43,12 @@ export default function AI() {
             </p>
           </div>
 
-          <CameraAnalysisSection />
-          <BiteDetectorSection />
+          <Suspense fallback={<SectionSkeleton />}>
+            <CameraAnalysisSection />
+          </Suspense>
+          <Suspense fallback={<SectionSkeleton />}>
+            <BiteDetectorSection />
+          </Suspense>
         </div>
       </div>
     </PremiumGuard>
