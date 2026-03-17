@@ -28,6 +28,7 @@ export default function Events() {
   const [topUsers, setTopUsers] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(null);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
     loadData();
@@ -47,6 +48,13 @@ export default function Events() {
       loadData();
     }, 3600000);
     return () => clearInterval(refreshInterval);
+  }, []);
+
+  useEffect(() => {
+    const timeInterval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timeInterval);
   }, []);
 
   const loadData = async () => {
@@ -111,6 +119,25 @@ export default function Events() {
   const getMedalEmoji = (position) => {
     const medals = ["", "", ""];
     return medals[position] || "";
+  };
+
+  const getLocalTimeInBerlin = () => {
+    const formatter = new Intl.DateTimeFormat('de-DE', {
+      timeZone: 'Europe/Berlin',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+    const timeString = formatter.format(currentTime);
+    
+    const options = { timeZone: 'Europe/Berlin', timeZoneName: 'short' };
+    const fullFormatter = new Intl.DateTimeFormat('de-DE', options);
+    const parts = fullFormatter.formatToParts(currentTime);
+    const tzPart = parts.find(p => p.type === 'timeZoneName');
+    const tz = tzPart ? tzPart.value : 'CET';
+    
+    return { time: timeString, timezone: tz };
   };
 
   if (loading) {
@@ -203,6 +230,7 @@ export default function Events() {
               const podiumHeights = ["h-32", "h-28", "h-24"];
               const borderColors = ["border-amber-500/40", "border-gray-400/40", "border-amber-700/40"];
               const bgColors = ["bg-gradient-to-b from-amber-500/20 to-amber-500/5", "bg-gradient-to-b from-gray-400/15 to-gray-400/5", "bg-gradient-to-b from-amber-700/15 to-amber-700/5"];
+              const { time: berlinTime, timezone: berlinTz } = getLocalTimeInBerlin();
               
               return (
                 <div
@@ -217,6 +245,9 @@ export default function Events() {
                           Platz {i + 1}
                         </div>
                         <div className="text-xs text-gray-400 truncate">{u.userId}</div>
+                        <div className="text-xs text-gray-500 mt-1 font-mono">
+                          {berlinTime} {berlinTz}
+                        </div>
                       </div>
                     </div>
                   </div>
