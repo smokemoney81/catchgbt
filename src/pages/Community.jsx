@@ -40,6 +40,7 @@ export default function Community() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showChat, setShowChat] = useState(false);
   const [activeUserCount, setActiveUserCount] = useState(0);
+  const fileInputRef = React.useRef(null);
 
   useEffect(() => {
     loadCurrentUser();
