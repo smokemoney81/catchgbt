@@ -158,6 +158,26 @@ export default function Events() {
         </div>
       )}
 
+      {/* Top 3 */}
+      {topUsers.length > 0 && (
+        <div className="bg-gray-900 border border-amber-500/20 rounded-2xl p-5 space-y-3">
+          <div className="text-xs font-bold text-amber-400 uppercase tracking-widest">Top 3 Tester</div>
+          <div className="space-y-2">
+            {topUsers.map((u, i) => (
+              <div key={u.userId} className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-3">
+                  <span className={`font-bold text-base w-5 ${i === 0 ? 'text-amber-400' : i === 1 ? 'text-gray-300' : 'text-amber-700'}`}>
+                    {i + 1}.
+                  </span>
+                  <span className="text-gray-200 truncate max-w-[160px]">{u.userId}</span>
+                </div>
+                <span className="font-mono text-cyan-400 font-semibold">{formatTime(u.seconds)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Regeln */}
       <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 space-y-3">
         <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">Regeln</div>
