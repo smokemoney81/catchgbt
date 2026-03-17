@@ -632,9 +632,9 @@ function LandingPageContent() {
             </motion.div>
 
             <motion.div 
-                className="fixed top-[42%] left-[30%] -translate-x-1/2 -translate-y-1/2 z-40 px-4 flex flex-col items-start gap-8 max-w-md"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
+                className="fixed top-[calc(8rem+2.5rem)] left-0 right-0 z-40 px-8 flex items-center justify-center"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
             >
                 <FeatureHints />
