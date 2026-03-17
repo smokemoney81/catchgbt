@@ -246,18 +246,18 @@ export default function QuickCatchDialog() {
     const handler = () => {
       setOpen(true);
     };
-    const biteDetectorHandler = () => {
+    const biteHandler = () => {
       setShowBiteDetectorPrompt(true);
     };
     window.addEventListener("openCatchDialog", handler);
-    window.addEventListener("bite-detector-session-ended", biteDetectorHandler);
+    window.addEventListener("bite-detector-session-ended", biteHandler);
     (async ()=> {
         const spotList = await Spot.list();
         setSpots(spotList.filter(s => s && s.id));
     })();
     return () => {
       window.removeEventListener("openCatchDialog", handler);
-      window.removeEventListener("bite-detector-session-ended", biteDetectorHandler);
+      window.removeEventListener("bite-detector-session-ended", biteHandler);
     };
   }, []);
 
@@ -545,7 +545,7 @@ export default function QuickCatchDialog() {
     setAiAnalysisData(null);
   };
 
-  if (!open && !showShareDialog) return null;
+  if (!open && !showShareDialog && !showBiteDetectorPrompt) return null;
   
   return (
     <>
