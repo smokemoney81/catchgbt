@@ -15,6 +15,8 @@ export default function RulesSection() {
   const [isLoading, setIsLoading] = useState(true);
   const [filterRegion, setFilterRegion] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [cacheInfo, setCacheInfo] = useState(null); // { cachedAt, fromCache }
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
   
   // State für den Schnell-Check
   const [checkForm, setCheckForm] = useState({
