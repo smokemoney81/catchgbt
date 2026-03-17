@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MobileSelect } from "@/components/ui/mobile-select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Loader2, Fish, Scale, FileUp, CheckCircle, AlertTriangle, ShieldQuestion, Calendar } from "lucide-react";
+import { Loader2, Fish, Scale, FileUp, CheckCircle, AlertTriangle, ShieldQuestion, Calendar, WifiOff, RefreshCw } from "lucide-react";
 import { FEDERAL_STATES } from "./rule-utils";
+import { saveRulesToCache, loadRulesFromCache, getRulesCacheAge } from "@/components/utils/rulesCache";
 
 export default function RulesSection() {
   const [rules, setRules] = useState([]);
