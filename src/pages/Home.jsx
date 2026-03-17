@@ -559,27 +559,7 @@ function LandingPageContent() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
             >
-                <motion.div
-                    animate={{
-                        scale: [1, 1.05, 1],
-                    }}
-                    transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                    }}
-                >
-                    <p className="text-lg sm:text-xl md:text-2xl font-semibold text-cyan-300">
-                        {(() => {
-                            const hour = new Date().getHours();
-                            const greeting = hour >= 5 && hour < 12 ? 'Guten Morgen' : 
-                                           hour >= 12 && hour < 17 ? 'Guten Tag' : 
-                                           hour >= 17 && hour < 21 ? 'Guten Abend' : 
-                                           'Gute Nacht';
-                            return userName ? `${greeting}, ${userName}` : `${greeting}, Angler`;
-                        })()}
-                    </p>
-                </motion.div>
+                <RotatingGreeting userName={userName} />
             </motion.div>
 
             <motion.div 
