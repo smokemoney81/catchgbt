@@ -73,7 +73,7 @@ Deno.serve(async (req) => {
     };
     
     return Response.json(fallback, {
-      status: 500,
+      status: 200,
       headers: {
         'Access-Control-Allow-Origin': '*'
       }
