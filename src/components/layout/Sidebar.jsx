@@ -7,7 +7,7 @@ import { useLanguage } from "@/components/i18n/LanguageContext";
 import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
 import { AnimatePresence, motion } from "framer-motion";
-import EventLeaderboard from "./EventLeaderboard";
+
 import {
   X,
   LogOut,
