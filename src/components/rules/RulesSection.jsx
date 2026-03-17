@@ -189,7 +189,30 @@ export default function RulesSection() {
     <div className="space-y-6">
       <Card className="glass-morphism border-gray-800 rounded-2xl">
         <CardHeader>
-          <CardTitle className="text-white">Regeln & Schonzeiten</CardTitle>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <CardTitle className="text-white">Regeln & Schonzeiten</CardTitle>
+            <div className="flex items-center gap-2">
+              {isOffline && (
+                <span className="flex items-center gap-1.5 text-xs text-amber-400 bg-amber-900/30 border border-amber-500/30 px-2 py-1 rounded-lg">
+                  <WifiOff className="w-3 h-3" /> Offline
+                </span>
+              )}
+              {cacheInfo && (
+                <span className="text-xs text-gray-500">
+                  {cacheInfo.fromCache ? "Gespeichert" : "Aktuell"} · {getRulesCacheAge(cacheInfo.cachedAt)}
+                </span>
+              )}
+              {!isOffline && (
+                <button
+                  onClick={() => loadRules(true)}
+                  className="flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 transition-colors"
+                  title="Regeln aktualisieren und offline speichern"
+                >
+                  <RefreshCw className="w-3 h-3" /> Aktualisieren
+                </button>
+              )}
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4 justify-between">
