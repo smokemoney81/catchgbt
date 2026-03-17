@@ -425,6 +425,8 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
           </p>
         </div>
 
+        <FishingRecommendationCard />
+
         <SchonzeitWarner />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
