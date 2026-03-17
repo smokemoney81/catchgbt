@@ -102,7 +102,7 @@ export default function CommunitySection() {
   const getUserAvatar = (email) => {
     const user = userCache[email];
     if (user?.profile_picture_url) {
-      return <img src={user.profile_picture_url} alt="Avatar" className="w-full h-full object-cover" />;
+      return <img src={user.profile_picture_url} alt={`Avatar von ${getUserDisplayName(email)}`} loading="lazy" className="w-full h-full object-cover" />;
     }
     
     const name = getUserDisplayName(email);
@@ -214,13 +214,9 @@ export default function CommunitySection() {
   };
 
   const handleReport = async (postId) => {
-    if (!confirm("Möchtest du diesen Post wirklich melden?")) return;
-    
     try {
-      await base44.entities.Post.update(postId, {
-        reported: true
-      });
-      await loadData();
+      await base44.entities.Post.update(postId, { reported: true });
+      setPosts(prev => prev.map(p => p.id === postId ? { ...p, reported: true } : p));
       triggerHaptic('medium');
       playSound('warning');
       toast.success("Post wurde gemeldet");
@@ -426,7 +422,8 @@ export default function CommunitySection() {
                   {post.photo_url && (
                     <img
                       src={post.photo_url}
-                      alt="Post"
+                      alt={`Post von ${getUserDisplayName(post.created_by)}`}
+                      loading="lazy"
                       className="w-full rounded-lg mb-4 max-h-96 object-cover"
                     />
                   )}

@@ -1,8 +1,12 @@
-
 import React, { useEffect, useState, useCallback } from "react";
 import { useLocation } from "@/components/location/LocationManager";
 import { Wind, Activity, Cloud, Droplets, Sun, CloudRain, MapPin } from "lucide-react";
 import { User } from "@/entities/User";
+
+const compactCacheKey = (lat, lon) => {
+  const hour = new Date().toISOString().slice(0, 13);
+  return `weather_compact_${lat.toFixed(2)}_${lon.toFixed(2)}_${hour}`;
+};
 
 export default function CompactWeatherDisplay() {
   const { currentLocation } = useLocation();
@@ -10,11 +14,6 @@ export default function CompactWeatherDisplay() {
   const [loading, setLoading] = useState(false);
   const [alertSettings, setAlertSettings] = useState(null);
   const [alertsChecked, setAlertsChecked] = useState(false);
-
-  const cacheKey = (lat, lon) => {
-    const hour = new Date().toISOString().slice(0,13);
-    return `weather_compact_${lat.toFixed(2)}_${lon.toFixed(2)}_${hour}`;
-  };
 
   useEffect(() => {
     loadAlertSettings();

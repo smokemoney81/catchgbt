@@ -273,7 +273,8 @@ export default function Header({
                     <div className="space-y-2">
                       <img 
                         src={recentPosts[postIndex].photo_url}
-                        alt="Post"
+                        alt={`Community Post ${postIndex + 1}`}
+                        loading="lazy"
                         className="w-full rounded-lg max-h-48 object-cover"
                       />
                       <p className="text-xs text-gray-300 line-clamp-2">
