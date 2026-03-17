@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { cacheEntityData, cacheWeatherData, getCachedWeather, getOfflineData, initOfflineDB } from "@/components/utils/OfflineDataCache";
 import OfflineCacheIndicator from "@/components/dashboard/OfflineCacheIndicator";
+import FishingRecommendationCard from "@/components/dashboard/FishingRecommendationCard";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
