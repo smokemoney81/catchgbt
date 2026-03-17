@@ -246,18 +246,18 @@ export default function QuickCatchDialog() {
     const handler = () => {
       setOpen(true);
     };
-    const biteHandler = () => {
+    const biteDetectorHandler = () => {
       setShowBiteDetectorPrompt(true);
     };
     window.addEventListener("openCatchDialog", handler);
-    window.addEventListener("bite-detector-session-ended", biteHandler);
+    window.addEventListener("bite-detector-session-ended", biteDetectorHandler);
     (async ()=> {
         const spotList = await Spot.list();
         setSpots(spotList.filter(s => s && s.id));
     })();
     return () => {
       window.removeEventListener("openCatchDialog", handler);
-      window.removeEventListener("bite-detector-session-ended", biteHandler);
+      window.removeEventListener("bite-detector-session-ended", biteDetectorHandler);
     };
   }, []);
 

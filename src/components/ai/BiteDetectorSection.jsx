@@ -306,6 +306,7 @@ export default function BiteDetectorSection() {
       procCanvas.height = Math.round(PROC_W * ratio);
 
       drawOverlay();
+      runningRef.current = true;
       setRunning(true);
 
       // Start processing loop
@@ -331,12 +332,19 @@ export default function BiteDetectorSection() {
     }
   };
 
-  const stopDetection = async () => {
+  const stopDetection = async (triggeredByUser = false) => {
     const video = videoRef.current;
     const state = stateRef.current;
 
+    const wasRunning = runningRef.current;
+    runningRef.current = false;
     setRunning(false);
     setError(null); // Clear error when stopping
+
+    // Frage nur wenn Session wirklich aktiv war und Nutzer manuell gestoppt hat
+    if (wasRunning && triggeredByUser) {
+      window.dispatchEvent(new CustomEvent('bite-detector-session-ended'));
+    }
 
     if (state.timer) {
       clearInterval(state.timer);
