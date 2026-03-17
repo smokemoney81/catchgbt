@@ -18,6 +18,75 @@ const features = [
   { icon: Compass, text: 'GPS-Navigation zu deinen Lieblingsplatzen' },
 ];
 
+const morningGreetings = [
+  (name) => `Guten Morgen${name ? `, ${name}` : ''}. Heute koennte dein bester Fangtag werden.`,
+  (name) => `Morgen${name ? `, ${name}` : ''}. Die Fische warten schon auf dich.`,
+  (name) => `Frueh aufgestanden${name ? `, ${name}` : ''}? Die besten Bisse kommen jetzt.`,
+  (name) => `Guten Morgen${name ? `, ${name}` : ''}. Petri Heil fuer heute.`,
+];
+
+const dayGreetings = [
+  (name) => `Hallo${name ? `, ${name}` : ''}. Wo wirfst du heute die Angel aus?`,
+  (name) => `${name ? `Hey ${name}` : 'Hallo'}. Bereit fuer den naechsten Fang?`,
+  (name) => `Schoener Tag zum Angeln${name ? `, ${name}` : ''}. Lass uns raus.`,
+  (name) => `${name ? `${name}, bist` : 'Bist'} du heute am Wasser?`,
+];
+
+const eveningGreetings = [
+  (name) => `Guten Abend${name ? `, ${name}` : ''}. Wie war die heutige Angelsession?`,
+  (name) => `${name ? `Hey ${name}` : 'Guten Abend'}. Zeit fuer die Abendbisse.`,
+  (name) => `Abendangeln${name ? `, ${name}` : ''}? Die besten Zeiten kommen noch.`,
+  (name) => `Guten Abend${name ? `, ${name}` : ''}. Petri Heil fuer heut Nacht.`,
+];
+
+const nightGreetings = [
+  (name) => `Nachtangler${name ? ` ${name}` : ''}? Die grossen kommen im Dunkeln.`,
+  (name) => `Gute Nacht${name ? `, ${name}` : ''}. Traumhafter Fang morgen.`,
+  (name) => `${name ? `${name}, noch` : 'Noch'} wach? Welse laufen gerade am besten.`,
+];
+
+function RotatingGreeting({ userName }) {
+  const [greetingIndex, setGreetingIndex] = useState(0);
+  const [key, setKey] = useState(0);
+
+  const getGreetingPool = () => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) return morningGreetings;
+    if (hour >= 12 && hour < 17) return dayGreetings;
+    if (hour >= 17 && hour < 21) return eveningGreetings;
+    return nightGreetings;
+  };
+
+  useEffect(() => {
+    const pool = getGreetingPool();
+    setGreetingIndex(Math.floor(Math.random() * pool.length));
+    
+    const interval = setInterval(() => {
+      setGreetingIndex(prev => (prev + 1) % pool.length);
+      setKey(k => k + 1);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const pool = getGreetingPool();
+  const text = pool[greetingIndex % pool.length](userName);
+
+  return (
+    <AnimatePresence mode="wait">
+      <motion.p
+        key={key}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -8 }}
+        transition={{ duration: 0.5 }}
+        className="text-lg sm:text-xl md:text-2xl font-semibold text-cyan-300"
+      >
+        {text}
+      </motion.p>
+    </AnimatePresence>
+  );
+}
+
 function FeatureHints() {
   const [currentFeature, setCurrentFeature] = useState(0);
 
