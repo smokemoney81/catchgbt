@@ -265,6 +265,8 @@ export const translations = {
     'nav.ar_view': 'Acque AR',
     'nav.weather': 'Meteo',
     'nav.weather_alerts': 'Avvisi meteo',
+    'nav.event_section': 'Evento',
+    'nav.events': 'Evento',
     'nav.ai_tools': 'Strumenti IA',
     'nav.ai_chat': 'IA Chat-Buddy',
     'nav.ai_camera': 'IA Fotocamera e Abboccata',
