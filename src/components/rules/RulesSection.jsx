@@ -28,16 +28,53 @@ export default function RulesSection() {
   const [checkResult, setCheckResult] = useState(null);
 
   useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+
+  useEffect(() => {
     loadRules();
   }, []);
 
-  const loadRules = async () => {
+  const loadRules = async (forceRefresh = false) => {
     setIsLoading(true);
+
+    // Versuche Cache zuerst wenn offline oder kein forceRefresh
+    if (!forceRefresh) {
+      const cached = loadRulesFromCache();
+      if (cached) {
+        setRules(cached.rules);
+        setCacheInfo({ cachedAt: cached.cachedAt, fromCache: true });
+        setIsLoading(false);
+        // Im Hintergrund aktualisieren wenn online
+        if (navigator.onLine) refreshFromNetwork();
+        return;
+      }
+    }
+
+    await refreshFromNetwork();
+  };
+
+  const refreshFromNetwork = async () => {
     try {
       const allRules = await base44.entities.RuleEntry.list("-created_date", 500);
       setRules(allRules);
+      saveRulesToCache(allRules);
+      setCacheInfo({ cachedAt: Date.now(), fromCache: false });
     } catch (e) {
       console.error("Failed to load rules:", e);
+      // Fallback auf Cache auch bei Fehler
+      const cached = loadRulesFromCache();
+      if (cached) {
+        setRules(cached.rules);
+        setCacheInfo({ cachedAt: cached.cachedAt, fromCache: true });
+      }
     } finally {
       setIsLoading(false);
     }
