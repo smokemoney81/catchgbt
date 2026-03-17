@@ -540,13 +540,13 @@ export default function Community() {
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    id="post-image-upload"
+                    ref={fileInputRef}
                     onChange={handleImageSelect}
                     disabled={uploading}
                   />
                   <Button
                     variant="outline"
-                    onClick={() => document.getElementById("post-image-upload").click()}
+                    onClick={() => fileInputRef.current?.click()}
                     disabled={uploading}
                     className="flex-1 border-gray-700 text-gray-300"
                   >
