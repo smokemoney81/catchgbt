@@ -119,6 +119,10 @@ function TextAIMode() {
     User.me().then(setUser).catch(() => setUser(null));
   }, []);
 
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [history, isLoading]);
+
   const handleSendMessage = async () => {
     if (!message.trim() || isLoading) return;
 
@@ -209,6 +213,7 @@ function TextAIMode() {
                 <span>KI-Buddy denkt nach...</span>
               </div>
             )}
+            <div ref={chatEndRef} />
           </div>
           <div className="flex gap-2">
             <Textarea
