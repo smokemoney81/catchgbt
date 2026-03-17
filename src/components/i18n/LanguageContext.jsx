@@ -885,6 +885,8 @@ export const translations = {
     'nav.ar_view': 'AR Sular',
     'nav.weather': 'Hava durumu',
     'nav.weather_alerts': 'Hava uyarıları',
+    'nav.event_section': 'Etkinlik',
+    'nav.events': 'Etkinlik',
     'nav.ai_tools': 'AI Araçlar',
     'nav.ai_chat': 'AI Chat-Buddy',
     'nav.ai_camera': 'AI Kamera & Isırma',
