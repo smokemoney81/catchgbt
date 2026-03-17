@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { User } from "@/entities/User";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -114,6 +113,7 @@ function TextAIMode() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [useSpeech, setUseSpeech] = useState(true);
+  const chatEndRef = useRef(null);
 
   useEffect(() => {
     User.me().then(setUser).catch(() => setUser(null));

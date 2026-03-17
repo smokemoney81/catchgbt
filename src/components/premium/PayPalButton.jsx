@@ -1,134 +1,65 @@
-
-import React, { useEffect, useRef, useState } from 'react';
-import { base44 } from '@/api/base44Client';
-import { toast } from 'sonner';
-
-const PAYPAL_CLIENT_ID = 'AW2UW1NJ8YU0Fw5YCSxUKTDT9gwHa5dnSL6dviKqgHEDAT-g5IaRZywYSskIOoNJxXuuxjo3wCxlHlYe';
+import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Crown, Mail, ExternalLink, Clock } from 'lucide-react';
 
 export default function PayPalButton({ planId, planName, planPrice, onSuccess }) {
-  const paypalRef = useRef(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const currentUser = await base44.auth.me();
-        setUser(currentUser);
-      } catch (error) {
-        console.error('Fehler beim Laden des Users:', error);
-      }
-    };
-    loadUser();
-  }, []);
-
-  useEffect(() => {
-    if (window.paypal) {
-      renderPayPalButton();
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = `https://www.paypal.com/sdk/js?client-id=${PAYPAL_CLIENT_ID}&currency=EUR&disable-funding=venmo`;
-    script.async = true;
-    
-    script.onload = () => {
-      renderPayPalButton();
-    };
-
-    script.onerror = () => {
-      toast.error('PayPal konnte nicht geladen werden');
-      setIsLoading(false);
-    };
-
-    document.body.appendChild(script);
-
-    return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-    };
-  }, [planId, planPrice, planName, user]);
-
-  const renderPayPalButton = () => {
-    if (!window.paypal || !paypalRef.current || !user) return;
-
-    paypalRef.current.innerHTML = '';
-
-    window.paypal.Buttons({
-      style: {
-        layout: 'vertical',
-        color: 'blue',
-        shape: 'rect',
-        label: 'paypal'
-      },
-      createOrder: (data, actions) => {
-        return actions.order.create({
-          purchase_units: [{
-            description: `CatchGbt ${planName} Plan - Monatliches Abo`,
-            amount: {
-              currency_code: 'EUR',
-              value: planPrice.toFixed(2)
-            },
-            custom_id: JSON.stringify({
-              user_id: user?.id,
-              user_email: user?.email,
-              plan_id: planId,
-              plan_name: planName
-            })
-          }]
-        });
-      },
-      onApprove: async (data, actions) => {
-        try {
-          const order = await actions.order.capture();
-          console.log('PayPal Zahlung erfolgreich:', order);
-
-          try {
-            await base44.functions.invoke('activatePlan', {
-              plan_id: planId,
-              payment_method: 'paypal',
-              transaction_id: order.id
-            });
-
-            toast.success('Zahlung erfolgreich!', {
-              description: `${planName} Plan wurde aktiviert`
-            });
-
-            if (onSuccess) onSuccess();
-          } catch (activationError) {
-            console.error('Fehler beim Aktivieren des Plans:', activationError);
-            toast.error('Plan-Aktivierung fehlgeschlagen', {
-              description: 'Bitte kontaktiere den Support'
-            });
-          }
-        } catch (error) {
-          console.error('PayPal Capture Error:', error);
-          toast.error('Zahlung fehlgeschlagen');
-        }
-      },
-      onCancel: () => {
-        toast.info('Zahlung abgebrochen');
-      },
-      onError: (err) => {
-        console.error('PayPal Error:', err);
-        toast.error('PayPal Fehler', {
-          description: 'Bitte versuche es später erneut'
-        });
-      }
-    }).render(paypalRef.current).then(() => {
-      setIsLoading(false);
-    });
+  const features = {
+    basic: ['KI-Fangberatung', 'Spot-Verwaltung', 'Fangbuch', 'Wetter-Integration'],
+    standard: ['Alles aus Basic', 'Offline-Karten', 'Erweiterte Analysen', 'Geraete-Anbindung'],
+    premium: ['Alles aus Standard', 'Profi-Berichte mit Erfolgsprognosen', 'Private Spot-Gruppen', 'Premium-Spiele & Themes', 'Priorisierter Support'],
   };
 
+  const planFeatures = features[planId] || features.premium;
+
+  const mailSubject = encodeURIComponent(`CatchGBT Premium Upgrade – ${planName} (${planPrice} EUR)`);
+  const mailBody = encodeURIComponent(`Hallo CatchGBT-Team,\n\nichmoechte den ${planName}-Plan fuer ${planPrice} EUR/Monat upgraden.\n\nBitte sendet mir die Zahlungsdetails.\n\nVielen Dank!`);
+  const mailtoLink = `mailto:support@catchgbt.de?subject=${mailSubject}&body=${mailBody}`;
+
   return (
-    <div className="w-full">
-      {isLoading && (
-        <div className="flex items-center justify-center py-4">
-          <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    <Card className="border border-emerald-600/30 bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl overflow-hidden">
+      <CardContent className="p-6 space-y-6">
+        <div className="text-center space-y-2">
+          <div className="flex items-center justify-center gap-2">
+            <Crown className="w-6 h-6 text-amber-400" />
+            <span className="text-xl font-bold text-white">{planName}</span>
+          </div>
+          <div className="text-3xl font-extrabold text-emerald-400">
+            {planPrice} EUR
+            <span className="text-sm font-normal text-gray-400"> / Monat</span>
+          </div>
         </div>
-      )}
-      <div ref={paypalRef} className="min-h-[50px]"></div>
-    </div>
+
+        <ul className="space-y-2">
+          {planFeatures.map((feature, i) => (
+            <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
+              <span className="text-emerald-400 mt-0.5 flex-shrink-0">+</span>
+              {feature}
+            </li>
+          ))}
+        </ul>
+
+        <div className="space-y-3">
+          <a href={mailtoLink} className="block">
+            <Button className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-3 rounded-xl">
+              <Mail className="w-4 h-4 mr-2" />
+              Per E-Mail upgraden
+            </Button>
+          </a>
+
+          <a href="https://paypal.me/CatchGBT" target="_blank" rel="noopener noreferrer" className="block">
+            <Button variant="outline" className="w-full border-amber-500/40 text-amber-400 hover:bg-amber-600/10 font-semibold py-3 rounded-xl">
+              <ExternalLink className="w-4 h-4 mr-2" />
+              Via PayPal.me bezahlen
+            </Button>
+          </a>
+        </div>
+
+        <div className="flex items-start gap-2 text-xs text-gray-400 bg-gray-800/60 rounded-xl p-3 border border-gray-700/50">
+          <Clock className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+          <span>Nach der Zahlung erhaeltst du deine Freischaltung innerhalb von 24 Stunden.</span>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
