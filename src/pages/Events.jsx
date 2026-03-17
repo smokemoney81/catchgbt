@@ -67,6 +67,25 @@ export default function Events() {
         }
       }
       setMySeconds(seconds);
+
+      // Top 3 berechnen
+      const allSessions = await base44.asServiceRole.entities.UsageSession.list();
+      const userMap = {};
+      for (const session of allSessions) {
+        const start = new Date(session.started_at);
+        if (start < eventStart || start > eventEnd) continue;
+        if (!userMap[session.user_id]) userMap[session.user_id] = 0;
+        if (session.status === 'stopped' && session.stopped_at) {
+          userMap[session.user_id] += Math.floor((new Date(session.stopped_at) - start) / 1000);
+        } else if (session.status === 'active') {
+          userMap[session.user_id] += Math.floor((new Date() - start) / 1000);
+        }
+      }
+      const sorted = Object.entries(userMap)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map(([userId, secs]) => ({ userId, seconds: secs }));
+      setTopUsers(sorted);
     } catch (error) {
       console.error("Fehler beim Laden des Events:", error);
     }
