@@ -60,12 +60,31 @@ export default function Events() {
     return () => clearInterval(timeInterval);
   }, []);
 
-  const calculateDailyRanking = async () => {
+  const calculateDailyRanking = async (forceRefresh = false) => {
     try {
+      const eventStart = event ? new Date(event.start_date) : null;
+      const eventEnd = event ? new Date(event.end_date) : null;
+
+      if (!eventStart || !eventEnd) return;
+
+      if (forceRefresh) {
+        localStorage.removeItem('eventRanking_lastCalc');
+        localStorage.removeItem('eventRanking_cached');
+        
+        try {
+          const allOldRankings = await base44.asServiceRole.entities.EventRanking.list();
+          for (const ranking of allOldRankings) {
+            await base44.asServiceRole.entities.EventRanking.delete(ranking.id);
+          }
+        } catch (e) {
+          console.log('Keine alten EventRanking-Einträge zum Löschen');
+        }
+      }
+
       const storedLastCalc = localStorage.getItem('eventRanking_lastCalc');
       const today = new Date().toDateString();
 
-      if (storedLastCalc === today) {
+      if (!forceRefresh && storedLastCalc === today) {
         const cached = localStorage.getItem('eventRanking_cached');
         if (cached) {
           const data = JSON.parse(cached);
@@ -77,12 +96,10 @@ export default function Events() {
       }
 
       const allSessions = await base44.asServiceRole.entities.UsageSession.list();
+      const allUsers = await base44.asServiceRole.entities.User.list();
       const userMap = {};
-      const eventStart = event ? new Date(event.start_date) : null;
-      const eventEnd = event ? new Date(event.end_date) : null;
 
       const calcSeconds = (session) => {
-        if (!eventStart || !eventEnd) return 0;
         const start = new Date(session.started_at);
         if (start < eventStart || start > eventEnd) return 0;
         if (session.status === 'stopped' && session.stopped_at) {
@@ -101,21 +118,31 @@ export default function Events() {
 
       const sorted = Object.entries(userMap)
         .sort((a, b) => b[1] - a[1])
-        .map(([userId, seconds], idx) => ({ userId, seconds, platzierung: idx + 1 }));
+        .map(([userId, seconds], idx) => {
+          const userData = allUsers.find(u => u.email === userId);
+          return {
+            userId,
+            userName: userData?.full_name || userData?.email?.split('@')[0] || userId.split('@')[0],
+            seconds,
+            platzierung: idx + 1
+          };
+        });
 
       const calcTime = new Date();
       const rankings = sorted.map(r => ({
         userId: r.userId,
-        userName: r.userId.split('@')[0],
+        userName: r.userName,
         eventTime: r.seconds,
         platzierung: r.platzierung,
         datum: calcTime.toISOString()
       }));
 
-      await base44.asServiceRole.entities.EventRanking.bulkCreate(rankings);
+      if (rankings.length > 0) {
+        await base44.asServiceRole.entities.EventRanking.bulkCreate(rankings);
+      }
 
       localStorage.setItem('eventRanking_lastCalc', today);
-      localStorage.setItem('eventRanking_cached', JSON.stringify({ rankings, calcTime: calcTime.toISOString() }));
+      localStorage.setItem('eventRanking_cached', JSON.stringify({ rankings: sorted, calcTime: calcTime.toISOString() }));
 
       setAllRankings(sorted);
       setLastCalcTime(calcTime);
@@ -189,6 +216,12 @@ export default function Events() {
 
   const handleManualRefresh = () => {
     loadData();
+  };
+
+  const handleHardRefresh = async () => {
+    setRefreshing(true);
+    await calculateDailyRanking(true);
+    setRefreshing(false);
   };
 
   const getMedalEmoji = (position) => {
@@ -281,19 +314,28 @@ export default function Events() {
 
       {/* Top 3 - GANZ OBEN */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h3 className="text-xs font-bold text-amber-400 uppercase tracking-widest">Top 3 Plaetze</h3>
+        <div className="flex items-center justify-between gap-2">
+          <h3 className="text-xs font-bold text-amber-400 uppercase tracking-widest">Top 3 Plaetze</h3>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={handleManualRefresh}
+              disabled={refreshing}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 rounded-lg transition text-xs text-gray-300"
+              title="Top 3 aktualisieren"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+              Aktualisieren
+            </button>
+            <button
+              onClick={handleHardRefresh}
+              disabled={refreshing}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-red-900/50 hover:bg-red-900 disabled:opacity-50 rounded-lg transition text-xs text-red-300 border border-red-800"
+              title="Hard Refresh - neu aus Datenbank laden"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+              Hard Refresh
+            </button>
           </div>
-          <button
-            onClick={handleManualRefresh}
-            disabled={refreshing}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 rounded-lg transition text-xs text-gray-300"
-            title="Top 3 aktualisieren"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-            Aktualisieren
-          </button>
         </div>
 
         <div className="grid gap-3">
@@ -333,9 +375,9 @@ export default function Events() {
           })}
         </div>
 
-        {lastRefresh && (
+        {lastCalcTime && (
           <div className="text-center text-xs text-gray-600 pt-2">
-            Aktualisiert: {lastRefresh.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}
+            Letzte Aktualisierung: {lastCalcTime.toLocaleDateString('de-DE')} {lastCalcTime.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })} Uhr
           </div>
         )}
       </div>
