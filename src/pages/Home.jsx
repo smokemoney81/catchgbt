@@ -797,7 +797,7 @@ function LandingPageContent() {
                             '0 0 20px rgba(168, 85, 247, 0.8)'
                         ]
                     }}
-                    transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+                    transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
                     onClick={handleLogin}
                     className="px-8 py-4 rounded-full text-white text-sm font-bold transform hover:scale-110 flex items-center justify-center whitespace-nowrap"
                     title={t('landing.cta.start')}
