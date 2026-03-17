@@ -29,58 +29,19 @@ export default function Header({
   const [recentPosts, setRecentPosts] = useState([]);
   const [postIndex, setPostIndex] = useState(0);
 
-  useEffect(() => {
-    loadAlertStatus();
-    loadActiveTrips();
-    loadUserAndPlan();
-    loadRecentPosts();
-    
-    const handleAlertsUpdate = () => {
-      loadAlertStatus();
-    };
-    
-    const handleTripsUpdate = () => {
-      loadActiveTrips();
-    };
-    
-    window.addEventListener('weather-alerts-updated', handleAlertsUpdate);
-    window.addEventListener('active-trips-updated', handleTripsUpdate);
-    
-    const handleUserRefresh = () => {
-      loadUserAndPlan();
-    };
-    window.addEventListener('user-refresh-request', handleUserRefresh);
-
-    return () => {
-      window.removeEventListener('weather-alerts-updated', handleAlertsUpdate);
-      window.removeEventListener('active-trips-updated', handleTripsUpdate);
-      window.removeEventListener('user-refresh-request', handleUserRefresh);
-    };
-  }, []);
-
-  const loadUserAndPlan = async () => {
+  const loadInitialData = async () => {
     setPlanLoading(true);
     try {
-      const currentUser = await User.me();
+      const [currentUser, planStatusResponse, plans] = await Promise.all([
+        User.me(),
+        base44.functions.invoke('getPlanStatus').catch(() => null),
+        FishingPlan.filter({ is_active: true }).catch(() => [])
+      ]);
+
       setUser(currentUser);
+      setActiveTripsCount(plans.length);
 
-      const planStatusResponse = await base44.functions.invoke('getPlanStatus');
-      if (planStatusResponse.data && planStatusResponse.data.plan) {
-        setCurrentPlan(planStatusResponse.data.plan);
-      }
-    } catch (error) {
-      console.error("Fehler beim Laden von Benutzerdaten oder Plan:", error);
-      setUser(null);
-      setCurrentPlan(null);
-    }
-    setPlanLoading(false);
-  };
-
-  const loadAlertStatus = async () => {
-    try {
-      const user = await User.me();
-      const alerts = user?.settings?.weather_alerts || {};
-      
+      const alerts = currentUser?.settings?.weather_alerts || {};
       let count = 0;
       if (alerts.rain_alert_enabled) count++;
       if (alerts.wind_alert_enabled) count++;
@@ -89,21 +50,31 @@ export default function Header({
       if (alerts.uv_alert_enabled) count++;
       if (alerts.visibility_alert_enabled) count++;
       if (alerts.dewpoint_alert_enabled) count++;
-      
       setActiveAlertsCount(count);
+
+      if (planStatusResponse?.data?.plan) {
+        setCurrentPlan(planStatusResponse.data.plan);
+      }
     } catch (error) {
-      console.error("Fehler beim Laden des Alarm-Status:", error);
+      console.error("Fehler beim Laden:", error);
     }
+    setPlanLoading(false);
   };
 
-  const loadActiveTrips = async () => {
-    try {
-      const plans = await FishingPlan.filter({ is_active: true });
-      setActiveTripsCount(plans.length);
-    } catch (error) {
-      console.error("Fehler beim Laden der aktiven Trips:", error);
-    }
-  };
+  useEffect(() => {
+    loadInitialData();
+    loadRecentPosts();
+
+    window.addEventListener('weather-alerts-updated', loadInitialData);
+    window.addEventListener('active-trips-updated', loadInitialData);
+    window.addEventListener('user-refresh-request', loadInitialData);
+
+    return () => {
+      window.removeEventListener('weather-alerts-updated', loadInitialData);
+      window.removeEventListener('active-trips-updated', loadInitialData);
+      window.removeEventListener('user-refresh-request', loadInitialData);
+    };
+  }, []);
 
   const loadRecentPosts = async () => {
     try {

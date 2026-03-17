@@ -1,8 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense, lazy } from "react";
 import PremiumGuard from "@/components/premium/PremiumGuard";
-import CameraAnalysisSection from "@/components/ai/CameraAnalysisSection";
-import BiteDetectorSection from "@/components/ai/BiteDetectorSection";
 import { base44 } from "@/api/base44Client";
+
+const CameraAnalysisSection = lazy(() => import("@/components/ai/CameraAnalysisSection"));
+const BiteDetectorSection = lazy(() => import("@/components/ai/BiteDetectorSection"));
+
+const SectionSkeleton = () => (
+  <div className="w-full h-48 rounded-2xl bg-gray-800/50 animate-pulse flex items-center justify-center">
+    <div className="text-gray-500 text-sm">Wird geladen...</div>
+  </div>
+);
 
 export default function AI() {
   const [user, setUser] = useState(null);

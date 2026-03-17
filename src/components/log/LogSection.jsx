@@ -12,6 +12,8 @@ import { getGuestCatches, addGuestCatch, updateGuestCatch, deleteGuestCatch } fr
 import { base44 } from "@/api/base44Client";
 import { fetchCatchesWithFallback, fetchSpotsWithFallback } from "@/components/utils/offlineDataCache";
 
+const PAGE_SIZE = 20;
+
 export default function LogSection() {
   const [catches, setCatches] = useState([]);
   const [spots, setSpots] = useState([]);
@@ -24,6 +26,9 @@ export default function LogSection() {
   const [isExtracting, setIsExtracting] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
   const [isFromCache, setIsFromCache] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   useEffect(() => {
     window.dispatchEvent(new CustomEvent('kiBuddyFunctionCall', {
@@ -34,22 +39,35 @@ export default function LogSection() {
       try {
         await base44.auth.me();
         setIsGuest(false);
-        // Faenge mit Offline-Fallback laden
         const { data: catchData, fromCache: catchFromCache } = await fetchCatchesWithFallback(
-          () => Catch.list("-catch_time")
+          () => Catch.list("-catch_time", PAGE_SIZE)
         );
         setCatches(catchData);
         setIsFromCache(catchFromCache);
-        // Spots mit Offline-Fallback laden
+        setHasMore(catchData.length === PAGE_SIZE);
         const { data: spotData } = await fetchSpotsWithFallback(() => Spot.list());
         setSpots(spotData);
       } catch {
-        // Gastmodus
         setIsGuest(true);
         setCatches(getGuestCatches());
       }
     })();
   }, []);
+
+  const loadMore = async () => {
+    setLoadingMore(true);
+    try {
+      const { data: more } = await fetchCatchesWithFallback(
+        () => Catch.list("-catch_time", PAGE_SIZE, page * PAGE_SIZE)
+      );
+      setCatches(prev => [...prev, ...more]);
+      setPage(p => p + 1);
+      setHasMore(more.length === PAGE_SIZE);
+    } catch (e) {
+      console.error(e);
+    }
+    setLoadingMore(false);
+  };
 
   const speciesList = useMemo(()=> Array.from(new Set(catches.map(c=>c.species).filter(Boolean))), [catches]);
 
