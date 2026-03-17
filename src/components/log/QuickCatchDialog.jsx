@@ -246,18 +246,18 @@ export default function QuickCatchDialog() {
     const handler = () => {
       setOpen(true);
     };
-    const biteDetectorHandler = () => {
+    const biteHandler = () => {
       setShowBiteDetectorPrompt(true);
     };
     window.addEventListener("openCatchDialog", handler);
-    window.addEventListener("bite-detector-session-ended", biteDetectorHandler);
+    window.addEventListener("bite-detector-session-ended", biteHandler);
     (async ()=> {
         const spotList = await Spot.list();
         setSpots(spotList.filter(s => s && s.id));
     })();
     return () => {
       window.removeEventListener("openCatchDialog", handler);
-      window.removeEventListener("bite-detector-session-ended", biteDetectorHandler);
+      window.removeEventListener("bite-detector-session-ended", biteHandler);
     };
   }, []);
 
@@ -545,7 +545,7 @@ export default function QuickCatchDialog() {
     setAiAnalysisData(null);
   };
 
-  if (!open && !showShareDialog) return null;
+  if (!open && !showShareDialog && !showBiteDetectorPrompt) return null;
   
   return (
     <>
@@ -749,13 +749,13 @@ export default function QuickCatchDialog() {
       </Dialog>
 
       <Dialog open={showBiteDetectorPrompt} onOpenChange={setShowBiteDetectorPrompt}>
-        <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-sm">
+        <DialogContent className="bg-gray-900 border-gray-800 text-white">
           <DialogHeader>
-            <DialogTitle className="text-white text-lg">Hast du was gefangen?</DialogTitle>
+            <DialogTitle className="text-cyan-400">Hast du was gefangen?</DialogTitle>
           </DialogHeader>
-          <div className="py-3">
-            <p className="text-gray-400 text-sm">
-              Deine Bissanzeiger-Session ist beendet. Moechtest du einen Fang eintragen?
+          <div className="py-4">
+            <p className="text-gray-300">
+              Die Bissanzeiger-Session wurde beendet. Moechtest du einen Fang eintragen?
             </p>
           </div>
           <DialogFooter className="flex gap-2">
@@ -769,7 +769,11 @@ export default function QuickCatchDialog() {
             <Button
               onClick={() => {
                 setShowBiteDetectorPrompt(false);
-                setForm(prev => ({ ...prev, catch_time: new Date().toISOString().slice(0, 16) }));
+                setForm(prev => ({
+                  ...prev,
+                  catch_time: new Date().toISOString().slice(0, 16),
+                  notes: "Fang nach Bissanzeiger-Session"
+                }));
                 setOpen(true);
               }}
               className="bg-emerald-600 hover:bg-emerald-700"
