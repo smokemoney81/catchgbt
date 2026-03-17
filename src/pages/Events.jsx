@@ -56,30 +56,29 @@ export default function Events() {
       const eventStart = new Date(activeEvent.start_date);
       const eventEnd = new Date(activeEvent.end_date);
 
-      let seconds = 0;
-      for (const session of sessions) {
+      const calcSeconds = (session) => {
         const start = new Date(session.started_at);
-        if (start < eventStart || start > eventEnd) continue;
+        if (start < eventStart || start > eventEnd) return 0;
         if (session.status === 'stopped' && session.stopped_at) {
-          seconds += Math.floor((new Date(session.stopped_at) - start) / 1000);
+          return Math.floor((new Date(session.stopped_at) - start) / 1000);
         } else if (session.status === 'active') {
-          seconds += Math.floor((new Date() - start) / 1000);
+          return Math.floor((new Date() - start) / 1000);
         }
-      }
+        return 0;
+      };
+
+      // Only count app_general sessions (total online time)
+      const generalSessions = sessions.filter(s => s.feature_id === 'app_general');
+      const seconds = generalSessions.reduce((sum, s) => sum + calcSeconds(s), 0);
       setMySeconds(seconds);
 
-      // Top 3 berechnen
+      // Top 3 berechnen - only app_general sessions
       const allSessions = await base44.asServiceRole.entities.UsageSession.list();
       const userMap = {};
       for (const session of allSessions) {
-        const start = new Date(session.started_at);
-        if (start < eventStart || start > eventEnd) continue;
+        if (session.feature_id !== 'app_general') continue;
         if (!userMap[session.user_id]) userMap[session.user_id] = 0;
-        if (session.status === 'stopped' && session.stopped_at) {
-          userMap[session.user_id] += Math.floor((new Date(session.stopped_at) - start) / 1000);
-        } else if (session.status === 'active') {
-          userMap[session.user_id] += Math.floor((new Date() - start) / 1000);
-        }
+        userMap[session.user_id] += calcSeconds(session);
       }
       const sorted = Object.entries(userMap)
         .sort((a, b) => b[1] - a[1])
