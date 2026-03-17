@@ -513,6 +513,8 @@ export const translations = {
     'nav.ar_view': 'AR Vatten',
     'nav.weather': 'Väder',
     'nav.weather_alerts': 'Vädervarningar',
+    'nav.event_section': 'Evenemang',
+    'nav.events': 'Evenemang',
     'nav.ai_tools': 'AI Verktyg',
     'nav.ai_chat': 'AI Chat-Buddy',
     'nav.ai_camera': 'AI Kamera & Napp',
