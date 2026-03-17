@@ -29,6 +29,9 @@ export default function Events() {
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefresh, setLastRefresh] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [allRankings, setAllRankings] = useState([]);
+  const [lastCalcTime, setLastCalcTime] = useState(null);
+  const [nextCalcTime, setNextCalcTime] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -56,6 +59,78 @@ export default function Events() {
     }, 1000);
     return () => clearInterval(timeInterval);
   }, []);
+
+  const calculateDailyRanking = async () => {
+    try {
+      const storedLastCalc = localStorage.getItem('eventRanking_lastCalc');
+      const today = new Date().toDateString();
+
+      if (storedLastCalc === today) {
+        const cached = localStorage.getItem('eventRanking_cached');
+        if (cached) {
+          const data = JSON.parse(cached);
+          setAllRankings(data.rankings);
+          setLastCalcTime(new Date(data.calcTime));
+          setNextCalcTime(getNextMidnight());
+          return;
+        }
+      }
+
+      const allSessions = await base44.asServiceRole.entities.UsageSession.list();
+      const userMap = {};
+      const eventStart = event ? new Date(event.start_date) : null;
+      const eventEnd = event ? new Date(event.end_date) : null;
+
+      const calcSeconds = (session) => {
+        if (!eventStart || !eventEnd) return 0;
+        const start = new Date(session.started_at);
+        if (start < eventStart || start > eventEnd) return 0;
+        if (session.status === 'stopped' && session.stopped_at) {
+          return Math.floor((new Date(session.stopped_at) - start) / 1000);
+        } else if (session.status === 'active') {
+          return Math.floor((new Date() - start) / 1000);
+        }
+        return 0;
+      };
+
+      for (const session of allSessions) {
+        if (session.feature_id !== 'app_general') continue;
+        if (!userMap[session.user_id]) userMap[session.user_id] = 0;
+        userMap[session.user_id] += calcSeconds(session);
+      }
+
+      const sorted = Object.entries(userMap)
+        .sort((a, b) => b[1] - a[1])
+        .map(([userId, seconds], idx) => ({ userId, seconds, platzierung: idx + 1 }));
+
+      const calcTime = new Date();
+      const rankings = sorted.map(r => ({
+        userId: r.userId,
+        userName: r.userId.split('@')[0],
+        eventTime: r.seconds,
+        platzierung: r.platzierung,
+        datum: calcTime.toISOString()
+      }));
+
+      await base44.asServiceRole.entities.EventRanking.bulkCreate(rankings);
+
+      localStorage.setItem('eventRanking_lastCalc', today);
+      localStorage.setItem('eventRanking_cached', JSON.stringify({ rankings, calcTime: calcTime.toISOString() }));
+
+      setAllRankings(sorted);
+      setLastCalcTime(calcTime);
+      setNextCalcTime(getNextMidnight());
+    } catch (error) {
+      console.error("Fehler bei Ranking-Berechnung:", error);
+    }
+  };
+
+  const getNextMidnight = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    return tomorrow;
+  };
 
   const loadData = async () => {
     try {
@@ -86,12 +161,10 @@ export default function Events() {
         return 0;
       };
 
-      // Only count app_general sessions (total online time)
       const generalSessions = sessions.filter(s => s.feature_id === 'app_general');
       const seconds = generalSessions.reduce((sum, s) => sum + calcSeconds(s), 0);
       setMySeconds(seconds);
 
-      // Top 3 berechnen - only app_general sessions
       const allSessions = await base44.asServiceRole.entities.UsageSession.list();
       const userMap = {};
       for (const session of allSessions) {
@@ -105,6 +178,8 @@ export default function Events() {
         .map(([userId, secs]) => ({ userId, seconds: secs }));
       setTopUsers(sorted);
       setLastRefresh(new Date());
+      
+      await calculateDailyRanking();
     } catch (error) {
       console.error("Fehler beim Laden des Events:", error);
     }
@@ -166,6 +241,31 @@ export default function Events() {
     { userId: 'Anna K.', seconds: 12600 },
     { userId: 'Tim P.', seconds: 10800 }
   ];
+
+  const displayAllRankings = allRankings.length > 0 ? allRankings : [
+    { userId: 'max@example.com', platzierung: 1, seconds: 14400 },
+    { userId: 'anna@example.com', platzierung: 2, seconds: 12600 },
+    { userId: 'tim@example.com', platzierung: 3, seconds: 10800 },
+    { userId: 'lisa@example.com', platzierung: 4, seconds: 9000 },
+    { userId: 'john@example.com', platzierung: 5, seconds: 7200 }
+  ];
+
+  const formatLastCalc = (date) => {
+    if (!date) return '';
+    const now = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+    const timeStr = date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+    return isToday ? `heute ${timeStr} Uhr` : date.toLocaleDateString('de-DE') + ` ${timeStr} Uhr`;
+  };
+
+  const formatNextCalc = (date) => {
+    if (!date) return '';
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const isTomorrow = date.toDateString() === tomorrow.toDateString();
+    const timeStr = date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+    return isTomorrow ? `morgen ${timeStr} Uhr` : date.toLocaleDateString('de-DE') + ` ${timeStr} Uhr`;
+  };
 
   return (
     <div className="min-h-screen bg-gray-950 px-4 py-8 max-w-lg mx-auto space-y-6">
@@ -238,6 +338,39 @@ export default function Events() {
             Aktualisiert: {lastRefresh.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}
           </div>
         )}
+      </div>
+
+      {/* Vollstaendige Rangliste */}
+      <div className="space-y-3">
+        <h3 className="text-xs font-bold text-cyan-400 uppercase tracking-widest">Vollstaendige Rangliste</h3>
+        
+        {lastCalcTime && (
+          <div className="bg-gray-900 border border-gray-800 rounded-lg p-3 space-y-1 text-xs text-gray-400">
+            <div>Zuletzt aktualisiert: {formatLastCalc(lastCalcTime)}</div>
+            <div>Naechstes Update: {formatNextCalc(nextCalcTime)}</div>
+          </div>
+        )}
+
+        <div className="space-y-2">
+          {displayAllRankings.map((ranking) => {
+            const medals = { 1: '', 2: '', 3: '' };
+            const medal = medals[ranking.platzierung] || '';
+            const userDisplay = ranking.userId.includes('@') ? ranking.userId.split('@')[0] : ranking.userId;
+            
+            return (
+              <div key={ranking.userId} className="bg-gray-900 border border-gray-800 rounded-lg p-3 flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-lg font-bold w-6">{medal || ranking.platzierung}</span>
+                  <div className="min-w-0">
+                    <div className="text-gray-200 truncate">{userDisplay}</div>
+                    <div className="text-xs text-gray-500">{ranking.platzierung}. Platz</div>
+                  </div>
+                </div>
+                <span className="font-mono text-cyan-400 font-semibold text-sm">{formatTime(ranking.seconds || ranking.eventTime)}</span>
+              </div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Countdown */}
