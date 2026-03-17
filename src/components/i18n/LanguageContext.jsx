@@ -327,6 +327,8 @@ export const translations = {
     'nav.ar_view': 'AR Wateren',
     'nav.weather': 'Weer',
     'nav.weather_alerts': 'Weerwaarschuwingen',
+    'nav.event_section': 'Evenement',
+    'nav.events': 'Evenement',
     'nav.ai_tools': 'AI Tools',
     'nav.ai_chat': 'AI Chat-Buddy',
     'nav.ai_camera': 'AI Camera & Beet',
