@@ -180,7 +180,7 @@ export default function MiniKiBuddy() {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-3 border-t border-gray-700/50 flex gap-2">
+      <div className="p-3 border-t border-gray-700/50 flex gap-2 items-center">
         <input
           type="text"
           value={input}
@@ -188,12 +188,12 @@ export default function MiniKiBuddy() {
           onKeyDown={handleKeyDown}
           placeholder="Frage stellen oder sprechen..."
           disabled={isLoading}
-          className="flex-1 bg-gray-900/60 border border-gray-600/50 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 disabled:opacity-50"
+          className="flex-1 min-w-0 bg-gray-900/60 border border-gray-600/50 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 disabled:opacity-50"
         />
         <button
           onClick={toggleListening}
           disabled={isLoading}
-          className={`px-3 py-2 rounded-lg text-white text-sm font-medium transition-colors ${
+          className={`flex-shrink-0 px-3 py-2 rounded-lg text-white text-sm font-medium transition-colors ${
             isListening
               ? 'bg-red-600 hover:bg-red-500'
               : 'bg-gray-700 hover:bg-gray-600 disabled:opacity-40'
@@ -205,7 +205,7 @@ export default function MiniKiBuddy() {
         <button
           onClick={sendMessage}
           disabled={isLoading || !input.trim()}
-          className="px-4 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors"
+          className="flex-shrink-0 px-4 py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors"
         >
           Senden
         </button>
