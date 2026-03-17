@@ -2,6 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve((req) => {
     try {
+        const workingIcon = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68bb3d3b9f83dc1f55ef532b/dcd615030_Screenshot_20250919_164159_Gallery.jpg';
         const iconBaseUrl = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68bb3d3b9f83dc1f55ef532b';
         
         const manifest = {
@@ -34,57 +35,15 @@ Deno.serve((req) => {
             ],
             "icons": [
                 {
-                    "src": `${iconBaseUrl}/ee5d668e0_icon_32.png`,
-                    "sizes": "32x32",
-                    "type": "image/png",
+                    "src": workingIcon,
+                    "sizes": "192x192",
+                    "type": "image/jpeg",
                     "purpose": "any"
                 },
                 {
-                    "src": `${iconBaseUrl}/1d1888ec8_icon_72.png`,
-                    "sizes": "72x72",
-                    "type": "image/png",
-                    "purpose": "any maskable"
-                },
-                {
-                    "src": `${iconBaseUrl}/1d1888ec8_icon_72.png`,
-                    "sizes": "96x96",
-                    "type": "image/png",
-                    "purpose": "any maskable"
-                },
-                {
-                    "src": `${iconBaseUrl}/1d1888ec8_icon_72.png`,
-                    "sizes": "128x128",
-                    "type": "image/png",
-                    "purpose": "any maskable"
-                },
-                {
-                    "src": `${iconBaseUrl}/1d1888ec8_icon_72.png`,
-                    "sizes": "144x144",
-                    "type": "image/png",
-                    "purpose": "any maskable"
-                },
-                {
-                    "src": `${iconBaseUrl}/1d1888ec8_icon_72.png`,
-                    "sizes": "152x152",
-                    "type": "image/png",
-                    "purpose": "any maskable"
-                },
-                {
-                    "src": `${iconBaseUrl}/e9d6eda08_icon_512.png`,
-                    "sizes": "192x192",
-                    "type": "image/png",
-                    "purpose": "any maskable"
-                },
-                {
-                    "src": `${iconBaseUrl}/e9d6eda08_icon_512.png`,
-                    "sizes": "384x384",
-                    "type": "image/png",
-                    "purpose": "any maskable"
-                },
-                {
-                    "src": `${iconBaseUrl}/e9d6eda08_icon_512.png`,
+                    "src": workingIcon,
                     "sizes": "512x512",
-                    "type": "image/png",
+                    "type": "image/jpeg",
                     "purpose": "any maskable"
                 }
             ],
