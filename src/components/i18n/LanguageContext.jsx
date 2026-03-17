@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 
@@ -16,6 +15,8 @@ export const translations = {
     'nav.ar_view': 'AR-Gewässer',
     'nav.weather': 'Wetter',
     'nav.weather_alerts': 'Wetter-Alarme',
+    'nav.event_section': 'Event',
+    'nav.events': 'Event',
     'nav.ai_tools': 'KI Tools',
     'nav.ai_chat': 'KI Chat-Buddy',
     'nav.ai_camera': 'KI-Kamera & Biss',
