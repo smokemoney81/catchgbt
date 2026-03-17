@@ -575,6 +575,8 @@ export const translations = {
     'nav.ar_view': 'AR Vann',
     'nav.weather': 'Vær',
     'nav.weather_alerts': 'Værvarsler',
+    'nav.event_section': 'Arrangement',
+    'nav.events': 'Arrangement',
     'nav.ai_tools': 'AI Verktøy',
     'nav.ai_chat': 'AI Chat-Buddy',
     'nav.ai_camera': 'AI Kamera & Bit',
