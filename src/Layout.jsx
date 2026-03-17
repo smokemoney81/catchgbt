@@ -73,6 +73,45 @@ export default function Layout({ children, currentPageName }) {
     }
   };
 
+  // Track total online time via UsageSession
+  useEffect(() => {
+    if (!user?.email) return;
+
+    const sessionId = `app_general_${user.email}_${Date.now()}`;
+    let sessionDbId = null;
+
+    base44.entities.UsageSession.create({
+      session_id: sessionId,
+      user_id: user.email,
+      feature_id: 'app_general',
+      started_at: new Date().toISOString(),
+      status: 'active',
+      last_heartbeat: new Date().toISOString()
+    }).then(s => { sessionDbId = s.id; });
+
+    const heartbeat = setInterval(async () => {
+      if (!sessionDbId) return;
+      await base44.entities.UsageSession.update(sessionDbId, {
+        last_heartbeat: new Date().toISOString()
+      });
+    }, 30000);
+
+    const stopSession = () => {
+      if (!sessionDbId) return;
+      base44.entities.UsageSession.update(sessionDbId, {
+        status: 'stopped',
+        stopped_at: new Date().toISOString()
+      });
+    };
+
+    window.addEventListener('beforeunload', stopSession);
+    return () => {
+      clearInterval(heartbeat);
+      window.removeEventListener('beforeunload', stopSession);
+      stopSession();
+    };
+  }, [user?.email]);
+
   useEffect(() => {
     if (currentPageName !== 'Home') {
       refreshUser();
