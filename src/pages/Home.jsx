@@ -246,6 +246,20 @@ function LandingPageContent() {
         try {
             const isAuth = await base44.auth.isAuthenticated();
             if (isAuth) {
+                const alreadySeen = localStorage.getItem('catchgbt_event_popup_seen');
+                if (!alreadySeen) {
+                    const events = await base44.entities.AppEvent.filter({ is_active: true });
+                    if (events && events.length > 0) {
+                        const ev = events[0];
+                        const now = new Date();
+                        if (now >= new Date(ev.start_date) && now <= new Date(ev.end_date)) {
+                            localStorage.setItem('catchgbt_event_popup_seen', '1');
+                            const endStr = new Date(ev.end_date).toLocaleDateString('de-DE');
+                            const msg = `${ev.name}\n\n${ev.description || ''}\n\nPreis: ${ev.prize || ''}\n\nEvent endet am: ${endStr}`;
+                            alert(msg);
+                        }
+                    }
+                }
                 window.location.href = createPageUrl('Dashboard');
             } else {
                 base44.auth.redirectToLogin(createPageUrl('Dashboard'));

@@ -8,6 +8,7 @@ import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import BathymetricCrowdsourcing from './pages/BathymetricCrowdsourcing';
+import Events from './pages/Events';
 import KiBuddyBeta from './pages/KiBuddyBeta';
 import ARKnotenAssistent from './pages/ARKnotenAssistent';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
