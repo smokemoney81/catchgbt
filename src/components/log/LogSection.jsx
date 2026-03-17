@@ -107,21 +107,23 @@ export default function LogSection() {
     try {
       if (isGuest) {
         if (editing === "new") {
-          const newCatch = addGuestCatch(payload);
+          addGuestCatch(payload);
           setEditing(null);
           setCatches(getGuestCatches());
-          alert("Fang gespeichert (Gastmodus - 24 Stunden gespeichert).");
+          toast.success("Fang gespeichert (Gastmodus - 24 Stunden gespeichert).");
         } else {
           updateGuestCatch(editing, payload);
           setEditing(null);
           setCatches(getGuestCatches());
-          alert("Fang aktualisiert.");
+          toast.success("Fang aktualisiert.");
         }
         return;
       }
 
       if (editing === "new") {
-        await Catch.create(payload);
+        const newCatch = await Catch.create(payload);
+        setCatches(prev => [newCatch, ...prev]);
+        setEditing(null);
         
         try {
           const user = await User.me();
@@ -130,25 +132,21 @@ export default function LogSection() {
             credits: (user.credits || 0) + credits,
             total_earned: (user.total_earned || 0) + credits
           });
-          alert(`Fang erfolgreich gespeichert!\n${form.species} (${form.length_cm || 'unbekannt'} cm)\n+${credits} Credits erhalten!`);
+          toast.success(`Fang gespeichert! ${form.species} (${form.length_cm || 'unbekannt'} cm) – +${credits} Credits erhalten.`);
         } catch (error) {
-          alert("Fang gespeichert, aber Credits konnten nicht gutgeschrieben werden.");
+          toast.success("Fang gespeichert, aber Credits konnten nicht gutgeschrieben werden.");
         }
       } else {
         await Catch.update(editing, payload);
-        alert("Fang erfolgreich aktualisiert!");
+        setCatches(prev => prev.map(c => c.id === editing ? { ...c, ...payload } : c));
+        setEditing(null);
+        toast.success("Fang erfolgreich aktualisiert.");
       }
-      
-      setEditing(null);
-      const { data: freshCatches } = await fetchCatchesWithFallback(() => Catch.list("-catch_time"));
-      setCatches(freshCatches);
-      setIsFromCache(false);
     } catch (error) {
-      // Offline: Fang in Queue einreihen
       const q = JSON.parse(localStorage.getItem("fishmaster_catch_queue") || "[]");
       q.push(payload);
       localStorage.setItem("fishmaster_catch_queue", JSON.stringify(q));
-      alert("Offline gespeichert - wird synchronisiert, sobald Internet verfuegbar ist.");
+      toast.info("Offline gespeichert - wird synchronisiert, sobald Internet verfuegbar ist.");
       setEditing(null);
     }
   };
@@ -159,8 +157,8 @@ export default function LogSection() {
       setCatches(getGuestCatches());
       return;
     }
+    setCatches(prev => prev.filter(x => x.id !== c.id));
     await Catch.delete(c.id);
-    setCatches(await Catch.list("-catch_time"));
   };
 
   const uploadPhoto = async (file) => {
@@ -207,13 +205,13 @@ export default function LogSection() {
         });
         setEditing("new");
       } else {
-        alert("Daten konnten nicht extrahiert werden. Bitte manuell eintragen.");
+        toast.error("Daten konnten nicht extrahiert werden. Bitte manuell eintragen.");
         openNew();
         setForm(prev => ({ ...prev, photo_url: file_url }));
       }
     } catch (error) {
       console.error("Fehler beim Import:", error);
-      alert("Ein Fehler ist aufgetreten. Bitte versuche es erneut.");
+      toast.error("Ein Fehler ist aufgetreten. Bitte versuche es erneut.");
     } finally {
       setIsExtracting(false);
       setUploading(false);
