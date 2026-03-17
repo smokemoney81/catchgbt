@@ -699,6 +699,8 @@ export const translations = {
     'nav.ar_view': 'AR Vedet',
     'nav.weather': 'Sää',
     'nav.weather_alerts': 'Säävaroitukset',
+    'nav.event_section': 'Tapahtuma',
+    'nav.events': 'Tapahtuma',
     'nav.ai_tools': 'AI Työkalut',
     'nav.ai_chat': 'AI Chat-Buddy',
     'nav.ai_camera': 'AI Kamera & Syötti',
