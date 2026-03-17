@@ -242,7 +242,7 @@ export default function MiniKiBuddy() {
           }`}
           title={isListening ? 'Hoere zu...' : 'Sprechen'}
         >
-          {isListening ? 'Hore' : 'Mic'}
+          {isListening ? 'Stop' : 'Sprache'}
         </button>
         <button
           onClick={sendMessage}
