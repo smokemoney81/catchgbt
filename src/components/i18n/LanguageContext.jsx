@@ -1009,6 +1009,8 @@ export const translations = {
     'nav.ar_view': 'Ape AR',
     'nav.weather': 'Vreme',
     'nav.weather_alerts': 'Alerte meteo',
+    'nav.event_section': 'Eveniment',
+    'nav.events': 'Eveniment',
     'nav.ai_tools': 'Instrumente IA',
     'nav.ai_chat': 'IA Chat-Buddy',
     'nav.ai_camera': 'IA Cameră & Mușcătură',
