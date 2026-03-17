@@ -161,6 +161,12 @@ export default function Events() {
 
   const isEnded = new Date() > new Date(event.end_date);
 
+  const displayUsers = topUsers.length > 0 ? topUsers : [
+    { userId: 'Max M.', seconds: 14400 },
+    { userId: 'Anna K.', seconds: 12600 },
+    { userId: 'Tim P.', seconds: 10800 }
+  ];
+
   return (
     <div className="min-h-screen bg-gray-950 px-4 py-8 max-w-lg mx-auto space-y-6">
 
@@ -170,6 +176,67 @@ export default function Events() {
         <h1 className="text-3xl font-bold text-white">{event.name}</h1>
         {event.description && (
           <p className="text-gray-400 text-sm leading-relaxed">{event.description}</p>
+        )}
+      </div>
+
+      {/* Top 3 - GANZ OBEN */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <h3 className="text-xs font-bold text-amber-400 uppercase tracking-widest">Top 3 Plaetze</h3>
+          </div>
+          <button
+            onClick={handleManualRefresh}
+            disabled={refreshing}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 rounded-lg transition text-xs text-gray-300"
+            title="Top 3 aktualisieren"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+            Aktualisieren
+          </button>
+        </div>
+
+        <div className="grid gap-3">
+          {displayUsers.map((u, i) => {
+            const medals = ["", "", ""];
+            const borderColors = ["border-amber-500/40", "border-gray-400/40", "border-amber-700/40"];
+            const bgColors = ["bg-gradient-to-b from-amber-500/20 to-amber-500/5", "bg-gradient-to-b from-gray-400/15 to-gray-400/5", "bg-gradient-to-b from-amber-700/15 to-amber-700/5"];
+            const { time: berlinTime, timezone: berlinTz } = getLocalTimeInBerlin();
+            
+            return (
+              <div
+                key={u.userId}
+                className={`${bgColors[i]} border ${borderColors[i]} rounded-xl p-4 space-y-3 transform transition`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    <span className="text-3xl font-bold leading-none">{medals[i]}</span>
+                    <div className="min-w-0 flex-1">
+                      <div className={`text-sm font-bold ${i === 0 ? 'text-amber-300' : i === 1 ? 'text-gray-200' : 'text-amber-800'}`}>
+                        Platz {i + 1}
+                      </div>
+                      <div className="text-xs text-gray-400 truncate">{u.userId}</div>
+                      <div className="text-xs text-gray-500 mt-1 font-mono">
+                        {berlinTime} {berlinTz}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="pt-2 border-t border-gray-700/50">
+                  <div className="text-2xl font-mono font-bold text-cyan-400 tracking-tight">
+                    {formatTime(u.seconds)}
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">Online-Zeit</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {lastRefresh && (
+          <div className="text-center text-xs text-gray-600 pt-2">
+            Aktualisiert: {lastRefresh.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}
+          </div>
         )}
       </div>
 
@@ -206,69 +273,7 @@ export default function Events() {
         </div>
       )}
 
-      {/* Top 3 */}
-      {topUsers.length > 0 && (
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <h3 className="text-xs font-bold text-amber-400 uppercase tracking-widest">Top 3 Tester</h3>
-            </div>
-            <button
-              onClick={handleManualRefresh}
-              disabled={refreshing}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 rounded-lg transition text-xs text-gray-300"
-              title="Top 3 aktualisieren"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-              Aktualisieren
-            </button>
-          </div>
 
-          <div className="grid gap-3">
-            {topUsers.map((u, i) => {
-              const medals = ["", "", ""];
-              const podiumHeights = ["h-32", "h-28", "h-24"];
-              const borderColors = ["border-amber-500/40", "border-gray-400/40", "border-amber-700/40"];
-              const bgColors = ["bg-gradient-to-b from-amber-500/20 to-amber-500/5", "bg-gradient-to-b from-gray-400/15 to-gray-400/5", "bg-gradient-to-b from-amber-700/15 to-amber-700/5"];
-              const { time: berlinTime, timezone: berlinTz } = getLocalTimeInBerlin();
-              
-              return (
-                <div
-                  key={u.userId}
-                  className={`${bgColors[i]} border ${borderColors[i]} rounded-xl p-4 space-y-3 transform transition`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-3 flex-1 min-w-0">
-                      <span className="text-3xl font-bold leading-none">{medals[i]}</span>
-                      <div className="min-w-0 flex-1">
-                        <div className={`text-sm font-bold ${i === 0 ? 'text-amber-300' : i === 1 ? 'text-gray-200' : 'text-amber-800'}`}>
-                          Platz {i + 1}
-                        </div>
-                        <div className="text-xs text-gray-400 truncate">{u.userId}</div>
-                        <div className="text-xs text-gray-500 mt-1 font-mono">
-                          {berlinTime} {berlinTz}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="pt-2 border-t border-gray-700/50">
-                    <div className="text-2xl font-mono font-bold text-cyan-400 tracking-tight">
-                      {formatTime(u.seconds)}
-                    </div>
-                    <div className="text-xs text-gray-500 mt-1">Online-Zeit</div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {lastRefresh && (
-            <div className="text-center text-xs text-gray-600 pt-2">
-              Aktualisiert: {lastRefresh.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}
-            </div>
-          )}
-        </div>
-      )}
 
       {/* Regeln */}
       <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 space-y-3">
