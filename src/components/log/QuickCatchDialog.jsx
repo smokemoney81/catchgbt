@@ -246,18 +246,18 @@ export default function QuickCatchDialog() {
     const handler = () => {
       setOpen(true);
     };
-    const biteHandler = () => {
+    const biteDetectorHandler = () => {
       setShowBiteDetectorPrompt(true);
     };
     window.addEventListener("openCatchDialog", handler);
-    window.addEventListener("bite-detector-session-ended", biteHandler);
+    window.addEventListener("bite-detector-session-ended", biteDetectorHandler);
     (async ()=> {
         const spotList = await Spot.list();
         setSpots(spotList.filter(s => s && s.id));
     })();
     return () => {
       window.removeEventListener("openCatchDialog", handler);
-      window.removeEventListener("bite-detector-session-ended", biteHandler);
+      window.removeEventListener("bite-detector-session-ended", biteDetectorHandler);
     };
   }, []);
 
@@ -545,7 +545,7 @@ export default function QuickCatchDialog() {
     setAiAnalysisData(null);
   };
 
-  if (!open && !showShareDialog && !showBiteDetectorPrompt) return null;
+  if (!open && !showShareDialog) return null;
   
   return (
     <>
@@ -743,6 +743,38 @@ export default function QuickCatchDialog() {
               className="bg-cyan-600 hover:bg-cyan-700"
             >
               Daten übernehmen
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showBiteDetectorPrompt} onOpenChange={setShowBiteDetectorPrompt}>
+        <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-white text-lg">Hast du was gefangen?</DialogTitle>
+          </DialogHeader>
+          <div className="py-3">
+            <p className="text-gray-400 text-sm">
+              Deine Bissanzeiger-Session ist beendet. Moechtest du einen Fang eintragen?
+            </p>
+          </div>
+          <DialogFooter className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setShowBiteDetectorPrompt(false)}
+              className="border-gray-700 text-gray-300 hover:bg-gray-700"
+            >
+              Nein, danke
+            </Button>
+            <Button
+              onClick={() => {
+                setShowBiteDetectorPrompt(false);
+                setForm(prev => ({ ...prev, catch_time: new Date().toISOString().slice(0, 16) }));
+                setOpen(true);
+              }}
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              Ja, Fang eintragen
             </Button>
           </DialogFooter>
         </DialogContent>
