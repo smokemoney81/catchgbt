@@ -88,33 +88,14 @@ function RotatingGreeting({ userName }) {
 }
 
 function FeatureHints() {
-  const [currentFeature, setCurrentFeature] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentFeature(prev => (prev + 1) % features.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const Feature = features[currentFeature];
-
   return (
-    <AnimatePresence mode="wait">
-      <motion.div 
-        key={currentFeature}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.4 }}
-        className="flex items-center justify-start gap-4"
-      >
-        <Feature.icon className="w-8 h-8 text-cyan-400" />
-        <p className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-          {Feature.text}
-        </p>
-      </motion.div>
-    </AnimatePresence>
+    <div className="flex flex-row items-center justify-center gap-6 flex-wrap">
+      {features.map((f, i) => (
+        <span key={i} className="text-xs font-semibold text-cyan-300 whitespace-nowrap opacity-80">
+          {f.text}
+        </span>
+      ))}
+    </div>
   );
 }
 
