@@ -246,12 +246,19 @@ export default function QuickCatchDialog() {
     const handler = () => {
       setOpen(true);
     };
+    const biteHandler = () => {
+      setShowBiteDetectorPrompt(true);
+    };
     window.addEventListener("openCatchDialog", handler);
+    window.addEventListener("bite-detector-session-ended", biteHandler);
     (async ()=> {
         const spotList = await Spot.list();
         setSpots(spotList.filter(s => s && s.id));
     })();
-    return () => window.removeEventListener("openCatchDialog", handler);
+    return () => {
+      window.removeEventListener("openCatchDialog", handler);
+      window.removeEventListener("bite-detector-session-ended", biteHandler);
+    };
   }, []);
 
   useEffect(() => {
