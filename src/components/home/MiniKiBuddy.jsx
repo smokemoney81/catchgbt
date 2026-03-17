@@ -186,8 +186,11 @@ export default function MiniKiBuddy() {
           </div>
         ))}
         {isLoading && (
-          <div className="self-start bg-gray-700/50 text-gray-400 border border-gray-600/30 rounded-xl px-3 py-2 text-sm">
-            ...
+          <div className="self-start bg-gray-700/50 border border-cyan-500/20 rounded-xl px-4 py-3 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+            <span className="text-xs text-cyan-400/70 ml-1">KI denkt nach...</span>
           </div>
         )}
         <div ref={messagesEndRef} />
