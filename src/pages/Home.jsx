@@ -10,12 +10,24 @@ import { LanguageProvider, useLanguage } from '@/components/i18n/LanguageContext
 import TutorialModal from '@/components/tutorial/TutorialModal';
 
 const features = [
-  { icon: Fish, text: 'KI-Fischidentifikation aus Fotos' },
-  { icon: Map, text: 'Interaktive Gewasserkarte mit Binnengewassern' },
-  { icon: Cloud, text: 'Echtzeit-Wetteranalyse fur Angelspots' },
-  { icon: Brain, text: 'KI-Fangberatung mit personlichen Tipps' },
-  { icon: Award, text: 'Ranglisten und Community-Wettbewerbe' },
-  { icon: Compass, text: 'GPS-Navigation zu deinen Lieblingsplatzen' },
+  'KI-Fischidentifikation aus Fotos',
+  'Interaktive Gewasserkarte mit Binnengewassern',
+  'Echtzeit-Wetteranalyse fur Angelspots',
+  'KI-Fangberatung mit personlichen Tipps',
+  'Ranglisten und Community-Wettbewerbe',
+  'GPS-Navigation zu deinen Lieblingsplatzen',
+  'Angelschein-Pruefungstrainer mit Ubungsfragen',
+  'Wasseranalyse mit Satellitendaten',
+  'Ködermixer fur individuelle Rezepte',
+  'Tiefenkarten fur deine Angelspots',
+  'Schonzeiten und Mindestmasse im Uberblick',
+  'Community-Fangfotos und Wettbewerbe',
+  'Offline-Modus fur Gebiete ohne Empfang',
+  'Tripplaner mit KI-Erfolgsprognose',
+  'Fangbuch mit automatischer KI-Analyse',
+  'Wetteralarme fur optimale Angelbedingungen',
+  'Gerateintegration fur Echolote und Sensoren',
+  'Angelparks und Vereine in deiner Nahe finden',
 ];
 
 const morningGreetings = [
@@ -64,7 +76,7 @@ function RotatingGreeting({ userName }) {
     const interval = setInterval(() => {
       setGreetingIndex(prev => (prev + 1) % pool.length);
       setKey(k => k + 1);
-    }, 5000);
+    }, 3600000);
     return () => clearInterval(interval);
   }, []);
 
@@ -93,25 +105,21 @@ function FeatureHints() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentFeature(prev => (prev + 1) % features.length);
-    }, 4000);
+    }, 20000);
     return () => clearInterval(interval);
   }, []);
-
-  const Feature = features[currentFeature];
 
   return (
     <AnimatePresence mode="wait">
       <motion.div 
         key={currentFeature}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -20 }}
         transition={{ duration: 0.4 }}
-        className="flex items-center justify-start gap-4"
       >
-        <Feature.icon className="w-8 h-8 text-cyan-400" />
-        <p className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
-          {Feature.text}
+        <p className="text-xs sm:text-sm font-medium bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent whitespace-nowrap">
+          {features[currentFeature]}
         </p>
       </motion.div>
     </AnimatePresence>
