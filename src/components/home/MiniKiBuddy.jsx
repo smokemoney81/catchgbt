@@ -193,13 +193,28 @@ export default function MiniKiBuddy() {
         <div ref={messagesEndRef} />
       </div>
 
-      {messages.length === 1 && (
+      {messages.length === 1 && !isLoading && (
         <div className="px-3 pb-2 flex flex-wrap gap-2">
           {EXAMPLE_QUESTIONS.map((q, i) => (
             <button
               key={i}
-              onClick={() => setInput(q)}
-              className="text-xs px-3 py-1.5 rounded-full bg-gray-700/60 border border-gray-600/50 text-gray-300 hover:bg-gray-600/60 hover:text-white transition-colors"
+              onClick={async () => {
+                const newMessages = [...messages, { role: "user", content: q }];
+                setMessages(newMessages);
+                setInput("");
+                setIsLoading(true);
+                try {
+                  const res = await catchgbtChat({ messages: newMessages, context: 'dashboard', userLocation: userLocation || null });
+                  const response = res?.data?.reply || "Ich konnte keine Antwort generieren.";
+                  setMessages(prev => [...prev, { role: "assistant", content: response }]);
+                  if (voiceEnabled && response) await speakText(response);
+                } catch {
+                  setMessages(prev => [...prev, { role: "assistant", content: "Entschuldigung, bitte erneut versuchen." }]);
+                } finally {
+                  setIsLoading(false);
+                }
+              }}
+              className="text-xs px-3 py-1.5 rounded-full bg-gray-700/60 border border-gray-600/50 text-gray-300 hover:bg-cyan-700/40 hover:border-cyan-500/50 hover:text-white transition-colors"
             >
               {q}
             </button>
