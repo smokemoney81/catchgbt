@@ -187,14 +187,20 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
                 {menuItems.map((item, idx) => {
                   // Kategorie-Header
                   if (item.type === "header") {
+                    const label = item.label || t(item.key);
                     return (
                       <div key={idx} className="pt-4 pb-2 px-4 flex items-center justify-between">
-                        <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">
-                          {t(item.key)}
+                        <span className={`text-xs font-bold uppercase tracking-wider ${item.key === "nav.event_section" ? "text-amber-400" : "text-cyan-400"}`}>
+                          {label}
                         </span>
                         {item.key === "nav.ai_tools" && (
                           <span className="ml-2 px-2 py-0.5 text-[10px] font-bold rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40 shadow-[0_0_10px_rgba(168,85,247,0.3)]">
                             BETA
+                          </span>
+                        )}
+                        {item.key === "nav.event_section" && (
+                          <span className="ml-2 px-2 py-0.5 text-[10px] font-bold rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                            LIVE
                           </span>
                         )}
                       </div>

@@ -162,7 +162,7 @@ export default function Header({
           </motion.div>
         )}
 
-        {/* Left Side - Menu Button */}
+        {/* Left Side - Menu Button + Event Timer */}
         <div className="flex items-center gap-3 relative z-20">
           <motion.div
             animate={{ 
@@ -195,6 +195,7 @@ export default function Header({
               />
             </Button>
           </motion.div>
+          <EventTimer />
         </div>
 
         {/* Center - Logo/Title */}
