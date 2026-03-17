@@ -823,6 +823,8 @@ export const translations = {
     'nav.ar_view': 'Vody AR',
     'nav.weather': 'Počasí',
     'nav.weather_alerts': 'Upozornění na počasí',
+    'nav.event_section': 'Akce',
+    'nav.events': 'Akce',
     'nav.ai_tools': 'AI Nástroje',
     'nav.ai_chat': 'AI Chat-Buddy',
     'nav.ai_camera': 'AI Kamera & Záběr',
