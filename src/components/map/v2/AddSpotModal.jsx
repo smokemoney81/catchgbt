@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
+import { Spot } from "@/entities/Spot";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { X, MapPin, Save } from "lucide-react";
 import { toast } from "sonner";
 import { useHaptic } from "@/components/utils/HapticFeedback";
+import { useOptimisticMutation } from "@/lib/useOptimisticMutation";
 
 const EMPTY_FORM = { name: "", water_type: "see", notes: "", depth_meters: "", is_favorite: false };
 
@@ -16,19 +16,20 @@ export default function AddSpotModal({ isOpen, onClose, onSave, initialCoords })
   const { triggerHaptic } = useHaptic();
   const [formData, setFormData] = useState(EMPTY_FORM);
 
-  const { mutate, isPending: isSaving } = useMutation({
-    mutationFn: (spotData) => base44.entities.Spot.create(spotData),
-    onMutate: () => {
-      triggerHaptic('medium');
-      // Optimistically close and reset immediately
-      setFormData(EMPTY_FORM);
-      onClose();
-    },
+  const { mutate, isPending: isSaving } = useOptimisticMutation({
+    queryKey: 'mapSpots',
+    mutationFn: (spotData) => Spot.create(spotData),
+    optimisticUpdate: (oldSpots = [], newSpot) => [
+      { id: `tmp-${Date.now()}`, ...newSpot },
+      ...oldSpots
+    ],
     onSuccess: (_, spotData) => {
       toast.success("Spot erfolgreich gespeichert!", {
         description: `${spotData.name} wurde zur Karte hinzugefuegt`,
       });
       triggerHaptic('success');
+      setFormData(EMPTY_FORM);
+      onClose();
       onSave?.(spotData);
     },
     onError: (error) => {
