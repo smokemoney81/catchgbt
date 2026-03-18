@@ -663,36 +663,7 @@ export default function ProfilePage() {
             </p>
           </div>
 
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="outline"
-                className="w-full border-red-600/50 text-red-400 hover:bg-red-600/10 hover:text-red-300"
-              >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Account löschen
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className="glass-morphism border-gray-800">
-              <AlertDialogHeader>
-                <AlertDialogTitle className="text-red-400">Account wirklich löschen?</AlertDialogTitle>
-                <AlertDialogDescription className="text-gray-300">
-                  Diese Aktion kann nicht rückgängig gemacht werden. Alle deine Fänge, Spots, Einstellungen und persönlichen Daten werden permanent gelöscht.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700">
-                  Abbrechen
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleAccountDeletion}
-                  className="bg-red-600 hover:bg-red-700 text-white"
-                >
-                  Löschung anfragen
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <DeleteAccountDialog />
         </CardContent>
       </Card>
     </div>
