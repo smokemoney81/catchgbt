@@ -4,10 +4,10 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Save, Settings2 } from 'lucide-react';
 import { MobileSelect } from '@/components/ui/mobile-select';
+import { useOptimisticMutation } from '@/lib/useOptimisticMutation';
 
 export default function GeneralSettings() {
     const [settings, setSettings] = useState({ language: 'de', theme: 'dark', units: 'metric' });
-    const [isSaving, setIsSaving] = useState(false);
     const [initialSettings, setInitialSettings] = useState({});
 
     useEffect(() => {
@@ -29,17 +29,24 @@ export default function GeneralSettings() {
         })();
     }, []);
 
-    const handleSave = async () => {
-        setIsSaving(true);
-        try {
-            await User.updateMyUserData({ settings });
-            toast.success("Allgemeine Einstellungen gespeichert!");
+    const settingsMutation = useOptimisticMutation({
+        mutationFn: async (newSettings) => {
+            await User.updateMyUserData({ settings: newSettings });
+            return newSettings;
+        },
+        optimisticUpdate: () => settings,
+        onSuccess: () => {
             setInitialSettings(settings);
-        } catch (error) {
+            toast.success("Allgemeine Einstellungen gespeichert!");
+        },
+        onError: () => {
             toast.error("Fehler beim Speichern der Einstellungen.");
-        } finally {
-            setIsSaving(false);
-        }
+        },
+        invalidateOnSettle: false
+    });
+
+    const handleSave = () => {
+        settingsMutation.mutate(settings);
     };
     
     const hasChanges = JSON.stringify(settings) !== JSON.stringify(initialSettings);
@@ -81,9 +88,9 @@ export default function GeneralSettings() {
                 </div>
             </div>
              <div className="mt-4 flex justify-end">
-                <Button onClick={handleSave} disabled={isSaving || !hasChanges}>
+                <Button onClick={handleSave} disabled={settingsMutation.isPending || !hasChanges}>
                     <Save className="w-4 h-4 mr-2" />
-                    {isSaving ? 'Speichert...' : 'Änderungen speichern'}
+                    {settingsMutation.isPending ? 'Speichert...' : 'Änderungen speichern'}
                 </Button>
             </div>
         </div>

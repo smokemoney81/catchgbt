@@ -3,61 +3,52 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { AlertCircle, Loader2 } from 'lucide-react';
-import { deleteAccount } from '@/functions/deleteAccount';
+import { useOptimisticMutation } from '@/lib/useOptimisticMutation';
+import { toast } from 'sonner';
 
 export default function DeleteAccountSection() {
-  // States: 'idle' | 'step1' | 'step2' | 'deleting' | 'success' | 'error'
   const [step, setStep] = useState('idle');
   const [error, setError] = useState(null);
   const [confirmText, setConfirmText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
 
-  // Open step 1: Warn user
+  const deleteAccountMutation = useOptimisticMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/functions/deleteAccount', { method: 'POST' });
+      const data = await response.json();
+      if (!data.success) throw new Error(data.error || 'Delete failed');
+      return data;
+    },
+    onSuccess: () => {
+      setStep('success');
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 3000);
+    },
+    onError: (err) => {
+      setError(err.message || 'Unbekannter Fehler beim Löschen des Kontos.');
+      setStep('error');
+    },
+    invalidateOnSettle: false
+  });
+
   const handleInitiateDelete = () => {
     setError(null);
     setConfirmText('');
     setStep('step1');
   };
 
-  // Proceed from step 1 to step 2: Require confirmation text
   const handleProceedToStep2 = () => {
     setStep('step2');
   };
 
-  // Execute deletion
-  const handleConfirmDelete = async () => {
+  const handleConfirmDelete = () => {
     if (!confirmText.trim()) {
       setError('Bitte geben Sie die Bestätigung ein, um fortzufahren.');
       return;
     }
-
-    setIsDeleting(true);
-    setError(null);
-
-    try {
-      const response = await deleteAccount({});
-
-      if (!response || !response.success) {
-        throw new Error(response?.error || 'API returned unexpected response');
-      }
-
-      setStep('success');
-
-      // Redirect after 3 seconds
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 3000);
-    } catch (err) {
-      const errorMsg = err?.message || err?.toString?.() || 'Unbekannter Fehler beim Löschen des Kontos.';
-      setError(errorMsg);
-      setStep('error');
-      console.error('[DeleteAccount] Error:', err);
-    } finally {
-      setIsDeleting(false);
-    }
+    deleteAccountMutation.mutate();
   };
 
-  // Close dialogs and reset to idle
   const handleCancel = () => {
     setStep('idle');
     setError(null);
@@ -204,10 +195,10 @@ export default function DeleteAccountSection() {
             </Button>
             <Button
               onClick={handleConfirmDelete}
-              disabled={isDeleting || !confirmText.trim()}
+              disabled={deleteAccountMutation.isPending || !confirmText.trim()}
               className="bg-red-700 hover:bg-red-600 text-white min-h-[44px] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isDeleting ? (
+              {deleteAccountMutation.isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Wird gelöscht...
