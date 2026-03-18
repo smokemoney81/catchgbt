@@ -237,13 +237,13 @@ export default function BiteDetectorSection() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     if (state.roiLine) {
-      ctx.strokeStyle = '#14b8a6';
+      ctx.strokeStyle = 'rgb(34, 211, 238)'; // cyan-400 (accessible on dark mode)
       ctx.lineWidth = 2;
       ctx.strokeRect(state.roiLine.x, state.roiLine.y, state.roiLine.w, state.roiLine.h);
     }
     
     if (state.roiTip) {
-      ctx.strokeStyle = '#f59e0b';
+      ctx.strokeStyle = 'rgb(245, 158, 11)'; // amber-400 (accessible on dark mode)
       ctx.lineWidth = 2;
       ctx.strokeRect(state.roiTip.x, state.roiTip.y, state.roiTip.w, state.roiTip.h);
     }
@@ -645,14 +645,14 @@ export default function BiteDetectorSection() {
 
   // Premium-Check temporär deaktiviert - alle Features frei
   return (
-    <Card className="glass-morphism border-gray-800 rounded-2xl">
+    <Card className="glass-morphism border-border rounded-2xl">
       <CardHeader>
-        <CardTitle className="text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.7)]">
+        <CardTitle className="text-primary drop-shadow-[0_0_12px_rgba(34,211,238,0.7)]">
           KI-Bisserkennung
         </CardTitle>
         {error && (
-            <p className="text-sm text-red-400 mt-2" role="alert" aria-live="assertive">{error}</p>
-          )}
+          <p className="text-sm text-destructive mt-2" role="alert" aria-live="assertive">{error}</p>
+        )}
         {/* Premium-Guthabenanzeige temporär deaktiviert
           {sessionId && user && !user.is_demo_user && (
               <div className="flex items-center gap-1 mt-2 px-2 py-1 bg-gray-800/50 rounded-lg max-w-fit">
@@ -699,7 +699,7 @@ export default function BiteDetectorSection() {
               
               {!running && (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center text-gray-400">
+                  <div className="text-center text-muted-foreground">
                     <Activity className="w-12 h-12 mx-auto mb-2 opacity-50" />
                     <p>Kamera ist aus</p>
                   </div>
