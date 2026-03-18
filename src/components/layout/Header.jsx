@@ -286,7 +286,7 @@ export default function Header({
                         {recentPosts[postIndex].text}
                       </p>
                       <Link to={createPageUrl('Community')}>
-                        <Button size="sm" className="w-full bg-cyan-600 hover:bg-cyan-700 text-xs">
+                        <Button size="sm" className="w-full bg-cyan-600 active:scale-95 active:bg-cyan-700 focus:ring-2 focus:ring-cyan-400 text-xs" aria-label="Zur Community gehen">
                           Zur Community
                         </Button>
                       </Link>
