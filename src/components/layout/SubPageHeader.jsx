@@ -33,9 +33,10 @@ export default function SubPageHeader({ title }) {
           variant="ghost"
           size="icon"
           onClick={handleBack}
+          aria-label="Zurueck"
           className="text-gray-400 hover:text-white"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft aria-hidden="true" className="w-5 h-5" />
         </Button>
         <h1 className="flex-1 text-center text-lg font-semibold text-white pr-10">
           {title || currentPage}
