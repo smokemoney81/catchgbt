@@ -155,17 +155,31 @@ Sei konkret, praxisnah und berechne die optimale Mischung!`;
     }
   };
 
-  const deleteRecipe = async (recipeId) => {
-    try {
-      await base44.entities.BaitRecipe.delete(recipeId);
-      triggerHaptic('warning');
-      toast.success("Rezept gelöscht!");
-      await loadRecipes(); // Reload recipes after deletion
-    } catch (error) {
-      console.error("Failed to delete recipe:", error);
-      toast.error("Fehler beim Löschen des Rezepts");
-    }
-  };
+  const { data: recipes = [] } = useQuery({
+    queryKey: ['baitRecipes'],
+    queryFn: () => base44.entities.BaitRecipe.list('-created_date'),
+  });
+
+  const saveRecipeMutation = useOptimisticMutation({
+    queryKey: 'baitRecipes',
+    mutationFn: (data) => base44.entities.BaitRecipe.create(data),
+    optimisticUpdate: (old = [], data) => [{ id: `tmp-${Date.now()}`, ...data }, ...old],
+    onSuccess: () => {
+      triggerHaptic('success');
+      toast.success(`Rezept gespeichert!`);
+      setRecipeName('');
+      setAiAnalysis('');
+    },
+    onError: () => toast.error('Fehler beim Speichern des Rezepts'),
+  });
+
+  const deleteRecipeMutation = useOptimisticMutation({
+    queryKey: 'baitRecipes',
+    mutationFn: (id) => base44.entities.BaitRecipe.delete(id),
+    optimisticUpdate: (old = [], id) => old.filter((r) => r.id !== id),
+    onSuccess: () => { triggerHaptic('warning'); toast.success('Rezept geloescht!'); },
+    onError: () => toast.error('Fehler beim Loeschen des Rezepts'),
+  });
 
   const resetMix = () => {
     setMix(Object.keys(mix).reduce((acc, key) => ({ ...acc, [key]: 0 }), {}));
