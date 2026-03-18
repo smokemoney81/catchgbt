@@ -14,6 +14,7 @@ import FishingRecommendationCard from "@/components/dashboard/FishingRecommendat
 import { useQueryClient } from "@tanstack/react-query";
 import { usePredictivePrefetch } from "@/hooks/usePredictivePrefetch";
 import PageContainer from "@/components/layout/PageContainer";
+import VoiceOverlay from "@/components/layout/VoiceOverlay";
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
