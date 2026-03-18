@@ -76,7 +76,7 @@ export default function ShopPage() {
         <Card className="glass-morphism border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 to-blue-500/10">
           <CardContent className="p-6 text-center">
             <h3 className="text-lg font-semibold text-cyan-400 mb-2 drop-shadow-[0_0_10px_rgba(34,211,238,0.7)]">
-              Premium-Funktionen bereits verfügbar!
+              Premium-Funktionen verfuegbar
             </h3>
             <p className="text-gray-300 mb-4">
               Während wir am Shop arbeiten, kannst du bereits jetzt Premium-Zeit kaufen und alle KI-Features nutzen.
