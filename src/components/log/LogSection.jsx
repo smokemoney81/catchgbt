@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Catch, Spot, User } from "@/entities/all";
+import React, { useMemo, useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { base44 } from "@/api/base44Client";
 import { UploadFile, ExtractDataFromUploadedFile } from "@/integrations/Core";
 import { toast } from "sonner";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,254 +11,250 @@ import SwipeToRefresh from "@/components/utils/SwipeToRefresh";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Camera, Edit2, Filter, MapPin, Ruler, Trash2, Upload, Weight, X, Loader2 } from "lucide-react";
 import { getGuestCatches, addGuestCatch, updateGuestCatch, deleteGuestCatch } from "@/components/utils/guestMode";
-import { base44 } from "@/api/base44Client";
 import { fetchCatchesWithFallback, fetchSpotsWithFallback } from "@/components/utils/offlineDataCache";
 
 const PAGE_SIZE = 20;
-
-const calculateCatchCredits = (species, lengthCm) => {
-  const rarityMultiplier = { 'Hecht': 1.5, 'Zander': 1.4, 'Wels': 2.0, 'Forelle': 1.2, 'Karpfen': 1.3, 'Barsch': 1.0, 'Brassen': 0.8, 'Rotauge': 0.7 };
-  const speciesMultiplier = rarityMultiplier[species] || 1.0;
-  const sizeBonus = lengthCm ? Math.min(lengthCm / 10, 10) : 1;
-  return Math.min(Math.max(Math.round(100 * speciesMultiplier * sizeBonus), 100), 1000);
+const EMPTY_FORM = {
+  species: "", length_cm: "", weight_kg: "", spot_id: "",
+  bait_used: "", notes: "", catch_time: new Date().toISOString().slice(0, 16), photo_url: "", is_released: false
 };
 
 export default function LogSection() {
   const queryClient = useQueryClient();
   const [filters, setFilters] = useState({ species: "all", spot: "all", from: "", to: "" });
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({
-    species: "", length_cm: "", weight_kg: "", spot_id: "", bait_used: "", notes: "",
-    catch_time: new Date().toISOString().slice(0, 16), photo_url: "", is_released: false
-  });
+  const [form, setForm] = useState(EMPTY_FORM);
   const [uploading, setUploading] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
   const [page, setPage] = useState(1);
 
-  // Resolve guest status once
-  useEffect(() => {
-    window.dispatchEvent(new CustomEvent('kiBuddyFunctionCall', {
-      detail: { functionName: 'logbook', context: { timestamp: Date.now() } }
-    }));
-    base44.auth.me().then(() => setIsGuest(false)).catch(() => setIsGuest(true));
-  }, []);
-
-  // React Query: catches
-  const { data: catches = [], isFetching: isFromCache } = useQuery({
-    queryKey: ['catches'],
+  // --- Queries ---
+  const { data: catches = [], isLoading: catchesLoading } = useQuery({
+    queryKey: ["catches"],
     queryFn: async () => {
-      if (isGuest) return getGuestCatches();
-      const { data } = await fetchCatchesWithFallback(() => Catch.list("-catch_time", PAGE_SIZE));
-      return data;
-    },
-    enabled: true,
-    staleTime: 30_000,
-  });
-
-  // React Query: spots
-  const { data: spots = [] } = useQuery({
-    queryKey: ['spots'],
-    queryFn: async () => {
-      const { data } = await fetchSpotsWithFallback(() => Spot.list());
-      return data;
-    },
-    staleTime: 60_000,
-  });
-
-  const hasMore = catches.length === PAGE_SIZE * page;
-
-  const loadMore = async () => {
-    const { data: more } = await fetchCatchesWithFallback(
-      () => Catch.list("-catch_time", PAGE_SIZE, page * PAGE_SIZE)
-    );
-    queryClient.setQueryData(['catches'], prev => [...(prev || []), ...more]);
-    setPage(p => p + 1);
-  };
-
-  // Create mutation with optimistic update
-  const createMutation = useMutation({
-    mutationFn: (payload) => Catch.create(payload),
-    onMutate: async (payload) => {
-      await queryClient.cancelQueries({ queryKey: ['catches'] });
-      const previous = queryClient.getQueryData(['catches']);
-      const optimistic = { ...payload, id: `temp-${Date.now()}` };
-      queryClient.setQueryData(['catches'], old => [optimistic, ...(old || [])]);
-      return { previous };
-    },
-    onSuccess: async (newCatch, payload) => {
-      // Replace optimistic entry with real one
-      queryClient.setQueryData(['catches'], old =>
-        (old || []).map(c => c.id?.toString().startsWith('temp-') ? newCatch : c)
-      );
       try {
-        const user = await User.me();
-        const credits = calculateCatchCredits(payload.species, parseFloat(payload.length_cm));
-        await User.updateMyUserData({
-          credits: (user.credits || 0) + credits,
-          total_earned: (user.total_earned || 0) + credits
-        });
-        toast.success(`Fang gespeichert! ${payload.species} (${payload.length_cm || 'unbekannt'} cm) – +${credits} Credits erhalten.`);
+        await base44.auth.me();
+        setIsGuest(false);
+        const { data } = await fetchCatchesWithFallback(
+          () => base44.entities.Catch.list("-catch_time", PAGE_SIZE)
+        );
+        return data;
       } catch {
-        toast.success("Fang gespeichert, aber Credits konnten nicht gutgeschrieben werden.");
+        setIsGuest(true);
+        return getGuestCatches();
       }
     },
-    onError: (_err, payload, ctx) => {
-      queryClient.setQueryData(['catches'], ctx.previous);
-      const q = JSON.parse(localStorage.getItem("fishmaster_catch_queue") || "[]");
-      q.push(payload);
-      localStorage.setItem("fishmaster_catch_queue", JSON.stringify(q));
-      toast.info("Offline gespeichert - wird synchronisiert, sobald Internet verfuegbar ist.");
+  });
+
+  const { data: spots = [] } = useQuery({
+    queryKey: ["spots"],
+    queryFn: async () => {
+      try {
+        const { data } = await fetchSpotsWithFallback(() => base44.entities.Spot.list());
+        return data;
+      } catch {
+        return [];
+      }
     },
   });
 
-  // Update mutation with optimistic update
+  // --- Mutations with optimistic updates ---
+  const createMutation = useMutation({
+    mutationFn: (payload) => base44.entities.Catch.create(payload),
+    onMutate: async (payload) => {
+      await queryClient.cancelQueries({ queryKey: ["catches"] });
+      const previous = queryClient.getQueryData(["catches"]);
+      const optimistic = { id: `tmp-${Date.now()}`, ...payload };
+      queryClient.setQueryData(["catches"], (old = []) => [optimistic, ...old]);
+      return { previous };
+    },
+    onError: (_err, _payload, context) => {
+      queryClient.setQueryData(["catches"], context.previous);
+      toast.error("Fehler beim Speichern.");
+    },
+    onSuccess: (newCatch) => {
+      queryClient.setQueryData(["catches"], (old = []) =>
+        old.map((c) => (c.id?.startsWith("tmp-") ? newCatch : c))
+      );
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["catches"] }),
+  });
+
   const updateMutation = useMutation({
-    mutationFn: ({ id, payload }) => Catch.update(id, payload),
+    mutationFn: ({ id, payload }) => base44.entities.Catch.update(id, payload),
     onMutate: async ({ id, payload }) => {
-      await queryClient.cancelQueries({ queryKey: ['catches'] });
-      const previous = queryClient.getQueryData(['catches']);
-      queryClient.setQueryData(['catches'], old =>
-        (old || []).map(c => c.id === id ? { ...c, ...payload } : c)
+      await queryClient.cancelQueries({ queryKey: ["catches"] });
+      const previous = queryClient.getQueryData(["catches"]);
+      queryClient.setQueryData(["catches"], (old = []) =>
+        old.map((c) => (c.id === id ? { ...c, ...payload } : c))
       );
       return { previous };
     },
-    onSuccess: () => toast.success("Fang erfolgreich aktualisiert."),
-    onError: (_err, _vars, ctx) => {
-      queryClient.setQueryData(['catches'], ctx.previous);
-      toast.error("Aktualisierung fehlgeschlagen.");
+    onError: (_err, _vars, context) => {
+      queryClient.setQueryData(["catches"], context.previous);
+      toast.error("Fehler beim Aktualisieren.");
     },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["catches"] }),
   });
 
-  // Delete mutation with optimistic update
   const deleteMutation = useMutation({
-    mutationFn: (id) => Catch.delete(id),
+    mutationFn: (id) => base44.entities.Catch.delete(id),
     onMutate: async (id) => {
-      await queryClient.cancelQueries({ queryKey: ['catches'] });
-      const previous = queryClient.getQueryData(['catches']);
-      queryClient.setQueryData(['catches'], old => (old || []).filter(c => c.id !== id));
+      await queryClient.cancelQueries({ queryKey: ["catches"] });
+      const previous = queryClient.getQueryData(["catches"]);
+      queryClient.setQueryData(["catches"], (old = []) => old.filter((c) => c.id !== id));
       return { previous };
     },
-    onError: (_err, _id, ctx) => {
-      queryClient.setQueryData(['catches'], ctx.previous);
-      toast.error("Loeschen fehlgeschlagen.");
+    onError: (_err, _id, context) => {
+      queryClient.setQueryData(["catches"], context.previous);
+      toast.error("Fehler beim Loeschen.");
     },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["catches"] }),
   });
 
-  const speciesList = useMemo(() => Array.from(new Set(catches.map(c => c.species).filter(Boolean))), [catches]);
+  // --- Helpers ---
+  const buildPayload = () => ({
+    ...form,
+    length_cm: form.length_cm ? parseFloat(form.length_cm) : null,
+    weight_kg: form.weight_kg ? parseFloat(form.weight_kg) : null,
+    catch_time: new Date(form.catch_time).toISOString(),
+    points_earned: form.length_cm ? (1 + Math.floor(parseFloat(form.length_cm) / 10)) : 1,
+  });
 
-  const filtered = useMemo(() => {
-    const fromDate = filters.from ? new Date(filters.from) : null;
-    const toDate = filters.to ? new Date(filters.to) : null;
-    return catches.filter(c => {
-      const date = new Date(c.catch_time);
-      return (filters.species === "all" || c.species === filters.species) &&
-             (filters.spot === "all" || c.spot_id === filters.spot) &&
-             (!fromDate || date >= fromDate) &&
-             (!toDate || date <= toDate);
-    });
-  }, [catches, filters]);
-
-  const refreshData = () => queryClient.invalidateQueries({ queryKey: ['catches'] });
+  const calculateCatchCredits = (species, lengthCm) => {
+    const rarityMap = { Hecht: 1.5, Zander: 1.4, Wels: 2.0, Forelle: 1.2, Karpfen: 1.3, Barsch: 1.0, Brassen: 0.8, Rotauge: 0.7 };
+    const sizeBonus = lengthCm ? Math.min(lengthCm / 10, 10) : 1;
+    return Math.min(Math.max(Math.round(100 * (rarityMap[species] || 1.0) * sizeBonus), 100), 1000);
+  };
 
   const openNew = () => {
     setEditing("new");
-    setForm({ species: "", length_cm: "", weight_kg: "", spot_id: "", bait_used: "", notes: "", catch_time: new Date().toISOString().slice(0, 16), photo_url: "" });
+    setForm({ ...EMPTY_FORM, catch_time: new Date().toISOString().slice(0, 16) });
   };
-  const startEdit = (c) => { setEditing(c.id); setForm({ ...c, catch_time: new Date(c.catch_time).toISOString().slice(0, 16) }); };
+  const startEdit = (c) => {
+    setEditing(c.id);
+    setForm({ ...c, catch_time: new Date(c.catch_time).toISOString().slice(0, 16) });
+  };
   const cancelEdit = () => setEditing(null);
 
   const save = async () => {
-    const payload = {
-      ...form,
-      length_cm: form.length_cm ? parseFloat(form.length_cm) : null,
-      weight_kg: form.weight_kg ? parseFloat(form.weight_kg) : null,
-      catch_time: new Date(form.catch_time).toISOString(),
-      points_earned: form.length_cm ? (1 + Math.floor(parseFloat(form.length_cm) / 10)) : 1
-    };
-
+    const payload = buildPayload();
     if (isGuest) {
       if (editing === "new") { addGuestCatch(payload); toast.success("Fang gespeichert (Gastmodus)."); }
       else { updateGuestCatch(editing, payload); toast.success("Fang aktualisiert."); }
-      queryClient.invalidateQueries({ queryKey: ['catches'] });
+      queryClient.invalidateQueries({ queryKey: ["catches"] });
       setEditing(null);
       return;
     }
-
-    if (editing === "new") {
-      createMutation.mutate(payload);
-    } else {
-      updateMutation.mutate({ id: editing, payload });
+    try {
+      if (editing === "new") {
+        createMutation.mutate(payload);
+        setEditing(null);
+        try {
+          const user = await base44.auth.me();
+          const credits = calculateCatchCredits(form.species, parseFloat(form.length_cm));
+          await base44.auth.updateMe({ credits: (user.credits || 0) + credits, total_earned: (user.total_earned || 0) + credits });
+          toast.success(`Fang gespeichert! +${credits} Credits.`);
+        } catch {
+          toast.success("Fang gespeichert.");
+        }
+      } else {
+        updateMutation.mutate({ id: editing, payload });
+        setEditing(null);
+        toast.success("Fang aktualisiert.");
+      }
+    } catch {
+      const q = JSON.parse(localStorage.getItem("fishmaster_catch_queue") || "[]");
+      q.push(payload);
+      localStorage.setItem("fishmaster_catch_queue", JSON.stringify(q));
+      toast.info("Offline gespeichert - wird synchronisiert.");
+      setEditing(null);
     }
-    setEditing(null);
   };
 
   const remove = (c) => {
-    if (isGuest) {
-      deleteGuestCatch(c.id);
-      queryClient.invalidateQueries({ queryKey: ['catches'] });
-      return;
-    }
+    if (isGuest) { deleteGuestCatch(c.id); queryClient.invalidateQueries({ queryKey: ["catches"] }); return; }
     deleteMutation.mutate(c.id);
   };
 
   const uploadPhoto = async (file) => {
     setUploading(true);
     const { file_url } = await UploadFile({ file });
-    setForm(prev => ({ ...prev, photo_url: file_url }));
+    setForm((prev) => ({ ...prev, photo_url: file_url }));
     setUploading(false);
   };
 
   const importImageAndExtract = async (imageFile) => {
     setIsExtracting(true);
     setUploading(true);
-
     try {
       const { file_url } = await UploadFile({ file: imageFile });
-      
       const extractionSchema = {
         type: "object",
         properties: {
-          species: { type: "string", description: "Fischart, z.B. Hecht, Zander, Karpfen. Falls nicht eindeutig, den häufigsten Fisch in Deutschland oder 'Unbekannt' verwenden." },
-          length_cm: { type: "number", description: "Länge des Fisches in Zentimetern. Nur Zahlen." },
-          weight_kg: { type: "number", description: "Gewicht des Fisches in Kilogramm. Nur Zahlen." },
-          catch_time: { type: "string", format: "date-time", description: "Datum und Uhrzeit des Fangs im ISO 8601 Format (z.B. 2024-01-15T10:30:00). Falls nur Datum vorhanden, Uhrzeit auf 12:00:00 setzen. Falls nur Uhrzeit vorhanden, heutiges Datum verwenden." },
-          bait_used: { type: "string", description: "Verwendeter Köder, z.B. Gummifisch, Wurm, Blinker." },
-          notes: { type: "string", description: "Zusätzliche Notizen zum Fang." }
+          species: { type: "string" },
+          length_cm: { type: "number" },
+          weight_kg: { type: "number" },
+          catch_time: { type: "string", format: "date-time" },
+          bait_used: { type: "string" },
+          notes: { type: "string" },
         },
-        required: ["species"]
+        required: ["species"],
       };
-
       const { output } = await ExtractDataFromUploadedFile({ file_url, json_schema: extractionSchema });
-
       if (output) {
-        const catchTime = output.catch_time ? new Date(output.catch_time).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16);
         setForm({
           species: output.species || "",
           length_cm: output.length_cm || "",
           weight_kg: output.weight_kg || "",
           bait_used: output.bait_used || "",
           notes: output.notes || "",
-          catch_time: catchTime,
+          catch_time: output.catch_time ? new Date(output.catch_time).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16),
           photo_url: file_url,
           spot_id: "",
-          is_released: false
+          is_released: false,
         });
         setEditing("new");
       } else {
-        toast.error("Daten konnten nicht extrahiert werden. Bitte manuell eintragen.");
+        toast.error("Daten konnten nicht extrahiert werden.");
         openNew();
-        setForm(prev => ({ ...prev, photo_url: file_url }));
+        setForm((prev) => ({ ...prev, photo_url: file_url }));
       }
-    } catch (error) {
-      console.error("Fehler beim Import:", error);
-      toast.error("Ein Fehler ist aufgetreten. Bitte versuche es erneut.");
+    } catch {
+      toast.error("Ein Fehler ist aufgetreten.");
     } finally {
       setIsExtracting(false);
       setUploading(false);
     }
   };
 
+  const refreshData = () => queryClient.invalidateQueries({ queryKey: ["catches"] });
+
+  const hasMore = catches.length === PAGE_SIZE * page;
+  const loadMore = async () => {
+    setPage((p) => p + 1);
+    const { data: more } = await fetchCatchesWithFallback(
+      () => base44.entities.Catch.list("-catch_time", PAGE_SIZE, PAGE_SIZE * page)
+    );
+    queryClient.setQueryData(["catches"], (old = []) => [...old, ...more]);
+  };
+
+  const speciesList = useMemo(() => Array.from(new Set(catches.map((c) => c.species).filter(Boolean))), [catches]);
+
+  const filtered = useMemo(() => {
+    const fromDate = filters.from ? new Date(filters.from) : null;
+    const toDate = filters.to ? new Date(filters.to) : null;
+    return catches.filter((c) => {
+      const date = new Date(c.catch_time);
+      return (
+        (filters.species === "all" || c.species === filters.species) &&
+        (filters.spot === "all" || c.spot_id === filters.spot) &&
+        (!fromDate || date >= fromDate) &&
+        (!toDate || date <= toDate)
+      );
+    });
+  }, [catches, filters]);
 
   return (
     <Card className="glass-morphism border-gray-800 rounded-2xl">
@@ -268,44 +264,19 @@ export default function LogSection() {
             <CardTitle className="text-white">Fangbuch</CardTitle>
             {isGuest && (
               <p className="text-xs text-amber-400 mt-1">
-                Gastmodus - Fänge werden 24 Stunden lokal gespeichert.{' '}
-                <button
-                  onClick={() => base44.auth.redirectToLogin()}
-                  className="underline font-semibold hover:text-amber-300"
-                >
+                Gastmodus - Faenge werden 24 Stunden lokal gespeichert.{" "}
+                <button onClick={() => base44.auth.redirectToLogin()} className="underline font-semibold hover:text-amber-300">
                   Anmelden
-                </button>{' '}
-                um Fänge dauerhaft zu speichern.
-              </p>
-            )}
-            {isFromCache && !isGuest && (
-              <p className="text-xs text-orange-400 mt-1">
-                Offline-Modus - Zeige zuletzt gespeicherte Faenge. Neue Eintraege werden automatisch synchronisiert.
+                </button>
               </p>
             )}
           </div>
           <div className="flex flex-wrap gap-2">
             {!isGuest && (
               <label className="inline-flex items-center">
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  className="hidden" 
-                  onChange={(e) => e.target.files[0] && importImageAndExtract(e.target.files[0])} 
-                  disabled={isExtracting || uploading}
-                />
-                <Button 
-                  as="span" 
-                  variant="outline" 
-                  size="sm" 
-                  className="cursor-pointer flex items-center"
-                  disabled={isExtracting || uploading}
-                >
-                  {isExtracting ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <Upload className="w-4 h-4 mr-2" />
-                  )}
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files[0] && importImageAndExtract(e.target.files[0])} disabled={isExtracting || uploading} />
+                <Button as="span" variant="outline" size="sm" className="cursor-pointer flex items-center" disabled={isExtracting || uploading}>
+                  {isExtracting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
                   Bild importieren
                 </Button>
               </label>
@@ -314,34 +285,32 @@ export default function LogSection() {
           </div>
         </div>
       </CardHeader>
+
       <CardContent>
         {/* Filter */}
         <div className="flex flex-wrap gap-3 items-end mb-4">
-          <div className="flex items-center gap-2"><Filter className="w-4 h-4 text-gray-400" /><span className="text-sm text-gray-300">Filter</span></div>
+          <div className="flex items-center gap-2">
+            <Filter className="w-4 h-4 text-gray-400" />
+            <span className="text-sm text-gray-300">Filter</span>
+          </div>
           <MobileSelect
             value={filters.species}
-            onValueChange={(v) => setFilters(prev => ({ ...prev, species: v }))}
+            onValueChange={(v) => setFilters((prev) => ({ ...prev, species: v }))}
             placeholder="Art"
             label="Fischart filtern"
-            options={[
-              { value: 'all', label: 'Alle Arten' },
-              ...speciesList.map(s => ({ value: s, label: s }))
-            ]}
+            options={[{ value: "all", label: "Alle Arten" }, ...speciesList.map((s) => ({ value: s, label: s }))]}
             className="w-40 bg-gray-800/50 border-gray-700 text-white"
           />
           <MobileSelect
             value={filters.spot}
-            onValueChange={(v) => setFilters(prev => ({ ...prev, spot: v }))}
+            onValueChange={(v) => setFilters((prev) => ({ ...prev, spot: v }))}
             placeholder="Spot"
             label="Spot filtern"
-            options={[
-              { value: 'all', label: 'Alle Spots' },
-              ...spots.map(s => ({ value: s.id, label: s.name }))
-            ]}
+            options={[{ value: "all", label: "Alle Spots" }, ...spots.map((s) => ({ value: s.id, label: s.name }))]}
             className="w-40 bg-gray-800/50 border-gray-700 text-white"
           />
-          <Input type="datetime-local" value={filters.from} onChange={(e)=>setFilters(prev=>({...prev, from: e.target.value}))} className="bg-gray-800/50 border-gray-700 text-white" />
-          <Input type="datetime-local" value={filters.to} onChange={(e)=>setFilters(prev=>({...prev, to: e.target.value}))} className="bg-gray-800/50 border-gray-700 text-white" />
+          <Input type="datetime-local" value={filters.from} onChange={(e) => setFilters((prev) => ({ ...prev, from: e.target.value }))} className="bg-gray-800/50 border-gray-700 text-white" />
+          <Input type="datetime-local" value={filters.to} onChange={(e) => setFilters((prev) => ({ ...prev, to: e.target.value }))} className="bg-gray-800/50 border-gray-700 text-white" />
           <Badge variant="outline" className="ml-auto">{filtered.length} von {catches.length}</Badge>
         </div>
 
@@ -349,26 +318,26 @@ export default function LogSection() {
         {editing && (
           <div className="p-4 rounded-xl bg-gray-800/40 mb-4">
             <div className="grid md:grid-cols-2 gap-3">
-              <Input placeholder="Art*" value={form.species} onChange={(e)=>setForm({...form, species: e.target.value})} className="bg-gray-800/50 border-gray-700 text-white" />
+              <Input placeholder="Art*" value={form.species} onChange={(e) => setForm({ ...form, species: e.target.value })} className="bg-gray-800/50 border-gray-700 text-white" />
               <MobileSelect
                 value={form.spot_id}
                 onValueChange={(v) => setForm({ ...form, spot_id: v })}
                 placeholder="Spot"
-                label="Spot auswählen"
-                options={spots.map(s => ({ value: s.id, label: s.name }))}
+                label="Spot auswaehlen"
+                options={spots.map((s) => ({ value: s.id, label: s.name }))}
                 className="bg-gray-800/50 border-gray-700 text-white"
               />
-              <Input type="number" placeholder="Länge (cm)" value={form.length_cm} onChange={(e)=>setForm({...form, length_cm: e.target.value})} className="bg-gray-800/50 border-gray-700 text-white" />
-              <Input type="number" step="0.1" placeholder="Gewicht (kg)" value={form.weight_kg} onChange={(e)=>setForm({...form, weight_kg: e.target.value})} className="bg-gray-800/50 border-gray-700 text-white" />
-              <Input placeholder="Köder" value={form.bait_used} onChange={(e)=>setForm({...form, bait_used: e.target.value})} className="bg-gray-800/50 border-gray-700 text-white" />
-              <Input type="datetime-local" value={form.catch_time} onChange={(e)=>setForm({...form, catch_time: e.target.value})} className="bg-gray-800/50 border-gray-700 text-white" />
-              <Input placeholder="Notizen" value={form.notes} onChange={(e)=>setForm({...form, notes: e.target.value})} className="bg-gray-800/50 border-gray-700 text-white md:col-span-2" />
+              <Input type="number" placeholder="Laenge (cm)" value={form.length_cm} onChange={(e) => setForm({ ...form, length_cm: e.target.value })} className="bg-gray-800/50 border-gray-700 text-white" />
+              <Input type="number" step="0.1" placeholder="Gewicht (kg)" value={form.weight_kg} onChange={(e) => setForm({ ...form, weight_kg: e.target.value })} className="bg-gray-800/50 border-gray-700 text-white" />
+              <Input placeholder="Koeder" value={form.bait_used} onChange={(e) => setForm({ ...form, bait_used: e.target.value })} className="bg-gray-800/50 border-gray-700 text-white" />
+              <Input type="datetime-local" value={form.catch_time} onChange={(e) => setForm({ ...form, catch_time: e.target.value })} className="bg-gray-800/50 border-gray-700 text-white" />
+              <Input placeholder="Notizen" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} className="bg-gray-800/50 border-gray-700 text-white md:col-span-2" />
               <div className="md:col-span-2 flex flex-col gap-2">
                 <label className="inline-flex items-center">
-                  <input type="file" accept="image/*" className="hidden" onChange={(e)=> e.target.files[0] && uploadPhoto(e.target.files[0])} disabled={uploading} />
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files[0] && uploadPhoto(e.target.files[0])} disabled={uploading} />
                   <Button as="span" variant="outline" size="sm" className="cursor-pointer" disabled={uploading}>
                     {uploading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Camera className="w-4 h-4 mr-2" />}
-                    Foto {form.photo_url ? 'ändern' : 'hochladen'}
+                    Foto {form.photo_url ? "aendern" : "hochladen"}
                   </Button>
                 </label>
                 {form.photo_url && <img src={form.photo_url} alt="Fang" className="mt-2 h-24 rounded-xl object-cover" />}
@@ -381,40 +350,35 @@ export default function LogSection() {
           </div>
         )}
 
-        {/* Liste */}
+        {/* List */}
         <SwipeToRefresh onRefresh={refreshData}>
           <div className="space-y-3">
-          {filtered.map(c => (
-            <div key={c.id} className="p-4 rounded-xl bg-gray-800/40 flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <div className="font-semibold text-white">{c.species}</div>
-                <div className="flex flex-wrap gap-3 text-sm text-gray-300 mt-1">
-                  <div className="flex items-center gap-1"><Calendar className="w-4 h-4" />{new Date(c.catch_time).toLocaleString('de-DE')}</div>
-                  {c.length_cm && <div className="flex items-center gap-1"><Ruler className="w-4 h-4" />{c.length_cm} cm</div>}
-                  {c.weight_kg && <div className="flex items-center gap-1"><Weight className="w-4 h-4" />{c.weight_kg} kg</div>}
-                  {c.spot_id && <div className="flex items-center gap-1"><MapPin className="w-4 h-4" />{spots.find(s => s.id === c.spot_id)?.name}</div>}
+            {catchesLoading && <div className="text-gray-400 text-sm">Lade Faenge...</div>}
+            {filtered.map((c) => (
+              <div key={c.id} className="p-4 rounded-xl bg-gray-800/40 flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <div className="font-semibold text-white">{c.species}</div>
+                  <div className="flex flex-wrap gap-3 text-sm text-gray-300 mt-1">
+                    <div className="flex items-center gap-1"><Calendar className="w-4 h-4" />{new Date(c.catch_time).toLocaleString("de-DE")}</div>
+                    {c.length_cm && <div className="flex items-center gap-1"><Ruler className="w-4 h-4" />{c.length_cm} cm</div>}
+                    {c.weight_kg && <div className="flex items-center gap-1"><Weight className="w-4 h-4" />{c.weight_kg} kg</div>}
+                    {c.spot_id && <div className="flex items-center gap-1"><MapPin className="w-4 h-4" />{spots.find((s) => s.id === c.spot_id)?.name}</div>}
+                  </div>
+                  {c.bait_used && <div className="text-gray-400 text-sm mt-1">Koeder: {c.bait_used}</div>}
+                  {c.notes && <div className="text-gray-300 text-sm mt-1">{c.notes}</div>}
                 </div>
-                {c.bait_used && <div className="text-gray-400 text-sm mt-1">Köder: {c.bait_used}</div>}
-                {c.notes && <div className="text-gray-300 text-sm mt-1">{c.notes}</div>}
+                <div className="flex items-center gap-2">
+                  <Button size="icon" variant="outline" onClick={() => startEdit(c)}><Edit2 className="w-4 h-4" /></Button>
+                  <Button size="icon" variant="destructive" onClick={() => remove(c)}><Trash2 className="w-4 h-4" /></Button>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Button size="icon" variant="outline" onClick={()=>startEdit(c)}><Edit2 className="w-4 h-4" /></Button>
-                <Button size="icon" variant="destructive" onClick={()=>remove(c)}><Trash2 className="w-4 h-4" /></Button>
-              </div>
-            </div>
-          ))}
-          {filtered.length === 0 && <div className="text-gray-400">Keine Fänge gefunden.</div>}
-          {hasMore && !filters.species && !filters.from && !filters.to && filters.spot === "all" && (
-            <Button
-              onClick={loadMore}
-              variant="outline"
-              className="w-full border-gray-700 text-gray-300 hover:text-white"
-              disabled={loadingMore}
-            >
-              {loadingMore ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-              Mehr laden
-            </Button>
-          )}
+            ))}
+            {filtered.length === 0 && !catchesLoading && <div className="text-gray-400">Keine Faenge gefunden.</div>}
+            {hasMore && !filters.species && !filters.from && !filters.to && filters.spot === "all" && (
+              <Button onClick={loadMore} variant="outline" className="w-full border-gray-700 text-gray-300 hover:text-white">
+                Mehr laden
+              </Button>
+            )}
           </div>
         </SwipeToRefresh>
       </CardContent>
