@@ -76,7 +76,16 @@ export default function BiteDetectorSection() {
   // Initialize Web Worker for data processing
   useEffect(() => {
     try {
-      workerRef.current = new Worker(new URL('/workers/echogramProcessor.js', import.meta.url), { type: 'module' });
+      workerRef.current = new Worker('/workers/echogramProcessor.js');
+      
+      workerRef.current.onmessage = (event) => {
+        const { type, result } = event.data;
+        if (type === 'frameProcessed' && result) {
+          setLineScore(Math.abs(result.z || 0));
+        }
+      };
+      
+      workerRef.current.postMessage({ command: 'init', payload: { reset: true } });
     } catch (e) {
       console.warn('Web Worker not available, using main thread:', e);
     }
@@ -192,16 +201,30 @@ export default function BiteDetectorSection() {
     const video = videoRef.current;
     const procCanvas = procCanvasRef.current;
     const state = stateRef.current;
+    const overlay = overlayRef.current;
     
-    if (!running || !video || !procCanvas) return;
+    if (!running || !video || !procCanvas || !overlay) return;
     
     const pctx = procCanvas.getContext('2d');
     pctx.drawImage(video, 0, 0, procCanvas.width, procCanvas.height);
     
+    const id = pctx.getImageData(0, 0, procCanvas.width, procCanvas.height);
+    
+    if (workerRef.current && state.roiLine) {
+      workerRef.current.postMessage({
+        command: 'processFrame',
+        payload: {
+          imageData: id.data.buffer,
+          rect: { ...state.roiLine, overlayWidth: overlay.width, overlayHeight: overlay.height },
+          procWidth: procCanvas.width,
+          procHeight: procCanvas.height
+        }
+      }, [id.data.buffer]);
+    }
+    
     const { e: eL, z: zL } = energyFor(state.roiLine, state.stLine);
     const { e: eT, z: zT } = energyFor(state.roiTip, state.stTip);
     
-    setLineScore(Math.abs(zL));
     setTipScore(Math.abs(zT));
     
     const armed = (performance.now() - state.lastAlarm) > lockTime * 1000;
@@ -214,7 +237,7 @@ export default function BiteDetectorSection() {
       setTimeout(() => setAlarmActive(false), 600);
     }
     
-    setDebugInfo(`proc=${procCanvas.width}x${procCanvas.height} stride=${STRIDE} zL=${zL.toFixed(2)} zT=${zT.toFixed(2)}`);
+    setDebugInfo(`proc=${procCanvas.width}x${procCanvas.height} stride=${STRIDE} zL=${zL.toFixed(2)} zT=${zT.toFixed(2)} worker=${'active'}`);
   }, [running, kLine, kTip, lockTime, energyFor, beep]);
 
   // requestAnimationFrame-throttled tick for 60fps mobile
