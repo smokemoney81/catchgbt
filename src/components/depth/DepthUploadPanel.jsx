@@ -56,16 +56,18 @@ export default function DepthUploadPanel({ onUploadSuccess }) {
 
         <div>
           <Label className="text-gray-300 text-sm">Geraetetyp</Label>
-          <select
+          <MobileSelect
             value={deviceType}
-            onChange={e => setDeviceType(e.target.value)}
-            className="w-full mt-1 bg-gray-800/50 border border-gray-700 text-white rounded-md px-3 py-2 text-sm"
-          >
-            <option value="echolot">Echolot</option>
-            <option value="gps_logger">GPS-Logger</option>
-            <option value="manual">Manuelle Messung</option>
-            <option value="app">App-Messung</option>
-          </select>
+            onValueChange={setDeviceType}
+            label="Geraetetyp auswaehlen"
+            options={[
+              { value: "echolot", label: "Echolot" },
+              { value: "gps_logger", label: "GPS-Logger" },
+              { value: "manual", label: "Manuelle Messung" },
+              { value: "app", label: "App-Messung" },
+            ]}
+            className="mt-1 bg-gray-800/50 border-gray-700 text-white"
+          />
         </div>
 
         <div>
