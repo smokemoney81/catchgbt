@@ -4,6 +4,7 @@ import { Settings as SettingsIcon, Volume2, VolumeX } from "lucide-react";
 import VoiceSettings from "./VoiceSettings";
 import GeneralSettings from "./GeneralSettings";
 import TickerSettings from "./TickerSettings";
+import DeleteAccountSection from "./DeleteAccountSection";
 import { useSound } from "@/components/utils/SoundManager";
 import { Button } from "@/components/ui/button";
 

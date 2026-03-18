@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import CatchCard from './CatchCard';
 import { Badge } from '@/components/ui/badge';
+import SwipeToRefresh from '@/components/utils/SwipeToRefresh';
 
 function CatchHistory({ catches, isLoading, onEdit, onDelete }) {
   if (isLoading) {
