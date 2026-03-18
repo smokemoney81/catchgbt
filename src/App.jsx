@@ -101,8 +101,10 @@ function App() {
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
         <Router>
-          <NavigationTracker />
-          <AuthenticatedApp />
+          <NavigationProvider>
+            <NavigationTracker />
+            <AuthenticatedApp />
+          </NavigationProvider>
         </Router>
         <Toaster />
         <VisualEditAgent />
