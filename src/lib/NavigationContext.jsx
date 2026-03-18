@@ -1,72 +1,150 @@
 import { createContext, useContext, useState, useCallback, useRef } from 'react';
 
 /**
- * Centralized navigation stack.
+ * Multi-stack Navigation Context
  *
- * Owns the route history list and the slide direction used by PageTransition.
- * NavigationTracker (inside Router) bridges React Router location changes into
- * this context so the context itself never imports Router APIs.
+ * Maintains separate navigation stacks for each bottom tab (Dashboard, Map, Logbook, Profile).
+ * When switching tabs, the context saves the current stack and restores the target tab's stack.
+ * This provides native mobile tab behavior: each tab preserves its own back-stack.
  */
 
 export const ROOT_SEGMENTS = new Set([
   '', 'Dashboard', 'Map', 'Logbook', 'Profile', 'Home', 'Start',
 ]);
 
+const TAB_ROOT_NAMES = ['Dashboard', 'Map', 'Logbook', 'Profile'];
+
 const NavigationContext = createContext({
   stack: [],
   direction: 1,
   canGoBack: false,
   isRootTab: true,
+  currentTab: 'Dashboard',
   pushRoute: () => {},
   popRoute: () => {},
   resetStack: () => {},
+  switchTab: () => {},
+  getTabStack: () => [],
 });
 
 export function NavigationProvider({ children }) {
-  const [stack, setStack] = useState([]);
+  // Map of tab name -> stack array
+  const [tabStacks, setTabStacks] = useState({
+    Dashboard: [],
+    Map: [],
+    Logbook: [],
+    Profile: [],
+  });
+
+  // Currently active tab
+  const [currentTab, setCurrentTab] = useState('Dashboard');
+
+  // Direction for animations
   const [direction, setDirection] = useState(1);
 
-  // Stable ref so event handlers always see latest values without re-registering.
-  const stackRef = useRef(stack);
+  // Stable refs for event handlers
+  const tabStacksRef = useRef(tabStacks);
+  const currentTabRef = useRef(currentTab);
   const directionRef = useRef(direction);
 
+  // Update refs whenever state changes
+  useEffect(() => {
+    tabStacksRef.current = tabStacks;
+  }, [tabStacks]);
+
+  useEffect(() => {
+    currentTabRef.current = currentTab;
+  }, [currentTab]);
+
+  useEffect(() => {
+    directionRef.current = direction;
+  }, [direction]);
+
+  // Get the stack for the current tab
+  const currentStack = tabStacks[currentTab] || [];
+
   const pushRoute = useCallback((pathname) => {
-    setStack(prev => {
-      if (prev[prev.length - 1] === pathname) return prev;
-      const next = [...prev, pathname];
-      stackRef.current = next;
+    setTabStacks(prev => {
+      const tab = currentTabRef.current;
+      const stack = prev[tab] || [];
+
+      // Avoid duplicates at the top of the stack
+      if (stack[stack.length - 1] === pathname) return prev;
+
+      const newStack = [...stack, pathname];
       directionRef.current = 1;
       setDirection(1);
-      return next;
+
+      return {
+        ...prev,
+        [tab]: newStack,
+      };
     });
   }, []);
 
   const popRoute = useCallback(() => {
-    setStack(prev => {
-      if (prev.length <= 1) return prev;
-      const next = prev.slice(0, -1);
-      stackRef.current = next;
+    setTabStacks(prev => {
+      const tab = currentTabRef.current;
+      const stack = prev[tab] || [];
+
+      // Don't pop below 1 item (can't pop the root)
+      if (stack.length <= 1) return prev;
+
+      const newStack = stack.slice(0, -1);
       directionRef.current = -1;
       setDirection(-1);
-      return next;
+
+      return {
+        ...prev,
+        [tab]: newStack,
+      };
     });
   }, []);
 
-  // Hard-reset the stack (e.g. when logging out or switching root tabs).
-  const resetStack = useCallback(() => {
-    setStack([]);
-    stackRef.current = [];
+  // Switch to a different tab
+  const switchTab = useCallback((tabName) => {
+    if (!TAB_ROOT_NAMES.includes(tabName)) return;
+
+    setCurrentTab(tabName);
+    // Switching tabs resets direction to forward
+    directionRef.current = 1;
     setDirection(1);
   }, []);
 
-  const currentPathname = stack[stack.length - 1] ?? '/';
+  // Hard-reset the stack for the current tab (e.g. on logout or explicit reset)
+  const resetStack = useCallback(() => {
+    setTabStacks(prev => ({
+      ...prev,
+      [currentTabRef.current]: [],
+    }));
+    directionRef.current = 1;
+    setDirection(1);
+  }, []);
+
+  // Get the stack for a specific tab (for external querying)
+  const getTabStack = useCallback((tabName) => {
+    return tabStacks[tabName] || [];
+  }, [tabStacks]);
+
+  const currentPathname = currentStack[currentStack.length - 1] ?? '/';
   const currentSegment = currentPathname.replace(/^\//, '').split('/')[0];
   const isRootTab = ROOT_SEGMENTS.has(currentSegment);
-  const canGoBack = stack.length > 1 && !isRootTab;
+  const canGoBack = currentStack.length > 1 && !isRootTab;
 
   return (
     <NavigationContext.Provider
-      value={{ stack, direction, canGoBack, isRootTab, pushRoute, popRoute, resetStack }}
+      value={{
+        stack: currentStack,
+        direction,
+        canGoBack,
+        isRootTab,
+        currentTab,
+        pushRoute,
+        popRoute,
+        resetStack,
+        switchTab,
+        getTabStack,
+      }}
     >
       {children}
     </NavigationContext.Provider>
@@ -76,3 +154,6 @@ export function NavigationProvider({ children }) {
 export function useNavigationContext() {
   return useContext(NavigationContext);
 }
+
+// Re-export useEffect since NavigationProvider uses it
+import { useEffect } from 'react';
