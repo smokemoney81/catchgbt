@@ -8,7 +8,7 @@ import { base44 } from '@/api/base44Client';
 import { UploadFile } from '@/integrations/Core';
 import { User as UserIcon, Camera, Copy, Check, Edit3, Calendar, Clock, MessageSquare, Crown, Link as LinkIcon, Mail, Volume2, AlertTriangle } from 'lucide-react';
 import { toast } from "sonner";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MobileSelect } from "@/components/ui/mobile-select";
 import { Separator } from "@/components/ui/separator";
 import RatingWidget from "@/components/feedback/RatingWidget";
 import {
