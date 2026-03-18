@@ -317,55 +317,51 @@ export default function RulesSection() {
           <Loader2 className="w-8 h-8 animate-spin mx-auto text-emerald-400" />
           <p className="mt-2 text-gray-400">Lade Regeln...</p>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredRules.map((rule) => (
-            <Card key={rule.id} className="glass-morphism border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-lg text-emerald-400">{rule.fish}</CardTitle>
-                <p className="text-sm text-gray-400">{rule.region}</p>
-              </CardHeader>
-              <CardContent className="space-y-3 text-sm">
-                {rule.min_size_cm && (
-                  <div className="flex items-center gap-2">
-                    <Scale className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-200">
-                      Mindestmaß: <b>{rule.min_size_cm} cm</b>
-                    </span>
-                  </div>
-                )}
-                {(rule.closed_from || rule.closed_to) && (
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-gray-400" />
-                    <span className="text-gray-200">
-                      Schonzeit:{" "}
-                      <b>
-                        {rule.closed_from
-                          ? new Date(rule.closed_from).toLocaleDateString()
-                          : "?"}{" "}
-                        -{" "}
-                        {rule.closed_to
-                          ? new Date(rule.closed_to).toLocaleDateString()
-                          : "?"}
-                      </b>
-                    </span>
-                  </div>
-                )}
-                {rule.notes && (
-                  <p className="text-xs text-gray-500 pt-2 border-t border-gray-700">
-                    {rule.notes}
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-          {filteredRules.length === 0 && (
-            <div className="col-span-full text-center py-12">
-              <Fish className="w-12 h-12 mx-auto text-gray-600" />
-              <p className="mt-4 text-gray-400">Keine Regeln für diese Auswahl gefunden.</p>
-            </div>
-          )}
+      ) : filteredRules.length === 0 ? (
+        <div className="text-center py-12">
+          <Fish className="w-12 h-12 mx-auto text-gray-600" />
+          <p className="mt-4 text-gray-400">Keine Regeln fuer diese Auswahl gefunden.</p>
         </div>
+      ) : (
+        <VirtualList
+          height={Math.min(filteredRules.length * 160, 640)}
+          itemCount={filteredRules.length}
+          itemSize={160}
+          width="100%"
+        >
+          {({ index, style }) => {
+            const rule = filteredRules[index];
+            return (
+              <div style={{ ...style, paddingBottom: 12 }}>
+                <Card className="glass-morphism border-gray-800 h-full overflow-hidden">
+                  <CardHeader className="pb-1">
+                    <CardTitle className="text-base text-emerald-400">{rule.fish}</CardTitle>
+                    <p className="text-xs text-gray-400">{rule.region}</p>
+                  </CardHeader>
+                  <CardContent className="space-y-1 text-sm pt-0">
+                    {rule.min_size_cm && (
+                      <div className="flex items-center gap-2">
+                        <Scale className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                        <span className="text-gray-200 text-xs">Mindestmass: <b>{rule.min_size_cm} cm</b></span>
+                      </div>
+                    )}
+                    {(rule.closed_from || rule.closed_to) && (
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                        <span className="text-gray-200 text-xs">
+                          Schonzeit: <b>{rule.closed_from ? new Date(rule.closed_from).toLocaleDateString() : "?"} - {rule.closed_to ? new Date(rule.closed_to).toLocaleDateString() : "?"}</b>
+                        </span>
+                      </div>
+                    )}
+                    {rule.notes && (
+                      <p className="text-xs text-gray-500 pt-1 border-t border-gray-700 truncate">{rule.notes}</p>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            );
+          }}
+        </VirtualList>
       )}
     </div>
   );

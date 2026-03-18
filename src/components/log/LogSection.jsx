@@ -353,30 +353,45 @@ export default function LogSection() {
 
         {/* List */}
         <SwipeToRefresh onRefresh={refreshData}>
-          <div className="space-y-3">
+          <div>
             {catchesLoading && <div className="text-gray-400 text-sm">Lade Faenge...</div>}
-            {filtered.map((c) => (
-              <div key={c.id} className="p-4 rounded-xl bg-gray-800/40 flex items-start justify-between gap-4">
-                <div className="flex-1">
-                  <div className="font-semibold text-white">{c.species}</div>
-                  <div className="flex flex-wrap gap-3 text-sm text-gray-300 mt-1">
-                    <div className="flex items-center gap-1"><Calendar className="w-4 h-4" />{new Date(c.catch_time).toLocaleString("de-DE")}</div>
-                    {c.length_cm && <div className="flex items-center gap-1"><Ruler className="w-4 h-4" />{c.length_cm} cm</div>}
-                    {c.weight_kg && <div className="flex items-center gap-1"><Weight className="w-4 h-4" />{c.weight_kg} kg</div>}
-                    {c.spot_id && <div className="flex items-center gap-1"><MapPin className="w-4 h-4" />{spots.find((s) => s.id === c.spot_id)?.name}</div>}
-                  </div>
-                  {c.bait_used && <div className="text-gray-400 text-sm mt-1">Koeder: {c.bait_used}</div>}
-                  {c.notes && <div className="text-gray-300 text-sm mt-1">{c.notes}</div>}
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button size="icon" variant="outline" aria-label="Fang bearbeiten" onClick={() => startEdit(c)}><Edit2 aria-hidden="true" className="w-4 h-4" /></Button>
-                  <Button size="icon" variant="destructive" aria-label="Fang loeschen" onClick={() => remove(c)}><Trash2 aria-hidden="true" className="w-4 h-4" /></Button>
-                </div>
-              </div>
-            ))}
             {filtered.length === 0 && !catchesLoading && <div className="text-gray-400">Keine Faenge gefunden.</div>}
+            {filtered.length > 0 && (
+              <VirtualList
+                height={Math.min(filtered.length * 110, 550)}
+                itemCount={filtered.length}
+                itemSize={110}
+                width="100%"
+                itemData={{ filtered, spots, startEdit, remove }}
+              >
+                {({ index, style, data }) => {
+                  const c = data.filtered[index];
+                  const spotName = data.spots.find((s) => s.id === c.spot_id)?.name;
+                  return (
+                    <div style={{ ...style, paddingBottom: 8 }}>
+                      <div className="p-3 rounded-xl bg-gray-800/40 flex items-start justify-between gap-3 h-full">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-semibold text-white text-sm truncate">{c.species}</div>
+                          <div className="flex flex-wrap gap-2 text-xs text-gray-300 mt-1">
+                            <span>{new Date(c.catch_time).toLocaleString("de-DE")}</span>
+                            {c.length_cm && <span>{c.length_cm} cm</span>}
+                            {c.weight_kg && <span>{c.weight_kg} kg</span>}
+                            {spotName && <span>{spotName}</span>}
+                          </div>
+                          {c.bait_used && <div className="text-gray-400 text-xs mt-0.5 truncate">Koeder: {c.bait_used}</div>}
+                        </div>
+                        <div className="flex items-center gap-1 flex-shrink-0">
+                          <Button size="icon" variant="outline" aria-label={`${c.species} bearbeiten`} onClick={() => data.startEdit(c)} className="h-8 w-8"><Edit2 aria-hidden="true" className="w-3 h-3" /></Button>
+                          <Button size="icon" variant="destructive" aria-label={`${c.species} loeschen`} onClick={() => data.remove(c)} className="h-8 w-8"><Trash2 aria-hidden="true" className="w-3 h-3" /></Button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }}
+              </VirtualList>
+            )}
             {hasMore && !filters.species && !filters.from && !filters.to && filters.spot === "all" && (
-              <Button onClick={loadMore} variant="outline" className="w-full border-gray-700 text-gray-300 hover:text-white">
+              <Button onClick={loadMore} variant="outline" className="w-full border-gray-700 text-gray-300 hover:text-white mt-2">
                 Mehr laden
               </Button>
             )}

@@ -110,17 +110,19 @@ export default function AdminUsers() {
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label className="text-sm text-gray-400">Plan</label>
-                <Select value={selectedPlan} onValueChange={setSelectedPlan}>
-                  <SelectTrigger className="bg-gray-800/50 border-gray-700 text-white">
-                    <SelectValue placeholder="Plan wählen" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="free">Free</SelectItem>
-                    <SelectItem value="basic">Basic</SelectItem>
-                    <SelectItem value="pro">Pro</SelectItem>
-                    <SelectItem value="ultimate">Ultimate</SelectItem>
-                  </SelectContent>
-                </Select>
+                <MobileSelect
+                  value={selectedPlan}
+                  onValueChange={setSelectedPlan}
+                  label="Plan waehlen"
+                  placeholder="Plan waehlen"
+                  options={[
+                    { value: "free", label: "Free" },
+                    { value: "basic", label: "Basic" },
+                    { value: "pro", label: "Pro" },
+                    { value: "ultimate", label: "Ultimate" },
+                  ]}
+                  className="bg-gray-800/50 border-gray-700 text-white"
+                />
               </div>
 
               <div className="space-y-1">
