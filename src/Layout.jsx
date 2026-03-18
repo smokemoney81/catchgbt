@@ -421,6 +421,12 @@ function LayoutContent({ children, currentPageName }) {
                   <SupportAgentButton />
                 </SuspenseWithErrorBoundary>
 
+                <VoiceOverlay 
+                  isOpen={voiceOverlayOpen} 
+                  onClose={() => setVoiceOverlayOpen(false)} 
+                  currentPageName={currentPageName} 
+                />
+
                 <Toaster 
                   position="bottom-center"
                   offset="80px"
