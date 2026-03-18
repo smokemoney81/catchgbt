@@ -357,7 +357,7 @@ export default function Layout({ children, currentPageName }) {
                 </div>
 
                 <SwipeToRefresh onRefresh={() => queryClient.invalidateQueries()}>
-                  <AnimatePresence mode="wait">
+                  <AnimatePresence initial={false}>
                     <PageTransition key={currentPageName}>
                       {children}
                     </PageTransition>
