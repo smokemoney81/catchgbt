@@ -208,25 +208,6 @@ export default function ProfilePage() {
     });
   };
 
-  const handleAccountDeletion = async () => {
-    try {
-      toast.info('Lösche Account-Daten...');
-      const response = await base44.functions.invoke('deleteAccount');
-      
-      if (response.data?.success) {
-        toast.success('Account-Daten gelöscht! Bitte kontaktiere den Support zum finalen Löschen.');
-        setTimeout(() => {
-          base44.auth.logout('/');
-        }, 2000);
-      } else {
-        toast.error('Fehler beim Löschen der Account-Daten');
-      }
-    } catch (error) {
-      console.error('Account deletion error:', error);
-      toast.error('Fehler beim Löschen des Accounts. Bitte kontaktiere den Support.');
-    }
-  };
-
   const formatDate = (dateString) => {
     if (!dateString) return 'Unbekannt';
     return new Date(dateString).toLocaleDateString('de-DE', {
