@@ -786,7 +786,7 @@ function LandingPageContent() {
                                 animation: 'gradient-wave 3s ease infinite'
                             }}
                         >
-                            CatchGBT.com
+                            Catchly.com
                         </motion.span>
                     </motion.div>
                 </a>
