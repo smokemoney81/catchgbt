@@ -4,7 +4,7 @@ import { useAuth } from './AuthContext';
 import { base44 } from '@/api/base44Client';
 import { pagesConfig } from '@/pages.config';
 import { useNavigationContext, ROOT_SEGMENTS } from './NavigationContext';
-import { navigationStack } from './NavigationStackV2';
+import { mobileStack } from './MobileStackManager';
 
 /**
  * NavigationTracker
@@ -53,36 +53,35 @@ export default function NavigationTracker() {
     pushRoute(location.pathname);
   }, [location.pathname, pushRoute, switchTab]);
 
-  // Single-sentinel back-button guard — registered ONCE on mount.
-  //
-  // We push one history sentinel entry at startup and re-push it on every
-  // popstate event. This keeps the browser from ever being able to navigate
-  // backwards on its own while still allowing us to call navigate(-1) through
-  // React Router when the user intentionally goes back.
+  // MobileStackManager-exclusive back-button handling.
+  // Pure state-based navigation independent of browser history API.
+  // Handles Android hardware back-button and iOS gesture back consistently.
   useEffect(() => {
-    // Arm the sentinel for the first time.
-    window.history.pushState({ _navGuard: true }, '');
-
     const handlePopState = () => {
-      // Immediately re-arm so the next back press is also intercepted.
-      window.history.pushState({ _navGuard: true }, '');
+      // Check if we can go back in the mobileStack
+      const handled = mobileStack.handleAndroidBack();
 
-      // Use V2 API (new standardized approach) with fallback to old context
-      const handled = navigationStack.handleAndroidBack() || (canGoBackRef.current && popRoute());
-      
       if (handled) {
-        // Update our internal stack direction then let React Router handle
-        // the actual URL change.
+        // Navigate using the stack state
         navigate(-1);
       }
-      // If we are on a root tab there is nothing to do — the re-arm above
-      // already prevents the browser from exiting the app.
+      // If at root, mobileStack prevents app exit
     };
 
+    // Listen for hardware back-button and browser back
     window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+
+    // For PWA/WebView environments, also handle direct back requests
+    const unsubscribeMobileStack = mobileStack.subscribe(() => {
+      // Stack changed externally - sync React Router if needed
+    });
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      unsubscribeMobileStack?.();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Empty deps: register once. canGoBack is read via ref.
+  }, [navigate]);
 
   // Analytics: log page view.
   useEffect(() => {
