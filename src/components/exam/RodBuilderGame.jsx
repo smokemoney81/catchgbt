@@ -21,17 +21,6 @@ import RodBuilderGameMobile from "./RodBuilderGameMobile";
 export default function RodBuilderGame() {
   const [isMobile, setIsMobile] = useState(false);
   const [selectedFish, setSelectedFish] = useState(null);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  if (isMobile) {
-    return <RodBuilderGameMobile />;
-  }
   const [selectedEquipment, setSelectedEquipment] = useState({
     rod: null,
     reel: null,
@@ -44,6 +33,17 @@ export default function RodBuilderGame() {
   const [showResult, setShowResult] = useState(false);
   const [score, setScore] = useState(0);
   const { triggerHaptic } = useHaptic();
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  if (isMobile) {
+    return <RodBuilderGameMobile />;
+  }
 
   const handleFishSelect = (fishId) => {
     triggerHaptic('selection');
