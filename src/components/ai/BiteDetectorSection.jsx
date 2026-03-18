@@ -1,17 +1,12 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { User } from "@/entities/User";
-// import PremiumGuard from "@/components/premium/PremiumGuard"; // Premium-System temporär deaktiviert
 import { Activity } from "lucide-react";
-// import { startPremiumMeter } from "@/functions/startPremiumMeter"; // Premium-System temporär deaktiviert
-// import { heartbeatPremiumMeter } from "@/functions/heartbeatPremiumMeter"; // Premium-System temporär deaktiviert
-// import { stopPremiumMeter } from "@/functions/stopPremiumMeter"; // Premium-System temporär deaktiviert
-// import { createPageUrl } from "@/utils"; // Nur in der deaktivierten Premium-Logik verwendet
-// import { Coins } from "lucide-react"; // Nur in der deaktivierten Premium-Guthabenanzeige verwendet
 import { useSound } from "@/components/utils/SoundManager";
-import { useHaptic } from "@/components/utils/HapticFeedback"; // Updated import path
+import { useHaptic } from "@/components/utils/HapticFeedback";
+import BiteDetectorControls from "./BiteDetectorControls";
+import BiteDetectorMetrics from "./BiteDetectorMetrics";
+import BiteDetectorInstructions from "./BiteDetectorInstructions";
 
 export default function BiteDetectorSection() {
   const [user, setUser] = useState(null);
