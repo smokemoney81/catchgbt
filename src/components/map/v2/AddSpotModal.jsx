@@ -120,22 +120,20 @@ export default function AddSpotModal({ isOpen, onClose, onSave, initialCoords })
           {/* Gewässertyp */}
           <div className="space-y-2">
             <label className="text-sm text-gray-300">Gewässertyp *</label>
-            <Select
+            <MobileSelect
               value={formData.water_type}
               onValueChange={(value) => setFormData({ ...formData, water_type: value })}
-            >
-              <SelectTrigger className="bg-gray-800/50 border-gray-700 text-white">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="fluss">Fluss</SelectItem>
-                <SelectItem value="see">See</SelectItem>
-                <SelectItem value="teich">Teich</SelectItem>
-                <SelectItem value="kanal">Kanal</SelectItem>
-                <SelectItem value="meer">Meer</SelectItem>
-                <SelectItem value="bach">Bach</SelectItem>
-              </SelectContent>
-            </Select>
+              label="Gewaessertyp"
+              options={[
+                { value: "fluss", label: "Fluss" },
+                { value: "see", label: "See" },
+                { value: "teich", label: "Teich" },
+                { value: "kanal", label: "Kanal" },
+                { value: "meer", label: "Meer" },
+                { value: "bach", label: "Bach" },
+              ]}
+              className="bg-gray-800/50 border-gray-700 text-white"
+            />
           </div>
 
           {/* Tiefe (optional) */}
