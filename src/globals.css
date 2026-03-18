@@ -166,6 +166,26 @@
   padding-bottom: calc(var(--safe-area-bottom) + 2rem);
 }
 
+/* Scrollable containers - allow normal scroll behavior within inner elements */
+.scrollable,
+.scrollable-y {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: auto;
+}
+
+.scrollable-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: auto;
+}
+
+/* Prevent scroll on specific elements when needed */
+.no-scroll {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 /* Selective overscroll prevention - allow inner scrolling, prevent elastic bounce */
 html {
   overscroll-behavior: none;
