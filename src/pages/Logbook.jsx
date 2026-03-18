@@ -15,6 +15,7 @@ import { Upload, X, Loader2, Share2 } from "lucide-react";
 import { UploadFile, ExtractDataFromUploadedFile } from "@/integrations/Core";
 import CatchHistory from "@/components/log/CatchHistory";
 import PendingPhotoCard from '@/components/log/PendingPhotoCard';
+import LazyImage from '@/components/images/LazyImage';
 import { AnimatePresence } from 'framer-motion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
@@ -365,7 +366,7 @@ export default function Logbook() {
               </div>
               {photoUrl && (
                 <div className="mt-4 relative w-full h-48 rounded-lg overflow-hidden bg-gray-800">
-                  <img src={photoUrl} alt="Vorschau" className="w-full h-full object-cover" loading="eager" />
+                  <LazyImage src={photoUrl} alt="Vorschau" className="w-full h-full object-cover" />
                 </div>
               )}
             </div>
@@ -463,10 +464,10 @@ export default function Logbook() {
           <div className="py-4">
             <p className="text-gray-300 mb-4">Möchtest du diesen Fang mit der Community teilen?</p>
             {savedCatchData?.photo_url && (
-              <div className="relative w-full h-48 rounded-lg overflow-hidden mb-4">
-                <img src={savedCatchData.photo_url} alt={savedCatchData.species} className="w-full h-full object-cover" />
-              </div>
-            )}
+               <div className="relative w-full h-48 rounded-lg overflow-hidden mb-4">
+                 <LazyImage src={savedCatchData.photo_url} alt={savedCatchData.species} className="w-full h-full object-cover" />
+               </div>
+             )}
             {savedCatchData && (
               <div className="bg-gray-800/50 rounded-lg p-4 space-y-2">
                 <p className="text-white font-semibold">{savedCatchData.species}</p>
