@@ -1,5 +1,15 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
+/**
+ * MobileStackManager - Single Source of Truth for Navigation
+ *
+ * Responsibilities:
+ * - Manage page stacks for tabbed navigation
+ * - Track current page and navigation direction
+ * - Handle back-button logic
+ * - NO direct history API usage (React Router handles UI)
+ * - Publish state changes to subscribers (NavigationTracker)
+ */
 class StackManager {
   constructor() {
     this.stacks = {
@@ -26,6 +36,10 @@ class StackManager {
     return tabMap[pageName] || 'other';
   }
 
+  /**
+   * Push a page onto the current tab's stack
+   * Called by MobileLink or programmatic navigation
+   */
   push(pageName) {
     const tab = this.getTabForPage(pageName);
     const stack = this.stacks[tab];
@@ -37,6 +51,10 @@ class StackManager {
     }
   }
 
+  /**
+   * Pop current page from stack (back navigation)
+   * Returns the new top page name or null if at root
+   */
   pop() {
     const stack = this.stacks[this.currentTab];
     if (stack.length > 1) {
@@ -48,11 +66,19 @@ class StackManager {
     return null;
   }
 
+  /**
+   * Handle Android/hardware back button
+   * Returns true if navigation occurred, false if at root
+   */
   handleAndroidBack() {
     const prevPage = this.pop();
     return prevPage !== null;
   }
 
+  /**
+   * Switch to a different tab
+   * Returns the top page of that tab or null if empty
+   */
   switchTab(tabName) {
     if (this.stacks[tabName] && this.stacks[tabName].length > 0) {
       this.currentTab = tabName;
@@ -63,15 +89,25 @@ class StackManager {
     return null;
   }
 
+  /**
+   * Get the current page name at the top of current tab's stack
+   */
   getCurrentPage() {
     const stack = this.stacks[this.currentTab];
     return stack[stack.length - 1] || null;
   }
 
+  /**
+   * Check if back navigation is possible
+   */
   canGoBack() {
     return this.stacks[this.currentTab].length > 1;
   }
 
+  /**
+   * Subscribe to state changes
+   * Returns unsubscribe function
+   */
   subscribe(callback) {
     this.listeners.push(callback);
     return () => {
@@ -79,10 +115,16 @@ class StackManager {
     };
   }
 
+  /**
+   * Notify all subscribers of state change
+   */
   notifyListeners() {
     this.listeners.forEach(callback => callback(this.getState()));
   }
 
+  /**
+   * Get current navigation state
+   */
   getState() {
     return {
       currentTab: this.currentTab,
