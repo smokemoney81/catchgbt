@@ -177,9 +177,9 @@ function MapController() {
           <div className="flex gap-1.5">
             <Button
               onClick={() => setShowInfo(!showInfo)}
-              aria-label={showInfo ? "Info ausblenden" : "Info anzeigen"}
+              aria-label={showInfo ? "Karteninfo ausblenden" : "Karteninfo anzeigen"}
               aria-expanded={showInfo}
-              className="bg-gray-800/90 hover:bg-gray-700 border border-gray-700 h-11 px-3"
+              className="bg-gray-800/90 hover:bg-gray-700 border border-gray-700 min-h-[44px] px-3"
             >
               <Info aria-hidden="true" className="w-4 h-4 sm:mr-1.5 text-cyan-400" />
               <span className="hidden sm:inline text-xs">Info</span>
@@ -187,8 +187,8 @@ function MapController() {
             
             <Button
               onClick={handleMyLocation}
-              aria-label="Meinen Standort anzeigen"
-              className="bg-gray-800/90 hover:bg-gray-700 border border-gray-700 h-11 px-3"
+              aria-label="Zu meinem aktuellen Standort navigieren"
+              className="bg-gray-800/90 hover:bg-gray-700 border border-gray-700 min-h-[44px] px-3"
             >
               <Navigation aria-hidden="true" className="w-4 h-4 sm:mr-1.5 text-cyan-400" />
               <span className="hidden sm:inline text-xs">Standort</span>
@@ -196,9 +196,9 @@ function MapController() {
 
             <Button
               onClick={() => setShowFilters(!showFilters)}
-              aria-label={showFilters ? "Filter ausblenden" : "Filter anzeigen"}
+              aria-label={showFilters ? "Kartenfilter ausblenden" : "Kartenfilter anzeigen"}
               aria-expanded={showFilters}
-              className="bg-gray-800/90 hover:bg-gray-700 border border-gray-700 h-11 px-3"
+              className="bg-gray-800/90 hover:bg-gray-700 border border-gray-700 min-h-[44px] px-3"
             >
               <Layers aria-hidden="true" className="w-4 h-4 sm:mr-1.5 text-cyan-400" />
               <span className="hidden sm:inline text-xs">Filter</span>
@@ -209,8 +209,8 @@ function MapController() {
            <div className="flex gap-1.5">
              <Button
                onClick={() => setShowDownloadDialog(true)}
-               aria-label="Karte fuer offline herunterladen"
-               className="bg-purple-700/90 hover:bg-purple-600 border border-purple-600/50 h-11 px-3"
+               aria-label="Karte fuer offline-Nutzung herunterladen"
+               className="bg-purple-700/90 hover:bg-purple-600 border border-purple-600/50 min-h-[44px] px-3"
              >
                <Download aria-hidden="true" className="w-4 h-4 sm:mr-1.5 text-purple-300" />
                <span className="hidden sm:inline text-xs">Download</span>
@@ -218,8 +218,8 @@ function MapController() {
              {newSpotCoords && !showAddModal && (
                <Button
                  onClick={handleAddSpotClick}
-                 aria-label="Neuen Spot hinzufuegen"
-                 className="bg-emerald-600/90 hover:bg-emerald-700 border border-emerald-500/50 text-white h-11 px-3"
+                 aria-label="Neuen Spot bei ausgewaehltem Ort hinzufuegen"
+                 className="bg-emerald-600/90 hover:bg-emerald-700 border border-emerald-500/50 text-white min-h-[44px] px-3"
                >
                  <Plus aria-hidden="true" className="w-4 h-4 sm:mr-1.5" />
                  <span className="hidden sm:inline text-xs">Spot</span>
@@ -230,42 +230,50 @@ function MapController() {
 
         {/* Filter Panel */}
         {showFilters && (
-          <div className="mt-2 bg-gray-800/50 rounded-lg p-2 space-y-1.5">
+         <div className="mt-2 bg-gray-800/50 rounded-lg p-2 space-y-1.5" role="group" aria-label="Kartenebenen-Filter">
+           <div className="flex items-center gap-2">
+             <input
+               type="checkbox"
+               id="filter-spots"
+               checked={filters.spots}
+               onChange={(e) => setFilters({ ...filters, spots: e.target.checked })}
+               className="w-4 h-4 min-h-[44px] min-w-[44px] cursor-pointer"
+               aria-label="Meine persoenlichen Angelspots anzeigen"
+             />
+             <label htmlFor="filter-spots" className="text-xs text-white cursor-pointer">Meine Spots</label>
+           </div>
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
-                checked={filters.spots}
-                onChange={(e) => setFilters({ ...filters, spots: e.target.checked })}
-                className="w-3.5 h-3.5"
-              />
-              <span className="text-xs text-white">Meine Spots</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
+                id="filter-clubs"
                 checked={filters.clubs}
                 onChange={(e) => setFilters({ ...filters, clubs: e.target.checked })}
-                className="w-3.5 h-3.5"
+                className="w-4 h-4 min-h-[44px] min-w-[44px] cursor-pointer"
+                aria-label="Angelvereine und Verbands-Plaetze anzeigen"
               />
-              <span className="text-xs text-white">Angelvereine</span>
+              <label htmlFor="filter-clubs" className="text-xs text-white cursor-pointer">Angelvereine</label>
             </div>
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
+                id="filter-parks"
                 checked={filters.parks}
                 onChange={(e) => setFilters({ ...filters, parks: e.target.checked })}
-                className="w-3.5 h-3.5"
+                className="w-4 h-4 min-h-[44px] min-w-[44px] cursor-pointer"
+                aria-label="Kommerzielle Angelparks anzeigen"
               />
-              <span className="text-xs text-white">Angelparks</span>
+              <label htmlFor="filter-parks" className="text-xs text-white cursor-pointer">Angelparks</label>
             </div>
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
+                id="filter-waters"
                 checked={filters.waters}
                 onChange={(e) => setFilters({ ...filters, waters: e.target.checked })}
-                className="w-3.5 h-3.5"
+                className="w-4 h-4 min-h-[44px] min-w-[44px] cursor-pointer"
+                aria-label="Gewaesser aus OpenStreetMap-Daten anzeigen"
               />
-              <span className="text-xs text-white">Gewässer (OSM)</span>
+              <label htmlFor="filter-waters" className="text-xs text-white cursor-pointer">Gewässer (OSM)</label>
             </div>
           </div>
         )}
@@ -314,8 +322,8 @@ function MapController() {
               </div>
               <button
                 onClick={() => setShowInfo(false)}
-                aria-label="Info schliessen"
-                className="text-gray-400 hover:text-white transition-colors p-2 min-h-[44px] min-w-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded"
+                aria-label="Infobanner schliessen"
+                className="text-gray-400 hover:text-white transition-colors p-2 min-h-[44px] min-w-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded active:scale-95"
               >
                 <X aria-hidden="true" className="w-4 h-4" />
               </button>
