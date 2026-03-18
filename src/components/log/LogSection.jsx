@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Catch, Spot, User } from "@/entities/all";
 import { UploadFile, ExtractDataFromUploadedFile } from "@/integrations/Core";
 import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,62 +16,136 @@ import { fetchCatchesWithFallback, fetchSpotsWithFallback } from "@/components/u
 
 const PAGE_SIZE = 20;
 
+const calculateCatchCredits = (species, lengthCm) => {
+  const rarityMultiplier = { 'Hecht': 1.5, 'Zander': 1.4, 'Wels': 2.0, 'Forelle': 1.2, 'Karpfen': 1.3, 'Barsch': 1.0, 'Brassen': 0.8, 'Rotauge': 0.7 };
+  const speciesMultiplier = rarityMultiplier[species] || 1.0;
+  const sizeBonus = lengthCm ? Math.min(lengthCm / 10, 10) : 1;
+  return Math.min(Math.max(Math.round(100 * speciesMultiplier * sizeBonus), 100), 1000);
+};
+
 export default function LogSection() {
-  const [catches, setCatches] = useState([]);
-  const [spots, setSpots] = useState([]);
+  const queryClient = useQueryClient();
   const [filters, setFilters] = useState({ species: "all", spot: "all", from: "", to: "" });
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({
-    species: "", length_cm: "", weight_kg: "", spot_id: "", bait_used: "", notes: "", catch_time: new Date().toISOString().slice(0,16), photo_url: "", is_released: false
+    species: "", length_cm: "", weight_kg: "", spot_id: "", bait_used: "", notes: "",
+    catch_time: new Date().toISOString().slice(0, 16), photo_url: "", is_released: false
   });
   const [uploading, setUploading] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
   const [isGuest, setIsGuest] = useState(false);
-  const [isFromCache, setIsFromCache] = useState(false);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
 
+  // Resolve guest status once
   useEffect(() => {
     window.dispatchEvent(new CustomEvent('kiBuddyFunctionCall', {
       detail: { functionName: 'logbook', context: { timestamp: Date.now() } }
     }));
-    
-    (async () => {
-      try {
-        await base44.auth.me();
-        setIsGuest(false);
-        const { data: catchData, fromCache: catchFromCache } = await fetchCatchesWithFallback(
-          () => Catch.list("-catch_time", PAGE_SIZE)
-        );
-        setCatches(catchData);
-        setIsFromCache(catchFromCache);
-        setHasMore(catchData.length === PAGE_SIZE);
-        const { data: spotData } = await fetchSpotsWithFallback(() => Spot.list());
-        setSpots(spotData);
-      } catch {
-        setIsGuest(true);
-        setCatches(getGuestCatches());
-      }
-    })();
+    base44.auth.me().then(() => setIsGuest(false)).catch(() => setIsGuest(true));
   }, []);
 
+  // React Query: catches
+  const { data: catches = [], isFetching: isFromCache } = useQuery({
+    queryKey: ['catches'],
+    queryFn: async () => {
+      if (isGuest) return getGuestCatches();
+      const { data } = await fetchCatchesWithFallback(() => Catch.list("-catch_time", PAGE_SIZE));
+      return data;
+    },
+    enabled: true,
+    staleTime: 30_000,
+  });
+
+  // React Query: spots
+  const { data: spots = [] } = useQuery({
+    queryKey: ['spots'],
+    queryFn: async () => {
+      const { data } = await fetchSpotsWithFallback(() => Spot.list());
+      return data;
+    },
+    staleTime: 60_000,
+  });
+
+  const hasMore = catches.length === PAGE_SIZE * page;
+
   const loadMore = async () => {
-    setLoadingMore(true);
-    try {
-      const { data: more } = await fetchCatchesWithFallback(
-        () => Catch.list("-catch_time", PAGE_SIZE, page * PAGE_SIZE)
-      );
-      setCatches(prev => [...prev, ...more]);
-      setPage(p => p + 1);
-      setHasMore(more.length === PAGE_SIZE);
-    } catch (e) {
-      console.error(e);
-    }
-    setLoadingMore(false);
+    const { data: more } = await fetchCatchesWithFallback(
+      () => Catch.list("-catch_time", PAGE_SIZE, page * PAGE_SIZE)
+    );
+    queryClient.setQueryData(['catches'], prev => [...(prev || []), ...more]);
+    setPage(p => p + 1);
   };
 
-  const speciesList = useMemo(()=> Array.from(new Set(catches.map(c=>c.species).filter(Boolean))), [catches]);
+  // Create mutation with optimistic update
+  const createMutation = useMutation({
+    mutationFn: (payload) => Catch.create(payload),
+    onMutate: async (payload) => {
+      await queryClient.cancelQueries({ queryKey: ['catches'] });
+      const previous = queryClient.getQueryData(['catches']);
+      const optimistic = { ...payload, id: `temp-${Date.now()}` };
+      queryClient.setQueryData(['catches'], old => [optimistic, ...(old || [])]);
+      return { previous };
+    },
+    onSuccess: async (newCatch, payload) => {
+      // Replace optimistic entry with real one
+      queryClient.setQueryData(['catches'], old =>
+        (old || []).map(c => c.id?.toString().startsWith('temp-') ? newCatch : c)
+      );
+      try {
+        const user = await User.me();
+        const credits = calculateCatchCredits(payload.species, parseFloat(payload.length_cm));
+        await User.updateMyUserData({
+          credits: (user.credits || 0) + credits,
+          total_earned: (user.total_earned || 0) + credits
+        });
+        toast.success(`Fang gespeichert! ${payload.species} (${payload.length_cm || 'unbekannt'} cm) – +${credits} Credits erhalten.`);
+      } catch {
+        toast.success("Fang gespeichert, aber Credits konnten nicht gutgeschrieben werden.");
+      }
+    },
+    onError: (_err, payload, ctx) => {
+      queryClient.setQueryData(['catches'], ctx.previous);
+      const q = JSON.parse(localStorage.getItem("fishmaster_catch_queue") || "[]");
+      q.push(payload);
+      localStorage.setItem("fishmaster_catch_queue", JSON.stringify(q));
+      toast.info("Offline gespeichert - wird synchronisiert, sobald Internet verfuegbar ist.");
+    },
+  });
+
+  // Update mutation with optimistic update
+  const updateMutation = useMutation({
+    mutationFn: ({ id, payload }) => Catch.update(id, payload),
+    onMutate: async ({ id, payload }) => {
+      await queryClient.cancelQueries({ queryKey: ['catches'] });
+      const previous = queryClient.getQueryData(['catches']);
+      queryClient.setQueryData(['catches'], old =>
+        (old || []).map(c => c.id === id ? { ...c, ...payload } : c)
+      );
+      return { previous };
+    },
+    onSuccess: () => toast.success("Fang erfolgreich aktualisiert."),
+    onError: (_err, _vars, ctx) => {
+      queryClient.setQueryData(['catches'], ctx.previous);
+      toast.error("Aktualisierung fehlgeschlagen.");
+    },
+  });
+
+  // Delete mutation with optimistic update
+  const deleteMutation = useMutation({
+    mutationFn: (id) => Catch.delete(id),
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: ['catches'] });
+      const previous = queryClient.getQueryData(['catches']);
+      queryClient.setQueryData(['catches'], old => (old || []).filter(c => c.id !== id));
+      return { previous };
+    },
+    onError: (_err, _id, ctx) => {
+      queryClient.setQueryData(['catches'], ctx.previous);
+      toast.error("Loeschen fehlgeschlagen.");
+    },
+  });
+
+  const speciesList = useMemo(() => Array.from(new Set(catches.map(c => c.species).filter(Boolean))), [catches]);
 
   const filtered = useMemo(() => {
     const fromDate = filters.from ? new Date(filters.from) : null;
@@ -84,43 +159,14 @@ export default function LogSection() {
     });
   }, [catches, filters]);
 
-  const refreshData = async () => {
-    try {
-      const { data: catchData } = await fetchCatchesWithFallback(() => Catch.list("-catch_time", PAGE_SIZE));
-      setCatches(catchData);
-      setHasMore(catchData.length === PAGE_SIZE);
-    } catch (e) { /* silent */ }
-  };
+  const refreshData = () => queryClient.invalidateQueries({ queryKey: ['catches'] });
 
-  const openNew = () => { setEditing("new"); setForm({ species: "", length_cm: "", weight_kg: "", spot_id: "", bait_used: "", notes: "", catch_time: new Date().toISOString().slice(0,16), photo_url: "" }); };
-  const startEdit = (c) => { setEditing(c.id); setForm({ ...c, catch_time: new Date(c.catch_time).toISOString().slice(0,16) }); };
-  const cancelEdit = () => { setEditing(null); };
-
-  // Neue Funktion zur Berechnung der Credits basierend auf Fischgröße und Seltenheit
-  const calculateCatchCredits = (species, lengthCm) => {
-    const baseCredits = 100; // Minimum Credits
-    const maxCredits = 1000; // Maximum Credits
-    
-    // Seltenheitswerte für verschiedene Fischarten
-    const rarityMultiplier = {
-      'Hecht': 1.5,
-      'Zander': 1.4, 
-      'Wels': 2.0,
-      'Forelle': 1.2,
-      'Karpfen': 1.3,
-      'Barsch': 1.0,
-      'Brassen': 0.8,
-      'Rotauge': 0.7
-    };
-    
-    const speciesMultiplier = rarityMultiplier[species] || 1.0;
-    
-    // Größenfaktor: Je größer der Fisch, desto mehr Credits
-    const sizeBonus = lengthCm ? Math.min(lengthCm / 10, 10) : 1; // Max 10x Bonus für sehr große Fische
-    
-    const calculatedCredits = Math.round(baseCredits * speciesMultiplier * sizeBonus);
-    return Math.min(Math.max(calculatedCredits, baseCredits), maxCredits);
+  const openNew = () => {
+    setEditing("new");
+    setForm({ species: "", length_cm: "", weight_kg: "", spot_id: "", bait_used: "", notes: "", catch_time: new Date().toISOString().slice(0, 16), photo_url: "" });
   };
+  const startEdit = (c) => { setEditing(c.id); setForm({ ...c, catch_time: new Date(c.catch_time).toISOString().slice(0, 16) }); };
+  const cancelEdit = () => setEditing(null);
 
   const save = async () => {
     const payload = {
@@ -128,64 +174,32 @@ export default function LogSection() {
       length_cm: form.length_cm ? parseFloat(form.length_cm) : null,
       weight_kg: form.weight_kg ? parseFloat(form.weight_kg) : null,
       catch_time: new Date(form.catch_time).toISOString(),
-      points_earned: form.length_cm ? (1 + Math.floor(parseFloat(form.length_cm)/10)) : 1
+      points_earned: form.length_cm ? (1 + Math.floor(parseFloat(form.length_cm) / 10)) : 1
     };
-    
-    try {
-      if (isGuest) {
-        if (editing === "new") {
-          addGuestCatch(payload);
-          setEditing(null);
-          setCatches(getGuestCatches());
-          toast.success("Fang gespeichert (Gastmodus - 24 Stunden gespeichert).");
-        } else {
-          updateGuestCatch(editing, payload);
-          setEditing(null);
-          setCatches(getGuestCatches());
-          toast.success("Fang aktualisiert.");
-        }
-        return;
-      }
 
-      if (editing === "new") {
-        const newCatch = await Catch.create(payload);
-        setCatches(prev => [newCatch, ...prev]);
-        setEditing(null);
-        
-        try {
-          const user = await User.me();
-          const credits = calculateCatchCredits(form.species, parseFloat(form.length_cm));
-          await User.updateMyUserData({
-            credits: (user.credits || 0) + credits,
-            total_earned: (user.total_earned || 0) + credits
-          });
-          toast.success(`Fang gespeichert! ${form.species} (${form.length_cm || 'unbekannt'} cm) – +${credits} Credits erhalten.`);
-        } catch (error) {
-          toast.success("Fang gespeichert, aber Credits konnten nicht gutgeschrieben werden.");
-        }
-      } else {
-        await Catch.update(editing, payload);
-        setCatches(prev => prev.map(c => c.id === editing ? { ...c, ...payload } : c));
-        setEditing(null);
-        toast.success("Fang erfolgreich aktualisiert.");
-      }
-    } catch (error) {
-      const q = JSON.parse(localStorage.getItem("fishmaster_catch_queue") || "[]");
-      q.push(payload);
-      localStorage.setItem("fishmaster_catch_queue", JSON.stringify(q));
-      toast.info("Offline gespeichert - wird synchronisiert, sobald Internet verfuegbar ist.");
-      setEditing(null);
-    }
-  };
-
-  const remove = async (c) => {
     if (isGuest) {
-      deleteGuestCatch(c.id);
-      setCatches(getGuestCatches());
+      if (editing === "new") { addGuestCatch(payload); toast.success("Fang gespeichert (Gastmodus)."); }
+      else { updateGuestCatch(editing, payload); toast.success("Fang aktualisiert."); }
+      queryClient.invalidateQueries({ queryKey: ['catches'] });
+      setEditing(null);
       return;
     }
-    setCatches(prev => prev.filter(x => x.id !== c.id));
-    await Catch.delete(c.id);
+
+    if (editing === "new") {
+      createMutation.mutate(payload);
+    } else {
+      updateMutation.mutate({ id: editing, payload });
+    }
+    setEditing(null);
+  };
+
+  const remove = (c) => {
+    if (isGuest) {
+      deleteGuestCatch(c.id);
+      queryClient.invalidateQueries({ queryKey: ['catches'] });
+      return;
+    }
+    deleteMutation.mutate(c.id);
   };
 
   const uploadPhoto = async (file) => {
