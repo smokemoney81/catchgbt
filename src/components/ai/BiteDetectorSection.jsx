@@ -684,60 +684,15 @@ export default function BiteDetectorSection() {
               onLockTimeChange={setLockTime}
             />
 
-            {/* Live Metrics */}
-             {running && (
-               <div className="grid grid-cols-2 gap-4" role="region" aria-label="Live Echtzeit-Metriken fuer Schnur- und Spitzen-Aktivitaet" aria-live="polite">
-                <div>
-                  <div className="flex justify-between text-sm text-gray-300 mb-1">
-                    <span>Schnur-Aktivität</span>
-                    <span>{lineScore.toFixed(2)}</span>
-                  </div>
-                  <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-cyan-400 transition-all duration-100"
-                      style={{ width: `${Math.min(100, lineScore * 20)}%` }}
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="flex justify-between text-sm text-gray-300 mb-1">
-                    <span>Spitzen-Aktivität</span>
-                    <span>{tipScore.toFixed(2)}</span>
-                  </div>
-                  <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-yellow-400 transition-all duration-100"
-                      style={{ width: `${Math.min(100, tipScore * 20)}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Metrics & Instructions */}
+            <BiteDetectorMetrics
+              running={running}
+              lineScore={lineScore}
+              tipScore={tipScore}
+              debugInfo={debugInfo}
+            />
 
-            {/* Instructions */}
-            <div className="p-4 bg-gray-800/30 rounded-lg text-sm text-gray-400" role="region" aria-label="Bedienungsanleitung fuer KI-Bisserkennung">
-              <p className="mb-2">
-                <strong className="text-gray-300">Schritt-für-Schritt-Anleitung:</strong>
-              </p>
-              <ol className="list-decimal list-inside space-y-1">
-                <li>Klicken Sie auf 'Bissanzeiger starten' und bringen Sie die Rute ins Kamerabild</li>
-                <li>Markieren Sie die Angelschnur mit der tuerkisen ROI (Region of Interest)</li>
-                <li>Markieren Sie die Rutenspitze mit der gelben ROI</li>
-                <li>Passen Sie Empfindlichkeit und Sperrzeit nach Bedarf an</li>
-                <li>Bei erkanntem Biss: Visueller Alarm + Audio-Signal + Vibration</li>
-              </ol>
-              <p className="mt-2 text-xs text-gray-500">
-                Leistungsoptimierung: {debugInfo}
-              </p>
-            </div>
-            
-            {/* New Sensitivity Explanation */}
-            <div className="text-xs text-gray-400 space-y-1">
-              <p><span className="font-semibold">Niedrige Sensitivität:</span> Reagiert nur auf starke Bewegungen</p>
-              <p><span className="font-semibold">Mittlere Sensitivität:</span> Gutes Gleichgewicht zwischen Genauigkeit und Fehlalarmen</p>
-              <p><span className="font-semibold">Hohe Sensitivität:</span> Erkennt auch kleinste Bewegungen, kann zu Fehlalarmen führen</p>
-            </div>
+            <BiteDetectorInstructions />
           </div>
       </CardContent>
     </Card>
