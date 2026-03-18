@@ -226,20 +226,22 @@ export default function KIFangberatungCatchGBT({ onStart, onStop, isActive }) {
 
   return (
     <div className="bg-gray-900/50 p-4 rounded-xl space-y-4">
-      <div className="flex flex-wrap gap-2 items-center">
+      <div className="flex flex-wrap gap-2 items-center" role="group" aria-label="Kamera- und Analyse-Steuerungen">
         {!isCameraOn ? (
           <button
             onClick={startCamera}
+            onKeyPress={(e) => e.key === 'Enter' && startCamera()}
             aria-label="Kamera starten"
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-md"
+            className="px-4 py-2 min-h-[44px] min-w-[44px] bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 active:scale-95"
           >
             Kamera starten
           </button>
         ) : (
           <button
             onClick={stopCamera}
+            onKeyPress={(e) => e.key === 'Enter' && stopCamera()}
             aria-label="Kamera stoppen"
-            className="px-4 py-2 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700"
+            className="px-4 py-2 min-h-[44px] min-w-[44px] bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 active:scale-95"
           >
             Kamera stoppen
           </button>
@@ -248,24 +250,26 @@ export default function KIFangberatungCatchGBT({ onStart, onStop, isActive }) {
           <>
             <button
               onClick={() => setIsAnalyzing(!isAnalyzing)}
+              onKeyPress={(e) => e.key === 'Enter' && setIsAnalyzing(!isAnalyzing)}
               aria-label={isAnalyzing ? "Analyse stoppen" : "Analyse starten"}
               aria-pressed={isAnalyzing}
-              className={`px-4 py-2 text-white rounded-lg shadow-md ${
+              className={`px-4 py-2 min-h-[44px] min-w-[44px] text-white rounded-lg shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-95 ${
                 isAnalyzing
-                  ? "bg-fuchsia-600 hover:bg-fuchsia-700"
-                  : "bg-gray-600 hover:bg-gray-700"
+                  ? "bg-fuchsia-600 hover:bg-fuchsia-700 focus-visible:ring-fuchsia-400"
+                  : "bg-gray-600 hover:bg-gray-700 focus-visible:ring-gray-400"
               }`}
             >
               {isAnalyzing ? "Analyse stoppen" : "Analyse starten"}
             </button>
             <button
               onClick={() => setFrozen(!frozen)}
+              onKeyPress={(e) => e.key === 'Enter' && setFrozen(!frozen)}
               aria-label={frozen ? "Live-Ansicht aktivieren" : "Bild einfrieren"}
               aria-pressed={frozen}
-              className={`px-4 py-2 text-white rounded-lg shadow-md ${
+              className={`px-4 py-2 min-h-[44px] min-w-[44px] text-white rounded-lg shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-95 ${
                 frozen
-                  ? "bg-blue-600 hover:bg-blue-700"
-                  : "bg-gray-600 hover:bg-gray-700"
+                  ? "bg-blue-600 hover:bg-blue-700 focus-visible:ring-blue-400"
+                  : "bg-gray-600 hover:bg-gray-700 focus-visible:ring-gray-400"
               }`}
             >
               {frozen ? "Live" : "Einfrieren"}
@@ -279,6 +283,8 @@ export default function KIFangberatungCatchGBT({ onStart, onStop, isActive }) {
         onMouseMove={handleBuddyMove}
         onMouseUp={() => setDraggingBuddy(false)}
         onMouseLeave={() => setDraggingBuddy(false)}
+        role="region"
+        aria-label="Live Kamera-Feed mit KI-Fanganalyse und drehbarem KI-Buddy"
       >
         <video
           ref={videoRef}
@@ -292,18 +298,29 @@ export default function KIFangberatungCatchGBT({ onStart, onStop, isActive }) {
         <canvas
           ref={overlayRef}
           className="absolute top-0 left-0 w-full h-full pointer-events-none"
+          role="img"
+          aria-label="Analyseergebnis-Overlay zeigt erkannte Fanghotspots mit Score-Werten"
         />
 
         {isCameraOn && (
           <div
             ref={buddyRef}
-            className="absolute w-20 h-20 text-center cursor-move select-none"
+            className="absolute w-20 h-20 text-center cursor-move select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fuchsia-400"
+            role="img"
+            tabIndex="0"
             style={{
               left: buddyPos.x - 40,
               top: buddyPos.y - 40,
               touchAction: "none",
             }}
             onMouseDown={() => setDraggingBuddy(true)}
+            onKeyDown={(e) => {
+              if (e.key === 'ArrowUp') setBuddyPos(prev => ({ ...prev, y: Math.max(0, prev.y - 10) }));
+              if (e.key === 'ArrowDown') setBuddyPos(prev => ({ ...prev, y: Math.min(500, prev.y + 10) }));
+              if (e.key === 'ArrowLeft') setBuddyPos(prev => ({ ...prev, x: Math.max(0, prev.x - 10) }));
+              if (e.key === 'ArrowRight') setBuddyPos(prev => ({ ...prev, x: Math.min(500, prev.x + 10) }));
+            }}
+            aria-label="KI-Buddy - drehbar mit Maus oder Pfeiltasten"
           >
             <div className="w-16 h-16 bg-fuchsia-500/80 rounded-full animate-pulse blur-lg absolute top-2 left-2"></div>
             <p className="font-bold text-3xl drop-shadow-lg relative">🎣</p>

@@ -702,7 +702,11 @@ export default function ARWater3D() {
   };
 
   return (
-    <div className="relative w-screen h-screen bg-black overflow-hidden" role="application" aria-label="AR 3D Bathymetrie Visualisierung">
+    <div 
+      className="relative w-screen h-screen bg-black overflow-hidden px-4 md:px-6 lg:px-8" 
+      role="application" 
+      aria-label="AR 3D Bathymetrie Visualisierung mit Sensor-Fusion und interaktiven 3D-Bedienelementem"
+    >
       <div 
         ref={mountRef} 
         className="w-full h-full" 
@@ -726,7 +730,7 @@ export default function ARWater3D() {
       </motion.button>
       
       {/* Status Bar */}
-      <div className="absolute top-4 left-4 right-20 z-10"> {/* Adjusted right-4 to right-20 */}
+      <div className="absolute top-4 left-4 right-20 sm:left-6 sm:right-24 lg:left-8 lg:right-28 z-10">
         <Card className="glass-morphism p-3 border-cyan-500/30">
           <div className="text-xs text-cyan-400 font-mono">
             {status}
@@ -735,7 +739,7 @@ export default function ARWater3D() {
       </div>
 
       {/* Controls */}
-      <div className="absolute top-20 left-4 right-4 z-10 space-y-2">
+      <div className="absolute top-20 left-4 right-4 sm:left-6 sm:right-6 lg:left-8 lg:right-8 z-10 space-y-2">
         <Button
           onClick={() => setShowControls(!showControls)}
           size="sm"
@@ -796,7 +800,7 @@ export default function ARWater3D() {
       </div>
 
       {/* Bottom Help */}
-      <div className="absolute bottom-4 left-4 right-4 z-10" role="region" aria-label="Bedienungshinweise fuer AR-Visualisierung">
+      <div className="absolute bottom-4 left-4 right-4 sm:left-6 sm:right-6 lg:left-8 lg:right-8 z-10" role="region" aria-label="Bedienungshinweise fuer AR-Visualisierung" aria-live="polite">
         <Card className="glass-morphism p-2 border-gray-700">
           <div className="text-xs text-gray-400 text-center">
             Geraet drehen zum Rotieren. Zwei Finger zusammen zum Zoomen. Drag-Geste zum Rotieren der Szene.

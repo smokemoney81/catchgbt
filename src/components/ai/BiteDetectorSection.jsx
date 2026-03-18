@@ -745,8 +745,8 @@ export default function BiteDetectorSection() {
             </div>
 
             {/* Live Metrics */}
-            {running && (
-              <div className="grid grid-cols-2 gap-4">
+             {running && (
+               <div className="grid grid-cols-2 gap-4" role="region" aria-label="Live Echtzeit-Metriken fuer Schnur- und Spitzen-Aktivitaet" aria-live="polite">
                 <div>
                   <div className="flex justify-between text-sm text-gray-300 mb-1">
                     <span>Schnur-Aktivität</span>
