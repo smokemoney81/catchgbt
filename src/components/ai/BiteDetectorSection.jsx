@@ -523,7 +523,7 @@ export default function BiteDetectorSection() {
                 className="absolute inset-0 w-full h-full"
                 style={{ pointerEvents: 'auto' }}
                 role="img"
-                aria-label="Interactive fishing rod detection area with cyan line marker and yellow tip marker regions"
+                aria-label="Interaktive Ruten-Erkennungsflaeche. Tuerkis: Angelschnur ROI, Gelb: Rutenspitze ROI. Klicken und ziehen zum Zeichnen."
               />
               <canvas
                 ref={procCanvasRef}
@@ -550,9 +550,10 @@ export default function BiteDetectorSection() {
                   onClick={running ? () => stopDetection(true) : startDetection}
                   className={`w-full ${
                     running 
-                      ? 'bg-red-600 hover:bg-red-700' 
-                      : 'bg-emerald-600 hover:bg-emerald-700'
+                      ? 'bg-red-600 active:scale-95 active:bg-red-700 focus:ring-2 focus:ring-red-400' 
+                      : 'bg-emerald-600 active:scale-95 active:bg-emerald-700 focus:ring-2 focus:ring-emerald-400'
                   }`}
+                  aria-label={running ? 'Bissanzeiger stoppen und Kamera-Stream beenden' : 'Kamera starten und Bissanzeiger aktivieren'}
                 >
                   {running ? 'Bissanzeiger stoppen' : 'Bissanzeiger starten'}
                 </Button>
@@ -562,7 +563,8 @@ export default function BiteDetectorSection() {
                     variant="outline"
                     onClick={() => enableRoiDraw('line')}
                     disabled={!running}
-                    className="text-cyan-400 border-cyan-400/50 hover:bg-cyan-400/10"
+                    className="text-cyan-400 border-cyan-400/50 active:scale-95 active:bg-cyan-400/10 focus:ring-2 focus:ring-cyan-400 disabled:opacity-50"
+                    aria-label="Klicken und ziehen zum Markieren der Angelschnur-Region"
                   >
                     ROI Schnur
                   </Button>
@@ -570,7 +572,8 @@ export default function BiteDetectorSection() {
                     variant="outline"
                     onClick={() => enableRoiDraw('tip')}
                     disabled={!running}
-                    className="text-yellow-400 border-yellow-400/50 hover:bg-yellow-400/10"
+                    className="text-yellow-400 border-yellow-400/50 active:scale-95 active:bg-yellow-400/10 focus:ring-2 focus:ring-yellow-400 disabled:opacity-50"
+                    aria-label="Klicken und ziehen zum Markieren der Rutenspitze-Region"
                   >
                     ROI Spitze
                   </Button>
