@@ -598,6 +598,7 @@ export default function Logbook() {
         isLoading={loading}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        onRefresh={loadData}
       />
 
       <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
