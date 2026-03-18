@@ -484,9 +484,9 @@ export default function Logbook() {
               {isSharing ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Wird geteilt...</> : <><Share2 className="w-4 h-4 mr-2" />Jetzt teilen</>}
             </Button>
           </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
-    </SwipeToRefresh>
-  );
-}
+          </DialogContent>
+          </Dialog>
+          </div>
+          </SwipeToRefresh>
+          );
+          }
