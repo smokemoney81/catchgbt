@@ -155,26 +155,22 @@ export default function CommunitySection() {
     createPostMutation.mutate({ text: newPost.text, photo_url: newPost.photo_url || null });
   };
 
-  const handleLike = async (postId, currentLikes) => {
-    // Optimistic update
-    setPosts(posts.map(p => 
-      p.id === postId ? { ...p, likes: currentLikes + 1 } : p
-    ));
-    triggerHaptic('light');
-    playSound('selection');
-
-    try {
-      await base44.entities.Post.update(postId, {
-        likes: currentLikes + 1
-      });
-    } catch (error) {
-      console.error("Fehler beim Liken:", error);
-      // Revert on error
-      setPosts(posts.map(p => 
-        p.id === postId ? { ...p, likes: currentLikes } : p
-      ));
-      toast.error("Fehler beim Liken");
+  const updateLikeMutation = useMutation({
+    mutationFn: ({ postId, likes }) => base44.entities.Post.update(postId, { likes }),
+    onMutate: ({ postId, likes }) => {
+      setPosts(prev => prev.map(p => p.id === postId ? { ...p, likes } : p));
+      triggerHaptic('light');
+      playSound('selection');
+      return { postId, previousPosts: posts };
+    },
+    onError: (_err, _vars, ctx) => {
+      setPosts(ctx.previousPosts);
+      toast.error('Fehler beim Liken');
     }
+  });
+
+  const handleLike = (postId, currentLikes) => {
+    updateLikeMutation.mutate({ postId, likes: currentLikes + 1 });
   };
 
   const handleComment = async (postId) => {
@@ -227,17 +223,23 @@ export default function CommunitySection() {
     }
   };
 
-  const handleReport = async (postId) => {
-    try {
-      await base44.entities.Post.update(postId, { reported: true });
+  const reportMutation = useMutation({
+    mutationFn: (postId) => base44.entities.Post.update(postId, { reported: true }),
+    onMutate: (postId) => {
       setPosts(prev => prev.map(p => p.id === postId ? { ...p, reported: true } : p));
       triggerHaptic('medium');
       playSound('warning');
-      toast.success("Post wurde gemeldet");
-    } catch (error) {
-      console.error("Fehler beim Melden:", error);
-      toast.error("Fehler beim Melden");
+      return { postId, previousPosts: posts };
+    },
+    onSuccess: () => toast.success('Post wurde gemeldet'),
+    onError: (_err, _vars, ctx) => {
+      setPosts(ctx.previousPosts);
+      toast.error('Fehler beim Melden');
     }
+  });
+
+  const handleReport = (postId) => {
+    reportMutation.mutate(postId);
   };
 
   if (loading) {
@@ -363,9 +365,10 @@ export default function CommunitySection() {
             />
             <Button
               onClick={handleCreatePost}
-              className="w-full bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700"
+              aria-label="Neuen Post in Community erstellen"
+              className="w-full bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700 min-h-[44px]"
             >
-              <Send className="w-4 h-4 mr-2" />
+              <Send className="w-4 h-4 mr-2" aria-hidden="true" />
               Post erstellen
             </Button>
           </CardContent>
@@ -415,14 +418,14 @@ export default function CommunitySection() {
                     {/* Report Button */}
                     {!post.reported && post.created_by !== currentUser?.email && (
                       <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label="Post melden"
-                        onClick={() => handleReport(post.id)}
-                        className="text-gray-500 hover:text-red-400"
-                      >
-                        <AlertTriangle aria-hidden="true" className="w-4 h-4" />
-                      </Button>
+                         variant="ghost"
+                         size="icon"
+                         aria-label="Post melden wegen Vertoess"
+                         onClick={() => handleReport(post.id)}
+                         className="text-gray-500 hover:text-red-400 min-h-[44px] min-w-[44px]"
+                       >
+                         <AlertTriangle aria-hidden="true" className="w-4 h-4" />
+                       </Button>
                     )}
                     {post.reported && (
                       <Badge variant="outline" className="text-xs bg-red-600/20 text-red-400 border-red-500/30">
@@ -449,19 +452,21 @@ export default function CommunitySection() {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleLike(post.id, post.likes || 0)}
-                      className="text-gray-400 hover:text-cyan-400 flex items-center gap-2"
+                      aria-label={`Post mit ${post.likes || 0} Likes - Klicken um Like hinzuzufuegen`}
+                      className="text-gray-400 hover:text-cyan-400 flex items-center gap-2 min-h-[44px]"
                     >
-                      <ThumbsUp className="w-4 h-4" />
+                      <ThumbsUp className="w-4 h-4" aria-hidden="true" />
                       <span>{post.likes || 0}</span>
                     </Button>
                     <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-gray-400 hover:text-emerald-400 flex items-center gap-2"
-                    >
-                      <MessageCircle className="w-4 h-4" />
-                      <span>{comments[post.id]?.length || 0}</span>
-                    </Button>
+                       variant="ghost"
+                       size="sm"
+                       aria-label={`${comments[post.id]?.length || 0} Kommentare zu diesem Post`}
+                       className="text-gray-400 hover:text-emerald-400 flex items-center gap-2 min-h-[44px]"
+                     >
+                       <MessageCircle className="w-4 h-4" aria-hidden="true" />
+                       <span>{comments[post.id]?.length || 0}</span>
+                     </Button>
                   </div>
 
                   {/* Comments */}
@@ -515,8 +520,8 @@ export default function CommunitySection() {
                     <Button
                      onClick={() => handleComment(post.id)}
                      size="icon"
-                     aria-label="Kommentar senden"
-                     className="bg-emerald-600 hover:bg-emerald-700 flex-shrink-0"
+                     aria-label="Kommentar zu Post senden"
+                     className="bg-emerald-600 hover:bg-emerald-700 flex-shrink-0 min-h-[44px] min-w-[44px]"
                     >
                      <Send aria-hidden="true" className="w-4 h-4" />
                     </Button>
