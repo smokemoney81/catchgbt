@@ -2,68 +2,47 @@ import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { base44 } from '@/api/base44Client';
-import { mobileStack } from './MobileStackManager';
+import { stackManager } from '@/components/navigation/MobileStackManager';
 
 /**
- * NavigationTracker - MobileStackManager Exclusive Integration
+ * NavigationTracker - One-Way MobileStackManager to React Router Sync
  *
- * Eliminates all window.history API usage. MobileStackManager is the SINGLE
- * SOURCE OF TRUTH for navigation state. React Router is UI binding only.
+ * MobileStackManager is the SINGLE SOURCE OF TRUTH for navigation.
+ * React Router is purely a UI renderer with no history API involvement.
  *
- * Core responsibilities:
- *   1. Sync React Router location to MobileStackManager (one-way binding)
- *   2. Handle hardware back-button via mobileStack.handleAndroidBack()
- *   3. Navigate UI when mobileStack state changes
- *   4. Post navigation events to Base44 platform parent
- *   5. NO direct history.pushState/replaceState calls
+ * Data Flow (ONE-WAY):
+ *   1. User/code calls stackManager.push(pageName)
+ *   2. StackManager notifies listeners and updates internal state
+ *   3. NavigationTracker.useEffect catches change and calls navigate()
+ *   4. React Router updates location/UI
+ *   5. No feedback loop - changes only flow StackManager -> React Router
  *
- * Navigation Flow:
- *   User Action -> MobileLink.onClick -> mobileStack.push/replace -> 
- *   MobileStackManager notifies -> NavigationTracker navigates React Router ->
- *   React Router updates location -> back-end services log navigation
+ * Key Principles:
+ *   - NO react-router history API usage
+ *   - NO window.history manipulation
+ *   - NO popstate listener (handled by Android/webview)
+ *   - Stack-based navigation only
+ *   - Single direction: StackManager state drives React Router UI
  */
 export default function NavigationTracker() {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  // Notify Base44 platform parent of URL changes
-  useEffect(() => {
-    window.parent?.postMessage({ 
-      type: 'app_changed_url', 
-      url: window.location.href 
-    }, '*');
-  }, [location]);
-
   /**
-   * Sync React Router location changes to MobileStackManager.
-   * This ensures mobileStack state matches the UI.
+   * Listen for StackManager changes and drive React Router UI.
+   * This is the PRIMARY mechanism for all navigation.
    */
   useEffect(() => {
-    const pathname = location.pathname;
-    
-    // Update mobileStack to match current location
-    // Only push if not already at this path
-    if (mobileStack.getCurrentPathname() !== pathname) {
-      mobileStack.push(pathname);
-    }
-    
-    if (isAuthenticated && pathname) {
-      base44.appLogs.logUserInApp(pathname).catch(() => {});
-    }
-  }, [location.pathname, isAuthenticated]);
+    const unsubscribe = stackManager.subscribe((state) => {
+      // Convert page name to route path
+      const pagePath = state.currentPage === 'Dashboard' 
+        ? '/' 
+        : `/${state.currentPage}`;
 
-  /**
-   * Listen for mobileStack changes and update React Router UI.
-   * This is the primary mechanism for navigation.
-   */
-  useEffect(() => {
-    const unsubscribe = mobileStack.subscribe((state) => {
-      // Navigate React Router to match mobileStack state
-      const currentPath = location.pathname;
-      if (currentPath !== state.pathname) {
-        // Use replace to prevent browser history pollution
-        navigate(state.pathname, { replace: true });
+      // Only navigate if path has actually changed
+      if (location.pathname !== pagePath) {
+        navigate(pagePath, { replace: true });
       }
     });
 
@@ -71,49 +50,56 @@ export default function NavigationTracker() {
   }, [navigate, location.pathname]);
 
   /**
-   * Handle Android/hardware back button.
-   * No browser history API involvement - pure stack-based navigation.
+   * Notify Base44 platform of URL changes
+   */
+  useEffect(() => {
+    window.parent?.postMessage(
+      { 
+        type: 'app_changed_url', 
+        url: window.location.href 
+      },
+      '*'
+    );
+  }, [location]);
+
+  /**
+   * Log app navigation for analytics
+   */
+  useEffect(() => {
+    if (isAuthenticated) {
+      base44.appLogs.logUserInApp(location.pathname).catch(() => {});
+    }
+  }, [location.pathname, isAuthenticated]);
+
+  /**
+   * Handle hardware back button (from webview/Android)
+   * Direct communication with StackManager - no Router involvement
    */
   useEffect(() => {
     const handlePopState = (event) => {
-      // Prevent browser default behavior completely
       event.preventDefault();
-      
-      // Let MobileStackManager handle back logic
-      const canGoBack = mobileStack.handleAndroidBack();
-
-      if (canGoBack) {
-        // Navigate React Router to new stack top
-        const nextPath = mobileStack.getCurrentPathname();
-        navigate(nextPath, { replace: true });
-      } else {
-        // At root - app should exit (handled by platform/webview)
-        console.log('[NavigationTracker] At root, back button returns to app exit');
-      }
+      stackManager.handleAndroidBack();
+      // StackManager will notify subscribers, which triggers navigate() above
     };
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [navigate]);
+  }, []);
 
   /**
-   * Handle Escape key as back-button equivalent
+   * Handle Escape key as back-button equivalent (for desktop testing)
    */
   useEffect(() => {
     const handleEscape = (event) => {
       if (event.key === 'Escape') {
         event.preventDefault();
-        const canGoBack = mobileStack.handleAndroidBack();
-        if (canGoBack) {
-          const nextPath = mobileStack.getCurrentPathname();
-          navigate(nextPath, { replace: true });
-        }
+        stackManager.handleAndroidBack();
       }
     };
 
     window.addEventListener('keydown', handleEscape);
     return () => window.removeEventListener('keydown', handleEscape);
-  }, [navigate]);
+  }, []);
 
   return null;
 }
