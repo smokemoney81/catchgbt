@@ -641,14 +641,20 @@ export default function BiteDetectorSection() {
               <video
                 ref={videoRef}
                 className="w-full h-full object-contain"
+                style={{ willChange: 'contents', WebkitAccelerated: 'true' }}
                 playsInline
                 autoPlay
                 muted
+                aria-label="Live Kamera-Stream fuer Bissanzeiger"
               />
               <canvas
                 ref={overlayRef}
                 className="absolute inset-0 w-full h-full"
-                style={{ pointerEvents: 'auto' }}
+                style={{ 
+                  pointerEvents: 'auto',
+                  willChange: 'transform',
+                  WebkitAccelerated: 'true'
+                }}
                 role="img"
                 aria-label="Interaktive Ruten-Erkennungsflaeche: Tuerkis umrahmtes Gebiet ist die Angelschnur-Region; Gelbes umrahmtes Gebiet ist die Rutenspitze-Region. Klicken und ziehen zum Zeichnen der Regions of Interest fuer Bissanzeige."
               />
@@ -657,6 +663,7 @@ export default function BiteDetectorSection() {
                 className="hidden"
                 role="presentation"
                 aria-hidden="true"
+                style={{ willChange: 'auto' }}
               />
               
               {!running && (
