@@ -379,23 +379,17 @@ function LayoutContent({ children, currentPageName }) {
                   </div>
                 )}
                 
-                <Suspense fallback={<LazyFallback />}>
-                  <ErrorBoundary isMinimal={true} isFull={false}>
-                    <QuickCatchDialog />
-                  </ErrorBoundary>
-                </Suspense>
+                <SuspenseWithErrorBoundary>
+                  <QuickCatchDialog />
+                </SuspenseWithErrorBoundary>
 
-                <Suspense fallback={<LazyFallback />}>
-                  <ErrorBoundary isMinimal={true} isFull={false}>
-                    <FeedbackManager />
-                  </ErrorBoundary>
-                </Suspense>
+                <SuspenseWithErrorBoundary>
+                  <FeedbackManager />
+                </SuspenseWithErrorBoundary>
 
-                <Suspense fallback={<LazyFallback />}>
-                  <ErrorBoundary isMinimal={true} isFull={false}>
-                    <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} currentPageName={currentPageName} />
-                  </ErrorBoundary>
-                </Suspense>
+                <SuspenseWithErrorBoundary>
+                  <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} currentPageName={currentPageName} />
+                </SuspenseWithErrorBoundary>
 
                 <div className="sticky top-0 z-40 bg-gray-950">
                   <Header 
