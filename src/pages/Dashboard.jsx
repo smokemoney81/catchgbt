@@ -357,6 +357,13 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
         aria-atomic="false"
         className="sr-only"
       />
+      
+      <VoiceOverlay 
+        isOpen={voiceOverlayOpen} 
+        onClose={() => setVoiceOverlayOpen(false)} 
+        currentPageName="Dashboard" 
+      />
+
       <div className="space-y-12">
 
         <div className="flex items-center justify-between border-b border-gray-800/50 pb-6">
