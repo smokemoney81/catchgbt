@@ -682,12 +682,13 @@ export default function BiteDetectorSection() {
               <div className="space-y-4">
                 <Button
                    onClick={running ? () => stopDetection(true) : startDetection}
-                   className={`w-full min-h-[44px] ${
+                   className={`w-full min-h-[44px] font-semibold transition-all duration-200 ${
                      running 
-                       ? 'bg-red-600 active:scale-95 active:bg-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2' 
-                       : 'bg-emerald-600 active:scale-95 active:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2'
+                       ? 'bg-red-600 hover:bg-red-700 active:scale-95 active:bg-red-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2' 
+                       : 'bg-emerald-600 hover:bg-emerald-700 active:scale-95 active:bg-emerald-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2'
                    }`}
                    aria-label={running ? 'Bissanzeiger stoppen und Kamera-Stream beenden' : 'Kamera starten und Bissanzeiger aktivieren'}
+                   aria-pressed={running}
                  >
                   {running ? 'Bissanzeiger stoppen' : 'Bissanzeiger starten'}
                 </Button>
