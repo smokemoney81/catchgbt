@@ -91,16 +91,38 @@
   [role="region"] {
     contain: layout style paint;
   }
-  /* Mobile Guidelines: 44x44px minimum tap target */
-  button, a, [role="button"], [role="tab"], input[type="checkbox"], input[type="radio"] {
+  /* Mobile Guidelines: 44x44px minimum tap target for all interactive elements */
+  button, a, [role="button"], [role="tab"], [role="menuitem"], 
+  [role="option"], [role="switch"], input[type="checkbox"], 
+  input[type="radio"], input[type="button"], input[type="submit"],
+  input[type="reset"], [role="link"], [data-interactive="true"] {
     min-height: 44px;
     min-width: 44px;
   }
-  /* Inline/icon-only elements override */
-  button.icon-only, a.icon-only {
+  
+  /* Ensure proper padding/display for tap targets */
+  button, a, [role="button"], [role="menuitem"],
+  input[type="button"], input[type="submit"] {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+  }
+  
+  /* Inline/icon-only elements override with proper sizing */
+  button.icon-only, a.icon-only, [role="button"].icon-only {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Fixed-position elements get safe-area-bottom padding */
+  [role="navigation"][style*="position: fixed"],
+  .fixed-bottom-nav, .bottom-nav-fixed,
+  nav[style*="bottom"], [data-fixed-bottom="true"],
+  .sticky-bottom {
+    padding-bottom: calc(var(--safe-area-bottom) + 1rem);
   }
 }
 
