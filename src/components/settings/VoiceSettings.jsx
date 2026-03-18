@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button";
 import { User } from "@/entities/User";
 import { Volume2, VolumeX } from "lucide-react";
 import { toast } from "sonner";
+import { useOptimisticMutation } from "@/lib/useOptimisticMutation";
 
 export default function VoiceSettings() {
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [speechSpeed, setSpeechSpeed] = useState(1.0);
-  const [isSaving, setIsSaving] = useState(false);
+  const [initialState, setInitialState] = useState({ audioEnabled: true, speechSpeed: 1.0 });
 
   useEffect(() => {
     loadSettings();
@@ -22,35 +23,49 @@ export default function VoiceSettings() {
       const user = await User.me();
       const settings = user?.settings || {};
       
-      setAudioEnabled(settings.audio_enabled !== false);
-      setSpeechSpeed(settings.speech_speed || 1.0);
+      const state = {
+        audioEnabled: settings.audio_enabled !== false,
+        speechSpeed: settings.speech_speed || 1.0
+      };
+      setAudioEnabled(state.audioEnabled);
+      setSpeechSpeed(state.speechSpeed);
+      setInitialState(state);
     } catch (error) {
       console.error("Fehler beim Laden der Einstellungen:", error);
     }
   };
 
-  const saveSettings = async () => {
-    setIsSaving(true);
-    try {
+  const voiceSettingsMutation = useOptimisticMutation({
+    queryKey: 'userSettings',
+    mutationFn: async (settings) => {
       const user = await User.me();
       await User.updateMyUserData({
         settings: {
           ...user.settings,
-          audio_enabled: audioEnabled,
-          speech_speed: speechSpeed
+          audio_enabled: settings.audioEnabled,
+          speech_speed: settings.speechSpeed
         }
       });
-
-      // Event für andere Komponenten
       window.dispatchEvent(new CustomEvent('voiceSettingsUpdated'));
-      
+      return settings;
+    },
+    optimisticUpdate: () => ({ audioEnabled, speechSpeed }),
+    onSuccess: () => {
+      setInitialState({ audioEnabled, speechSpeed });
       toast.success("Audio-Einstellungen gespeichert!");
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error("Fehler beim Speichern:", error);
       toast.error("Fehler beim Speichern der Einstellungen");
-    }
-    setIsSaving(false);
+    },
+    invalidateOnSettle: true
+  });
+
+  const saveSettings = () => {
+    voiceSettingsMutation.mutate({ audioEnabled, speechSpeed });
   };
+
+  const hasChanges = audioEnabled !== initialState.audioEnabled || speechSpeed !== initialState.speechSpeed;
 
   return (
     <Card className="glass-morphism border-gray-800">
@@ -103,11 +118,11 @@ export default function VoiceSettings() {
         {/* Speichern Button */}
         <Button 
           onClick={saveSettings}
-          disabled={isSaving}
+          disabled={voiceSettingsMutation.isPending || !hasChanges}
           className="w-full bg-cyan-600 active:scale-95 active:bg-cyan-700 focus:ring-2 focus:ring-cyan-400"
           aria-label="Einstellungen speichern"
         >
-          {isSaving ? 'Speichere...' : 'Einstellungen speichern'}
+          {voiceSettingsMutation.isPending ? 'Speichere...' : 'Einstellungen speichern'}
         </Button>
       </CardContent>
     </Card>
