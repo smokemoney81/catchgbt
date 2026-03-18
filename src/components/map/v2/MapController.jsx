@@ -7,6 +7,7 @@ import { useLocation } from "@/components/location/LocationManager";
 import { toast } from "sonner";
 import { useHaptic } from "@/components/utils/HapticFeedback";
 import { useSound } from "@/components/utils/SoundManager";
+import { useOptimisticMutation } from "@/lib/useOptimisticMutation";
 import MapView from "./MapView";
 import AddSpotModal from "./AddSpotModal";
 import LocationDetailPanel from "./LocationDetailPanel";
@@ -122,14 +123,28 @@ function MapController() {
     playSound('click');
   }, [newSpotCoords, triggerHaptic, playSound]);
 
+  const addSpotMutation = useOptimisticMutation({
+    queryKey: 'mapSpots',
+    mutationFn: (spotData) => Spot.create(spotData),
+    optimisticUpdate: (oldSpots = [], newSpot) => [
+      { id: `tmp-${Date.now()}`, ...newSpot },
+      ...oldSpots
+    ],
+    onSuccess: () => {
+      triggerHaptic('success');
+      playSound('success');
+      toast.success("Spot erfolgreich hinzugefügt!");
+    },
+    onError: () => {
+      toast.error("Fehler beim Hinzufügen des Spots");
+    }
+  });
+
   const handleSpotAdded = useCallback(async () => {
-    await loadAllData();
     setNewSpotCoords(null);
     setShowAddModal(false);
-    triggerHaptic('success');
-    playSound('success');
-    toast.success("Spot erfolgreich hinzugefügt!");
-  }, [triggerHaptic, playSound]);
+    await loadAllData();
+  }, []);
 
   const handleLocationClick = useCallback((location, type) => {
     setSelectedLocation({ ...location, type });
@@ -216,15 +231,16 @@ function MapController() {
                <span className="hidden sm:inline text-xs">Download</span>
              </Button>
              {newSpotCoords && !showAddModal && (
-               <Button
-                 onClick={handleAddSpotClick}
-                 aria-label="Neuen Spot bei ausgewaehltem Ort hinzufuegen"
-                 className="bg-emerald-600/90 hover:bg-emerald-700 border border-emerald-500/50 text-white min-h-[44px] px-3"
-               >
-                 <Plus aria-hidden="true" className="w-4 h-4 sm:mr-1.5" />
-                 <span className="hidden sm:inline text-xs">Spot</span>
-               </Button>
-             )}
+                  <Button
+                    onClick={handleAddSpotClick}
+                    disabled={addSpotMutation.isPending}
+                    aria-label="Neuen Spot bei ausgewaehltem Ort hinzufuegen"
+                    className="bg-emerald-600/90 hover:bg-emerald-700 border border-emerald-500/50 text-white min-h-[44px] px-3"
+                  >
+                    <Plus aria-hidden="true" className="w-4 h-4 sm:mr-1.5" />
+                    <span className="hidden sm:inline text-xs">Spot</span>
+                  </Button>
+                )}
            </div>
           </div>
 

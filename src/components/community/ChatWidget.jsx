@@ -137,26 +137,26 @@ export default function ChatWidget({ topic = "Allgemein" }) {
         </Button>
       </DialogTrigger>
       <DialogContent className="bg-slate-900 border-slate-700 max-w-md">
-        <DialogHeader>
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-slate-100">Chat - {topic}</DialogTitle>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500"></div>
-              <span className="text-xs text-slate-400">{activeUsers.length} online</span>
-            </div>
-          </div>
-          {activeUsers.length > 0 && (
-            <div className="mt-2 flex flex-wrap gap-1">
-              {activeUsers.map((u) => (
-                <span key={u.id} className="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded">
-                  {u.user_name}
-                </span>
-              ))}
-            </div>
-          )}
-        </DialogHeader>
-        
-        <div className="h-80 overflow-y-auto space-y-3 mb-4 bg-slate-950 rounded p-3">
+         <DialogHeader>
+           <div className="flex items-center justify-between">
+             <DialogTitle className="text-slate-100">Chat - {topic}</DialogTitle>
+             <div className="flex items-center gap-2">
+               <div className="w-2 h-2 rounded-full bg-green-500"></div>
+               <span className="text-xs text-slate-400">{activeUsers.length} online</span>
+             </div>
+           </div>
+           {activeUsers.length > 0 && (
+             <div className="mt-2 flex flex-wrap gap-1" aria-live="polite" aria-label="Online Nutzer">
+               {activeUsers.map((u) => (
+                 <span key={u.id} className="text-xs bg-slate-800 text-slate-300 px-2 py-1 rounded">
+                   {u.user_name}
+                 </span>
+               ))}
+             </div>
+           )}
+         </DialogHeader>
+
+         <div className="h-80 overflow-y-auto space-y-3 mb-4 bg-slate-950 rounded p-3" aria-live="polite" aria-label="Chatnachrichten" role="log">
           {messages.length === 0 ? (
             <p className="text-xs text-slate-400 text-center py-8">Keine Nachrichten</p>
           ) : (

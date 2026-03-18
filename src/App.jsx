@@ -11,6 +11,7 @@ import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import PageNotFound from './lib/PageNotFound';
+import PageTransition from '@/lib/PageTransitionEnhanced';
 import BathymetricCrowdsourcing from './pages/BathymetricCrowdsourcing';
 import WeatherAlerts from './pages/WeatherAlerts';
 import Events from './pages/Events';
@@ -83,11 +84,31 @@ const AnimatedRoutes = ({ PageFallback }) => {
               }
             />
           ))}
-          <Route path="/BathymetricCrowdsourcing" element={<LayoutWrapper currentPageName="BathymetricCrowdsourcing"><BathymetricCrowdsourcing /></LayoutWrapper>} />
-          <Route path="/ARKnotenAssistent" element={<LayoutWrapper currentPageName="ARKnotenAssistent"><ARKnotenAssistent /></LayoutWrapper>} />
-          <Route path="/KiBuddyBeta" element={<LayoutWrapper currentPageName="KiBuddyBeta"><KiBuddyBeta /></LayoutWrapper>} />
-          <Route path="/Events" element={<LayoutWrapper currentPageName="Events"><Events /></LayoutWrapper>} />
-          <Route path="/WeatherAlerts" element={<LayoutWrapper currentPageName="WeatherAlerts"><WeatherAlerts /></LayoutWrapper>} />
+          <Route path="/BathymetricCrowdsourcing" element={
+            <LayoutWrapper currentPageName="BathymetricCrowdsourcing">
+              <PageTransition><BathymetricCrowdsourcing /></PageTransition>
+            </LayoutWrapper>
+          } />
+          <Route path="/ARKnotenAssistent" element={
+            <LayoutWrapper currentPageName="ARKnotenAssistent">
+              <PageTransition><ARKnotenAssistent /></PageTransition>
+            </LayoutWrapper>
+          } />
+          <Route path="/KiBuddyBeta" element={
+            <LayoutWrapper currentPageName="KiBuddyBeta">
+              <PageTransition><KiBuddyBeta /></PageTransition>
+            </LayoutWrapper>
+          } />
+          <Route path="/Events" element={
+            <LayoutWrapper currentPageName="Events">
+              <PageTransition><Events /></PageTransition>
+            </LayoutWrapper>
+          } />
+          <Route path="/WeatherAlerts" element={
+            <LayoutWrapper currentPageName="WeatherAlerts">
+              <PageTransition><WeatherAlerts /></PageTransition>
+            </LayoutWrapper>
+          } />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </AnimatePresence>
