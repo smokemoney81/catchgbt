@@ -422,71 +422,85 @@ function LayoutContent({ children, currentPageName, queryClient }) {
                 
                 @keyframes gradient-shift {
                     0%, 100% {
-                        transform: translate(0, 0) rotate(var(--rotation, 0deg)) scale(1);
+                        transform: translate(0, 0) scale(1);
                         opacity: var(--opacity-start, 0.2);
                     }
                     25% {
-                        transform: translate(10%, -5%) rotate(calc(var(--rotation, 0deg) + 15deg)) scale(1.1);
+                        transform: translate(8%, -4%) scale(1.08);
                         opacity: var(--opacity-mid, 0.3);
                     }
                     50% {
-                        transform: translate(-5%, 10%) rotate(calc(var(--rotation, 0deg) - 10deg)) scale(0.95);
+                        transform: translate(-4%, 8%) scale(0.96);
                         opacity: var(--opacity-end, 0.15);
                     }
                     75% {
-                        transform: translate(-10%, -10%) rotate(calc(var(--rotation, 0deg) + 20deg)) scale(1.05);
+                        transform: translate(-8%, -8%) scale(1.04);
                         opacity: var(--opacity-mid, 0.3);
                     }
                 }
 
                 @keyframes gradient-shift-reverse {
                     0%, 100% {
-                        transform: translate(0, 0) rotate(var(--rotation, 0deg)) scale(1);
+                        transform: translate(0, 0) scale(1);
                         opacity: var(--opacity-start, 0.25);
                     }
                     25% {
-                        transform: translate(-10%, 5%) rotate(calc(var(--rotation, 0deg) - 15deg)) scale(1.1);
+                        transform: translate(-8%, 4%) scale(1.08);
                         opacity: var(--opacity-mid, 0.35);
                     }
                     50% {
-                        transform: translate(5%, -10%) rotate(calc(var(--rotation, 0deg) + 10deg)) scale(0.95);
+                        transform: translate(4%, -8%) scale(0.96);
                         opacity: var(--opacity-end, 0.2);
                     }
                     75% {
-                        transform: translate(10%, 10%) rotate(calc(var(--rotation, 0deg) - 20deg)) scale(1.05);
+                        transform: translate(8%, 8%) scale(1.04);
                         opacity: var(--opacity-mid, 0.35);
                     }
                 }
 
                 @keyframes glow-pulse {
                     0%, 100% {
+                        opacity: 0.2;
                         filter: blur(80px);
                     }
                     50% {
-                        filter: blur(120px);
+                        opacity: 0.25;
+                        filter: blur(100px);
                     }
                 }
 
                 .animate-gradient-shift {
-                    animation: gradient-shift 20s ease-in-out infinite;
+                    animation: gradient-shift 20s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+                    will-change: transform, opacity;
+                    transform: translateZ(0);
+                    backface-visibility: hidden;
                 }
 
                 .animate-gradient-shift-reverse {
-                    animation: gradient-shift-reverse 25s ease-in-out infinite;
+                    animation: gradient-shift-reverse 25s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+                    will-change: transform, opacity;
+                    transform: translateZ(0);
+                    backface-visibility: hidden;
                 }
 
                 .animate-glow-pulse {
-                    animation: glow-pulse 8s ease-in-out infinite;
+                    animation: glow-pulse 8s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+                    will-change: opacity;
+                    transform: translateZ(0);
                 }
 
                 .animate-glow-pulse-delayed {
-                    animation: glow-pulse 8s ease-in-out infinite;
+                    animation: glow-pulse 8s cubic-bezier(0.42, 0, 0.58, 1) infinite;
                     animation-delay: 2s;
+                    will-change: opacity;
+                    transform: translateZ(0);
                 }
 
                 .animate-glow-pulse-slow {
-                    animation: glow-pulse 12s ease-in-out infinite;
+                    animation: glow-pulse 12s cubic-bezier(0.42, 0, 0.58, 1) infinite;
                     animation-delay: 4s;
+                    will-change: opacity;
+                    transform: translateZ(0);
                 }
 
                 [data-sonner-toast] {
