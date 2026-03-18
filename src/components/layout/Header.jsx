@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Bell, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { Bell, ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useHaptic } from "@/components/utils/HapticFeedback";
@@ -7,12 +8,13 @@ import { useSound } from "@/components/utils/SoundManager";
 import { User } from "@/entities/User";
 import { FishingPlan } from "@/entities/FishingPlan";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import WakeWordIndicator from "@/components/header/WakeWordIndicator";
 import EventTimer from "@/components/header/EventTimer";
 import { base44 } from "@/api/base44Client";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { mobileStack } from "@/lib/MobileStackManager";
 
 export default function Header({
   isSidebarOpen,
@@ -21,6 +23,7 @@ export default function Header({
 }) {
   const { triggerHaptic } = useHaptic();
   const { playSound } = useSound();
+  const navigate = useNavigate();
   const [activeAlertsCount, setActiveAlertsCount] = useState(0);
   const [activeTripsCount, setActiveTripsCount] = useState(0);
   const [user, setUser] = useState(null);
@@ -28,6 +31,7 @@ export default function Header({
   const [planLoading, setPlanLoading] = useState(true);
   const [recentPosts, setRecentPosts] = useState([]);
   const [postIndex, setPostIndex] = useState(0);
+  const [canGoBack, setCanGoBack] = useState(false);
 
   const loadInitialData = async () => {
     setPlanLoading(true);
@@ -73,6 +77,21 @@ export default function Header({
       window.removeEventListener('weather-alerts-updated', loadInitialData);
       window.removeEventListener('active-trips-updated', loadInitialData);
       window.removeEventListener('user-refresh-request', loadInitialData);
+    };
+  }, []);
+
+  // Track navigation stack for back button visibility
+  useEffect(() => {
+    const updateCanGoBack = () => {
+      setCanGoBack(mobileStack.canGoBack());
+    };
+
+    updateCanGoBack();
+
+    // Listen for navigation changes
+    const listener = mobileStack.subscribe(updateCanGoBack);
+    return () => {
+      if (listener) listener();
     };
   }, []);
 
