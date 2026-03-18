@@ -12,7 +12,7 @@ import AddSpotModal from "./AddSpotModal";
 import LocationDetailPanel from "./LocationDetailPanel";
 import MapDownloadDialog from "./MapDownloadDialog";
 
-export default function MapController() {
+function MapController() {
   const { currentLocation, requestGpsLocation, setSpotAsLocation } = useLocation();
   const { triggerHaptic } = useHaptic();
   const { playSound } = useSound();
@@ -105,15 +105,14 @@ export default function MapController() {
     setLoading(false);
   };
 
-  const handleMapClick = (coords) => {
+  const handleMapClick = useCallback((coords) => {
     if (!showAddModal && !selectedLocation) {
-      console.log("Map clicked at:", coords);
       setNewSpotCoords(coords);
       triggerHaptic('light');
     }
-  };
+  }, [showAddModal, selectedLocation, triggerHaptic]);
 
-  const handleAddSpotClick = () => {
+  const handleAddSpotClick = useCallback(() => {
     if (!newSpotCoords) {
       toast.warning("Bitte setze zuerst einen Pin auf der Karte");
       return;
@@ -121,34 +120,32 @@ export default function MapController() {
     setShowAddModal(true);
     triggerHaptic('medium');
     playSound('click');
-  };
+  }, [newSpotCoords, triggerHaptic, playSound]);
 
-  const handleSpotAdded = async (newSpot) => {
+  const handleSpotAdded = useCallback(async () => {
     await loadAllData();
     setNewSpotCoords(null);
     setShowAddModal(false);
     triggerHaptic('success');
     playSound('success');
     toast.success("Spot erfolgreich hinzugefügt!");
-  };
+  }, [triggerHaptic, playSound]);
 
-  const handleLocationClick = (location, type) => {
-    console.log("Location clicked:", location, type);
+  const handleLocationClick = useCallback((location, type) => {
     setSelectedLocation({ ...location, type });
     triggerHaptic('light');
     playSound('selection');
-  };
+  }, [triggerHaptic, playSound]);
 
-  const handleMyLocation = async () => {
+  const handleMyLocation = useCallback(async () => {
     triggerHaptic('medium');
     await requestGpsLocation();
-    
     if (currentLocation && currentLocation.lat != null && currentLocation.lon != null) {
       setMapCenter({ lat: currentLocation.lat, lng: currentLocation.lon });
       setMapZoom(15);
       toast.success("Standort aktualisiert");
     }
-  };
+  }, [triggerHaptic, requestGpsLocation, currentLocation]);
 
   const filteredSpots = filters.spots ? spots : [];
   const filteredClubs = fishingClubs.filter(fc => {
@@ -380,3 +377,5 @@ export default function MapController() {
         </div>
         );
         }
+
+export default memo(MapController);
