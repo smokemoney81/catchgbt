@@ -47,7 +47,8 @@ export default function Layout({ children, currentPageName }) {
   );
 }
 
-function LayoutContent({ children, currentPageName, queryClient }) {
+function LayoutContent({ children, currentPageName }) {
+  const queryClient = useQueryClient();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [scrollPositions, setScrollPositions] = useState({});
