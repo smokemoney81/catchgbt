@@ -7,7 +7,7 @@ export default function Datenschutz() {
       <Card className="glass-morphism border-gray-800 rounded-2xl">
         <CardHeader>
           <CardTitle className="text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.7)]">
-            DATENSCHUTZERKLÄRUNG - catchgbt
+            DATENSCHUTZERKLÄRUNG - Catchly
           </CardTitle>
         </CardHeader>
         <CardContent className="text-gray-300 prose prose-invert max-w-none">
@@ -32,7 +32,7 @@ export default function Datenschutz() {
 
           <h2 className="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]">3. Verarbeitete Daten</h2>
           <p>
-            Die App „catchgbt" verarbeitet - abhängig von der Nutzung - folgende Daten:
+            Die App „Catchly" verarbeitet - abhängig von der Nutzung - folgende Daten:
           </p>
           <ul>
             <li>Geräte- und Nutzungsdaten (z. B. Betriebssystem, App-Version, technische Logdaten)</li>
