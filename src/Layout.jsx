@@ -36,12 +36,11 @@ const SupportAgentButton = lazy(() => import("@/components/layout/SupportAgentBu
 const LazyFallback = () => null;
 
 export default function Layout({ children, currentPageName }) {
-  const queryClient = useQueryClient();
   usePrefetch();
 
   return (
     <MobileStackProvider>
-      <LayoutContent currentPageName={currentPageName} queryClient={queryClient}>
+      <LayoutContent currentPageName={currentPageName}>
         {children}
       </LayoutContent>
     </MobileStackProvider>
