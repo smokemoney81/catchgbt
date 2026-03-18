@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
+import { useOptimisticMutation } from "@/lib/useOptimisticMutation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,7 @@ import { ThumbsUp, MessageCircle, AlertTriangle, Send, Users, ExternalLink, Vide
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function CommunitySection() {
+  const queryClient = useQueryClient();
   const { triggerHaptic } = useHaptic();
   const { playSound } = useSound();
   
@@ -129,17 +131,18 @@ export default function CommunitySection() {
       };
       setPosts((prev) => [optimistic, ...prev]);
       setNewPost({ text: '', photo_url: '' });
-      return { optimistic };
+      triggerHaptic('light');
+      playSound('click');
+      return { optimistic, previousPosts: posts };
     },
     onSuccess: (saved, _, ctx) => {
-      // Replace tmp entry with real record
       setPosts((prev) => prev.map((p) => (p.id === ctx.optimistic.id ? saved : p)));
       triggerHaptic('success');
       playSound('success');
       toast.success('Post erfolgreich erstellt!');
     },
     onError: (_err, _vars, ctx) => {
-      setPosts((prev) => prev.filter((p) => p.id !== ctx.optimistic.id));
+      setPosts(ctx.previousPosts);
       setNewPost({ text: ctx.optimistic.text, photo_url: ctx.optimistic.photo_url || '' });
       triggerHaptic('error');
       playSound('error');
@@ -155,87 +158,73 @@ export default function CommunitySection() {
     createPostMutation.mutate({ text: newPost.text, photo_url: newPost.photo_url || null });
   };
 
-  const updateLikeMutation = useMutation({
+  const updateLikeMutation = useOptimisticMutation({
+    queryKey: 'posts',
     mutationFn: ({ postId, likes }) => base44.entities.Post.update(postId, { likes }),
-    onMutate: ({ postId, likes }) => {
-      setPosts(prev => prev.map(p => p.id === postId ? { ...p, likes } : p));
+    optimisticUpdate: (old = [], { postId, likes }) => old.map(p => p.id === postId ? { ...p, likes } : p),
+    onMutate: () => {
       triggerHaptic('light');
       playSound('selection');
-      return { postId, previousPosts: posts };
     },
-    onError: (_err, _vars, ctx) => {
-      setPosts(ctx.previousPosts);
-      toast.error('Fehler beim Liken');
-    }
+    onError: () => toast.error('Fehler beim Liken'),
   });
 
   const handleLike = (postId, currentLikes) => {
     updateLikeMutation.mutate({ postId, likes: currentLikes + 1 });
   };
 
-  const handleComment = async (postId) => {
+  const commentMutation = useMutation({
+    mutationFn: ({ postId, commentText }) => base44.entities.Comment.create({ post_id: postId, text: commentText }),
+    onMutate: ({ postId, commentText }) => {
+      const optimisticComment = {
+        id: `temp-${Date.now()}`,
+        post_id: postId,
+        text: commentText,
+        created_by: currentUser?.email,
+        created_date: new Date().toISOString()
+      };
+      const previousComments = comments;
+      setComments(prev => ({
+        ...prev,
+        [postId]: [...(prev[postId] || []), optimisticComment]
+      }));
+      setNewComment(prev => ({ ...prev, [postId]: "" }));
+      triggerHaptic('light');
+      playSound('click');
+      return { optimisticComment, previousComments, postId };
+    },
+    onSuccess: (newCommentData, _, ctx) => {
+      setComments(prev => ({
+        ...prev,
+        [ctx.postId]: prev[ctx.postId].map(c => c.id === ctx.optimisticComment.id ? newCommentData : c)
+      }));
+    },
+    onError: (_, __, ctx) => {
+      setComments(ctx.previousComments);
+      setNewComment(prev => ({ ...prev, [ctx.postId]: ctx.optimisticComment.text }));
+      toast.error("Fehler beim Kommentieren");
+    }
+  });
+
+  const handleComment = (postId) => {
     const commentText = newComment[postId];
     if (!commentText?.trim()) {
       toast.warning("Bitte gib einen Kommentar ein");
       return;
     }
-
-    // Optimistic update
-    const optimisticComment = {
-      id: `temp-${Date.now()}`,
-      post_id: postId,
-      text: commentText,
-      created_by: currentUser?.email,
-      created_date: new Date().toISOString()
-    };
-
-    const updatedComments = {
-      ...comments,
-      [postId]: [...(comments[postId] || []), optimisticComment]
-    };
-    setComments(updatedComments);
-    setNewComment({ ...newComment, [postId]: "" });
-    triggerHaptic('light');
-    playSound('click');
-
-    try {
-      const newCommentData = await base44.entities.Comment.create({
-        post_id: postId,
-        text: commentText
-      });
-      
-      // Replace temp with real
-      setComments({
-        ...updatedComments,
-        [postId]: updatedComments[postId].map(c => 
-          c.id === optimisticComment.id ? newCommentData : c
-        )
-      });
-    } catch (error) {
-      console.error("Fehler beim Kommentieren:", error);
-      // Revert on error
-      setComments({
-        ...comments,
-        [postId]: (comments[postId] || []).filter(c => c.id !== optimisticComment.id)
-      });
-      setNewComment({ ...newComment, [postId]: commentText });
-      toast.error("Fehler beim Kommentieren");
-    }
+    commentMutation.mutate({ postId, commentText });
   };
 
-  const reportMutation = useMutation({
+  const reportMutation = useOptimisticMutation({
+    queryKey: 'posts',
     mutationFn: (postId) => base44.entities.Post.update(postId, { reported: true }),
-    onMutate: (postId) => {
-      setPosts(prev => prev.map(p => p.id === postId ? { ...p, reported: true } : p));
+    optimisticUpdate: (old = [], postId) => old.map(p => p.id === postId ? { ...p, reported: true } : p),
+    onMutate: () => {
       triggerHaptic('medium');
       playSound('warning');
-      return { postId, previousPosts: posts };
     },
     onSuccess: () => toast.success('Post wurde gemeldet'),
-    onError: (_err, _vars, ctx) => {
-      setPosts(ctx.previousPosts);
-      toast.error('Fehler beim Melden');
-    }
+    onError: () => toast.error('Fehler beim Melden'),
   });
 
   const handleReport = (postId) => {
