@@ -12,7 +12,7 @@ export default function SettingsSection() {
   const { soundsEnabled, toggleSounds, playSound } = useSound();
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6 px-4 sm:px-0">
       <Card className="glass-morphism border-gray-800 rounded-2xl">
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
