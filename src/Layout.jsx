@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { usePrefetch } from "@/hooks/usePrefetch";
 import SEO from "@/components/pwa/SEO";
 import { LocationProvider } from "@/components/location/LocationManager";
 import OfflineWrapper from "@/components/utils/OfflineWrapper";
@@ -31,6 +32,7 @@ import { Link } from "react-router-dom";
 
 export default function Layout({ children, currentPageName }) {
   const queryClient = useQueryClient();
+  usePrefetch();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [scrollPositions, setScrollPositions] = useState({});
