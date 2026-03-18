@@ -64,11 +64,16 @@ export default function TickerSettings() {
                 </div>
             </div>
              <div className="mt-4 flex justify-end">
-                <Button onClick={handleSave} disabled={isSaving || !hasChanges}>
-                    <Save className="w-4 h-4 mr-2" />
+                <Button 
+                  onClick={handleSave} 
+                  disabled={isSaving || !hasChanges}
+                  className="active:scale-95 focus:ring-2 focus:ring-emerald-400"
+                  aria-label="Ticker Einstellungen speichern"
+                >
+                    <Save className="w-4 h-4 mr-2" aria-hidden="true" />
                     {isSaving ? 'Speichert...' : 'Änderungen speichern'}
                 </Button>
-            </div>
+             </div>
         </div>
     );
 }
