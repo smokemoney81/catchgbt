@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import optimized CSS modules */
+@import './styles/hover-states-mobile-first.css';
+@import './styles/gradient-animations-optimized.css';
+
 @layer base {
   /* Hardware acceleration for smooth animations */
   * {
@@ -89,7 +93,27 @@
   [role="alert"],
   [role="log"],
   [role="region"] {
-    contain: layout style paint;
+   contain: layout style paint;
+  }
+
+  /* Glass-morphism text color overrides for WCAG AA compliance */
+  .glass-morphism .text-muted-foreground,
+  .glass-morphism .text-gray-400 {
+   color: rgb(148, 163, 184);
+  }
+
+  .glass-morphism .text-gray-500 {
+   color: rgb(148, 163, 184);
+  }
+
+  .glass-morphism .text-secondary-foreground {
+   color: rgb(203, 213, 225);
+  }
+
+  /* Ensure proper contrast for disabled states on glass */
+  .glass-morphism button:disabled,
+  .glass-morphism [aria-disabled="true"] {
+   color: rgb(148, 163, 184);
   }
   /* Mobile Guidelines: 44x44px minimum tap target for all interactive elements */
   button, a, [role="button"], [role="tab"], [role="menuitem"], 
