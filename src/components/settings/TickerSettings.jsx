@@ -3,10 +3,10 @@ import { User } from '@/entities/User';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Save, Newspaper } from 'lucide-react';
+import { useOptimisticMutation } from '@/lib/useOptimisticMutation';
 
 export default function TickerSettings() {
     const [speed, setSpeed] = useState(100);
-    const [isSaving, setIsSaving] = useState(false);
     const [initialSpeed, setInitialSpeed] = useState(100);
 
     useEffect(() => {
@@ -23,18 +23,25 @@ export default function TickerSettings() {
         })();
     }, []);
 
-    const handleSave = async () => {
-        setIsSaving(true);
-        try {
-            await User.updateMyUserData({ settings: { ticker_speed: speed } });
-            toast.success("Ticker-Einstellungen gespeichert!");
+    const tickerMutation = useOptimisticMutation({
+        mutationFn: async (newSpeed) => {
+            await User.updateMyUserData({ settings: { ticker_speed: newSpeed } });
+            return newSpeed;
+        },
+        optimisticUpdate: () => speed,
+        onSuccess: () => {
             setInitialSpeed(speed);
+            toast.success("Ticker-Einstellungen gespeichert!");
             window.dispatchEvent(new CustomEvent('tickerSettingsChanged', { detail: { speed } }));
-        } catch (error) {
+        },
+        onError: () => {
             toast.error("Fehler beim Speichern der Ticker-Einstellungen.");
-        } finally {
-            setIsSaving(false);
-        }
+        },
+        invalidateOnSettle: false
+    });
+
+    const handleSave = () => {
+        tickerMutation.mutate(speed);
     };
     
     const hasChanges = speed !== initialSpeed;
@@ -66,12 +73,12 @@ export default function TickerSettings() {
              <div className="mt-4 flex justify-end">
                 <Button 
                   onClick={handleSave} 
-                  disabled={isSaving || !hasChanges}
+                  disabled={tickerMutation.isPending || !hasChanges}
                   className="active:scale-95 focus:ring-2 focus:ring-emerald-400"
                   aria-label="Ticker Einstellungen speichern"
                 >
                     <Save className="w-4 h-4 mr-2" aria-hidden="true" />
-                    {isSaving ? 'Speichert...' : 'Änderungen speichern'}
+                    {tickerMutation.isPending ? 'Speichert...' : 'Änderungen speichern'}
                 </Button>
              </div>
         </div>
