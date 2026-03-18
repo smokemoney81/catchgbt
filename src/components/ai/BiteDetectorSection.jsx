@@ -66,16 +66,6 @@ export default function BiteDetectorSection() {
       }
     };
     loadUser();
-
-    // Development: Run worker fallback tests
-    if (process.env.NODE_ENV === 'development') {
-      import('@/components/ai/BiteDetectorWorkerFallback.test.js').then(
-        ({ runAllWorkerFallbackTests }) => {
-          // Uncomment next line to test worker fallback on load
-          // runAllWorkerFallbackTests();
-        }
-      ).catch(e => console.warn('[BiteDetector] Test module not loaded:', e));
-    }
   }, []);
 
   // Initialize optimized Web Worker for data processing with robust fallback
