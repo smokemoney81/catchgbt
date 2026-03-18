@@ -125,43 +125,9 @@ export default function Logbook() {
     loadData();
     loadPendingPhotos();
 
-    const handleTouchStart = (e) => {
-      if (window.scrollY === 0) {
-        setPullStart(e.touches[0].clientY);
-      }
-    };
-
-    const handleTouchMove = (e) => {
-      if (pullStart > 0) {
-        const distance = e.touches[0].clientY - pullStart;
-        if (distance > 0 && distance < 150) {
-          setPullDistance(distance);
-        }
-      }
-    };
-
-    const handleTouchEnd = async () => {
-      if (pullDistance > 80) {
-        setIsRefreshing(true);
-        await loadData();
-        setIsRefreshing(false);
-      }
-      setPullStart(0);
-      setPullDistance(0);
-    };
-
-    window.addEventListener('touchstart', handleTouchStart, { passive: true });
-    window.addEventListener('touchmove', handleTouchMove, { passive: true });
-    window.addEventListener('touchend', handleTouchEnd);
     window.addEventListener('catch-saved', loadData);
-
-    return () => {
-      window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', handleTouchEnd);
-      window.removeEventListener('catch-saved', loadData);
-    };
-  }, [pullStart, loadData]);
+    return () => window.removeEventListener('catch-saved', loadData);
+  }, [loadData]);
 
   const resetForm = useCallback(() => {
     setPhotoUrl("");
