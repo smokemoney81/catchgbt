@@ -136,7 +136,7 @@ export default function Logbook() {
           ...variables,
           created_date: new Date().toISOString(),
           created_by: 'temp',
-        } as any),
+        }),
       onSuccess: async (newCatches, variables) => {
         toast.success("Fang gespeichert!");
         const savedCatch = newCatches[0];
@@ -173,7 +173,7 @@ export default function Logbook() {
         return catches.map(c => c.id === id ? { ...c, ...data } : c);
       },
       optimisticData: ({ id, data }) => 
-        createOptimisticUpdate(catches, { ...catches.find(c => c.id === id), ...data } as any),
+        createOptimisticUpdate(catches, { ...catches.find(c => c.id === id), ...data }),
       onSuccess: () => { toast.success("Fang aktualisiert!"); resetForm(); },
       onError: () => toast.error("Fehler beim Aktualisieren"),
     }
