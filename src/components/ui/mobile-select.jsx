@@ -63,12 +63,20 @@ export function MobileSelect({
           <DrawerHeader className="border-b border-gray-800">
             <DrawerTitle className="text-white">{label || placeholder}</DrawerTitle>
           </DrawerHeader>
-          <div className="overflow-y-auto p-4" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 1rem)' }}>
+          <div
+            role="listbox"
+            aria-labelledby={triggerId}
+            aria-label={label || placeholder}
+            className="overflow-y-auto p-4"
+            style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 1rem)' }}
+          >
             <div className="space-y-2">
               {options.map((option) => (
                 <button
                   key={option.value}
                   type="button"
+                  role="option"
+                  aria-selected={value === option.value}
                   onClick={() => handleSelect(option.value)}
                   className={cn(
                     "w-full flex items-center justify-between px-4 py-3 rounded-lg text-left transition-colors min-h-[44px]",
