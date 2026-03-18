@@ -623,7 +623,7 @@ export default function BiteDetectorSection() {
                 className="absolute inset-0 w-full h-full"
                 style={{ pointerEvents: 'auto' }}
                 role="img"
-                aria-label="Interaktive Ruten-Erkennungsflaeche. Tuerkis: Angelschnur ROI, Gelb: Rutenspitze ROI. Klicken und ziehen zum Zeichnen."
+                aria-label="Interaktive Ruten-Erkennungsflaeche: Tuerkis umrahmtes Gebiet ist die Angelschnur-Region; Gelbes umrahmtes Gebiet ist die Rutenspitze-Region. Klicken und ziehen zum Zeichnen der Regions of Interest fuer Bissanzeige."
               />
               <canvas
                 ref={procCanvasRef}
@@ -776,18 +776,19 @@ export default function BiteDetectorSection() {
             )}
 
             {/* Instructions */}
-            <div className="p-4 bg-gray-800/30 rounded-lg text-sm text-gray-400">
+            <div className="p-4 bg-gray-800/30 rounded-lg text-sm text-gray-400" role="region" aria-label="Bedienungsanleitung fuer KI-Bisserkennung">
               <p className="mb-2">
-                <strong className="text-gray-300">Verwendung:</strong>
+                <strong className="text-gray-300">Schritt-für-Schritt-Anleitung:</strong>
               </p>
               <ol className="list-decimal list-inside space-y-1">
-                <li>Kamera starten und Rute ins Bild bringen</li>
-                <li>ROI-Bereiche für Schnur (türkis) und Rutenspitze (gelb) markieren</li>
-                <li>Empfindlichkeit nach Bedarf anpassen</li>
-                <li>Bei Biss: Visueller + Audio-Alarm + Vibration</li>
+                <li>Klicken Sie auf 'Bissanzeiger starten' und bringen Sie die Rute ins Kamerabild</li>
+                <li>Markieren Sie die Angelschnur mit der tuerkisen ROI (Region of Interest)</li>
+                <li>Markieren Sie die Rutenspitze mit der gelben ROI</li>
+                <li>Passen Sie Empfindlichkeit und Sperrzeit nach Bedarf an</li>
+                <li>Bei erkanntem Biss: Visueller Alarm + Audio-Signal + Vibration</li>
               </ol>
               <p className="mt-2 text-xs text-gray-500">
-                Low-CPU Optimierung: {debugInfo}
+                Leistungsoptimierung: {debugInfo}
               </p>
             </div>
             

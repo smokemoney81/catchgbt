@@ -101,18 +101,18 @@ export default function WaterRadarChart({ parameters }) {
 
 // Normalisiere Werte zu 0-100 Skala
 function normalizeParameter(value, min, max, optimalMin, optimalMax, inverse = false) {
-  // Wenn Wert im optimalen Bereich
+  // Normalisiere Parameterwerte auf 0-100 Skala
+  // Optimal range (optimalMin-optimalMax) gets 100%
+  // Below/above gets reduced proportionally
+  
   if (value >= optimalMin && value <= optimalMax) {
     return 100;
   }
   
-  // Wenn außerhalb des optimalen Bereichs
   let score;
   if (value < optimalMin) {
-    // Zu niedrig
     score = ((value - min) / (optimalMin - min)) * 100;
   } else {
-    // Zu hoch
     score = 100 - (((value - optimalMax) / (max - optimalMax)) * 100);
   }
   
