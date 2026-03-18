@@ -38,10 +38,13 @@ export default function WaterRadarChart({ parameters }) {
   ];
 
   return (
-    <Card className="glass-morphism border-gray-800">
+    <Card className="glass-morphism border-gray-800" role="region" aria-label="6-Parameter Qualitätsprofil Radar-Diagramm">
       <CardHeader>
         <CardTitle className="text-cyan-400">6-Parameter Qualitätsprofil</CardTitle>
-        <p className="text-gray-400 text-sm">Multivariate Gewässeranalyse</p>
+        <p className="text-gray-400 text-sm">Multivariate Gewässeranalyse - Alle Parameter auf 0-100 normalisiert</p>
+        <div className="text-xs text-gray-500 mt-2 space-y-1" aria-label="Qualitaetsprofil Legende">
+          <div>Temperatur, Chlorophyll, Klarheit, Sauerstoff, pH-Wert und Cyanobakterien-Risiko</div>
+        </div>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={400}>
@@ -76,13 +79,19 @@ export default function WaterRadarChart({ parameters }) {
         </ResponsiveContainer>
         
         <div className="mt-4 text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800/50">
-            <div className="w-3 h-3 rounded-full bg-green-400"></div>
-            <span className="text-sm text-gray-300">80-100% = Optimal</span>
-            <div className="w-3 h-3 rounded-full bg-yellow-400 ml-2"></div>
-            <span className="text-sm text-gray-300">50-80% = Gut</span>
-            <div className="w-3 h-3 rounded-full bg-red-400 ml-2"></div>
-            <span className="text-sm text-gray-300">&lt;50% = Suboptimal</span>
+          <div className="inline-flex flex-col sm:flex-row items-center gap-4 px-4 py-2 rounded-lg bg-gray-800/50" role="definition" aria-label="Qualitaets-Bewertungsskala">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-green-400" aria-hidden="true"></div>
+              <span className="text-sm text-gray-300">80-100% Optimal</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-yellow-400" aria-hidden="true"></div>
+              <span className="text-sm text-gray-300">50-80% Gut</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-red-400" aria-hidden="true"></div>
+              <span className="text-sm text-gray-300">unter 50% Suboptimal</span>
+            </div>
           </div>
         </div>
       </CardContent>

@@ -10,9 +10,10 @@ export default function WaterCharts({ data, type }) {
     <div className="space-y-6">
       
       {/* Fishing Score Chart */}
-      <Card className="glass-morphism border-gray-800">
+      <Card className="glass-morphism border-gray-800" role="region" aria-label="Fang-Score Diagramm">
         <CardHeader>
           <CardTitle className="text-cyan-400">Fang-Score {isHistory ? "Verlauf" : "Prognose"}</CardTitle>
+          <p className="text-xs text-gray-400 mt-1">Zeitliche Entwicklung der Fang-Erfolgswahrscheinlichkeit im Bereich 0-100</p>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -56,9 +57,10 @@ export default function WaterCharts({ data, type }) {
       </Card>
 
       {/* Temperature & Chlorophyll */}
-      <Card className="glass-morphism border-gray-800">
+      <Card className="glass-morphism border-gray-800" role="region" aria-label="Temperatur und Chlorophyll Diagramm">
         <CardHeader>
           <CardTitle className="text-cyan-400">Temperatur & Chlorophyll</CardTitle>
+          <p className="text-xs text-gray-400 mt-1">Temperatur in Grad Celsius (linke Achse) und Chlorophyll-a in mg/m³ (rechte Achse)</p>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -116,9 +118,10 @@ export default function WaterCharts({ data, type }) {
 
       {/* Turbidity & Oxygen (nur History) */}
       {isHistory && (
-        <Card className="glass-morphism border-gray-800">
+        <Card className="glass-morphism border-gray-800" role="region" aria-label="Truebung und Sauerstoff Diagramm">
           <CardHeader>
             <CardTitle className="text-cyan-400">Trübung & Sauerstoff</CardTitle>
+            <p className="text-xs text-gray-400 mt-1">Wasserklarheit in NTU (linke Achse) und Sauerstoffgehalt in mg/L (rechte Achse)</p>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -177,9 +180,10 @@ export default function WaterCharts({ data, type }) {
 
       {/* Algae Bloom Risk (nur Forecast) */}
       {!isHistory && (
-        <Card className="glass-morphism border-gray-800">
+        <Card className="glass-morphism border-gray-800" role="region" aria-label="Algenblüte-Risiko Prognose">
           <CardHeader>
             <CardTitle className="text-cyan-400">Algenblüte-Risiko Prognose</CardTitle>
+            <p className="text-xs text-gray-400 mt-1">Geschaetztes Risiko für schädliche Algenblüten basierend auf Chlorophyll-Konzentration</p>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
