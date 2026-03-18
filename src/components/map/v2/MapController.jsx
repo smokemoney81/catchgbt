@@ -18,10 +18,8 @@ function MapController() {
   const { currentLocation, requestGpsLocation, setSpotAsLocation } = useLocation();
   const { triggerHaptic } = useHaptic();
   const { playSound } = useSound();
+  const queryClient = useQueryClient();
 
-  const [spots, setSpots] = useState([]);
-  const [fishingClubs, setFishingClubs] = useState([]);
-  const [waterBodies, setWaterBodies] = useState([]);
   const [mapCenter, setMapCenter] = useState(null);
   const [mapZoom, setMapZoom] = useState(13);
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -30,19 +28,31 @@ function MapController() {
   const [showFilters, setShowFilters] = useState(false);
   const [showInfo, setShowInfo] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     spots: true,
     clubs: true,
     parks: true,
     waters: true
   });
+  const [waterBodies, setWaterBodies] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
+  // Query data with react-query
+  const { data: spots = [] } = useQuery({
+    queryKey: ['mapSpots'],
+    queryFn: () => Spot.list().catch(() => []),
+    initialData: []
+  });
+
+  const { data: fishingClubs = [] } = useQuery({
+    queryKey: ['mapClubs'],
+    queryFn: () => FishingClub.list(),
+    initialData: []
+  });
+
   useEffect(() => {
-    loadAllData();
     initializeMap();
 
     const handleOnline = () => setIsOnline(true);
