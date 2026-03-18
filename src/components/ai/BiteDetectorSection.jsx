@@ -73,15 +73,22 @@ export default function BiteDetectorSection() {
     loadUser();
   }, []);
 
-  // Initialize Web Worker for data processing
+  // Initialize optimized Web Worker for data processing
   useEffect(() => {
     try {
-      workerRef.current = new Worker('/workers/echogramProcessor.js');
+      workerRef.current = new Worker('/workers/biteDetectorOptimized.js');
       
       workerRef.current.onmessage = (event) => {
         const { type, result } = event.data;
         if (type === 'frameProcessed' && result) {
+          // Only update state when z-score changes significantly (debounce)
           setLineScore(Math.abs(result.z || 0));
+          setDebugInfo(
+            `proc=${PROC_W}x${result.procHeight || 'auto'} stride=${STRIDE} ` +
+            `zL=${result.z.toFixed(2)} fps=${result.fps} frames=${result.frameCount}`
+          );
+        } else if (type === 'error') {
+          console.error('[BiteDetector] Worker error:', result.error);
         }
       };
       
@@ -211,6 +218,7 @@ export default function BiteDetectorSection() {
     const id = pctx.getImageData(0, 0, procCanvas.width, procCanvas.height);
     
     if (workerRef.current && state.roiLine) {
+      // Transfer buffer ownership to worker (zero-copy)
       workerRef.current.postMessage({
         command: 'processFrame',
         payload: {
@@ -219,7 +227,7 @@ export default function BiteDetectorSection() {
           procWidth: procCanvas.width,
           procHeight: procCanvas.height
         }
-      }, [id.data.buffer]);
+      }, [id.data.buffer]); // Transferable object
     }
     
     const { e: eL, z: zL } = energyFor(state.roiLine, state.stLine);
@@ -240,24 +248,30 @@ export default function BiteDetectorSection() {
     setDebugInfo(`proc=${procCanvas.width}x${procCanvas.height} stride=${STRIDE} zL=${zL.toFixed(2)} zT=${zT.toFixed(2)} worker=${'active'}`);
   }, [running, kLine, kTip, lockTime, energyFor, beep]);
 
-  // requestAnimationFrame-throttled tick for 60fps mobile
+  // Optimized frame scheduling for 60fps on low-end hardware
   const scheduleNextTick = useCallback(() => {
     if (!runningRef.current) return;
     
-    const interval = Math.round(1000 / TARGET_FPS);
-    const startTime = performance.now();
+    const FRAME_TIME = 1000 / 60; // Always target 60fps for main thread
     
-    const processFrame = () => {
+    const processFrameOptimized = () => {
+      if (!runningRef.current) return;
+      
+      const startTime = performance.now();
       tick();
       const elapsed = performance.now() - startTime;
-      const nextDelay = Math.max(0, interval - elapsed);
       
-      rafIdRef.current = setTimeout(() => {
-        rafIdRef.current = requestAnimationFrame(processFrame);
-      }, nextDelay);
+      // Calculate next frame delay to maintain 60fps
+      const nextDelay = Math.max(0, FRAME_TIME - elapsed);
+      rafIdRef.current = setTimeout(
+        () => {
+          rafIdRef.current = requestAnimationFrame(processFrameOptimized);
+        },
+        nextDelay
+      );
     };
     
-    rafIdRef.current = requestAnimationFrame(processFrame);
+    rafIdRef.current = requestAnimationFrame(processFrameOptimized);
   }, [tick]);
 
   const startDetection = async () => {
