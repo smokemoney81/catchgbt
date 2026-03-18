@@ -5,7 +5,7 @@ import { User } from "@/entities/User";
 import { useHaptic } from "@/components/utils/HapticFeedback";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function KiBuddyBar({ onToggleChatbot, chatbotOpen }) {
+export default function KiBuddyBar({ onToggleChatbot, chatbotOpen, onOpenVoice }) {
   const [user, setUser] = useState(null);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const { triggerHaptic } = useHaptic();
