@@ -19,6 +19,7 @@ export default function Dashboard() {
   const queryClient = useQueryClient();
   usePredictivePrefetch('Dashboard');
   const [user, setUser] = useState(null);
+  const statusAnnouncementRef = React.useRef(null);
   const [weather, setWeather] = useState(null);
   const [nearestSpot, setNearestSpot] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -322,9 +323,15 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
 
       setAiAnalysis(response);
       setShowAnalysis(true);
+      if (statusAnnouncementRef?.current) {
+        statusAnnouncementRef.current.textContent = "KI-Analyse abgeschlossen";
+      }
       toast.success("KI-Analyse abgeschlossen");
     } catch (error) {
       console.error("KI-Analyse Fehler:", error);
+      if (statusAnnouncementRef?.current) {
+        statusAnnouncementRef.current.textContent = "KI-Analyse fehlgeschlagen";
+      }
       toast.error("KI-Analyse fehlgeschlagen");
     } finally {
       setIsAnalyzing(false);
@@ -341,6 +348,13 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
 
     return (
     <PageContainer maxWidth="max-w-7xl" enableSwipeRefresh={true} onRefresh={loadData}>
+      <div 
+        ref={statusAnnouncementRef}
+        role="status"
+        aria-live="polite"
+        aria-atomic="false"
+        className="sr-only"
+      />
       <div className="space-y-12">
 
         <div className="flex items-center justify-between border-b border-gray-800/50 pb-6">
