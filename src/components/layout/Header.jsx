@@ -155,9 +155,11 @@ export default function Header({
               variant="ghost"
               size="sm"
               onClick={handleLeftSidebarToggle}
+              aria-label={isSidebarOpen ? "Menü schliessen" : "Menü öffnen"}
+              aria-expanded={isSidebarOpen}
               className="text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/20 transition-all duration-300 text-base font-bold relative overflow-hidden group"
             >
-              <span className="relative z-10">Menü</span>
+              <span className="relative z-10" aria-hidden="true">Menü</span>
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-emerald-500/20"
                 initial={{ opacity: 0 }}
