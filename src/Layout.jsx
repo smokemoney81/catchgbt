@@ -29,6 +29,7 @@ import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
 
 export default function Layout({ children, currentPageName }) {
+  const queryClient = useQueryClient();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [scrollPositions, setScrollPositions] = useState({});
