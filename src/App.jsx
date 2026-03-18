@@ -50,22 +50,23 @@ const AuthenticatedApp = () => {
   return <AnimatedRoutes />;
 };
 
-const AnimatedRoutes = ({ PageFallback }) => {
+const AnimatedRoutes = () => {
   const location = useLocation();
   const { Pages, Layout, mainPage } = pagesConfig;
   const mainPageKey = mainPage ?? Object.keys(Pages)[0];
-  const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
+  const MainPage = mainPageKey ? Pages[mainPageKey] : null;
+  
   const LayoutWrapper = ({ children, currentPageName }) => Layout
     ? <Layout currentPageName={currentPageName}>{children}</Layout>
     : <>{children}</>;
 
   return (
-    <Suspense fallback={PageFallback}>
+    <Suspense fallback={<LazyPageFallback />}>
       <AnimatePresence initial={false}>
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={
             <LayoutWrapper currentPageName={mainPageKey}>
-              <MainPage />
+              {MainPage && <MainPage />}
             </LayoutWrapper>
           } />
           {Object.entries(Pages).map(([path, Page]) => (
@@ -79,31 +80,6 @@ const AnimatedRoutes = ({ PageFallback }) => {
               }
             />
           ))}
-          <Route path="/BathymetricCrowdsourcing" element={
-            <LayoutWrapper currentPageName="BathymetricCrowdsourcing">
-              <PageTransition><BathymetricCrowdsourcing /></PageTransition>
-            </LayoutWrapper>
-          } />
-          <Route path="/ARKnotenAssistent" element={
-            <LayoutWrapper currentPageName="ARKnotenAssistent">
-              <PageTransition><ARKnotenAssistent /></PageTransition>
-            </LayoutWrapper>
-          } />
-          <Route path="/KiBuddyBeta" element={
-            <LayoutWrapper currentPageName="KiBuddyBeta">
-              <PageTransition><KiBuddyBeta /></PageTransition>
-            </LayoutWrapper>
-          } />
-          <Route path="/Events" element={
-            <LayoutWrapper currentPageName="Events">
-              <PageTransition><Events /></PageTransition>
-            </LayoutWrapper>
-          } />
-          <Route path="/WeatherAlerts" element={
-            <LayoutWrapper currentPageName="WeatherAlerts">
-              <PageTransition><WeatherAlerts /></PageTransition>
-            </LayoutWrapper>
-          } />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </AnimatePresence>
