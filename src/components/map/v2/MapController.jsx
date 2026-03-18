@@ -97,25 +97,7 @@ function MapController() {
     }
   };
 
-  const loadAllData = async () => {
-    setLoading(true);
-    try {
-      const [spotsData, clubsData] = await Promise.all([
-        Spot.list().catch(() => []),
-        FishingClub.list()
-      ]);
-      
-      console.log("Loaded spots:", spotsData.length);
-      console.log("Loaded clubs:", clubsData.length);
-      
-      setSpots(spotsData);
-      setFishingClubs(clubsData);
-    } catch (error) {
-      console.error("Error loading map data:", error);
-      toast.error("Fehler beim Laden der Kartendaten");
-    }
-    setLoading(false);
-  };
+
 
   const handleMapClick = useCallback((coords) => {
     if (!showAddModal && !selectedLocation) {
