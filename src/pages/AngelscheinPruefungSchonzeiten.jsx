@@ -10,7 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import PremiumGuard from "@/components/premium/PremiumGuard";
 
 export default function AngelscheinPruefungSchonzeiten() {
-  const [selectedRegion, setSelectedRegion] = useState("Deutschland");
+  const [selectedRegion, setSelectedRegion] = useState("Baden-Württemberg");
   const [examStarted, setExamStarted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [questions, setQuestions] = useState([]);
@@ -23,7 +23,6 @@ export default function AngelscheinPruefungSchonzeiten() {
   const [user, setUser] = useState(null);
 
   const bundeslaender = [
-    "Deutschland",
     "Baden-Württemberg",
     "Bayern",
     "Berlin",
