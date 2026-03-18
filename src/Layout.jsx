@@ -360,11 +360,17 @@ function LayoutContent({ children, currentPageName, queryClient }) {
                   </div>
                 )}
                 
-                <QuickCatchDialog />
+                <Suspense fallback={<LazyFallback />}>
+                  <QuickCatchDialog />
+                </Suspense>
 
-                <FeedbackManager />
+                <Suspense fallback={<LazyFallback />}>
+                  <FeedbackManager />
+                </Suspense>
 
-                <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} currentPageName={currentPageName} />
+                <Suspense fallback={<LazyFallback />}>
+                  <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} currentPageName={currentPageName} />
+                </Suspense>
 
                 <div className="sticky top-0 z-40 bg-gray-950">
                   <Header 
@@ -372,7 +378,9 @@ function LayoutContent({ children, currentPageName, queryClient }) {
                     setIsSidebarOpen={setIsSidebarOpen} 
                     isDemo={isDemo}
                   />
-                  <EnhancedTicker />
+                  <Suspense fallback={<LazyFallback />}>
+                    <EnhancedTicker />
+                  </Suspense>
                   <SubPageHeader title={currentPageName} />
                 </div>
 
