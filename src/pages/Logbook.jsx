@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MobileSelect } from "@/components/ui/mobile-select";
 import { Textarea } from "@/components/ui/textarea";
+import SwipeToRefresh from "@/components/utils/SwipeToRefresh";
 import { toast } from "sonner";
 import { Upload, X, Loader2, Share2 } from "lucide-react";
 import { UploadFile, ExtractDataFromUploadedFile } from "@/integrations/Core";
