@@ -41,9 +41,10 @@ export default function BottomTabs() {
     <nav
       aria-label="Hauptnavigation"
       className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-950/95 backdrop-blur-xl border-t border-gray-800 z-50"
-      style={{ paddingBottom: 'var(--safe-area-bottom)' }}
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      role="tablist"
     >
-      <div className="flex items-center justify-around" style={{ height: '60px' }}>
+      <div className="flex items-center justify-around min-h-[60px]">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const active = isActive(tab.path);
@@ -55,14 +56,15 @@ export default function BottomTabs() {
               onClick={(e) => handleTabClick(e, tab)}
               aria-label={tab.name}
               aria-current={active ? 'page' : undefined}
-              className={`flex flex-col items-center justify-center flex-1 h-full transition-colors`}
-              style={{ minHeight: '44px', minWidth: '44px' }}
+              aria-selected={active}
+              role="tab"
+              className={`flex flex-col items-center justify-center flex-1 h-full min-h-[44px] min-w-[44px] transition-colors`}
             >
               <Icon
                 aria-hidden="true"
-                className={`w-6 h-6 mb-1 ${active ? 'text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]' : 'text-gray-400'}`}
+                className={`w-6 h-6 mb-1 transition-colors ${active ? 'text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]' : 'text-gray-400'}`}
               />
-              <span className={`text-xs font-medium ${active ? 'text-cyan-400' : 'text-gray-400'}`} aria-hidden="true">
+              <span className={`text-xs font-medium transition-colors ${active ? 'text-cyan-400' : 'text-gray-400'}`} aria-hidden="true">
                 {tab.name}
               </span>
             </Link>
