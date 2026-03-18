@@ -230,6 +230,7 @@ export default function KIFangberatungCatchGBT({ onStart, onStop, isActive }) {
         {!isCameraOn ? (
           <button
             onClick={startCamera}
+            aria-label="Kamera starten"
             className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg shadow-md"
           >
             Kamera starten
@@ -237,6 +238,7 @@ export default function KIFangberatungCatchGBT({ onStart, onStop, isActive }) {
         ) : (
           <button
             onClick={stopCamera}
+            aria-label="Kamera stoppen"
             className="px-4 py-2 bg-red-600 text-white rounded-lg shadow-md hover:bg-red-700"
           >
             Kamera stoppen
@@ -246,6 +248,8 @@ export default function KIFangberatungCatchGBT({ onStart, onStop, isActive }) {
           <>
             <button
               onClick={() => setIsAnalyzing(!isAnalyzing)}
+              aria-label={isAnalyzing ? "Analyse stoppen" : "Analyse starten"}
+              aria-pressed={isAnalyzing}
               className={`px-4 py-2 text-white rounded-lg shadow-md ${
                 isAnalyzing
                   ? "bg-fuchsia-600 hover:bg-fuchsia-700"
@@ -256,6 +260,8 @@ export default function KIFangberatungCatchGBT({ onStart, onStop, isActive }) {
             </button>
             <button
               onClick={() => setFrozen(!frozen)}
+              aria-label={frozen ? "Live-Ansicht aktivieren" : "Bild einfrieren"}
+              aria-pressed={frozen}
               className={`px-4 py-2 text-white rounded-lg shadow-md ${
                 frozen
                   ? "bg-blue-600 hover:bg-blue-700"
