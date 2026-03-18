@@ -13,10 +13,10 @@ import { toast } from "sonner";
 import { useHaptic } from "@/components/utils/HapticFeedback";
 
 export default function BaitMixerPage() {
+  const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [ingredients, setIngredients] = useState([]);
-  const [recipes, setRecipes] = useState([]);
   const [mode, setMode] = useState("boilies");
   const [mix, setMix] = useState({});
   const [targetFish, setTargetFish] = useState("Karpfen");
