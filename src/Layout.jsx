@@ -415,11 +415,9 @@ function LayoutContent({ children, currentPageName }) {
 
                 <BottomTabs />
 
-                <Suspense fallback={<LazyFallback />}>
-                  <ErrorBoundary isMinimal={true} isFull={false}>
-                    <SupportAgentButton />
-                  </ErrorBoundary>
-                </Suspense>
+                <SuspenseWithErrorBoundary>
+                  <SupportAgentButton />
+                </SuspenseWithErrorBoundary>
 
                 <Toaster 
                   position="bottom-center"
