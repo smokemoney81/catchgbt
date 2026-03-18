@@ -180,28 +180,25 @@ export default function MapController() {
           <div className="flex gap-1.5">
             <Button
               onClick={() => setShowInfo(!showInfo)}
-              className="bg-gray-800/90 hover:bg-gray-700 border border-gray-700 h-8 px-2"
-              size="sm"
+              className="bg-gray-800/90 hover:bg-gray-700 border border-gray-700 h-11 px-3"
             >
-              <Info className="w-3.5 h-3.5 sm:mr-1.5 text-cyan-400" />
+              <Info className="w-4 h-4 sm:mr-1.5 text-cyan-400" />
               <span className="hidden sm:inline text-xs">Info</span>
             </Button>
             
             <Button
               onClick={handleMyLocation}
-              className="bg-gray-800/90 hover:bg-gray-700 border border-gray-700 h-8 px-2"
-              size="sm"
+              className="bg-gray-800/90 hover:bg-gray-700 border border-gray-700 h-11 px-3"
             >
-              <Navigation className="w-3.5 h-3.5 sm:mr-1.5 text-cyan-400" />
+              <Navigation className="w-4 h-4 sm:mr-1.5 text-cyan-400" />
               <span className="hidden sm:inline text-xs">Standort</span>
             </Button>
 
             <Button
               onClick={() => setShowFilters(!showFilters)}
-              className="bg-gray-800/90 hover:bg-gray-700 border border-gray-700 h-8 px-2"
-              size="sm"
+              className="bg-gray-800/90 hover:bg-gray-700 border border-gray-700 h-11 px-3"
             >
-              <Layers className="w-3.5 h-3.5 sm:mr-1.5 text-cyan-400" />
+              <Layers className="w-4 h-4 sm:mr-1.5 text-cyan-400" />
               <span className="hidden sm:inline text-xs">Filter</span>
             </Button>
           </div>
@@ -210,20 +207,18 @@ export default function MapController() {
            <div className="flex gap-1.5">
              <Button
                onClick={() => setShowDownloadDialog(true)}
-               className="bg-purple-700/90 hover:bg-purple-600 border border-purple-600/50 h-8 px-2"
-               size="sm"
+               className="bg-purple-700/90 hover:bg-purple-600 border border-purple-600/50 h-11 px-3"
                title="Karte fuer offline Download"
              >
-               <Download className="w-3.5 h-3.5 sm:mr-1.5 text-purple-300" />
+               <Download className="w-4 h-4 sm:mr-1.5 text-purple-300" />
                <span className="hidden sm:inline text-xs">Download</span>
              </Button>
              {newSpotCoords && !showAddModal && (
                <Button
                  onClick={handleAddSpotClick}
-                 className="bg-emerald-600/90 hover:bg-emerald-700 border border-emerald-500/50 text-white h-8 px-2"
-                 size="sm"
+                 className="bg-emerald-600/90 hover:bg-emerald-700 border border-emerald-500/50 text-white h-11 px-3"
                >
-                 <Plus className="w-3.5 h-3.5 sm:mr-1.5" />
+                 <Plus className="w-4 h-4 sm:mr-1.5" />
                  <span className="hidden sm:inline text-xs">Spot</span>
                </Button>
              )}
@@ -316,7 +311,7 @@ export default function MapController() {
               </div>
               <button
                 onClick={() => setShowInfo(false)}
-                className="text-gray-400 hover:text-white transition-colors p-1"
+                className="text-gray-400 hover:text-white transition-colors p-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
               >
                 <X className="w-4 h-4" />
               </button>
