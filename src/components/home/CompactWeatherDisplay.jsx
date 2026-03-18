@@ -8,7 +8,7 @@ const compactCacheKey = (lat, lon) => {
   return `weather_compact_${lat.toFixed(2)}_${lon.toFixed(2)}_${hour}`;
 };
 
-export default function CompactWeatherDisplay() {
+function CompactWeatherDisplay() {
   const { currentLocation } = useLocation();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -331,3 +331,11 @@ export default function CompactWeatherDisplay() {
     </div>
   );
 }
+
+export default React.memo(CompactWeatherDisplay, (prevProps, nextProps) => {
+  // Re-render only if location changed significantly (at least 0.1 degrees)
+  return (
+    Math.abs((prevProps.currentLocation?.lat || 0) - (nextProps.currentLocation?.lat || 0)) < 0.1 &&
+    Math.abs((prevProps.currentLocation?.lon || 0) - (nextProps.currentLocation?.lon || 0)) < 0.1
+  );
+});

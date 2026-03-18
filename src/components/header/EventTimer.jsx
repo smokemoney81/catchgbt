@@ -10,7 +10,7 @@ function formatTime(totalSeconds) {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-export default function EventTimer() {
+function EventTimer() {
   const [totalSeconds, setTotalSeconds] = useState(0);
   const [visible, setVisible] = useState(false);
   const intervalRef = useRef(null);
@@ -73,3 +73,5 @@ export default function EventTimer() {
     </Link>
   );
 }
+
+export default React.memo(EventTimer);
