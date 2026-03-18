@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useHaptic } from "@/components/utils/HapticFeedback";
 import { useSound } from "@/components/utils/SoundManager";
 
-const ROOT_TABS = ["Dashboard", "Map", "Logbook", "Profile"];
+const ROOT_TABS = ["Dashboard", "Map", "Logbook", "Profile", "Home", "Start", ""];
 
 export default function SubPageHeader({ title }) {
   const navigate = useNavigate();
