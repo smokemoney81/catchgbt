@@ -38,6 +38,8 @@ export default function BiteDetectorSection() {
   const [lockTime, setLockTime] = useState(3.0);
 
   const runningRef = useRef(false);
+  const workerRef = useRef(null);
+  const rafIdRef = useRef(null);
 
   // Internal state für die Bite Detection
   const stateRef = useRef({
@@ -71,10 +73,21 @@ export default function BiteDetectorSection() {
     loadUser();
   }, []);
 
+  // Initialize Web Worker for data processing
+  useEffect(() => {
+    try {
+      workerRef.current = new Worker(new URL('/workers/echogramProcessor.js', import.meta.url), { type: 'module' });
+    } catch (e) {
+      console.warn('Web Worker not available, using main thread:', e);
+    }
+  }, []);
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       stopDetection();
+      if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
+      if (workerRef.current) workerRef.current.terminate();
     };
   }, []);
 
@@ -204,6 +217,26 @@ export default function BiteDetectorSection() {
     setDebugInfo(`proc=${procCanvas.width}x${procCanvas.height} stride=${STRIDE} zL=${zL.toFixed(2)} zT=${zT.toFixed(2)}`);
   }, [running, kLine, kTip, lockTime, energyFor, beep]);
 
+  // requestAnimationFrame-throttled tick for 60fps mobile
+  const scheduleNextTick = useCallback(() => {
+    if (!runningRef.current) return;
+    
+    const interval = Math.round(1000 / TARGET_FPS);
+    const startTime = performance.now();
+    
+    const processFrame = () => {
+      tick();
+      const elapsed = performance.now() - startTime;
+      const nextDelay = Math.max(0, interval - elapsed);
+      
+      rafIdRef.current = setTimeout(() => {
+        rafIdRef.current = requestAnimationFrame(processFrame);
+      }, nextDelay);
+    };
+    
+    rafIdRef.current = requestAnimationFrame(processFrame);
+  }, [tick]);
+
   const startDetection = async () => {
     setError(null); // Clear any previous errors
 
@@ -309,9 +342,8 @@ export default function BiteDetectorSection() {
       runningRef.current = true;
       setRunning(true);
 
-      // Start processing loop
-      const interval = Math.round(1000 / TARGET_FPS);
-      stateRef.current.timer = setInterval(tick, interval);
+      // Start processing loop with requestAnimationFrame throttling
+      scheduleNextTick();
 
     } catch (error) {
       console.error("Failed to start bite detection:", error);
@@ -346,9 +378,12 @@ export default function BiteDetectorSection() {
       window.dispatchEvent(new CustomEvent('bite-detector-session-ended'));
     }
 
-    if (state.timer) {
-      clearInterval(state.timer);
-      state.timer = null;
+    if (rafIdRef.current) {
+      cancelAnimationFrame(rafIdRef.current);
+      if (typeof rafIdRef.current === 'number') {
+        clearTimeout(rafIdRef.current);
+      }
+      rafIdRef.current = null;
     }
 
     if (video && video.srcObject) {
@@ -487,10 +522,14 @@ export default function BiteDetectorSection() {
                 ref={overlayRef}
                 className="absolute inset-0 w-full h-full"
                 style={{ pointerEvents: 'auto' }}
+                role="img"
+                aria-label="Interactive fishing rod detection area with cyan line marker and yellow tip marker regions"
               />
               <canvas
                 ref={procCanvasRef}
                 className="hidden"
+                role="presentation"
+                aria-hidden="true"
               />
               
               {!running && (
