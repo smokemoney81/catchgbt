@@ -277,8 +277,13 @@ function MapController() {
         {/* Filter Panel */}
          {showFilters && (
           <div className="mt-2 bg-gray-800/50 rounded-lg p-2 space-y-1.5" role="group" aria-label="Kartenebenen-Filter">
-            <div aria-live="polite" aria-atomic="true" className="sr-only">
-              {`Karte zeigt ${filteredSpots.length} Spots, ${filteredClubs.length} Vereine, ${filteredWaters.length} Gewaesser`}
+            <div aria-live="polite" aria-atomic="true" aria-label="Aktive Kartenebenen Summary">
+              <div className="sr-only">
+                Aktiv: {filters.spots && 'Spots'}{filters.spots && filters.clubs && ', '}{filters.clubs && 'Vereine'}{(filters.spots || filters.clubs) && filters.waters && ', '}{filters.waters && 'Gewaesser'}. Karte zeigt {filteredSpots.length} Spots, {filteredClubs.length} Vereine, {filteredWaters.length} Gewaesser
+              </div>
+              <div className="text-xs text-gray-400 px-2 py-1 bg-gray-900/50 rounded mb-2">
+                {filteredSpots.length + filteredClubs.length + filteredWaters.length} Orte sichtbar
+              </div>
             </div>
            <div className="flex items-center gap-2">
              <input

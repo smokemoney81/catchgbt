@@ -85,14 +85,29 @@ export default function BiteDetectorSection() {
         // Feature detection: Check if Worker is available and not blocked
         if (typeof Worker === 'undefined') {
           console.warn('[BiteDetector] Worker API not available, using main thread');
+          setDebugInfo('worker=unavailable (main thread)');
           return;
         }
 
-        // Attempt Worker creation with timeout fallback
+        // Attempt Worker creation with CSP/load error handling
         const workerInitPromise = new Promise((resolve, reject) => {
           try {
-            const worker = new Worker('/workers/biteDetectorOptimized.js');
-            
+            let worker;
+
+            // Try primary worker path first
+            try {
+              worker = new Worker('/workers/biteDetectorOptimized.js');
+            } catch (workerLoadError) {
+              // CSP violation or 404 - try fallback worker
+              console.warn('[BiteDetector] Primary worker load failed, trying fallback:', workerLoadError.message);
+              try {
+                worker = new Worker('/biteDetectorOptimized.js');
+              } catch (fallbackError) {
+                reject(new Error(`Worker load failed (CSP/404): ${fallbackError.message}`));
+                return;
+              }
+            }
+
             // Set up handlers before any message passing
             worker.onmessage = (event) => {
               const { type, result } = event.data;
@@ -104,23 +119,28 @@ export default function BiteDetectorSection() {
                 );
               } else if (type === 'error') {
                 console.error('[BiteDetector] Worker error:', result.error);
+                setError(`Worker error: ${result.error}`);
               }
             };
-            
+
             worker.onerror = (error) => {
-              console.error('[BiteDetector] Worker initialization error:', error);
-              reject(error);
+              console.error('[BiteDetector] Worker runtime error:', error);
+              reject(new Error(`Worker runtime error: ${error.message}`));
             };
-            
+
             // Send init with timeout
             worker.postMessage({ command: 'init', payload: { reset: true } });
-            
+
             // Confirm worker is responsive within 2 seconds
             const timeoutId = setTimeout(() => {
-              worker.terminate();
-              reject(new Error('Worker initialization timeout'));
+              try {
+                worker.terminate();
+              } catch (e) {
+                console.warn('[BiteDetector] Error terminating unresponsive worker:', e);
+              }
+              reject(new Error('Worker initialization timeout (no response in 2s)'));
             }, 2000);
-            
+
             // Intercept first message to confirm responsiveness
             const originalOnMessage = worker.onmessage;
             worker.onmessage = (event) => {
@@ -129,25 +149,30 @@ export default function BiteDetectorSection() {
               resolve(worker);
               originalOnMessage.call(worker, event);
             };
-            
+
           } catch (e) {
-            reject(e);
+            reject(new Error(`Worker creation error: ${e.message}`));
           }
         });
 
         // Wait for worker with 3-second timeout total
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Worker creation timeout')), 3000)
+          setTimeout(() => reject(new Error('Worker creation timeout (3s exceeded)')), 3000)
         );
 
         workerRef.current = await Promise.race([workerInitPromise, timeoutPromise]);
-        
+        console.log('[BiteDetector] Worker initialized successfully');
+
       } catch (e) {
         // Graceful fallback when Worker is blocked, unavailable, or fails
         console.warn('[BiteDetector] Worker fallback activated:', e.message);
+        console.warn('[BiteDetector] Reason:', e.message);
         console.warn('[BiteDetector] Running frame processing on main thread (performance degraded)');
         workerRef.current = null;
-        setDebugInfo('worker=fallback (main thread)');
+        setDebugInfo(`worker=fallback (main: ${e.message.split('(')[0].trim()})`);
+
+        // Don't set error state for worker fallback - it's graceful and expected in CSP environments
+        console.info('[BiteDetector] Frame processing will continue on main thread without performance penalty');
       }
     };
 
@@ -157,8 +182,9 @@ export default function BiteDetectorSection() {
       if (workerRef.current) {
         try {
           workerRef.current.terminate();
+          console.log('[BiteDetector] Worker terminated');
         } catch (e) {
-          console.warn('[BiteDetector] Error terminating worker:', e);
+          console.warn('[BiteDetector] Error terminating worker:', e.message);
         }
         workerRef.current = null;
       }
