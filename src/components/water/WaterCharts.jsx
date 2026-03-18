@@ -40,7 +40,7 @@ export default function WaterCharts({ data, type }) {
                   border: '1px solid #374151',
                   borderRadius: '8px'
                 }}
-                labelStyle={{ color: '#22d3ee' }}
+                labelStyle={{ color: '#0284c7' }}
               />
               <Area 
                 type="monotone" 
@@ -88,7 +88,7 @@ export default function WaterCharts({ data, type }) {
                   border: '1px solid #374151',
                   borderRadius: '8px'
                 }}
-                labelStyle={{ color: '#22d3ee' }}
+                labelStyle={{ color: '#0284c7' }}
               />
               <Legend wrapperStyle={{ color: '#9ca3af' }} />
               <Line 
@@ -148,7 +148,7 @@ export default function WaterCharts({ data, type }) {
                     border: '1px solid #374151',
                     borderRadius: '8px'
                   }}
-                  labelStyle={{ color: '#22d3ee' }}
+                  labelStyle={{ color: '#0284c7' }}
                 />
                 <Legend wrapperStyle={{ color: '#9ca3af' }} />
                 <Line 
