@@ -104,7 +104,8 @@ export default function VoiceSettings() {
         <Button 
           onClick={saveSettings}
           disabled={isSaving}
-          className="w-full bg-cyan-600 hover:bg-cyan-700"
+          className="w-full bg-cyan-600 active:scale-95 active:bg-cyan-700 focus:ring-2 focus:ring-cyan-400"
+          aria-label="Einstellungen speichern"
         >
           {isSaving ? 'Speichere...' : 'Einstellungen speichern'}
         </Button>
