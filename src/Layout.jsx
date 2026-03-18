@@ -35,6 +35,17 @@ import BackButtonHandler from "@/components/navigation/BackButtonHandler";
 export default function Layout({ children, currentPageName }) {
   const queryClient = useQueryClient();
   usePrefetch();
+
+  return (
+    <MobileStackProvider>
+      <LayoutContent currentPageName={currentPageName} queryClient={queryClient}>
+        {children}
+      </LayoutContent>
+    </MobileStackProvider>
+  );
+}
+
+function LayoutContent({ children, currentPageName, queryClient }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [scrollPositions, setScrollPositions] = useState({});
