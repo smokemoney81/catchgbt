@@ -144,11 +144,58 @@
 .mb-safe { margin-bottom: var(--safe-area-bottom); }
 .mt-safe { margin-top: var(--safe-area-top); }
 
-/* Touch target utility for 44px minimum tap targets */
+/* Touch target utilities */
 .touch-target {
   min-height: 44px;
   min-width: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Additional safe-area utilities for fixed bottom elements */
+.pb-safe-fixed {
+  padding-bottom: calc(var(--safe-area-bottom) + 1rem);
+}
+
+.mb-safe-fixed {
+  margin-bottom: calc(var(--safe-area-bottom) + 1rem);
+}
+
+.pb-safe-lg {
+  padding-bottom: calc(var(--safe-area-bottom) + 2rem);
+}
+
+/* Prevent overscroll bounce on iOS */
+html {
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
+}
+
+body {
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
+}
+
+/* Prevent elastic scroll/overscroll on all scroll containers */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Consistent interactive element sizing across the app */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="number"],
+textarea,
+select {
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+}
+
+/* Small input variant - still respects accessible minimums */
+input.input-sm,
+select.select-sm {
+  min-height: 40px;
 }
