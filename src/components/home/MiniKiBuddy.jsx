@@ -155,6 +155,15 @@ export default function MiniKiBuddy() {
 
   return (
     <div className="flex flex-col bg-gray-800/30 rounded-xl border border-gray-700/50 overflow-hidden h-96">
+      <div 
+        className="sr-only"
+        role="region"
+        aria-live="polite"
+        aria-label="KI-Buddy Konversation"
+        aria-atomic="false"
+      >
+        {messages[messages.length - 1] && `${messages[messages.length - 1].role === 'assistant' ? 'Assistent' : 'Du'}: ${messages[messages.length - 1].content}`}
+      </div>
       <div className="px-4 py-3 border-b border-gray-700/50 flex items-center justify-between">
         <span className="text-cyan-400 font-medium text-sm">KI-Buddy</span>
         <div className="flex items-center gap-3">
