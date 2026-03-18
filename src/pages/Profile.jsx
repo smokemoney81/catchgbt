@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -30,18 +31,20 @@ const generateReferralCode = () => {
 };
 
 export default function ProfilePage() {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isEditing, setIsEditing] = useState(false);
-  const [nickname, setNickname] = useState('');
-  const [isUploading, setIsUploading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [copiedReferral, setCopiedReferral] = useState(false);
-  const [postsCount, setPostsCount] = useState(0);
-  const [currentPlan, setCurrentPlan] = useState(null);
-  const [chatHistory, setChatHistory] = useState([]);
-  const [loadingHistory, setLoadingHistory] = useState(false);
-  const [expandedConversation, setExpandedConversation] = useState(null);
+   const navigate = useNavigate();
+   const [user, setUser] = useState(null);
+   const [isLoading, setIsLoading] = useState(true);
+   const [isEditing, setIsEditing] = useState(false);
+   const [nickname, setNickname] = useState('');
+   const [isUploading, setIsUploading] = useState(false);
+   const [isSaving, setIsSaving] = useState(false);
+   const [copiedReferral, setCopiedReferral] = useState(false);
+   const [postsCount, setPostsCount] = useState(0);
+   const [currentPlan, setCurrentPlan] = useState(null);
+   const [chatHistory, setChatHistory] = useState([]);
+   const [loadingHistory, setLoadingHistory] = useState(false);
+   const [expandedConversation, setExpandedConversation] = useState(null);
+   const [navigationAnnouncement, setNavigationAnnouncement] = useState('');
 
   const loadUserProfile = useCallback(async () => {
     setIsLoading(true);
@@ -273,6 +276,9 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen w-full px-4 sm:px-6 lg:px-8 py-6 pb-20 space-y-6 max-w-5xl mx-auto">
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {navigationAnnouncement}
+      </div>
       
       {/* Profil-Header mit Bild und Basis-Info */}
       <Card className="glass-morphism border-gray-800 rounded-2xl">
@@ -478,8 +484,8 @@ export default function ProfilePage() {
                     <Button
                       className="bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700"
                       onClick={() => {
-                        const { mobileStack } = require('@/lib/MobileStackManager');
-                        mobileStack.push('PremiumPlans');
+                        setNavigationAnnouncement('Navigiere zu Premium-Plaenen');
+                        navigate('/PremiumPlans');
                       }}
                     >
                       <Crown className="w-4 h-4 mr-2" />
