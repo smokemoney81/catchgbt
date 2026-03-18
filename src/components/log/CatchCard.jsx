@@ -109,24 +109,26 @@ function CatchCard({ catchItem, onEdit, onDelete }) {
               onClick={handleShowDetails}
               className="flex-1 border-gray-700 hover:border-cyan-500/50"
             >
-              <Eye className="w-4 h-4 mr-1" />
+              <Eye aria-hidden="true" className="w-4 h-4 mr-1" />
               Details
             </Button>
             <Button
               size="sm"
               variant="outline"
+              aria-label={`${catchItem.species || 'Fang'} bearbeiten`}
               onClick={() => onEdit(catchItem)}
               className="border-gray-700 hover:border-blue-500/50"
             >
-              <Edit className="w-4 h-4" />
+              <Edit aria-hidden="true" className="w-4 h-4" />
             </Button>
             <Button
               size="sm"
               variant="outline"
+              aria-label={`${catchItem.species || 'Fang'} loeschen`}
               onClick={() => onDelete(catchItem.id)}
               className="border-gray-700 hover:border-red-500/50"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 aria-hidden="true" className="w-4 h-4" />
             </Button>
           </div>
         </CardContent>

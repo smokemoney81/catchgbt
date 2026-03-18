@@ -75,10 +75,11 @@ export default function MapLegendFilter({
                   <Button
                     variant="ghost"
                     size="icon"
+                    aria-label="Filter schliessen"
                     onClick={() => setIsExpanded(false)}
                     className="h-6 w-6"
                   >
-                    <X className="w-4 h-4" />
+                    <X aria-hidden="true" className="w-4 h-4" />
                   </Button>
                 </div>
               </CardHeader>
@@ -92,6 +93,8 @@ export default function MapLegendFilter({
                   
                   <button
                     onClick={() => handleFilterToggle('mySpots')}
+                    aria-pressed={activeFilters.mySpots}
+                    aria-label="Eigene Spots anzeigen"
                     className={`w-full flex items-center justify-between p-2 rounded-lg transition-colors ${
                       activeFilters.mySpots 
                         ? 'bg-red-500/20 border border-red-500/50' 
@@ -109,6 +112,8 @@ export default function MapLegendFilter({
 
                   <button
                     onClick={() => handleFilterToggle('publicLocations')}
+                    aria-pressed={activeFilters.publicLocations}
+                    aria-label="Oeffentliche Orte anzeigen"
                     className={`w-full flex items-center justify-between p-2 rounded-lg transition-colors ${
                       activeFilters.publicLocations 
                         ? 'bg-green-500/20 border border-green-500/50' 
@@ -126,6 +131,8 @@ export default function MapLegendFilter({
 
                   <button
                     onClick={() => handleFilterToggle('favorites')}
+                    aria-pressed={activeFilters.favorites}
+                    aria-label="Nur Favoriten anzeigen"
                     className={`w-full flex items-center justify-between p-2 rounded-lg transition-colors ${
                       activeFilters.favorites 
                         ? 'bg-yellow-500/20 border border-yellow-500/50' 

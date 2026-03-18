@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { base44 } from '@/api/base44Client';
@@ -14,6 +14,13 @@ export default function NavigationTracker() {
   const mainPageKey = mainPage ?? Object.keys(Pages)[0];
   const { pushRoute, popRoute, canGoBack } = useNavigationContext();
 
+  // Keep a ref so the popstate handler always sees the latest value
+  // without needing to be recreated on every canGoBack change.
+  const canGoBackRef = useRef(canGoBack);
+  useEffect(() => {
+    canGoBackRef.current = canGoBack;
+  }, [canGoBack]);
+
   // Notify parent frame of URL changes (Base44 platform requirement)
   useEffect(() => {
     window.parent?.postMessage({ type: 'app_changed_url', url: window.location.href }, '*');
@@ -24,36 +31,35 @@ export default function NavigationTracker() {
     pushRoute(location.pathname);
   }, [location.pathname, pushRoute]);
 
-  // Android hardware back-button via popstate.
-  // We always keep one synthetic history entry ahead so that the back gesture
-  // hits our handler first rather than leaving the app.
+  // Hardware back-button guard.
+  // Strategy: always keep one synthetic guard entry ahead so that the first
+  // back gesture hits our handler. The handler then either navigates within
+  // the app or re-pushes the guard to stay put (on root tabs).
   useEffect(() => {
     const segment = location.pathname.replace(/^\//, '').split('/')[0];
     const isRoot = ROOT_SEGMENTS.has(segment) || location.pathname === '/';
 
-    if (isRoot) {
-      // Keep a guard entry so the hardware back is interceptable
-      window.history.pushState({ catchgbt_guard: true }, '', window.location.href);
-    }
+    // Push one guard entry so the popstate fires before the browser acts
+    window.history.pushState({ catchgbt_guard: true }, '', window.location.href);
 
-    const handlePopState = (event) => {
-      if (canGoBack) {
-        // Intercept: pop our internal stack and navigate back in React Router
-        event.preventDefault?.();
+    const handlePopState = () => {
+      if (canGoBackRef.current) {
+        // Navigate back inside the app and restore the guard
         popRoute();
         navigate(-1);
-        // Re-push guard so subsequent backs are also intercepted
         window.history.pushState({ catchgbt_guard: true }, '', window.location.href);
       } else if (isRoot) {
-        // On a root tab: re-push guard to prevent app exit
+        // On a root tab: block the app from exiting
         window.history.pushState({ catchgbt_guard: true }, '', window.location.href);
       }
-      // If canGoBack is false and not root, let the browser/OS handle it (app closes naturally)
+      // Non-root with no history left: let the OS/browser close the app naturally
     };
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [location.pathname, canGoBack, navigate, popRoute]);
+    // Re-run only when the actual route changes, NOT on every canGoBack toggle
+    // (canGoBackRef keeps it fresh without triggering re-registration)
+  }, [location.pathname, navigate, popRoute]);
 
   // Analytics: log page view
   useEffect(() => {
