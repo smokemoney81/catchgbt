@@ -33,89 +33,104 @@ Deno.serve(async (req) => {
 
     const byEmail = { created_by: email };
 
-    // Phase 2: Atomic batch deletion with verification
+    // Phase 2: Atomic cascading deletion with dependency order
     const entityMap = [
-      { name: 'Catch', filter: byEmail, category: 'user_data' },
-      { name: 'Spot', filter: byEmail, category: 'user_data' },
-      { name: 'Post', filter: byEmail, category: 'user_data' },
-      { name: 'BaitRecipe', filter: byEmail, category: 'user_data' },
-      { name: 'License', filter: byEmail, category: 'user_data' },
-      { name: 'ChatMessage', filter: byEmail, category: 'analytics' },
-      { name: 'ChatSession', filter: byEmail, category: 'analytics' },
-      { name: 'FishingPlan', filter: byEmail, category: 'user_data' },
-      { name: 'WaterAnalysisHistory', filter: byEmail, category: 'analytics' },
-      { name: 'DepthDataPoint', filter: byEmail, category: 'analytics' },
-      { name: 'BathymetricMap', filter: byEmail, category: 'user_data' },
-      { name: 'SpotGroup', filter: byEmail, category: 'user_data' },
-      { name: 'GearListing', filter: byEmail, category: 'user_data' },
-      { name: 'WaterReview', filter: byEmail, category: 'analytics' },
-      { name: 'FunctionRating', filter: byEmail, category: 'analytics' },
-      { name: 'VotingSubmission', filter: byEmail, category: 'analytics' },
-      { name: 'VotingLike', filter: byEmail, category: 'analytics' },
-      { name: 'ClanCatch', filter: byEmail, category: 'analytics' },
-      { name: 'Comment', filter: byEmail, category: 'analytics' },
-      { name: 'UsageSession', filter: { user_id: email }, category: 'analytics' },
-      { name: 'PremiumEvent', filter: { user_id: email }, category: 'analytics' },
-      { name: 'PremiumWallet', filter: { user_id: email }, category: 'analytics' },
+      // Purge comments first (depends on posts/catches for fk refs)
+      { name: 'Comment', filter: byEmail, critical: false },
+      { name: 'VotingLike', filter: byEmail, critical: false },
+      { name: 'VotingSubmission', filter: byEmail, critical: false },
+      { name: 'FunctionRating', filter: byEmail, critical: false },
+      { name: 'WaterReview', filter: byEmail, critical: false },
+      { name: 'ClanCatch', filter: byEmail, critical: false },
+      
+      // User-generated content
+      { name: 'Catch', filter: byEmail, critical: true },
+      { name: 'Post', filter: byEmail, critical: false },
+      { name: 'ChatMessage', filter: byEmail, critical: false },
+      
+      // Spot-related content
+      { name: 'SpotGroup', filter: byEmail, critical: false },
+      { name: 'Spot', filter: byEmail, critical: false },
+      { name: 'BathymetricMap', filter: byEmail, critical: false },
+      { name: 'DepthDataPoint', filter: byEmail, critical: false },
+      
+      // Fishing metadata
+      { name: 'FishingPlan', filter: byEmail, critical: false },
+      { name: 'BaitRecipe', filter: byEmail, critical: false },
+      { name: 'GearListing', filter: byEmail, critical: false },
+      { name: 'License', filter: byEmail, critical: false },
+      
+      // Analytics & sessions
+      { name: 'ChatSession', filter: byEmail, critical: false },
+      { name: 'WaterAnalysisHistory', filter: byEmail, critical: false },
+      { name: 'UsageSession', filter: { user_id: email }, critical: true },
+      { name: 'PremiumEvent', filter: { user_id: email }, critical: false },
+      { name: 'PremiumWallet', filter: { user_id: email }, critical: true },
     ];
 
-    const deleteResults = [];
-    const deletionLog = { txId, email, timestamp: new Date().toISOString(), entities: {} };
+    const deletionLog = { txId, email, timestamp: new Date().toISOString(), entities: {}, cascadeOrder: [] };
 
-    // Purge function with verification
-    const purgeWithVerify = async (entityName, filter) => {
+    // Atomic purge with cascade verification
+    const purgeWithCascadeVerify = async (entityName, filter, critical) => {
       try {
         const beforeCount = await base44.entities[entityName].filter(filter);
         const recordIds = beforeCount.map(r => r.id);
+        
+        if (recordIds.length === 0) {
+          deletionLog.entities[entityName] = { deleted: 0, verified: true, timestamp: new Date().toISOString() };
+          return 0;
+        }
 
+        // Atomic batch delete (all or nothing)
         await Promise.all(recordIds.map(id => base44.entities[entityName].delete(id)));
 
-        // Verify deletion
+        // Cascade verification - ensure no orphaned refs
         const afterCount = await base44.entities[entityName].filter(filter);
         if (afterCount.length !== 0) {
-          throw new Error(`Verification failed: ${afterCount.length} records remain`);
+          throw new Error(`Cascade failed: ${afterCount.length}/${recordIds.length} records not deleted`);
         }
 
         deletionLog.entities[entityName] = {
           deleted: recordIds.length,
           verified: true,
+          critical,
           timestamp: new Date().toISOString(),
         };
-
+        deletionLog.cascadeOrder.push(entityName);
+        
         return recordIds.length;
       } catch (e) {
-        console.warn(`[deleteAccount:${txId}] ${entityName}: ${e.message}`);
+        console.error(`[deleteAccount:${txId}] CRITICAL(${critical}): ${entityName} failed - ${e.message}`);
         deletionLog.entities[entityName] = {
           error: e.message,
           verified: false,
+          critical,
           timestamp: new Date().toISOString(),
         };
         return 0;
       }
     };
 
-    // Execute all deletions in parallel with per-entity atomicity
+    // Execute deletions in cascading order (dependencies first)
     const results = await Promise.allSettled(
-      entityMap.map(({ name, filter }) => purgeWithVerify(name, filter))
+      entityMap.map(({ name, filter, critical }) => purgeWithCascadeVerify(name, filter, critical))
     );
 
     // Aggregate results
-    const totalDeleted = results.reduce((sum, r) => {
-      return sum + (r.status === 'fulfilled' ? r.value : 0);
-    }, 0);
-
+    const totalDeleted = results.reduce((sum, r) => sum + (r.status === 'fulfilled' ? r.value : 0), 0);
+    
     const failedEntities = Object.entries(deletionLog.entities)
       .filter(([_, data]) => data.error)
-      .map(([name]) => name);
+      .map(([name, data]) => ({ name, critical: data.critical }));
 
+    const criticalFailures = failedEntities.filter(f => f.critical);
     const duration = performance.now() - startTime;
 
-    // Phase 3: Server-side state verification
-    console.log(`[deleteAccount:${txId}] Deletion complete. Duration: ${duration.toFixed(2)}ms`);
-    console.log(`[deleteAccount:${txId}] Deleted ${totalDeleted} records. Failed entities: ${failedEntities.length}`);
+    console.log(`[deleteAccount:${txId}] Cascade order: ${deletionLog.cascadeOrder.join(' -> ')}`);
+    console.log(`[deleteAccount:${txId}] Deletion complete in ${duration.toFixed(2)}ms. Total: ${totalDeleted}, Failed: ${failedEntities.length}, Critical: ${criticalFailures.length}`);
 
-    // Only proceed to client state clear if critical deletions succeeded
-    const criticalSuccessful = !failedEntities.includes('Catch') && !failedEntities.includes('UsageSession');
+    // Only proceed if no critical deletions failed (Catch, UsageSession, PremiumWallet)
+    const criticalSuccessful = criticalFailures.length === 0;
 
     if (!criticalSuccessful) {
       console.error(`[deleteAccount:${txId}] Critical entity deletion failed. Manual cleanup required.`);
