@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import './App.css'
 import './globals.css'
 import { Toaster } from "@/components/ui/toaster"
@@ -18,6 +18,7 @@ import KiBuddyBeta from './pages/KiBuddyBeta';
 import ARKnotenAssistent from './pages/ARKnotenAssistent';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import { migrateOfflineStorage } from '@/lib/StorageMigration';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, isAuthenticated, navigateToLogin } = useAuth();
@@ -96,6 +97,12 @@ const AnimatedRoutes = ({ PageFallback }) => {
 
 
 function App() {
+  // Initialize storage migration on app startup
+  useEffect(() => {
+    migrateOfflineStorage().catch(err => {
+      console.error('[App] Storage migration failed:', err);
+    });
+  }, []);
 
   return (
     <AuthProvider>
