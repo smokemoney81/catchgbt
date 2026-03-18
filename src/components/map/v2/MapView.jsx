@@ -185,6 +185,8 @@ export default function MapView({
       zoom={zoom}
       style={{ width: "100%", height: "100%" }}
       className="rounded-2xl"
+      role="region"
+      aria-label="Interactive fishing map showing user spots, fishing clubs, and water bodies. Click locations to view details or add new spots."
     >
       <OfflineMapLayer isOnline={isOnline} />
 
@@ -246,6 +248,8 @@ export default function MapView({
         <Marker
           position={[currentLocation.lat, currentLocation.lon]}
           icon={locationIcon}
+          alt="Your current location on the map"
+          aria-label="Current user location marker"
         >
           <Popup>
             <div className="text-sm">
@@ -307,6 +311,8 @@ export default function MapView({
           eventHandlers={{
             click: () => onSpotClick(spot)
           }}
+          alt={`Fishing spot: ${spot.name} on ${spot.water_type}. ${spot.notes || 'No additional notes'}`}
+          aria-label={`Spot marker for ${spot.name}`}
         >
           <Popup>
             <div className="text-sm">
@@ -328,6 +334,8 @@ export default function MapView({
           eventHandlers={{
             click: () => onClubClick(club)
           }}
+          alt={`${club.category === 'club' ? 'Fishing club' : 'Fishing park'}: ${club.name} in ${club.address?.city || 'location unknown'}`}
+          aria-label={`${club.category === 'club' ? 'Club' : 'Park'} marker for ${club.name}`}
         >
           <Popup>
             <div className="text-sm">
