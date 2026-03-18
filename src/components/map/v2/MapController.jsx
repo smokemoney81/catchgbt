@@ -195,7 +195,7 @@ function MapController() {
   });
   const filteredWaters = filters.waters ? waterBodies : [];
 
-  if (loading || !isInitialized || !mapCenter) {
+  if (!isInitialized || !mapCenter) {
     return (
       <div className="relative h-[calc(100vh-250px)] min-h-[500px] rounded-2xl overflow-hidden border border-gray-800 bg-gray-900 flex items-center justify-center">
         <div className="text-center">
