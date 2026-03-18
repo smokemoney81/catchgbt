@@ -188,57 +188,33 @@ Sei konkret, praxisnah und berechne die optimale Mischung!`;
     triggerHaptic('light');
   };
 
-  const saveRecipe = async () => {
+  const saveRecipe = () => {
     if (!recipeName.trim()) {
-      toast.error("Bitte gib einen Namen für das Rezept ein");
+      toast.error("Bitte gib einen Namen fuer das Rezept ein");
       return;
     }
-
     const totalPercentage = Object.values(mix).reduce((sum, val) => sum + val, 0);
-    
     if (totalPercentage === 0) {
-      toast.error("Füge mindestens eine Zutat hinzu");
+      toast.error("Fuege mindestens eine Zutat hinzu");
       return;
     }
-
-    // Note: The previous logic of requiring 95-100% is removed as per the outline.
-    // The UI now shows `isValid = totalPercentage === 100` as an indicator, but saving is not blocked by it.
-
-    try {
-      const fishScores = calculateFishAttractiveness();
-      const attractivenessScore = Math.round(fishScores[targetFish] || 0); // Rounded
-
-      const estimatedCost = Object.entries(mix).reduce((sum, [ingName, percentage]) => {
-        const ingredient = ingredients.find(i => i.name === ingName);
-        const cost = ingredient?.cost_per_kg || 0;
-        return sum + (cost * percentage / 100);
-      }, 0);
-
-      const recipeData = {
-        name: recipeName.trim(), // Trimmed
-        category: mode,
-        target_fish: targetFish,
-        ingredients: mix,
-        total_percentage: totalPercentage,
-        attractiveness_score: attractivenessScore,
-        estimated_cost: Math.round(estimatedCost * 100) / 100, // Rounded to 2 decimal places
-        ai_generated: !!aiAnalysis,
-        ai_analysis: aiAnalysis || ""
-      };
-
-      await base44.entities.BaitRecipe.create(recipeData);
-      
-      triggerHaptic('success');
-      toast.success(`Rezept "${recipeName}" gespeichert!`); // Updated toast message
-      
-      setRecipeName("");
-      setAiAnalysis(""); // Clear AI analysis after saving
-      await loadRecipes();
-      
-    } catch (error) {
-      console.error("Failed to save recipe:", error);
-      toast.error("Fehler beim Speichern des Rezepts"); // Updated error message
-    }
+    const fishScores = calculateFishAttractiveness();
+    const attractivenessScore = Math.round(fishScores[targetFish] || 0);
+    const estimatedCost = Object.entries(mix).reduce((sum, [ingName, percentage]) => {
+      const ingredient = ingredients.find((i) => i.name === ingName);
+      return sum + ((ingredient?.cost_per_kg || 0) * percentage / 100);
+    }, 0);
+    saveRecipeMutation.mutate({
+      name: recipeName.trim(),
+      category: mode,
+      target_fish: targetFish,
+      ingredients: mix,
+      total_percentage: totalPercentage,
+      attractiveness_score: attractivenessScore,
+      estimated_cost: Math.round(estimatedCost * 100) / 100,
+      ai_generated: !!aiAnalysis,
+      ai_analysis: aiAnalysis || "",
+    });
   };
 
   const loadRecipe = (recipe) => {
