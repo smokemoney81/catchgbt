@@ -737,11 +737,12 @@ function LayoutContent({ children, currentPageName, queryClient }) {
                 }
               `}</style>
             </div>
-              </OfflineWrapper>
-          </LocationProvider>
-          </SoundProvider>
-          </HapticProvider>
-          </LanguageProvider>
+                </OfflineWrapper>
+              </LocationProvider>
+              </SoundProvider>
+            </HapticProvider>
+            </LanguageProvider>
           </PlanProvider>
-          );
-}
+        </>
+      );
+    }
