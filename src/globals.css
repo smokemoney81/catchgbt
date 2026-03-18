@@ -107,3 +107,12 @@
 .pr-safe { padding-right: var(--safe-area-right); }
 .mb-safe { margin-bottom: var(--safe-area-bottom); }
 .mt-safe { margin-top: var(--safe-area-top); }
+
+/* Touch target utility for 44px minimum tap targets */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
