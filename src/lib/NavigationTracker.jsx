@@ -1,28 +1,22 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { base44 } from '@/api/base44Client';
 import { pagesConfig } from '@/pages.config';
-import { useNavigationContext, ROOT_SEGMENTS } from './NavigationContext';
 import { mobileStack } from './MobileStackManager';
 
 /**
- * NavigationTracker
+ * NavigationTracker - MobileStackManager Exclusive Integration
  *
- * Bridges React Router with the centralized NavigationContext stack.
+ * Pure state-based navigation that decouples from React Router's history API.
+ * MobileStackManager handles ALL navigation state independently, preventing
+ * conflicts between browser history API and React Router location changes.
  *
- * Back-button strategy (Android PWA / WebView compatible):
- *   - On mount, we push ONE sentinel entry into browser history so the first
- *     hardware back-press fires popstate instead of exiting the app.
- *   - Every time popstate fires we IMMEDIATELY re-arm the sentinel so the next
- *     back-press is also caught. This means we never lose control regardless of
- *     how many times the user presses back.
- *   - canGoBack is read via a stable ref to avoid the handler being
- *     re-registered on every navigation, which was the source of duplicate
- *     guards in the previous implementation.
- *
- * This removes all per-route pushState calls and decouples the guard from
- * React Router's location lifecycle entirely.
+ * Back-button strategy:
+ *   - MobileStackManager maintains its own stack, independent of browser history
+ *   - popstate events trigger mobileStack.handleAndroidBack() for pure state navigation
+ *   - React Router location changes sync TO mobileStack (not the reverse)
+ *   - No window.history.pushState() calls - mobileStack is the single source of truth
  */
 export default function NavigationTracker() {
   const location = useLocation();
@@ -30,60 +24,44 @@ export default function NavigationTracker() {
   const { isAuthenticated } = useAuth();
   const { Pages, mainPage } = pagesConfig;
   const mainPageKey = mainPage ?? Object.keys(Pages)[0];
-  const { pushRoute, popRoute, canGoBack, switchTab } = useNavigationContext();
-
-  // Stable ref so the popstate handler never becomes stale.
-  const canGoBackRef = useRef(canGoBack);
-  useEffect(() => {
-    canGoBackRef.current = canGoBack;
-  }, [canGoBack]);
 
   // Notify parent frame of URL changes (Base44 platform requirement).
   useEffect(() => {
     window.parent?.postMessage({ type: 'app_changed_url', url: window.location.href }, '*');
   }, [location]);
 
-  // Keep the centralized stack in sync with React Router.
-  // Also detect when the user navigates to a different tab root and sync the context.
+  // Keep mobileStack in sync when React Router location changes
+  // This is ONE-WAY: React Router location -> mobileStack (never reverse)
   useEffect(() => {
-    const segment = location.pathname.replace(/^\//, '').split('/')[0] || 'Dashboard';
-    if (ROOT_SEGMENTS.has(segment)) {
-      switchTab(segment);
-    }
-    pushRoute(location.pathname);
-  }, [location.pathname, pushRoute, switchTab]);
+    mobileStack.pushToStack(location.pathname);
+  }, [location.pathname]);
 
-  // MobileStackManager-exclusive back-button handling.
-  // Pure state-based navigation independent of browser history API.
-  // Handles Android hardware back-button and iOS gesture back consistently.
+  // MobileStackManager-exclusive back-button handling
+  // Pure state-based navigation, independent of browser history API
   useEffect(() => {
-    const handlePopState = () => {
+    const handlePopState = (event) => {
+      // Prevent browser default back behavior - let mobileStack handle it
+      event.preventDefault();
+      
       // Check if we can go back in the mobileStack
-      const handled = mobileStack.handleAndroidBack();
+      const nextPath = mobileStack.handleAndroidBack();
 
-      if (handled) {
-        // Navigate using the stack state
-        navigate(-1);
+      if (nextPath && nextPath !== location.pathname) {
+        // Navigate using React Router to the path from mobileStack
+        navigate(nextPath, { replace: true });
       }
       // If at root, mobileStack prevents app exit
     };
 
-    // Listen for hardware back-button and browser back
+    // Listen only for popstate (browser/hardware back button)
     window.addEventListener('popstate', handlePopState);
-
-    // For PWA/WebView environments, also handle direct back requests
-    const unsubscribeMobileStack = mobileStack.subscribe(() => {
-      // Stack changed externally - sync React Router if needed
-    });
 
     return () => {
       window.removeEventListener('popstate', handlePopState);
-      unsubscribeMobileStack?.();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
-  // Analytics: log page view.
+  // Analytics: log page view
   useEffect(() => {
     const pathname = location.pathname;
     let pageName;
