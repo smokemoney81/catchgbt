@@ -415,34 +415,34 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
 
         <SchonzeitWarner />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-900/40 backdrop-blur-sm p-8 border border-gray-800/50">
+        <div className="space-y-4 sm:grid sm:grid-cols-2 sm:gap-6">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-900/40 backdrop-blur-sm p-6 sm:p-8 border border-gray-800/50">
             <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl" />
             <div className="relative">
-              <h3 className="text-sm font-semibold text-cyan-400/70 uppercase tracking-wider mb-6">Aktuelles Wetter</h3>
+              <h3 className="text-sm font-semibold text-cyan-400/70 uppercase tracking-wider mb-4 sm:mb-6">Aktuelles Wetter</h3>
               {weather ? (
-                <div className="space-y-4">
-                  <div className="flex items-baseline gap-3">
-                    <span className="text-6xl font-bold text-white tracking-tight">{Math.round(weather.temperature_2m)}</span>
-                    <span className="text-3xl text-gray-400">C</span>
+                <div className="space-y-3" role="region" aria-live="polite" aria-atomic="true" aria-label="Echtzeit-Wetterdaten">
+                  <div className="flex items-baseline gap-2 sm:gap-3">
+                    <span className="text-4xl sm:text-6xl font-bold text-white tracking-tight">{Math.round(weather.temperature_2m)}</span>
+                    <span className="text-2xl sm:text-3xl text-gray-400">C</span>
                   </div>
-                  <div className="text-lg text-gray-300">{getWeatherDesc(weather.weather_code)}</div>
-                  <div className="text-sm text-gray-500 pt-2 border-t border-gray-800/50">Wind: {Math.round(weather.wind_speed_10m)} m/s</div>
+                  <div className="text-base sm:text-lg text-gray-300">{getWeatherDesc(weather.weather_code)}</div>
+                  <div className="text-xs sm:text-sm text-gray-500 pt-2 border-t border-gray-800/50">Wind: {Math.round(weather.wind_speed_10m)} m/s</div>
                 </div>
               ) : (
-                <div className="text-gray-500">Keine Wetterdaten verfuegbar</div>
+                <div className="text-gray-500 text-sm">Keine Wetterdaten verfuegbar</div>
               )}
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-900/40 backdrop-blur-sm p-8 border border-gray-800/50">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-900/40 backdrop-blur-sm p-6 sm:p-8 border border-gray-800/50">
             <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl" />
             <div className="relative">
-              <h3 className="text-sm font-semibold text-emerald-400/70 uppercase tracking-wider mb-6">Naechster Spot</h3>
+              <h3 className="text-sm font-semibold text-emerald-400/70 uppercase tracking-wider mb-4 sm:mb-6">Naechster Spot</h3>
               {nearestSpot ? (
-                <div className="space-y-4">
-                  <div className="text-2xl font-bold text-white">{nearestSpot.name}</div>
-                  <div className="text-sm text-gray-400 capitalize">{nearestSpot.water_type}</div>
+                <div className="space-y-3" role="region" aria-live="polite" aria-atomic="true" aria-label="Naechster Angelspot">
+                  <div className="text-xl sm:text-2xl font-bold text-white">{nearestSpot.name}</div>
+                  <div className="text-xs sm:text-sm text-gray-400 capitalize">{nearestSpot.water_type}</div>
                   {nearestSpot.distance && (
                     <div className="text-xs text-gray-500 pt-2 border-t border-gray-800/50">
                       {nearestSpot.distance < 1 
@@ -451,12 +451,12 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
                       }
                     </div>
                   )}
-                  <Link to={createPageUrl('Map')} className="inline-block text-sm text-cyan-400 hover:text-cyan-300 transition-colors pt-2">
+                  <Link to={createPageUrl('Map')} className="inline-block text-xs sm:text-sm text-cyan-400 hover:text-cyan-300 transition-colors pt-2">
                     Auf Karte anzeigen
                   </Link>
                 </div>
               ) : (
-                <div className="text-gray-500">Spots auf Karte verfuegbar</div>
+                <div className="text-gray-500 text-sm">Spots auf Karte verfuegbar</div>
               )}
             </div>
           </div>
@@ -468,7 +468,7 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
 
         <div className="space-y-4">
           <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Schnellzugriff</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
             {[
               { name: "Karte", path: "Map", offline: true },
               { name: "Wetter", path: "Weather", offline: true },
