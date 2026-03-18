@@ -1,13 +1,13 @@
-
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import { Compass, Fish, MapPin, RefreshCcw, Wand2, Search, CloudSun, Loader2 } from "lucide-react";
 import { toast, Toaster } from "sonner";
 import { catchgbtChat } from "@/functions/catchgbtChat";
-import { useHaptic } from "@/components/utils/HapticFeedback"; // Added import
-import PremiumGuard from "@/components/premium/PremiumGuard"; // Added import
-import { base44 } from "@/api/base44Client"; // Updated import path and destructuring
+import { useHaptic } from "@/components/utils/HapticFeedback";
+import PremiumGuard from "@/components/premium/PremiumGuard";
+import { base44 } from "@/api/base44Client";
+import { MobileSelect } from "@/components/ui/mobile-select";
 
 // Leaflet CSS nachladen
 if (typeof document !== "undefined") {
