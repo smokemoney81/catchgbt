@@ -228,15 +228,16 @@ export default function Header({
                 className="relative"
               >
                 <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 relative"
-                  onClick={() => {
-                    triggerHaptic('light');
-                    playSound('click');
-                  }}
-                >
-                  <Bell className="w-5 h-5" />
+                   variant="ghost"
+                   size="icon"
+                   aria-label={`${activeTripsCount} aktive Angeltouren`}
+                   className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 relative"
+                   onClick={() => {
+                     triggerHaptic('light');
+                     playSound('click');
+                   }}
+                 >
+                   <Bell aria-hidden="true" className="w-5 h-5" />
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
