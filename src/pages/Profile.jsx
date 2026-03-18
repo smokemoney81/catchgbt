@@ -479,7 +479,7 @@ export default function ProfilePage() {
                       className="bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700"
                       onClick={() => {
                         const { mobileStack } = require('@/lib/MobileStackManager');
-                        mobileStack.push('/PremiumPlans');
+                        mobileStack.push('PremiumPlans');
                       }}
                     >
                       <Crown className="w-4 h-4 mr-2" />
