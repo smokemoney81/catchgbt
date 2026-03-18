@@ -355,9 +355,11 @@ export default function Layout({ children, currentPageName }) {
                   <SubPageHeader title={currentPageName} />
                 </div>
 
+                <SwipeToRefresh onRefresh={() => queryClient.invalidateQueries()}>
                 <PageTransition pageKey={currentPageName}>
                   {children}
                 </PageTransition>
+                </SwipeToRefresh>
 
                   <BottomTabs />
 
