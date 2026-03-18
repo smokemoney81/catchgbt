@@ -29,7 +29,7 @@ export default function NavigationTracker() {
   const { isAuthenticated } = useAuth();
   const { Pages, mainPage } = pagesConfig;
   const mainPageKey = mainPage ?? Object.keys(Pages)[0];
-  const { pushRoute, popRoute, canGoBack } = useNavigationContext();
+  const { pushRoute, popRoute, canGoBack, switchTab } = useNavigationContext();
 
   // Stable ref so the popstate handler never becomes stale.
   const canGoBackRef = useRef(canGoBack);
