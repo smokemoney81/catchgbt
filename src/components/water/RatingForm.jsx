@@ -68,17 +68,19 @@ export default function RatingForm({ spot, onSuccess }) {
 
       <div className="space-y-2">
         <label className="text-xs text-gray-400">Beissaktivitaet jetzt</label>
-        <select
+        <MobileSelect
           value={biteActivity}
-          onChange={(e) => setBiteActivity(e.target.value)}
-          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"
-        >
-          <option value="sehr_gering">Sehr gering</option>
-          <option value="gering">Gering</option>
-          <option value="mittel">Mittel</option>
-          <option value="hoch">Hoch</option>
-          <option value="sehr_hoch">Sehr hoch</option>
-        </select>
+          onValueChange={setBiteActivity}
+          label="Beissaktivitaet"
+          options={[
+            { value: "sehr_gering", label: "Sehr gering" },
+            { value: "gering", label: "Gering" },
+            { value: "mittel", label: "Mittel" },
+            { value: "hoch", label: "Hoch" },
+            { value: "sehr_hoch", label: "Sehr hoch" },
+          ]}
+          className="bg-gray-800 border-gray-700 text-white"
+        />
       </div>
 
       <div className="space-y-2">

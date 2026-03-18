@@ -113,29 +113,17 @@ export default function LocationSelector({ compact = false }) {
         {getLocationDisplay()}
       </div>
 
-      <Select value={selectedSpot} onValueChange={handleSpotChange}>
-        <SelectTrigger className="bg-gray-800/50 border-gray-700 text-white">
-          <SelectValue placeholder="Standort wählen..." />
-        </SelectTrigger>
-        <SelectContent>
-          {gpsLocation && (
-            <SelectItem value="gps">
-              <div className="flex items-center gap-2">
-                <Navigation className="w-4 h-4 text-emerald-400" />
-                GPS-Standort verwenden
-              </div>
-            </SelectItem>
-          )}
-          {spots.map(spot => (
-            <SelectItem key={spot.id} value={spot.id}>
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-blue-400" />
-                {spot.name} ({spot.water_type})
-              </div>
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <MobileSelect
+        value={selectedSpot}
+        onValueChange={handleSpotChange}
+        label="Standort waehlen"
+        placeholder="Standort waehlen..."
+        options={[
+          ...(gpsLocation ? [{ value: "gps", label: "GPS-Standort verwenden" }] : []),
+          ...spots.map(spot => ({ value: spot.id, label: `${spot.name} (${spot.water_type})` }))
+        ]}
+        className="bg-gray-800/50 border-gray-700 text-white"
+      />
     </div>
   );
 }
