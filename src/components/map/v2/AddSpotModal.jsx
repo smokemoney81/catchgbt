@@ -10,68 +10,55 @@ import { X, MapPin, Save } from "lucide-react";
 import { toast } from "sonner";
 import { useHaptic } from "@/components/utils/HapticFeedback";
 
+const EMPTY_FORM = { name: "", water_type: "see", notes: "", depth_meters: "", is_favorite: false };
+
 export default function AddSpotModal({ isOpen, onClose, onSave, initialCoords }) {
   const { triggerHaptic } = useHaptic();
-  const [formData, setFormData] = useState({
-    name: "",
-    water_type: "see",
-    notes: "",
-    depth_meters: "",
-    is_favorite: false
-  });
-  const [isSaving, setIsSaving] = useState(false);
+  const [formData, setFormData] = useState(EMPTY_FORM);
 
-  const handleSave = async () => {
-    if (!formData.name.trim()) {
-      toast.error("Bitte gib einen Namen für den Spot ein");
-      triggerHaptic('light');
-      return;
-    }
-
-    if (!initialCoords || !initialCoords.lat || !initialCoords.lng) {
-      toast.error("Keine gültigen Koordinaten verfügbar");
-      triggerHaptic('light');
-      return;
-    }
-
-    setIsSaving(true);
-    triggerHaptic('medium');
-
-    try {
-      const spotData = {
-        name: formData.name.trim(),
-        latitude: initialCoords.lat,
-        longitude: initialCoords.lng,
-        water_type: formData.water_type,
-        notes: formData.notes.trim() || "",
-        is_favorite: formData.is_favorite,
-        ...(formData.depth_meters && { depth_meters: parseFloat(formData.depth_meters) })
-      };
-
-      console.log("Creating spot with data:", spotData);
-
-      await base44.entities.Spot.create(spotData);
-      
-      toast.success("Spot erfolgreich gespeichert! 🎣", {
-        description: `${formData.name} wurde zur Karte hinzugefügt`
-      });
-      
-      triggerHaptic('success');
-      
-      if (onSave) {
-        onSave(spotData);
-      }
-      
+  const { mutate, isPending: isSaving } = useMutation({
+    mutationFn: (spotData) => base44.entities.Spot.create(spotData),
+    onMutate: () => {
+      triggerHaptic('medium');
+      // Optimistically close and reset immediately
+      setFormData(EMPTY_FORM);
       onClose();
-    } catch (error) {
-      console.error("Error adding spot:", error);
+    },
+    onSuccess: (_, spotData) => {
+      toast.success("Spot erfolgreich gespeichert!", {
+        description: `${spotData.name} wurde zur Karte hinzugefuegt`,
+      });
+      triggerHaptic('success');
+      onSave?.(spotData);
+    },
+    onError: (error) => {
       toast.error("Fehler beim Speichern des Spots", {
-        description: error.message || "Bitte versuche es erneut"
+        description: error.message || "Bitte versuche es erneut",
       });
       triggerHaptic('error');
-    } finally {
-      setIsSaving(false);
+    },
+  });
+
+  const handleSave = () => {
+    if (!formData.name.trim()) {
+      toast.error("Bitte gib einen Namen fuer den Spot ein");
+      triggerHaptic('light');
+      return;
     }
+    if (!initialCoords?.lat || !initialCoords?.lng) {
+      toast.error("Keine gueltigen Koordinaten verfuegbar");
+      triggerHaptic('light');
+      return;
+    }
+    mutate({
+      name: formData.name.trim(),
+      latitude: initialCoords.lat,
+      longitude: initialCoords.lng,
+      water_type: formData.water_type,
+      notes: formData.notes.trim() || "",
+      is_favorite: formData.is_favorite,
+      ...(formData.depth_meters && { depth_meters: parseFloat(formData.depth_meters) }),
+    });
   };
 
   if (!isOpen) return null;

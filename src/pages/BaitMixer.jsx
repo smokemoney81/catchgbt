@@ -68,14 +68,8 @@ export default function BaitMixerPage() {
     }
   };
 
-  const loadRecipes = async () => {
-    try {
-      const allRecipes = await base44.entities.BaitRecipe.list('-created_date');
-      setRecipes(allRecipes);
-    } catch (error) {
-      console.error("Failed to load recipes:", error);
-    }
-  };
+  // Replaced with useQuery below - stub kept for loadData compatibility
+  const loadRecipes = () => queryClient.invalidateQueries({ queryKey: ['baitRecipes'] });
 
   const handleAddIngredient = (ingredient, amount = 5) => {
     triggerHaptic('selection');
