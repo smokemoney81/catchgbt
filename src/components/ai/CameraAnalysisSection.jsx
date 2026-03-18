@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Camera, Play, Square, Loader2, Sparkles } from "lucide-react"; // Added Sparkles
@@ -143,17 +142,17 @@ export default function CameraAnalysisSection() {
   return (
     <Card className="glass-morphism border-gray-800 rounded-2xl">
       <CardHeader>
-        <CardTitle className="text-cyan-400 drop-shadow-[0_0_12px_rgba(34,211,238,0.7)]">
+        <CardTitle className="text-primary drop-shadow-[0_0_12px_rgba(var(--primary),0.7)]">
           KI-Kamera
         </CardTitle>
-        <CardDescription className="text-gray-400 text-sm">
+        <CardDescription className="text-muted-foreground text-sm">
           Nutze deine Kamera zur Live-Analyse von Fischen, Gewässern und Angelumgebung.
           Die KI erkennt Fischarten und gibt dir Echtzeit-Empfehlungen.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {error && (
-          <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-3 text-red-300 text-sm">
+          <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3 text-destructive text-sm" role="alert">
             {error}
           </div>
         )}
@@ -194,7 +193,7 @@ export default function CameraAnalysisSection() {
                 onClick={handleFreeze}
                 variant="outline"
                 size="sm"
-                className="border-blue-500/50 hover:bg-blue-500/20 text-blue-300 text-xs h-9 flex-1"
+                className="border-primary/50 hover:bg-primary/20 text-primary text-xs h-9 flex-1"
                 disabled={isAnalyzing}
               >
                 {isAnalyzing ? (
@@ -227,8 +226,8 @@ export default function CameraAnalysisSection() {
           />
 
           {!isCameraActive && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-900/50">
-              <div className="text-center text-gray-400">
+            <div className="absolute inset-0 flex items-center justify-center bg-background/50">
+              <div className="text-center text-muted-foreground">
                 <Camera className="w-12 h-12 mx-auto mb-2 opacity-50" />
                 <p className="text-sm">Kamera inaktiv</p>
               </div>
@@ -238,8 +237,8 @@ export default function CameraAnalysisSection() {
           {isAnalyzing && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
               <div className="text-center">
-                <Loader2 className="w-8 h-8 text-cyan-400 animate-spin mx-auto mb-2" />
-                <p className="text-white text-sm">KI analysiert...</p>
+                <Loader2 className="w-8 h-8 text-primary animate-spin mx-auto mb-2" />
+                <p className="text-foreground text-sm">KI analysiert...</p>
               </div>
             </div>
           )}
@@ -252,13 +251,13 @@ export default function CameraAnalysisSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/30 rounded-lg p-4"
+              className="bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/30 rounded-lg p-4"
             >
               <div className="flex items-start gap-3">
-                <Sparkles className="w-5 h-5 text-cyan-400 flex-shrink-0 mt-1" />
+                <Sparkles className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-white font-semibold mb-2 text-sm">KI-Analyse Ergebnis</h4>
-                  <p className="text-gray-200 text-sm leading-relaxed whitespace-pre-wrap">
+                  <h4 className="text-foreground font-semibold mb-2 text-sm">KI-Analyse Ergebnis</h4>
+                  <p className="text-foreground/80 text-sm leading-relaxed whitespace-pre-wrap">
                     {analysisResult}
                   </p>
                 </div>
