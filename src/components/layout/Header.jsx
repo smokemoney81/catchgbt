@@ -153,11 +153,11 @@ export default function Header({
           >
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={handleLeftSidebarToggle}
               aria-label={isSidebarOpen ? "Menü schliessen" : "Menü öffnen"}
               aria-expanded={isSidebarOpen}
-              className="text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/20 transition-all duration-300 text-base font-bold relative overflow-hidden group"
+              className="text-cyan-400 active:scale-95 active:bg-cyan-500/20 focus:ring-2 focus:ring-cyan-400 transition-all duration-200 text-base font-bold relative overflow-hidden group min-h-[44px] min-w-[44px]"
             >
               <span className="relative z-10" aria-hidden="true">Menü</span>
               <motion.div
@@ -199,7 +199,7 @@ export default function Header({
                    variant="ghost"
                    size="icon"
                    aria-label={`${activeAlertsCount} Wetteralarme aktiv`}
-                   className="text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 relative"
+                   className="text-amber-400 active:scale-95 active:bg-amber-500/10 focus:ring-2 focus:ring-amber-400 relative min-h-[44px] min-w-[44px]"
                    onClick={() => {
                      triggerHaptic('light');
                      playSound('click');
@@ -231,7 +231,7 @@ export default function Header({
                    variant="ghost"
                    size="icon"
                    aria-label={`${activeTripsCount} aktive Angeltouren`}
-                   className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 relative"
+                   className="text-emerald-400 active:scale-95 active:bg-emerald-500/10 focus:ring-2 focus:ring-emerald-400 relative min-h-[44px] min-w-[44px]"
                    onClick={() => {
                      triggerHaptic('light');
                      playSound('click');
@@ -254,13 +254,13 @@ export default function Header({
             <Popover>
               <PopoverTrigger asChild>
                 <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-cyan-400 hover:text-cyan-300 hover:bg-cyan-500/10"
-                  onClick={() => {
-                    triggerHaptic('light');
-                    playSound('click');
-                  }}
+                   variant="ghost"
+                   size="icon"
+                   className="text-cyan-400 active:scale-95 active:bg-cyan-500/10 focus:ring-2 focus:ring-cyan-400 min-h-[44px] min-w-[44px]"
+                   onClick={() => {
+                     triggerHaptic('light');
+                     playSound('click');
+                   }}
                 >
                   <motion.div
                     animate={{ scale: [1, 1.1, 1] }}
