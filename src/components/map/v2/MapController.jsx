@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, memo } from "react";
 import { Spot } from "@/entities/Spot";
 import { FishingClub } from "@/entities/FishingClub";
 import { Button } from "@/components/ui/button";

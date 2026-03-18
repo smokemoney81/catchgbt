@@ -368,8 +368,8 @@ export default function LogSection() {
                   {c.notes && <div className="text-gray-300 text-sm mt-1">{c.notes}</div>}
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button size="icon" variant="outline" onClick={() => startEdit(c)}><Edit2 className="w-4 h-4" /></Button>
-                  <Button size="icon" variant="destructive" onClick={() => remove(c)}><Trash2 className="w-4 h-4" /></Button>
+                  <Button size="icon" variant="outline" aria-label="Fang bearbeiten" onClick={() => startEdit(c)}><Edit2 aria-hidden="true" className="w-4 h-4" /></Button>
+                  <Button size="icon" variant="destructive" aria-label="Fang loeschen" onClick={() => remove(c)}><Trash2 aria-hidden="true" className="w-4 h-4" /></Button>
                 </div>
               </div>
             ))}

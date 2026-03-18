@@ -714,8 +714,8 @@ export default function ARWater3D() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.5 }}
         onClick={() => setShowTutorial(true)}
-        className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 shadow-lg flex items-center justify-center transition-all hover:scale-110"
-        title="Tutorial anzeigen"
+        aria-label="Tutorial anzeigen"
+        className="absolute top-4 right-4 z-20 w-11 h-11 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 shadow-lg flex items-center justify-center transition-all hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2"
       >
         <span className="text-white text-xl font-bold">!</span>
       </motion.button>

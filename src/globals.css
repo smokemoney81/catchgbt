@@ -40,6 +40,16 @@
   }
 }
 
+/* Keyboard focus styles — visible only for keyboard navigation */
+:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 2px;
+}
+/* Remove default outline for mouse/touch */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
 /* Utility classes for safe-area spacing */
 .pb-safe { padding-bottom: var(--safe-area-bottom); }
 .pt-safe { padding-top: var(--safe-area-top); }
