@@ -84,6 +84,14 @@ export default function LogSection() {
     });
   }, [catches, filters]);
 
+  const refreshData = async () => {
+    try {
+      const { data: catchData } = await fetchCatchesWithFallback(() => Catch.list("-catch_time", PAGE_SIZE));
+      setCatches(catchData);
+      setHasMore(catchData.length === PAGE_SIZE);
+    } catch (e) { /* silent */ }
+  };
+
   const openNew = () => { setEditing("new"); setForm({ species: "", length_cm: "", weight_kg: "", spot_id: "", bait_used: "", notes: "", catch_time: new Date().toISOString().slice(0,16), photo_url: "" }); };
   const startEdit = (c) => { setEditing(c.id); setForm({ ...c, catch_time: new Date(c.catch_time).toISOString().slice(0,16) }); };
   const cancelEdit = () => { setEditing(null); };
