@@ -1,10 +1,33 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
+import { FixedSizeList } from 'react-window';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import CatchCard from './CatchCard';
 import { Badge } from '@/components/ui/badge';
 import SwipeToRefresh from '@/components/utils/SwipeToRefresh';
 
+// Threshold above which the list is virtualized.
+const VIRTUALIZE_THRESHOLD = 20;
+// Estimated height of a single CatchCard row (px).
+const ITEM_HEIGHT = 340;
+// Max height of the virtualized list container.
+const LIST_MAX_HEIGHT = 640;
+
+/**
+ * Row renderer for react-window.
+ * Data is passed via the `data` prop to avoid closure staleness.
+ */
+const VirtualRow = ({ index, style, data }) => {
+  const { catches, onEdit, onDelete } = data;
+  return (
+    <div style={{ ...style, paddingBottom: 16 }}>
+      <CatchCard catchItem={catches[index]} onEdit={onEdit} onDelete={onDelete} />
+    </div>
+  );
+};
+
 function CatchHistory({ catches, isLoading, onEdit, onDelete, onRefresh }) {
+  const itemData = { catches, onEdit, onDelete };
+
   if (isLoading) {
     return (
       <Card className="glass-morphism border-gray-800 rounded-2xl mt-6">
@@ -36,6 +59,9 @@ function CatchHistory({ catches, isLoading, onEdit, onDelete, onRefresh }) {
     );
   }
 
+  const listHeight = Math.min(LIST_MAX_HEIGHT, catches.length * ITEM_HEIGHT);
+  const shouldVirtualize = catches.length > VIRTUALIZE_THRESHOLD;
+
   return (
     <SwipeToRefresh onRefresh={onRefresh || (() => Promise.resolve())}>
       <Card className="glass-morphism border-gray-800 rounded-2xl mt-6" role="region" aria-label="Meine Fänge">
@@ -49,16 +75,25 @@ function CatchHistory({ catches, isLoading, onEdit, onDelete, onRefresh }) {
         </CardHeader>
         <CardContent>
           {catches.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {catches.map(c => (
-                <CatchCard 
-                  key={c.id} 
-                  catchItem={c} 
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                />
-              ))}
-            </div>
+            shouldVirtualize ? (
+              // Virtualized list for large datasets (> VIRTUALIZE_THRESHOLD items)
+              <FixedSizeList
+                height={listHeight}
+                itemCount={catches.length}
+                itemSize={ITEM_HEIGHT}
+                width="100%"
+                itemData={itemData}
+                overscanCount={3}
+              >
+                {VirtualRow}
+              </FixedSizeList>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {catches.map(c => (
+                  <CatchCard key={c.id} catchItem={c} onEdit={onEdit} onDelete={onDelete} />
+                ))}
+              </div>
+            )
           ) : (
             <Card className="glass-morphism border-gray-800 rounded-2xl text-center p-12">
               <h3 className="text-xl font-semibold text-white">Noch keine Fänge erfasst</h3>
