@@ -497,18 +497,16 @@ export default function ProfilePage() {
               </p>
             </div>
             
-            <Select
+            <MobileSelect
               value={user?.settings?.voice_gender || 'female'}
               onValueChange={handleVoiceGenderChange}
-            >
-              <SelectTrigger className="w-40 bg-gray-800/50 border-gray-700">
-                <SelectValue placeholder="Stimme wählen" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="female">Weiblich</SelectItem>
-                <SelectItem value="male">Männlich</SelectItem>
-              </SelectContent>
-            </Select>
+              label="Stimme waehlen"
+              options={[
+                { value: 'female', label: 'Weiblich' },
+                { value: 'male', label: 'Maennlich' },
+              ]}
+              className="w-full sm:w-48 bg-gray-800/50 border-gray-700"
+            />
           </div>
         </CardContent>
       </Card>
