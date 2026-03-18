@@ -28,11 +28,17 @@ export function MobileSelect({
     setOpen(false);
   };
 
+  const triggerId = React.useId?.() ?? Math.random().toString(36).slice(2);
+
   return (
     <>
       <button
         type="button"
+        id={triggerId}
         onClick={() => setOpen(true)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-label={label || placeholder}
         className={cn(
           "flex h-11 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background",
           "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
