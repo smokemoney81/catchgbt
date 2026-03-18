@@ -256,6 +256,7 @@ export default function Header({
                 <Button
                    variant="ghost"
                    size="icon"
+                   aria-label="Neueste Community Beitraege anzeigen"
                    className="text-cyan-400 active:scale-95 active:bg-cyan-500/10 focus:ring-2 focus:ring-cyan-400 min-h-[44px] min-w-[44px]"
                    onClick={() => {
                      triggerHaptic('light');
@@ -296,10 +297,11 @@ export default function Header({
                       <Button
                         size="sm"
                         variant="ghost"
+                        aria-label="Vorheriger Beitrag"
                         onClick={() => setPostIndex(Math.max(0, postIndex - 1))}
                         disabled={postIndex === 0}
                       >
-                        <ChevronLeft className="w-4 h-4" />
+                        <ChevronLeft className="w-4 h-4" aria-hidden="true" />
                       </Button>
                       <span className="text-xs text-gray-400">
                         {postIndex + 1} / {recentPosts.length}
@@ -307,10 +309,11 @@ export default function Header({
                       <Button
                         size="sm"
                         variant="ghost"
+                        aria-label="Naechster Beitrag"
                         onClick={() => setPostIndex(Math.min(recentPosts.length - 1, postIndex + 1))}
                         disabled={postIndex === recentPosts.length - 1}
                       >
-                        <ChevronRight className="w-4 h-4" />
+                        <ChevronRight className="w-4 h-4" aria-hidden="true" />
                       </Button>
                     </div>
                   )}
