@@ -20,39 +20,37 @@ import { toast } from 'sonner';
 export function useOptimisticMutation({
   mutationFn,
   queryKey,
-  onOptimisticUpdate,
+  optimisticUpdate,
   onSuccess,
   onError,
-  successMessage = null,
-  errorMessage = 'Operation failed'
+  invalidateOnSettle = false
 }) {
   const queryClient = useQueryClient();
   const previousDataRef = useRef(null);
-  const isPendingRef = useRef(false);
+  const [isPending, setIsPending] = useCallback(false);
 
   const mutate = useCallback(
     async (variables) => {
-      isPendingRef.current = true;
+      setIsPending(true);
 
       try {
         // Save previous state for rollback
         previousDataRef.current = queryClient.getQueryData(queryKey);
 
         // Update cache immediately (optimistic)
-        if (onOptimisticUpdate && previousDataRef.current) {
-          const optimisticData = onOptimisticUpdate(variables, previousDataRef.current);
+        if (optimisticUpdate && previousDataRef.current !== undefined) {
+          const optimisticData = optimisticUpdate(previousDataRef.current, variables);
           queryClient.setQueryData(queryKey, optimisticData);
         }
 
         // Execute mutation
         const result = await mutationFn(variables);
 
-        // Invalidate to refetch latest from server
-        await queryClient.invalidateQueries({ queryKey });
-
-        if (successMessage) {
-          toast.success(successMessage);
+        // Invalidate to refetch latest from server if requested
+        if (invalidateOnSettle) {
+          await queryClient.invalidateQueries({ queryKey });
         }
+
         if (onSuccess) {
           onSuccess(result);
         }
@@ -60,12 +58,9 @@ export function useOptimisticMutation({
         return result;
       } catch (error) {
         // Rollback to previous state
-        if (previousDataRef.current) {
+        if (previousDataRef.current !== undefined) {
           queryClient.setQueryData(queryKey, previousDataRef.current);
         }
-
-        const message = error.message || errorMessage;
-        toast.error(message);
 
         if (onError) {
           onError(error);
@@ -73,15 +68,15 @@ export function useOptimisticMutation({
 
         throw error;
       } finally {
-        isPendingRef.current = false;
+        setIsPending(false);
       }
     },
-    [queryClient, queryKey, mutationFn, onOptimisticUpdate, onSuccess, onError, successMessage, errorMessage]
+    [queryClient, queryKey, mutationFn, optimisticUpdate, onSuccess, onError, invalidateOnSettle]
   );
 
   return {
     mutate,
-    isPending: isPendingRef.current
+    isPending
   };
 }
 
