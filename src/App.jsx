@@ -21,16 +21,18 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { migrateOfflineStorage } from '@/lib/StorageMigration';
 
+const LazyPageFallback = () => (
+  <div className="fixed inset-0 flex items-center justify-center bg-gray-950">
+    <div className="w-8 h-8 border-4 border-gray-700 border-t-cyan-400 rounded-full animate-spin" />
+  </div>
+);
+
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, isAuthenticated, navigateToLogin } = useAuth();
 
   // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
-      </div>
-    );
+    return <LazyPageFallback />;
   }
 
   // Handle authentication errors
@@ -44,15 +46,8 @@ const AuthenticatedApp = () => {
     }
   }
 
-  // Render the main app
-  const PageFallback = (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-950">
-      <div className="w-8 h-8 border-4 border-gray-700 border-t-cyan-400 rounded-full animate-spin" />
-    </div>
-  );
-
   // AnimatePresence needs location from inside Router
-  return <AnimatedRoutes PageFallback={PageFallback} />;
+  return <AnimatedRoutes />;
 };
 
 const AnimatedRoutes = ({ PageFallback }) => {
