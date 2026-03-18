@@ -8,15 +8,15 @@ import { mobileStack } from './MobileStackManager';
 /**
  * NavigationTracker - MobileStackManager Exclusive Integration
  *
- * Pure state-based navigation that decouples from React Router's history API.
- * MobileStackManager handles ALL navigation state independently, preventing
- * conflicts between browser history API and React Router location changes.
+ * Enforces WebView-native navigation standards by eliminating direct
+ * React Router browser history manipulation. MobileStackManager is the
+ * SINGLE SOURCE OF TRUTH for all navigation state.
  *
- * Back-button strategy:
- *   - MobileStackManager maintains its own stack, independent of browser history
- *   - popstate events trigger mobileStack.handleAndroidBack() for pure state navigation
- *   - React Router location changes sync TO mobileStack (not the reverse)
- *   - No window.history.pushState() calls - mobileStack is the single source of truth
+ * Core principles:
+ *   1. MobileStackManager maintains the navigation stack exclusively
+ *   2. No window.history.pushState/replaceState calls
+ *   3. All back-button events flow through mobileStack.handleAndroidBack()
+ *   4. React Router is UI binding only, not state owner
  */
 export default function NavigationTracker() {
   const location = useLocation();
@@ -30,58 +30,46 @@ export default function NavigationTracker() {
     window.parent?.postMessage({ type: 'app_changed_url', url: window.location.href }, '*');
   }, [location]);
 
-  // Keep mobileStack in sync when React Router location changes
-  // This is ONE-WAY: React Router location -> mobileStack (never reverse)
+  // CRITICAL: React Router location MUST sync to mobileStack (one-way only)
+  // This ensures mobileStack remains the single source of truth
   useEffect(() => {
-    mobileStack.push(location.pathname);
-  }, [location.pathname]);
+    const pathname = location.pathname;
+    
+    // Update mobileStack when React Router location changes
+    // This is safe because mobileStack is our state authority
+    mobileStack.push(pathname);
+    
+    if (isAuthenticated && pathname) {
+      base44.appLogs.logUserInApp(pathname).catch(() => {});
+    }
+  }, [location.pathname, isAuthenticated]);
 
-  // MobileStackManager-exclusive back-button handling
-  // Pure state-based navigation, independent of browser history API
+  // EXCLUSIVE back-button handling via MobileStackManager
+  // No React Router history manipulation - mobileStack controls all navigation
   useEffect(() => {
     const handlePopState = (event) => {
-      // Prevent browser default back behavior - let mobileStack handle it
+      // Prevent ALL browser history API interference
       event.preventDefault();
       
-      // Check if we can go back in the mobileStack
+      // MobileStackManager handles all back logic
       const canGoBack = mobileStack.handleAndroidBack();
 
       if (canGoBack) {
-        // Get the new pathname from mobileStack and navigate
+        // Navigate using React Router only for UI binding
+        // mobileStack state is already updated by handleAndroidBack()
         const nextPath = mobileStack.getCurrentPathname();
         navigate(nextPath, { replace: true });
       }
-      // If at root, mobileStack prevents app exit
+      // If !canGoBack, mobileStack prevents exit (mobile-native behavior)
     };
 
-    // Listen only for popstate (browser/hardware back button)
+    // Listen ONLY for hardware/browser back events
     window.addEventListener('popstate', handlePopState);
 
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
-  }, [navigate, location.pathname]);
-
-  // Analytics: log page view
-  useEffect(() => {
-    const pathname = location.pathname;
-    let pageName;
-
-    if (pathname === '/' || pathname === '') {
-      pageName = mainPageKey;
-    } else {
-      const pathSegment = pathname.replace(/^\//, '').split('/')[0];
-      const pageKeys = Object.keys(Pages);
-      const matchedKey = pageKeys.find(
-        (key) => key.toLowerCase() === pathSegment.toLowerCase()
-      );
-      pageName = matchedKey || null;
-    }
-
-    if (isAuthenticated && pageName) {
-      base44.appLogs.logUserInApp(pageName).catch(() => {});
-    }
-  }, [location, isAuthenticated, Pages, mainPageKey]);
+  }, [navigate]);
 
   return null;
 }
