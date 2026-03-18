@@ -255,7 +255,7 @@ Sei konkret, praxisnah und berechne die optimale Mischung!`;
 
   return (
     <PremiumGuard user={user} requiredPlan="basic" feature="KI-Köder-Mischer">
-      <div className="min-h-screen bg-gray-950 p-6 pb-32">
+      <div className="min-h-screen bg-gray-950 px-3 py-4 sm:p-6 pb-32">
         <div className="max-w-7xl mx-auto space-y-6">
           
           <div className="text-center space-y-2">
@@ -314,8 +314,9 @@ Sei konkret, praxisnah und berechne die optimale Mischung!`;
                     {ingredients.map((ingredient) => (
                       <button
                         key={ingredient.id}
-                        onClick={() => handleAddIngredient(ingredient)} // defaults to +5
-                        className="p-3 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700 rounded-lg transition-all text-left"
+                        aria-label={`${ingredient.name} hinzufuegen (max ${ingredient.max_percentage}%)`}
+                        onClick={() => handleAddIngredient(ingredient)}
+                        className="p-3 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700 rounded-lg transition-all text-left min-h-[44px]"
                       >
                         <div className="text-white font-medium text-sm mb-1">
                           {ingredient.name}
@@ -363,29 +364,32 @@ Sei konkret, praxisnah und berechne die optimale Mischung!`;
                             </div>
                             <div className="flex items-center gap-2">
                               <Button
-                                size="icon"
-                                variant="outline"
-                                className="h-8 w-8 border-gray-700"
-                                onClick={() => handleAddIngredient(ingredient, -5)}
-                                disabled={value <= 0}
+                               size="icon"
+                               variant="outline"
+                               aria-label={`${name} um 5% verringern`}
+                               className="h-8 w-8 border-gray-700"
+                               onClick={() => handleAddIngredient(ingredient, -5)}
+                               disabled={value <= 0}
                               >
-                                <Minus className="w-4 h-4" />
+                               <Minus className="w-4 h-4" />
                               </Button>
-                              <span className="text-white font-mono w-12 text-center">{value}%</span>
+                              <span className="text-white font-mono w-12 text-center" aria-live="polite" aria-label={`${name}: ${value} Prozent`}>{value}%</span>
                               <Button
-                                size="icon"
-                                variant="outline"
-                                className="h-8 w-8 border-gray-700"
-                                onClick={() => handleAddIngredient(ingredient, 5)}
-                                disabled={value >= ingredient?.max_percentage}
+                               size="icon"
+                               variant="outline"
+                               aria-label={`${name} um 5% erhoehen`}
+                               className="h-8 w-8 border-gray-700"
+                               onClick={() => handleAddIngredient(ingredient, 5)}
+                               disabled={value >= ingredient?.max_percentage}
                               >
-                                <Plus className="w-4 h-4" />
+                               <Plus className="w-4 h-4" />
                               </Button>
                               <Button
-                                size="icon"
-                                variant="ghost"
-                                className="h-8 w-8 text-red-400 hover:text-red-300"
-                                onClick={() => handleRemoveIngredient(name)}
+                               size="icon"
+                               variant="ghost"
+                               aria-label={`${name} entfernen`}
+                               className="h-8 w-8 text-red-400 hover:text-red-300"
+                               onClick={() => handleRemoveIngredient(name)}
                               >
                                 <X className="w-4 h-4" />
                               </Button>
