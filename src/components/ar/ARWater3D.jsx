@@ -702,8 +702,13 @@ export default function ARWater3D() {
   };
 
   return (
-    <div className="relative w-screen h-screen bg-black overflow-hidden">
-      <div ref={mountRef} className="w-full h-full" />
+    <div className="relative w-screen h-screen bg-black overflow-hidden" role="application" aria-label="AR 3D Bathymetrie Visualisierung">
+      <div 
+        ref={mountRef} 
+        className="w-full h-full" 
+        role="img" 
+        aria-label="3D interaktive Wassertiefenkarte - zum Rotieren ziehen, zum Zoomen pinchen"
+      />
       
       {/* Tutorial Modal */}
       <ARTutorial isOpen={showTutorial} onClose={() => setShowTutorial(false)} />
@@ -714,10 +719,10 @@ export default function ARWater3D() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.5 }}
         onClick={() => setShowTutorial(true)}
-        aria-label="Tutorial anzeigen"
-        className="absolute top-4 right-4 z-20 w-11 h-11 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 shadow-lg flex items-center justify-center transition-all hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2"
+        aria-label="AR Bedienungsanleitung anzeigen"
+        className="absolute top-4 right-4 z-20 w-11 h-11 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 active:scale-95 active:from-cyan-600 active:to-blue-700 shadow-lg flex items-center justify-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 min-h-[44px] min-w-[44px]"
       >
-        <span className="text-white text-xl font-bold">!</span>
+        <span className="text-white text-xl font-bold" aria-hidden="true">!</span>
       </motion.button>
       
       {/* Status Bar */}
@@ -735,20 +740,28 @@ export default function ARWater3D() {
           onClick={() => setShowControls(!showControls)}
           size="sm"
           variant="outline"
-          className="w-full"
+          className="w-full active:scale-95 focus:ring-2 focus:ring-cyan-400"
+          aria-expanded={showControls}
+          aria-controls="ar-controls-panel"
         >
           {showControls ? 'Steuerung verbergen' : 'Steuerung anzeigen'}
         </Button>
 
         {showControls && (
-          <Card className="glass-morphism p-4 space-y-4 border-gray-700">
+          <Card 
+            id="ar-controls-panel"
+            className="glass-morphism p-4 space-y-4 border-gray-700" 
+            role="region" 
+            aria-label="AR Steuerelemente"
+          >
             <div>
               <Button
                 onClick={loadRealBathymetry}
                 disabled={loading || !sensorRef.current}
-                className="w-full bg-cyan-600 hover:bg-cyan-700"
+                className="w-full bg-cyan-600 active:scale-95 active:bg-cyan-700 focus:ring-2 focus:ring-cyan-400 disabled:opacity-50"
+                aria-label={loading ? 'Bathymetrie wird geladen' : 'Bathymetrie Daten laden'}
               >
-                {loading ? '⏳ Lädt...' : '🌊 Bathymetrie laden'}
+                {loading ? 'Lädt...' : 'Bathymetrie laden'}
               </Button>
             </div>
 
