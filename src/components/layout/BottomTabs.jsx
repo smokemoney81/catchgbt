@@ -58,7 +58,7 @@ export default function BottomTabs() {
               aria-current={active ? 'page' : undefined}
               aria-selected={active}
               role="tab"
-              className={`flex flex-col items-center justify-center flex-1 h-full min-h-[44px] min-w-[44px] transition-colors`}
+              className={`flex flex-col items-center justify-center flex-1 h-full touch-target transition-colors`}
             >
               <Icon
                 aria-hidden="true"
