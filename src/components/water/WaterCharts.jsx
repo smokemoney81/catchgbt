@@ -42,24 +42,25 @@ export default function WaterCharts({ data, type }) {
                    <stop offset="95%" stopColor="#0284c7" stopOpacity={0}/>
                  </linearGradient>
                </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis 
                 dataKey="date" 
-                stroke="#9ca3af"
-                tick={{ fill: '#9ca3af', fontSize: 12 }}
+                stroke="hsl(var(--muted-foreground))"
+                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
               />
               <YAxis 
-                stroke="#9ca3af"
-                tick={{ fill: '#9ca3af', fontSize: 12 }}
+                stroke="hsl(var(--muted-foreground))"
+                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                 domain={[0, 100]}
               />
               <Tooltip 
                 contentStyle={{ 
-                  backgroundColor: '#1f2937', 
-                  border: '1px solid #374151',
-                  borderRadius: '8px'
+                  backgroundColor: 'hsl(var(--card))', 
+                  border: `1px solid hsl(var(--border))`,
+                  borderRadius: '8px',
+                  color: 'hsl(var(--foreground))'
                 }}
-                labelStyle={{ color: '#0284c7' }}
+                labelStyle={{ color: 'hsl(var(--chart-1))' }}
               />
               <Area 
                 type="monotone" 
@@ -83,51 +84,52 @@ export default function WaterCharts({ data, type }) {
         <CardContent aria-live="polite" aria-atomic="true">
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
               <XAxis 
                 dataKey="date" 
-                stroke="#9ca3af"
-                tick={{ fill: '#9ca3af', fontSize: 12 }}
+                stroke="hsl(var(--muted-foreground))"
+                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
               />
               <YAxis 
                 yAxisId="left"
-                stroke="#9ca3af"
-                tick={{ fill: '#9ca3af', fontSize: 12 }}
-                label={{ value: '°C', position: 'insideLeft', fill: '#9ca3af' }}
+                stroke="hsl(var(--muted-foreground))"
+                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                label={{ value: '°C', position: 'insideLeft', fill: 'hsl(var(--muted-foreground))' }}
               />
               <YAxis 
                 yAxisId="right"
                 orientation="right"
-                stroke="#9ca3af"
-                tick={{ fill: '#9ca3af', fontSize: 12 }}
-                label={{ value: 'mg/m³', position: 'insideRight', fill: '#9ca3af' }}
+                stroke="hsl(var(--muted-foreground))"
+                tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                label={{ value: 'mg/m³', position: 'insideRight', fill: 'hsl(var(--muted-foreground))' }}
               />
               <Tooltip 
                 contentStyle={{ 
-                  backgroundColor: '#1f2937', 
-                  border: '1px solid #374151',
-                  borderRadius: '8px'
+                  backgroundColor: 'hsl(var(--card))', 
+                  border: `1px solid hsl(var(--border))`,
+                  borderRadius: '8px',
+                  color: 'hsl(var(--foreground))'
                 }}
-                labelStyle={{ color: '#0284c7' }}
+                labelStyle={{ color: 'hsl(var(--chart-1))' }}
               />
-              <Legend wrapperStyle={{ color: '#9ca3af' }} />
+              <Legend wrapperStyle={{ color: 'hsl(var(--muted-foreground))' }} />
               <Line 
                 yAxisId="left"
                 type="monotone" 
                 dataKey="temperature" 
-                stroke="#d97706" 
+                stroke="hsl(var(--chart-4))" 
                 strokeWidth={2}
                 name="Temperatur (°C)"
-                dot={{ fill: '#d97706' }}
+                dot={{ fill: 'hsl(var(--chart-4))' }}
               />
               <Line 
                 yAxisId="right"
                 type="monotone" 
                 dataKey="chlorophyll" 
-                stroke="#059669" 
+                stroke="hsl(var(--chart-2))" 
                 strokeWidth={2}
                 name="Chlorophyll (mg/m³)"
-                dot={{ fill: '#059669' }}
+                dot={{ fill: 'hsl(var(--chart-2))' }}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -144,51 +146,52 @@ export default function WaterCharts({ data, type }) {
           <CardContent aria-live="polite" aria-atomic="true">
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={data}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis 
                   dataKey="date" 
-                  stroke="#9ca3af"
-                  tick={{ fill: '#9ca3af', fontSize: 12 }}
+                  stroke="hsl(var(--muted-foreground))"
+                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                 />
                 <YAxis 
                   yAxisId="left"
-                  stroke="#9ca3af"
-                  tick={{ fill: '#9ca3af', fontSize: 12 }}
-                  label={{ value: 'NTU', position: 'insideLeft', fill: '#9ca3af' }}
+                  stroke="hsl(var(--muted-foreground))"
+                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                  label={{ value: 'NTU', position: 'insideLeft', fill: 'hsl(var(--muted-foreground))' }}
                 />
                 <YAxis 
                   yAxisId="right"
                   orientation="right"
-                  stroke="#9ca3af"
-                  tick={{ fill: '#9ca3af', fontSize: 12 }}
-                  label={{ value: 'mg/L', position: 'insideRight', fill: '#9ca3af' }}
+                  stroke="hsl(var(--muted-foreground))"
+                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                  label={{ value: 'mg/L', position: 'insideRight', fill: 'hsl(var(--muted-foreground))' }}
                 />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: '#1f2937', 
-                    border: '1px solid #374151',
-                    borderRadius: '8px'
+                    backgroundColor: 'hsl(var(--card))', 
+                    border: `1px solid hsl(var(--border))`,
+                    borderRadius: '8px',
+                    color: 'hsl(var(--foreground))'
                   }}
-                  labelStyle={{ color: '#0284c7' }}
+                  labelStyle={{ color: 'hsl(var(--chart-1))' }}
                 />
-                <Legend wrapperStyle={{ color: '#9ca3af' }} />
+                <Legend wrapperStyle={{ color: 'hsl(var(--muted-foreground))' }} />
                 <Line 
                   yAxisId="left"
                   type="monotone" 
                   dataKey="turbidity" 
-                  stroke="#1e40af" 
+                  stroke="hsl(var(--chart-3))" 
                   strokeWidth={2}
                   name="Trübung (NTU)"
-                  dot={{ fill: '#1e40af' }}
+                  dot={{ fill: 'hsl(var(--chart-3))' }}
                 />
                 <Line 
                   yAxisId="right"
                   type="monotone" 
                   dataKey="oxygen" 
-                  stroke="#0369a1" 
+                  stroke="hsl(var(--chart-1))" 
                   strokeWidth={2}
                   name="Sauerstoff (mg/L)"
-                  dot={{ fill: '#0369a1' }}
+                  dot={{ fill: 'hsl(var(--chart-1))' }}
                 />
               </LineChart>
             </ResponsiveContainer>
