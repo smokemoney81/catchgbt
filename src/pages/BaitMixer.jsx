@@ -277,12 +277,13 @@ Sei konkret, praxisnah und berechne die optimale Mischung!`;
                     <CardTitle className="text-cyan-400">Modus & Zielfisch</CardTitle>
                     <MobileSelect 
                       value={mode} 
-                      onChange={(val) => setMode(val)}
+                      onValueChange={(val) => setMode(val)}
                       options={[
                         { value: 'boilies', label: 'Boilies' },
-                        { value: 'bait', label: 'Anfütterung' }
+                        { value: 'bait', label: 'Anfuetterung' }
                       ]}
-                      placeholder="Modus wählen"
+                      label="Modus"
+                      placeholder="Modus waehlen"
                     />
                   </div>
                 </CardHeader>
@@ -292,7 +293,7 @@ Sei konkret, praxisnah und berechne die optimale Mischung!`;
                       <label className="text-sm text-gray-400 mb-2 block">Zielfisch</label>
                       <MobileSelect 
                         value={targetFish} 
-                        onChange={setTargetFish}
+                        onValueChange={setTargetFish}
                         options={["Karpfen", "Brassen", "Rotauge", "Hecht", "Zander", "Barsch", "Forelle", "Aal"].map(fish => ({
                           value: fish,
                           label: fish
@@ -583,8 +584,8 @@ Sei konkret, praxisnah und berechne die optimale Mischung!`;
                               variant="ghost"
                               className="opacity-0 group-hover:opacity-100 h-8 w-8 text-red-400 hover:text-red-300"
                               onClick={(e) => {
-                                e.stopPropagation(); // Prevent loading the recipe when deleting
-                                deleteRecipe(recipe.id);
+                                e.stopPropagation();
+                                deleteRecipeMutation.mutate(recipe.id);
                               }}
                             >
                               <Trash2 className="w-4 h-4" />
