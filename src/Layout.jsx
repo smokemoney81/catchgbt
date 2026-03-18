@@ -312,12 +312,14 @@ function LayoutContent({ children, currentPageName, queryClient }) {
   }
 
   return (
-    <PlanProvider>
-      <LanguageProvider>
-        <HapticProvider>
-          <SoundProvider>
-            <LocationProvider>
-              <OfflineWrapper>
+    <>
+      <BackButtonHandler />
+      <PlanProvider>
+        <LanguageProvider>
+          <HapticProvider>
+            <SoundProvider>
+              <LocationProvider>
+                <OfflineWrapper>
             <div className="min-h-screen bg-gray-950 text-slate-50 relative overflow-hidden">
               <SEO />
               
