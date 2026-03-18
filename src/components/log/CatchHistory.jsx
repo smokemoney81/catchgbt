@@ -4,7 +4,7 @@ import CatchCard from './CatchCard';
 import { Badge } from '@/components/ui/badge';
 import SwipeToRefresh from '@/components/utils/SwipeToRefresh';
 
-function CatchHistory({ catches, isLoading, onEdit, onDelete }) {
+function CatchHistory({ catches, isLoading, onEdit, onDelete, onRefresh }) {
   if (isLoading) {
     return (
       <Card className="glass-morphism border-gray-800 rounded-2xl mt-6">

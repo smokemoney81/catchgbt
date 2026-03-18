@@ -90,6 +90,7 @@ export default function SettingsSection() {
           )}
         </CardContent>
       </Card>
+      <DeleteAccountSection />
     </div>
   );
 }
