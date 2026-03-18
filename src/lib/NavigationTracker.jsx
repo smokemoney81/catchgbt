@@ -4,6 +4,7 @@ import { useAuth } from './AuthContext';
 import { base44 } from '@/api/base44Client';
 import { pagesConfig } from '@/pages.config';
 import { useNavigationContext, ROOT_SEGMENTS } from './NavigationContext';
+import { navigationStack } from './NavigationStackV2';
 
 /**
  * NavigationTracker
@@ -66,10 +67,12 @@ export default function NavigationTracker() {
       // Immediately re-arm so the next back press is also intercepted.
       window.history.pushState({ _navGuard: true }, '');
 
-      if (canGoBackRef.current) {
+      // Use V2 API (new standardized approach) with fallback to old context
+      const handled = navigationStack.handleAndroidBack() || (canGoBackRef.current && popRoute());
+      
+      if (handled) {
         // Update our internal stack direction then let React Router handle
         // the actual URL change.
-        popRoute();
         navigate(-1);
       }
       // If we are on a root tab there is nothing to do — the re-arm above
