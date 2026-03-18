@@ -43,9 +43,14 @@ export default function NavigationTracker() {
   }, [location]);
 
   // Keep the centralized stack in sync with React Router.
+  // Also detect when the user navigates to a different tab root and sync the context.
   useEffect(() => {
+    const segment = location.pathname.replace(/^\//, '').split('/')[0] || 'Dashboard';
+    if (ROOT_SEGMENTS.has(segment)) {
+      switchTab(segment);
+    }
     pushRoute(location.pathname);
-  }, [location.pathname, pushRoute]);
+  }, [location.pathname, pushRoute, switchTab]);
 
   // Single-sentinel back-button guard — registered ONCE on mount.
   //
