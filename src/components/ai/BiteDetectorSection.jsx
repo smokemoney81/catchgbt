@@ -73,29 +73,91 @@ export default function BiteDetectorSection() {
     loadUser();
   }, []);
 
-  // Initialize optimized Web Worker for data processing
+  // Initialize optimized Web Worker for data processing with robust fallback
   useEffect(() => {
-    try {
-      workerRef.current = new Worker('/workers/biteDetectorOptimized.js');
-      
-      workerRef.current.onmessage = (event) => {
-        const { type, result } = event.data;
-        if (type === 'frameProcessed' && result) {
-          // Only update state when z-score changes significantly (debounce)
-          setLineScore(Math.abs(result.z || 0));
-          setDebugInfo(
-            `proc=${PROC_W}x${result.procHeight || 'auto'} stride=${STRIDE} ` +
-            `zL=${result.z.toFixed(2)} fps=${result.fps} frames=${result.frameCount}`
-          );
-        } else if (type === 'error') {
-          console.error('[BiteDetector] Worker error:', result.error);
+    const initWorker = async () => {
+      try {
+        // Feature detection: Check if Worker is available and not blocked
+        if (typeof Worker === 'undefined') {
+          console.warn('[BiteDetector] Worker API not available, using main thread');
+          return;
         }
-      };
-      
-      workerRef.current.postMessage({ command: 'init', payload: { reset: true } });
-    } catch (e) {
-      console.warn('Web Worker not available, using main thread:', e);
-    }
+
+        // Attempt Worker creation with timeout fallback
+        const workerInitPromise = new Promise((resolve, reject) => {
+          try {
+            const worker = new Worker('/workers/biteDetectorOptimized.js');
+            
+            // Set up handlers before any message passing
+            worker.onmessage = (event) => {
+              const { type, result } = event.data;
+              if (type === 'frameProcessed' && result) {
+                setLineScore(Math.abs(result.z || 0));
+                setDebugInfo(
+                  `proc=${PROC_W}x${result.procHeight || 'auto'} stride=${STRIDE} ` +
+                  `zL=${result.z.toFixed(2)} fps=${result.fps} frames=${result.frameCount} worker=active`
+                );
+              } else if (type === 'error') {
+                console.error('[BiteDetector] Worker error:', result.error);
+              }
+            };
+            
+            worker.onerror = (error) => {
+              console.error('[BiteDetector] Worker initialization error:', error);
+              reject(error);
+            };
+            
+            // Send init with timeout
+            worker.postMessage({ command: 'init', payload: { reset: true } });
+            
+            // Confirm worker is responsive within 2 seconds
+            const timeoutId = setTimeout(() => {
+              worker.terminate();
+              reject(new Error('Worker initialization timeout'));
+            }, 2000);
+            
+            // Intercept first message to confirm responsiveness
+            const originalOnMessage = worker.onmessage;
+            worker.onmessage = (event) => {
+              clearTimeout(timeoutId);
+              worker.onmessage = originalOnMessage;
+              resolve(worker);
+              originalOnMessage.call(worker, event);
+            };
+            
+          } catch (e) {
+            reject(e);
+          }
+        });
+
+        // Wait for worker with 3-second timeout total
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Worker creation timeout')), 3000)
+        );
+
+        workerRef.current = await Promise.race([workerInitPromise, timeoutPromise]);
+        
+      } catch (e) {
+        // Graceful fallback when Worker is blocked, unavailable, or fails
+        console.warn('[BiteDetector] Worker fallback activated:', e.message);
+        console.warn('[BiteDetector] Running frame processing on main thread (performance degraded)');
+        workerRef.current = null;
+        setDebugInfo('worker=fallback (main thread)');
+      }
+    };
+
+    initWorker();
+
+    return () => {
+      if (workerRef.current) {
+        try {
+          workerRef.current.terminate();
+        } catch (e) {
+          console.warn('[BiteDetector] Error terminating worker:', e);
+        }
+        workerRef.current = null;
+      }
+    };
   }, []);
 
   // Cleanup on unmount
@@ -245,7 +307,8 @@ export default function BiteDetectorSection() {
       setTimeout(() => setAlarmActive(false), 600);
     }
     
-    setDebugInfo(`proc=${procCanvas.width}x${procCanvas.height} stride=${STRIDE} zL=${zL.toFixed(2)} zT=${zT.toFixed(2)} worker=${'active'}`);
+    const workerStatus = workerRef.current ? 'active' : 'fallback';
+    setDebugInfo(`proc=${procCanvas.width}x${procCanvas.height} stride=${STRIDE} zL=${zL.toFixed(2)} zT=${zT.toFixed(2)} worker=${workerStatus}`);
   }, [running, kLine, kTip, lockTime, energyFor, beep]);
 
   // Optimized frame scheduling for 60fps on low-end hardware
