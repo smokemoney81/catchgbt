@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import './App.css'
+import './globals.css'
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
@@ -48,7 +49,14 @@ const AuthenticatedApp = () => {
   }
 
   // Render the main app
+  const PageFallback = (
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-950">
+      <div className="w-8 h-8 border-4 border-gray-700 border-t-cyan-400 rounded-full animate-spin" />
+    </div>
+  );
+
   return (
+    <Suspense fallback={PageFallback}>
     <Routes>
       <Route path="/" element={
         <LayoutWrapper currentPageName={mainPageKey}>
@@ -73,6 +81,7 @@ const AuthenticatedApp = () => {
       <Route path="/WeatherAlerts" element={<LayoutWrapper currentPageName="WeatherAlerts"><WeatherAlerts /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
+    </Suspense>
   );
 };
 
