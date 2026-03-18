@@ -14,24 +14,39 @@ export default function MessageBubble({ message }) {
     const isUser = message.role === 'user';
     
     return (
-        <div className={cn("flex items-start gap-3", isUser ? "justify-end" : "justify-start")}>
+        <div 
+            className={cn("flex items-start gap-3", isUser ? "justify-end" : "justify-start")}
+            role="article"
+            aria-label={`${isUser ? 'Nutzer' : 'Assistent'} Nachricht: ${message.content.substring(0, 50)}...`}
+        >
             {!isUser && (
                 <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gray-800 flex items-center justify-center mt-0.5 border border-gray-700">
                     <Bot className="w-5 h-5 text-cyan-400" />
                 </div>
             )}
             <div className={cn("max-w-[85%]", isUser && "flex flex-col items-end")}>
-                <div className={cn(
-                    "rounded-2xl px-4 py-2.5 shadow-md",
-                    isUser 
-                        ? "bg-blue-600 text-white rounded-br-lg" 
-                        : "bg-gray-700/80 border border-gray-600/50 backdrop-blur-sm text-gray-200 rounded-bl-lg"
-                )}>
+                <div 
+                    className={cn(
+                        "rounded-2xl px-4 py-2.5 shadow-md transition-all duration-150",
+                        isUser 
+                            ? "bg-blue-600 text-white rounded-br-lg" 
+                            : "bg-gray-700/80 border border-gray-600/50 backdrop-blur-sm text-gray-200 rounded-bl-lg"
+                    )}
+                    role={isUser ? "status" : "presentation"}
+                    aria-live={isUser ? "off" : "polite"}
+                    aria-atomic="true"
+                >
                     {isUser ? (
                         <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
                     ) : (
-                        <ReactMarkdown 
-                            className="text-sm prose prose-sm prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
+                        <div 
+                            role="status" 
+                            aria-live="polite" 
+                            aria-atomic="false"
+                            className="animate-in fade-in"
+                        >
+                            <ReactMarkdown 
+                                className="text-sm prose prose-sm prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0"
                             components={{
                                 code: ({ inline, className, children, ...props }) => {
                                     const match = /language-(\w+)/.exec(className || '');
@@ -64,7 +79,8 @@ export default function MessageBubble({ message }) {
                             }}
                         >
                             {message.content}
-                        </ReactMarkdown>
+                            </ReactMarkdown>
+                        </div>
                     )}
                 </div>
             </div>
