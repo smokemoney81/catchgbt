@@ -267,7 +267,8 @@ export default function Logbook() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6 space-y-8 pb-32">
+    <SwipeToRefresh onRefresh={() => queryClient.invalidateQueries({ queryKey: ['catches'] })}>
+      <div className="max-w-6xl mx-auto p-6 space-y-8 pb-safe-fixed">
       <Card className="glass-morphism border-gray-800 rounded-2xl">
         <CardHeader>
           {!editingCatch && (
