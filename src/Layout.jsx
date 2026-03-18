@@ -352,22 +352,9 @@ export default function Layout({ children, currentPageName }) {
                   <SubPageHeader title={currentPageName} />
                 </div>
 
-                <AnimatePresence mode="wait">
-                  <motion.main 
-                    key={currentPageName}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.2 }}
-                    className="bg-gray-950" 
-                    style={{ 
-                      minHeight: 'calc(100vh - 200px)',
-                      paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))'
-                    }}
-                  >
-                    {children}
-                  </motion.main>
-                </AnimatePresence>
+                <PageTransition pageKey={currentPageName}>
+                  {children}
+                </PageTransition>
 
                   <BottomTabs />
 

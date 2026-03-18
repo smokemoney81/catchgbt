@@ -53,27 +53,31 @@ export default function GeneralSettings() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label className="text-sm text-gray-400 block mb-2">Sprache</label>
-                    <Select value={settings.language} onValueChange={(value) => setSettings(prev => ({ ...prev, language: value }))}>
-                        <SelectTrigger className="w-full bg-gray-800/50 border-gray-700 text-white rounded-lg">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="de">Deutsch</SelectItem>
-                            <SelectItem value="en">Englisch</SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <MobileSelect
+                        value={settings.language}
+                        onValueChange={(value) => setSettings(prev => ({ ...prev, language: value }))}
+                        label="Sprache"
+                        placeholder="Sprache wählen"
+                        options={[
+                            { value: 'de', label: 'Deutsch' },
+                            { value: 'en', label: 'Englisch' },
+                        ]}
+                        className="bg-gray-800/50 border-gray-700 text-white"
+                    />
                 </div>
                 <div>
                     <label className="text-sm text-gray-400 block mb-2">Einheiten</label>
-                    <Select value={settings.units} onValueChange={(value) => setSettings(prev => ({ ...prev, units: value }))}>
-                        <SelectTrigger className="w-full bg-gray-800/50 border-gray-700 text-white rounded-lg">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="metric">Metrisch (cm, kg)</SelectItem>
-                            <SelectItem value="imperial">Imperial (in, lbs)</SelectItem>
-                        </SelectContent>
-                    </Select>
+                    <MobileSelect
+                        value={settings.units}
+                        onValueChange={(value) => setSettings(prev => ({ ...prev, units: value }))}
+                        label="Einheiten"
+                        placeholder="Einheiten wählen"
+                        options={[
+                            { value: 'metric', label: 'Metrisch (cm, kg)' },
+                            { value: 'imperial', label: 'Imperial (in, lbs)' },
+                        ]}
+                        className="bg-gray-800/50 border-gray-700 text-white"
+                    />
                 </div>
             </div>
              <div className="mt-4 flex justify-end">
