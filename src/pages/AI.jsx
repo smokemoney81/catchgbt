@@ -1,7 +1,6 @@
-import React, { useState, useEffect, Suspense, lazy } from "react";
+import React, { useState, useEffect, Suspense, lazy, useRef } from "react";
 import PremiumGuard from "@/components/premium/PremiumGuard";
 import { base44 } from "@/api/base44Client";
-import { useState, useRef, useEffect } from "react";
 
 const CameraAnalysisSection = lazy(() => import("@/components/ai/CameraAnalysisSection"));
 const BiteDetectorSection = lazy(() => import("@/components/ai/BiteDetectorSection"));
