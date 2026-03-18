@@ -12,11 +12,7 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-route
 import { AnimatePresence } from 'framer-motion';
 import PageNotFound from './lib/PageNotFound';
 import PageTransition from '@/lib/PageTransitionEnhanced';
-import BathymetricCrowdsourcing from './pages/BathymetricCrowdsourcing';
-import WeatherAlerts from './pages/WeatherAlerts';
-import Events from './pages/Events';
-import KiBuddyBeta from './pages/KiBuddyBeta';
-import ARKnotenAssistent from './pages/ARKnotenAssistent';
+
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { migrateOfflineStorage } from '@/lib/StorageMigration';
