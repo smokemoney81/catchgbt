@@ -7,9 +7,9 @@ export default function FishingRecommendationCard() {
   const [data, setData] = useState(null);
 
   const ratingColor = {
-    "Gut": "text-emerald-400",
-    "Mittel": "text-amber-400",
-    "Schlecht": "text-red-400"
+    "Gut": "text-emerald-700",
+    "Mittel": "text-amber-700",
+    "Schlecht": "text-red-700"
   };
 
   const analyze = async () => {
