@@ -18,11 +18,11 @@ export default function WaterCharts({ data, type }) {
           <ResponsiveContainer width="100%" height={300}>
             <AreaChart data={data}>
               <defs>
-                <linearGradient id="fishingScoreGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#22d3ee" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#22d3ee" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
+                 <linearGradient id="fishingScoreGradient" x1="0" y1="0" x2="0" y2="1">
+                   <stop offset="5%" stopColor="#0284c7" stopOpacity={0.8}/>
+                   <stop offset="95%" stopColor="#0284c7" stopOpacity={0}/>
+                 </linearGradient>
+               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
               <XAxis 
                 dataKey="date" 
@@ -45,7 +45,7 @@ export default function WaterCharts({ data, type }) {
               <Area 
                 type="monotone" 
                 dataKey="fishingScore" 
-                stroke="#22d3ee" 
+                stroke="#0284c7" 
                 fillOpacity={1} 
                 fill="url(#fishingScoreGradient)"
                 name="Fang-Score"
@@ -95,19 +95,19 @@ export default function WaterCharts({ data, type }) {
                 yAxisId="left"
                 type="monotone" 
                 dataKey="temperature" 
-                stroke="#f97316" 
+                stroke="#d97706" 
                 strokeWidth={2}
                 name="Temperatur (°C)"
-                dot={{ fill: '#f97316' }}
+                dot={{ fill: '#d97706' }}
               />
               <Line 
                 yAxisId="right"
                 type="monotone" 
                 dataKey="chlorophyll" 
-                stroke="#10b981" 
+                stroke="#059669" 
                 strokeWidth={2}
                 name="Chlorophyll (mg/m³)"
-                dot={{ fill: '#10b981' }}
+                dot={{ fill: '#059669' }}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -155,19 +155,19 @@ export default function WaterCharts({ data, type }) {
                   yAxisId="left"
                   type="monotone" 
                   dataKey="turbidity" 
-                  stroke="#3b82f6" 
+                  stroke="#1e40af" 
                   strokeWidth={2}
                   name="Trübung (NTU)"
-                  dot={{ fill: '#3b82f6' }}
+                  dot={{ fill: '#1e40af' }}
                 />
                 <Line 
                   yAxisId="right"
                   type="monotone" 
                   dataKey="oxygen" 
-                  stroke="#06b6d4" 
+                  stroke="#0369a1" 
                   strokeWidth={2}
                   name="Sauerstoff (mg/L)"
-                  dot={{ fill: '#06b6d4' }}
+                  dot={{ fill: '#0369a1' }}
                 />
               </LineChart>
             </ResponsiveContainer>
