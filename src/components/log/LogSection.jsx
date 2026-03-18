@@ -402,6 +402,7 @@ export default function LogSection() {
             </Button>
           )}
         </div>
+        </SwipeToRefresh>
       </CardContent>
     </Card>
   );
