@@ -26,16 +26,16 @@ import { Link } from "react-router-dom";
 import { MobileStackProvider } from "@/components/navigation/MobileStackManager";
 import BackButtonHandler from "@/components/navigation/BackButtonHandler";
 
+import ErrorBoundary from "@/lib/ErrorBoundary";
+
 // Lazy-loaded non-critical components
 const Sidebar = lazy(() => import("@/components/layout/Sidebar"));
 const QuickCatchDialog = lazy(() => import("@/components/log/QuickCatchDialog"));
 const EnhancedTicker = lazy(() => import("@/components/layout/TipTicker"));
 const FeedbackManager = lazy(() => import("@/components/feedback/FeedbackManager"));
 const SupportAgentButton = lazy(() => import("@/components/layout/SupportAgentButton"));
-const ErrorBoundary = lazy(() => import("@/lib/ErrorBoundary").then(m => ({ default: m.default })));
 
 const LazyFallback = () => null;
-const MinimalErrorFallback = () => null;
 
 export default function Layout({ children, currentPageName }) {
   usePrefetch();
