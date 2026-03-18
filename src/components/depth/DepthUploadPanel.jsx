@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { base44 } from "@/api/base44Client";
 import { processDepthData } from "@/functions/processDepthData";
+import { MobileSelect } from "@/components/ui/mobile-select";
 import { toast } from "sonner";
 
 export default function DepthUploadPanel({ onUploadSuccess }) {

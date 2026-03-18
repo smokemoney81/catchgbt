@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { User } from "@/entities/User";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -128,6 +127,7 @@ export default function WeatherAlertsSettings() {
             </div>
             <Switch
               checked={settings.rain_alert_enabled}
+              aria-label="Regen-Warnung aktivieren"
               onCheckedChange={(checked) => {
                 triggerHaptic('light');
                 setSettings({ ...settings, rain_alert_enabled: checked });
@@ -164,6 +164,7 @@ export default function WeatherAlertsSettings() {
             </div>
             <Switch
               checked={settings.wind_alert_enabled}
+              aria-label="Wind-Warnung aktivieren"
               onCheckedChange={(checked) => {
                 triggerHaptic('light');
                 setSettings({ ...settings, wind_alert_enabled: checked });
@@ -200,6 +201,7 @@ export default function WeatherAlertsSettings() {
             </div>
             <Switch
               checked={settings.storm_alert_enabled}
+              aria-label="Sturm-Warnung aktivieren"
               onCheckedChange={(checked) => {
                 triggerHaptic('light');
                 setSettings({ ...settings, storm_alert_enabled: checked });
@@ -236,6 +238,7 @@ export default function WeatherAlertsSettings() {
             </div>
             <Switch
               checked={settings.temp_alert_enabled}
+              aria-label="Temperatur-Warnung aktivieren"
               onCheckedChange={(checked) => {
                 triggerHaptic('light');
                 setSettings({ ...settings, temp_alert_enabled: checked });
@@ -286,6 +289,7 @@ export default function WeatherAlertsSettings() {
             </div>
             <Switch
               checked={settings.uv_alert_enabled}
+              aria-label="UV-Index-Warnung aktivieren"
               onCheckedChange={(checked) => {
                 triggerHaptic('light');
                 setSettings({ ...settings, uv_alert_enabled: checked });
@@ -322,6 +326,7 @@ export default function WeatherAlertsSettings() {
             </div>
             <Switch
               checked={settings.visibility_alert_enabled}
+              aria-label="Sichtweiten-Warnung aktivieren"
               onCheckedChange={(checked) => {
                 triggerHaptic('light');
                 setSettings({ ...settings, visibility_alert_enabled: checked });
@@ -359,6 +364,7 @@ export default function WeatherAlertsSettings() {
             </div>
             <Switch
               checked={settings.dewpoint_alert_enabled}
+              aria-label="Taupunkt-Warnung aktivieren"
               onCheckedChange={(checked) => {
                 triggerHaptic('light');
                 setSettings({ ...settings, dewpoint_alert_enabled: checked });

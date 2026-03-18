@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { AlertTriangle, Edit3, ChevronRight, Circle, ShoppingCart, CheckCircle2 } from "lucide-react";
 
@@ -182,13 +181,13 @@ export default function CatchgbtAusrüstung() {
         <div className="mt-6 rounded-3xl border border-slate-800 bg-slate-900/40 p-4">
           <h3 className="mb-3 text-base font-semibold">KI-Empfehlungen</h3>
           <div className="grid grid-cols-2 gap-3">
-            <button className="flex items-center justify-between rounded-2xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-sm">
+            <button aria-label="KI-Tipp: Was fehlt noch?" className="flex items-center justify-between rounded-2xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-sm">
               <span>Was fehlt noch?</span>
-              <ChevronRight size={18} className="text-slate-400" />
+              <ChevronRight aria-hidden="true" size={18} className="text-slate-400" />
             </button>
-            <button className="flex items-center justify-between rounded-2xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-sm">
-              <span>3 Köder-Setups</span>
-              <ChevronRight size={18} className="text-slate-400" />
+            <button aria-label="KI-Tipp: 3 Koeder-Setups anzeigen" className="flex items-center justify-between rounded-2xl border border-slate-700 bg-slate-800/50 px-4 py-3 text-sm">
+              <span>3 Koeder-Setups</span>
+              <ChevronRight aria-hidden="true" size={18} className="text-slate-400" />
             </button>
           </div>
         </div>
