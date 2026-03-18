@@ -296,20 +296,28 @@ export default function LogSection() {
         {/* Filter */}
         <div className="flex flex-wrap gap-3 items-end mb-4">
           <div className="flex items-center gap-2"><Filter className="w-4 h-4 text-gray-400" /><span className="text-sm text-gray-300">Filter</span></div>
-          <Select value={filters.species} onValueChange={(v)=>setFilters(prev=>({...prev, species: v}))}>
-            <SelectTrigger className="w-40 bg-gray-800/50 border-gray-700 text-white"><SelectValue placeholder="Art" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Alle Arten</SelectItem>
-              {speciesList.map(s=> <SelectItem key={s} value={s}>{s}</SelectItem>)}
-            </SelectContent>
-          </Select>
-          <Select value={filters.spot} onValueChange={(v)=>setFilters(prev=>({...prev, spot: v}))}>
-            <SelectTrigger className="w-40 bg-gray-800/50 border-gray-700 text-white"><SelectValue placeholder="Spot" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Alle Spots</SelectItem>
-              {spots.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
-            </SelectContent>
-          </Select>
+          <MobileSelect
+            value={filters.species}
+            onValueChange={(v) => setFilters(prev => ({ ...prev, species: v }))}
+            placeholder="Art"
+            label="Fischart filtern"
+            options={[
+              { value: 'all', label: 'Alle Arten' },
+              ...speciesList.map(s => ({ value: s, label: s }))
+            ]}
+            className="w-40 bg-gray-800/50 border-gray-700 text-white"
+          />
+          <MobileSelect
+            value={filters.spot}
+            onValueChange={(v) => setFilters(prev => ({ ...prev, spot: v }))}
+            placeholder="Spot"
+            label="Spot filtern"
+            options={[
+              { value: 'all', label: 'Alle Spots' },
+              ...spots.map(s => ({ value: s.id, label: s.name }))
+            ]}
+            className="w-40 bg-gray-800/50 border-gray-700 text-white"
+          />
           <Input type="datetime-local" value={filters.from} onChange={(e)=>setFilters(prev=>({...prev, from: e.target.value}))} className="bg-gray-800/50 border-gray-700 text-white" />
           <Input type="datetime-local" value={filters.to} onChange={(e)=>setFilters(prev=>({...prev, to: e.target.value}))} className="bg-gray-800/50 border-gray-700 text-white" />
           <Badge variant="outline" className="ml-auto">{filtered.length} von {catches.length}</Badge>
