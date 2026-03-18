@@ -1,84 +1,100 @@
-/**
- * Web Worker for Echogram data decimation
- * 
- * Offloads heavy filtering and decimation operations to prevent
- * jank on low-end Android devices.
- */
+self.onmessage = function(event) {
+  const { command, payload } = event.data;
 
-self.onmessage = (event) => {
-  const { type, data } = event.data;
-
-  if (type === 'decimate') {
-    const { imageData, decimationFactor, stride } = data;
-    const result = decimateData(imageData, decimationFactor, stride);
-    self.postMessage({ type: 'decimate-result', result });
-  } else if (type === 'filter') {
-    const { buffer, windowSize } = data;
-    const result = movingAverageFilter(buffer, windowSize);
-    self.postMessage({ type: 'filter-result', result });
+  switch (command) {
+    case 'processFrame':
+      processFrame(payload);
+      break;
+    case 'init':
+      init(payload);
+      break;
+    default:
+      console.warn('Unknown worker command:', command);
   }
 };
 
-/**
- * Decimate image data for lower resolution processing
- */
-function decimateData(imageData, factor = 2, stride = 4) {
-  const { data, width, height } = imageData;
-  const newWidth = Math.ceil(width / factor);
-  const newHeight = Math.ceil(height / factor);
-  const decimated = new Uint8ClampedArray(newWidth * newHeight * 4);
+let state = {
+  prev: null,
+  n: 0,
+  mean: 0,
+  M2: 0,
+  above: 0
+};
 
-  let outIdx = 0;
-  for (let y = 0; y < height; y += factor) {
-    for (let x = 0; x < width; x += factor) {
-      const inIdx = (y * width + x) * 4;
-      
-      // Average stride pixels
-      let r = 0, g = 0, b = 0, a = 0, count = 0;
-      for (let dy = 0; dy < factor && y + dy < height; dy++) {
-        for (let dx = 0; dx < factor && x + dx < width; dx += stride) {
-          const idx = ((y + dy) * width + (x + dx)) * 4;
-          r += data[idx];
-          g += data[idx + 1];
-          b += data[idx + 2];
-          a += data[idx + 3];
-          count++;
-        }
-      }
-      
-      decimated[outIdx] = Math.round(r / count);
-      decimated[outIdx + 1] = Math.round(g / count);
-      decimated[outIdx + 2] = Math.round(b / count);
-      decimated[outIdx + 3] = Math.round(a / count);
-      outIdx += 4;
-    }
+const STRIDE = 4;
+
+function init(config) {
+  if (config.reset) {
+    state = {
+      prev: null,
+      n: 0,
+      mean: 0,
+      M2: 0,
+      above: 0
+    };
+  }
+}
+
+function welfordPush(st, x) {
+  st.n++;
+  const d = x - st.mean;
+  st.mean += d / st.n;
+  const d2 = x - st.mean;
+  st.M2 += d * d2;
+}
+
+function welfordStd(st) {
+  return st.n > 1 ? Math.sqrt(Math.max(0, st.M2 / (st.n - 1))) : 0;
+}
+
+function processFrame(payload) {
+  const { imageData, rect, procWidth, procHeight } = payload;
+  
+  if (!rect || !imageData) {
+    self.postMessage({
+      type: 'frameProcessed',
+      result: { e: 0, z: 0 }
+    });
+    return;
   }
 
-  return {
-    data: decimated,
-    width: newWidth,
-    height: newHeight,
+  const data = new Uint8ClampedArray(imageData);
+  
+  const sx = procWidth / (rect.overlayWidth || 1);
+  const sy = procHeight / (rect.overlayHeight || 1);
+  
+  const r = {
+    x: Math.max(0, Math.floor(rect.x * sx)),
+    y: Math.max(0, Math.floor(rect.y * sy)),
+    w: Math.max(1, Math.floor(rect.w * sx)),
+    h: Math.max(1, Math.floor(rect.h * sy))
   };
-}
 
-/**
- * Moving average filter for smoothing
- */
-function movingAverageFilter(buffer, windowSize = 5) {
-  const filtered = new Float32Array(buffer.length);
-  const halfWindow = Math.floor(windowSize / 2);
+  let sum = 0;
+  let count = 0;
 
-  for (let i = 0; i < buffer.length; i++) {
-    let sum = 0;
-    let count = 0;
-
-    for (let j = Math.max(0, i - halfWindow); j < Math.min(buffer.length, i + halfWindow + 1); j++) {
-      sum += buffer[j];
-      count++;
-    }
-
-    filtered[i] = sum / count;
+  if (!state.prev || state.prev.length !== data.length) {
+    state.prev = new Uint8ClampedArray(data.length);
   }
 
-  return filtered;
+  for (let i = 0; i < data.length; i += 4 * STRIDE) {
+    const y = data[i];
+    const py = state.prev[i];
+    sum += Math.abs(y - py);
+    state.prev[i] = y;
+    count++;
+  }
+
+  const e = sum / Math.max(1, count);
+  const s = welfordStd(state);
+  const z = s > 1e-6 ? (e - state.mean) / s : 0;
+
+  welfordPush(state, e * 0.05 + state.mean * 0.95);
+
+  self.postMessage({
+    type: 'frameProcessed',
+    result: { e, z, mean: state.mean, stdDev: s }
+  });
 }
+
+self.postMessage({ type: 'ready' });
