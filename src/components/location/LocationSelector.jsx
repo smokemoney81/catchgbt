@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from './LocationManager';
 import { Spot } from '@/entities/Spot';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { MobileSelect } from '@/components/ui/mobile-select';
 import { MapPin, Navigation, Loader2, AlertCircle } from 'lucide-react';
 
 export default function LocationSelector({ compact = false }) {

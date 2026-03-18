@@ -403,10 +403,11 @@ export default function CommunitySection() {
                       <Button
                         variant="ghost"
                         size="icon"
+                        aria-label="Post melden"
                         onClick={() => handleReport(post.id)}
                         className="text-gray-500 hover:text-red-400"
                       >
-                        <AlertTriangle className="w-4 h-4" />
+                        <AlertTriangle aria-hidden="true" className="w-4 h-4" />
                       </Button>
                     )}
                     {post.reported && (
@@ -498,11 +499,12 @@ export default function CommunitySection() {
                       className="bg-gray-800/50 border-gray-700 text-white"
                     />
                     <Button
-                      onClick={() => handleComment(post.id)}
-                      size="icon"
-                      className="bg-emerald-600 hover:bg-emerald-700 flex-shrink-0"
+                     onClick={() => handleComment(post.id)}
+                     size="icon"
+                     aria-label="Kommentar senden"
+                     className="bg-emerald-600 hover:bg-emerald-700 flex-shrink-0"
                     >
-                      <Send className="w-4 h-4" />
+                     <Send aria-hidden="true" className="w-4 h-4" />
                     </Button>
                   </div>
                 </CardContent>

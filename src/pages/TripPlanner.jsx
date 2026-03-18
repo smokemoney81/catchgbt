@@ -246,35 +246,38 @@ function TripPlannerContent() {
                           <Button
                             variant="ghost"
                             size="icon"
+                            aria-label={plan.is_active ? "Trip deaktivieren" : "Trip aktivieren"}
                             onClick={(e) => {
                               e.stopPropagation();
                               toggleActivePlan(plan);
                             }}
                             className={plan.is_active ? "text-emerald-400 hover:text-emerald-300" : "text-gray-400 hover:text-white"}
                           >
-                            <Power className="w-4 h-4" />
+                            <Power aria-hidden="true" className="w-4 h-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
+                            aria-label="Plan-Details anzeigen"
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelectedPlan(plan);
                             }}
                             className="text-gray-400 hover:text-white"
                           >
-                            <Eye className="w-4 h-4" />
+                            <Eye aria-hidden="true" className="w-4 h-4" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
+                            aria-label="Plan loeschen"
                             onClick={(e) => {
                               e.stopPropagation();
                               deletePlan(plan.id);
                             }}
                             className="text-gray-400 hover:text-red-400"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 aria-hidden="true" className="w-4 h-4" />
                           </Button>
                         </div>
                       </div>

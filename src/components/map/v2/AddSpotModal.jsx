@@ -89,10 +89,11 @@ export default function AddSpotModal({ isOpen, onClose, onSave, initialCoords })
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Modal schliessen"
             onClick={onClose}
             className="text-gray-400 hover:text-white"
           >
-            <X className="w-5 h-5" />
+            <X aria-hidden="true" className="w-5 h-5" />
           </Button>
         </CardHeader>
         <CardContent className="space-y-4">
