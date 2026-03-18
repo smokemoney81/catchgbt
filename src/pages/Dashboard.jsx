@@ -424,13 +424,13 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
             <div className="relative">
               <h3 className="text-sm font-semibold text-cyan-400/70 uppercase tracking-wider mb-4 sm:mb-6">Aktuelles Wetter</h3>
               {weather ? (
-                <div className="space-y-3" role="region" aria-live="polite" aria-atomic="true" aria-label="Echtzeit-Wetterdaten">
+                <div className="space-y-3" role="region" aria-live="polite" aria-atomic="false" aria-label="Live Wetterdaten: Temperatur, Bedingung, Windgeschwindigkeit">
                   <div className="flex items-baseline gap-2 sm:gap-3">
-                    <span className="text-4xl sm:text-6xl font-bold text-white tracking-tight">{Math.round(weather.temperature_2m)}</span>
+                    <span className="text-4xl sm:text-6xl font-bold text-white tracking-tight" aria-label={`Temperatur: ${Math.round(weather.temperature_2m)} Grad Celsius`}>{Math.round(weather.temperature_2m)}</span>
                     <span className="text-2xl sm:text-3xl text-gray-400">C</span>
                   </div>
-                  <div className="text-base sm:text-lg text-gray-300">{getWeatherDesc(weather.weather_code)}</div>
-                  <div className="text-xs sm:text-sm text-gray-500 pt-2 border-t border-gray-800/50">Wind: {Math.round(weather.wind_speed_10m)} m/s</div>
+                  <div className="text-base sm:text-lg text-gray-300" aria-label={`Wetterbedingung: ${getWeatherDesc(weather.weather_code)}`}>{getWeatherDesc(weather.weather_code)}</div>
+                  <div className="text-xs sm:text-sm text-gray-500 pt-2 border-t border-gray-800/50" aria-label={`Windgeschwindigkeit: ${Math.round(weather.wind_speed_10m)} Meter pro Sekunde`}>Wind: {Math.round(weather.wind_speed_10m)} m/s</div>
                 </div>
               ) : (
                 <div className="text-gray-500 text-sm">Keine Wetterdaten verfuegbar</div>
@@ -443,11 +443,11 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
             <div className="relative">
               <h3 className="text-sm font-semibold text-emerald-400/70 uppercase tracking-wider mb-4 sm:mb-6">Naechster Spot</h3>
               {nearestSpot ? (
-                <div className="space-y-3" role="region" aria-live="polite" aria-atomic="true" aria-label="Naechster Angelspot">
-                  <div className="text-xl sm:text-2xl font-bold text-white">{nearestSpot.name}</div>
-                  <div className="text-xs sm:text-sm text-gray-400 capitalize">{nearestSpot.water_type}</div>
+                <div className="space-y-3" role="region" aria-live="polite" aria-atomic="false" aria-label="Naechster Angelspot: Name, Gewassertyp, Entfernung">
+                  <div className="text-xl sm:text-2xl font-bold text-white" aria-label={`Spotname: ${nearestSpot.name}`}>{nearestSpot.name}</div>
+                  <div className="text-xs sm:text-sm text-gray-400 capitalize" aria-label={`Gewassertyp: ${nearestSpot.water_type}`}>{nearestSpot.water_type}</div>
                   {nearestSpot.distance && (
-                    <div className="text-xs text-gray-500 pt-2 border-t border-gray-800/50">
+                    <div className="text-xs text-gray-500 pt-2 border-t border-gray-800/50" aria-label={`Entfernung: ${nearestSpot.distance < 1 ? Math.round(nearestSpot.distance * 1000) + ' Meter' : nearestSpot.distance.toFixed(1) + ' Kilometer'}`}>
                       {nearestSpot.distance < 1 
                         ? `${Math.round(nearestSpot.distance * 1000)}m entfernt`
                         : `${nearestSpot.distance.toFixed(1)}km entfernt`
@@ -463,7 +463,7 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
               )}
             </div>
           </div>
-        </div>
+          </div>
 
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-900/40 backdrop-blur-sm border border-gray-800/50">
           <MiniKarte />
