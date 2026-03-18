@@ -154,6 +154,3 @@ export function NavigationProvider({ children }) {
 export function useNavigationContext() {
   return useContext(NavigationContext);
 }
-
-// Re-export useEffect since NavigationProvider uses it
-import { useEffect } from 'react';
