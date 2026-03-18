@@ -3,7 +3,6 @@ import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MobileSelect } from "@/components/ui/mobile-select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Loader2, Fish, Scale, FileUp, CheckCircle, AlertTriangle, ShieldQuestion, Calendar, WifiOff, RefreshCw } from "lucide-react";
@@ -219,7 +218,7 @@ export default function RulesSection() {
             <div className="flex gap-4">
               <MobileSelect 
                 value={filterRegion} 
-                onChange={setFilterRegion}
+                onValueChange={setFilterRegion}
                 options={[
                   { value: 'all', label: 'Alle Bundesländer' },
                   ...FEDERAL_STATES.map(stateObj => ({ value: stateObj.name, label: stateObj.name }))
@@ -258,7 +257,7 @@ export default function RulesSection() {
              <label className="text-xs text-gray-400">Region</label>
              <MobileSelect 
                value={checkForm.region} 
-               onChange={v => setCheckForm({...checkForm, region: v})}
+               onValueChange={v => setCheckForm({...checkForm, region: v})}
                options={[
                  { value: 'all', label: 'Alle Bundesländer' },
                  ...FEDERAL_STATES.map(stateObj => ({ value: stateObj.name, label: stateObj.name }))
