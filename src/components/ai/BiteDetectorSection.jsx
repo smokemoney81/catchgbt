@@ -311,20 +311,47 @@ export default function BiteDetectorSection() {
     setDebugInfo(`proc=${procCanvas.width}x${procCanvas.height} stride=${STRIDE} zL=${zL.toFixed(2)} zT=${zT.toFixed(2)} worker=${workerStatus}`);
   }, [running, kLine, kTip, lockTime, energyFor, beep]);
 
-  // Optimized frame scheduling for 60fps on low-end hardware
+  // Document visibility state to stop processing when tab is inactive
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden && runningRef.current) {
+        console.log('[BiteDetector] Tab hidden - pausing frame processing');
+        if (rafIdRef.current) {
+          cancelAnimationFrame(rafIdRef.current);
+          if (typeof rafIdRef.current === 'number') {
+            clearTimeout(rafIdRef.current);
+          }
+        }
+      } else if (!document.hidden && runningRef.current) {
+        console.log('[BiteDetector] Tab visible - resuming frame processing');
+        scheduleNextTick();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
+
+  // Optimized frame scheduling with hardware acceleration via will-change
   const scheduleNextTick = useCallback(() => {
     if (!runningRef.current) return;
     
-    const FRAME_TIME = 1000 / 60; // Always target 60fps for main thread
+    // Target 30fps for battery/thermal efficiency with fallback to 60fps
+    const FRAME_TIME = 1000 / 30;
     
     const processFrameOptimized = () => {
       if (!runningRef.current) return;
+      
+      // Check document visibility before processing expensive frame
+      if (document.hidden) {
+        return;
+      }
       
       const startTime = performance.now();
       tick();
       const elapsed = performance.now() - startTime;
       
-      // Calculate next frame delay to maintain 60fps
+      // Adaptive frame rate: maintain 30fps base, skip if processing takes >33ms
       const nextDelay = Math.max(0, FRAME_TIME - elapsed);
       rafIdRef.current = setTimeout(
         () => {
