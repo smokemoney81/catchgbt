@@ -925,51 +925,52 @@ export default function Community() {
 
 
       </div>
+      </SwipeToRefresh>
 
       <Dialog open={showCatchSelector} onOpenChange={setShowCatchSelector}>
-        <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-2xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-cyan-400">Wähle einen Fang zum Teilen</DialogTitle>
-          </DialogHeader>
-          
-          {loadingCatches ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 animate-spin text-cyan-400" />
-            </div>
-          ) : userCatches.length === 0 ? (
-            <div className="text-center py-8 text-gray-400">
-              <p>Keine Fänge mit Fotos gefunden</p>
-              <p className="text-sm mt-2">Logge zuerst einen Fang mit Foto ein</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-4">
-              {userCatches.map((catchData) => (
-                <button
-                  key={catchData.id}
-                  onClick={() => handleSelectCatch(catchData)}
-                  className="relative group cursor-pointer rounded-lg overflow-hidden border-2 border-gray-700 hover:border-cyan-400 transition-all"
-                >
-                  <img 
-                    src={catchData.photo_url} 
-                    alt={catchData.species}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-3">
-                    <p className="text-white font-semibold">{catchData.species}</p>
-                    <p className="text-xs text-gray-300">
-                      {catchData.length_cm && `${catchData.length_cm}cm`}
-                      {catchData.weight_kg && ` • ${catchData.weight_kg}kg`}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      {new Date(catchData.catch_time).toLocaleDateString('de-DE')}
-                    </p>
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
-        </DialogContent>
+       <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-2xl max-h-[80vh] overflow-y-auto">
+         <DialogHeader>
+           <DialogTitle className="text-cyan-400">Wähle einen Fang zum Teilen</DialogTitle>
+         </DialogHeader>
+
+         {loadingCatches ? (
+           <div className="flex items-center justify-center py-8">
+             <Loader2 className="w-6 h-6 animate-spin text-cyan-400" />
+           </div>
+         ) : userCatches.length === 0 ? (
+           <div className="text-center py-8 text-gray-400">
+             <p>Keine Fänge mit Fotos gefunden</p>
+             <p className="text-sm mt-2">Logge zuerst einen Fang mit Foto ein</p>
+           </div>
+         ) : (
+           <div className="grid grid-cols-2 gap-4">
+             {userCatches.map((catchData) => (
+               <button
+                 key={catchData.id}
+                 onClick={() => handleSelectCatch(catchData)}
+                 className="relative group cursor-pointer rounded-lg overflow-hidden border-2 border-gray-700 hover:border-cyan-400 transition-all"
+               >
+                 <img 
+                   src={catchData.photo_url} 
+                   alt={catchData.species}
+                   className="w-full h-48 object-cover"
+                 />
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-3">
+                   <p className="text-white font-semibold">{catchData.species}</p>
+                   <p className="text-xs text-gray-300">
+                     {catchData.length_cm && `${catchData.length_cm}cm`}
+                     {catchData.weight_kg && ` • ${catchData.weight_kg}kg`}
+                   </p>
+                   <p className="text-xs text-gray-400 mt-1">
+                     {new Date(catchData.catch_time).toLocaleDateString('de-DE')}
+                   </p>
+                 </div>
+               </button>
+             ))}
+           </div>
+         )}
+       </DialogContent>
       </Dialog>
-    </div>
-  );
-}
+      </div>
+      );
+      }
