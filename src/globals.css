@@ -3,6 +3,45 @@
 @tailwind utilities;
 
 @layer base {
+  /* Hardware acceleration for smooth animations */
+  * {
+    will-change: auto;
+  }
+  
+  /* Explicitly enable hardware acceleration for animated elements */
+  [data-animated],
+  .transition-all,
+  .animate-in,
+  .animate-out,
+  [data-sonner-toast],
+  .toast-animated,
+  [role="status"],
+  [role="alert"],
+  [role="region"] {
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+  
+  /* Optimize transition performance during rapid state changes */
+  @media (prefers-reduced-motion: no-preference) {
+    .transition-all,
+    .transition {
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      transition-duration: 150ms;
+    }
+  }
+  
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
   :root {
     /* Safe-area insets for notches and home bars */
     --safe-area-top: env(safe-area-inset-top, 0px);
@@ -26,6 +65,17 @@
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
+    will-change: auto;
+  }
+  
+  /* Live region styling - ARIA compatible */
+  [aria-live="polite"],
+  [aria-live="assertive"],
+  [role="status"],
+  [role="alert"],
+  [role="log"],
+  [role="region"] {
+    contain: layout style paint;
   }
   /* Mobile Guidelines: 44x44px minimum tap target */
   button, a, [role="button"], [role="tab"], input[type="checkbox"], input[type="radio"] {
