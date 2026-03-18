@@ -1,16 +1,14 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 
-export default function QuickStatsCard({ stats, user }) {
-    const calculateWeeklyProgress = () => {
-        if (!stats.weekCatches) return 0;
+function QuickStatsCard({ stats, user }) {
+    const calculateWeeklyProgress = useMemo(() => {
+        if (!stats?.weekCatches) return 0;
         const target = 5;
         return Math.min((stats.weekCatches / target) * 100, 100);
-    };
+    }, [stats?.weekCatches]);
 
-    const weeklyProgress = calculateWeeklyProgress();
-
-    const statsData = [
+    const statsData = useMemo(() => [
         {
             label: 'Gesamt Fänge',
             value: stats.totalCatches || 0,
@@ -33,13 +31,13 @@ export default function QuickStatsCard({ stats, user }) {
             borderColor: 'border-amber-500/20'
         },
         {
-            label: 'Angel-Punkte',
-            value: user?.points || 0,
-            color: 'text-purple-400',
-            bgColor: 'bg-purple-500/10',
-            borderColor: 'border-purple-500/20'
-        }
-    ];
+             label: 'Angel-Punkte',
+             value: user?.points || 0,
+             color: 'text-purple-400',
+             bgColor: 'bg-purple-500/10',
+             borderColor: 'border-purple-500/20'
+         }
+        ], [stats, user?.points]);
 
     return (
         <Card className="bg-gray-900/50 border-gray-800 backdrop-blur-sm">
@@ -62,22 +60,22 @@ export default function QuickStatsCard({ stats, user }) {
                     ))}
                 </div>
 
-                {weeklyProgress > 0 && (
+                {calculateWeeklyProgress > 0 && (
                     <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
                         <div className="flex justify-between items-center mb-2">
                             <span className="text-xs text-gray-400">Wochen-Ziel</span>
                             <span className="text-xs text-emerald-400 font-semibold">
-                                {Math.round(weeklyProgress)}%
+                                {Math.round(calculateWeeklyProgress)}%
                             </span>
                         </div>
                         <div className="w-full bg-gray-700 rounded-full h-2">
                             <div
                                 className="bg-gradient-to-r from-emerald-500 to-cyan-500 h-2 rounded-full transition-all duration-500"
-                                style={{ width: `${weeklyProgress}%` }}
+                                style={{ width: `${calculateWeeklyProgress}%` }}
                             />
                         </div>
                         <p className="text-xs text-gray-500 mt-2 text-center">
-                            {stats.weekCatches || 0} von 5 Fängen diese Woche
+                            {stats?.weekCatches || 0} von 5 Fängen diese Woche
                         </p>
                     </div>
                 )}
@@ -85,3 +83,12 @@ export default function QuickStatsCard({ stats, user }) {
         </Card>
     );
 }
+
+export default React.memo(QuickStatsCard, (prevProps, nextProps) => {
+    return (
+        prevProps.stats?.totalCatches === nextProps.stats?.totalCatches &&
+        prevProps.stats?.weekCatches === nextProps.stats?.weekCatches &&
+        prevProps.stats?.totalSpots === nextProps.stats?.totalSpots &&
+        prevProps.user?.points === nextProps.user?.points
+    );
+});
