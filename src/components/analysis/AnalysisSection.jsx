@@ -1,4 +1,3 @@
-
 import React, { useEffect, useMemo, useState } from "react";
 import { Catch, Spot } from "@/entities/all";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -102,28 +101,28 @@ export default function AnalysisSection() {
           </Button>
         </div>
         <div className="grid md:grid-cols-3 gap-4">
-          <div className="p-4 rounded-xl bg-gray-800/40">
+          <div className="p-4 rounded-xl bg-gray-800/40" role="region" aria-live="polite" aria-label="Top Zeitfenster mit den meisten Faengen">
             <div className="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.6)] mb-2">Top-Zeitfenster</div>
             {topWindows.map(w => (
               <div key={w.start} className="flex justify-between text-white">
-                <span>{String(w.start).padStart(2,"0")}:00–{String((w.start+2)%24).padStart(2,"0")}:59</span>
-                <Badge variant="outline" className="text-gray-300 border-gray-600">{w.sum}</Badge>
+                <span aria-label={`${String(w.start).padStart(2,"0")}:00 bis ${String((w.start+2)%24).padStart(2,"0")}:59 Uhr`}>{String(w.start).padStart(2,"0")}:00–{String((w.start+2)%24).padStart(2,"0")}:59</span>
+                <Badge variant="outline" className="text-gray-300 border-gray-600" aria-label={`${w.sum} Faenge`}>{w.sum}</Badge>
               </div>
             ))}
           </div>
-          <div className="p-4 rounded-xl bg-gray-800/40">
+          <div className="p-4 rounded-xl bg-gray-800/40" role="region" aria-live="polite" aria-label="Top Angelplaetze nach Anzahl Faenge">
             <div className="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.6)] mb-2">Top-Spots</div>
             {bySpot.map(s => (
               <div key={s.id} className="flex justify-between text-white">
-                <span>{s.name}</span><Badge variant="outline" className="text-gray-300 border-gray-600">{s.count}</Badge>
+                <span aria-label={`${s.name}`}>{s.name}</span><Badge variant="outline" className="text-gray-300 border-gray-600" aria-label={`${s.count} Faenge`}>{s.count}</Badge>
               </div>
             ))}
           </div>
-          <div className="p-4 rounded-xl bg-gray-800/40">
+          <div className="p-4 rounded-xl bg-gray-800/40" role="region" aria-live="polite" aria-label="Top Koeder mit den meisten erfolgreichen Faengen">
             <div className="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.6)] mb-2">Köder-Treffer</div>
             {baitStats.map(b => (
               <div key={b.bait} className="flex justify-between text-white">
-                <span>{b.bait}</span><Badge variant="outline" className="text-gray-300 border-gray-600">{b.count}</Badge>
+                <span aria-label={`${b.bait}`}>{b.bait}</span><Badge variant="outline" className="text-gray-300 border-gray-600" aria-label={`${b.count} erfolgreiche Faenge`}>{b.count}</Badge>
               </div>
             ))}
           </div>
