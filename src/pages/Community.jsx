@@ -440,9 +440,20 @@ export default function Community() {
     );
   }
 
+  const queryClient = useQueryClient();
+
+  const handleRefresh = async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['posts'] }),
+      queryClient.invalidateQueries({ queryKey: ['competitions'] }),
+      queryClient.invalidateQueries({ queryKey: ['recent-activity'] })
+    ]);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-950">
-      {pullDistance > 0 && (
+    <SwipeToRefresh onRefresh={handleRefresh}>
+      <div className="min-h-screen bg-gray-950 pb-safe-fixed">
+        {pullDistance > 0 && (
         <div 
           className="fixed top-0 left-0 right-0 flex items-center justify-center z-50 transition-opacity"
           style={{ 
