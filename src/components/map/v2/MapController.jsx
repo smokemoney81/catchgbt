@@ -197,7 +197,12 @@ function MapController() {
 
   if (!isInitialized || !mapCenter) {
     return (
-      <div className="relative h-[calc(100vh-250px)] min-h-[500px] rounded-2xl overflow-hidden border border-gray-800 bg-gray-900 flex items-center justify-center">
+      <div 
+        className="relative h-[calc(100vh-250px)] min-h-[500px] rounded-2xl overflow-hidden border border-gray-800 bg-gray-900 flex items-center justify-center"
+        role="status"
+        aria-live="polite"
+        aria-label="Karte wird geladen"
+      >
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-cyan-400 mx-auto mb-4" />
           <p className="text-gray-400">Karte wird geladen...</p>
@@ -272,7 +277,7 @@ function MapController() {
         {/* Filter Panel */}
          {showFilters && (
           <div className="mt-2 bg-gray-800/50 rounded-lg p-2 space-y-1.5" role="group" aria-label="Kartenebenen-Filter">
-            <div aria-live="polite" className="sr-only">
+            <div aria-live="polite" aria-atomic="true" className="sr-only">
               {`Karte zeigt ${filteredSpots.length} Spots, ${filteredClubs.length} Vereine, ${filteredWaters.length} Gewaesser`}
             </div>
            <div className="flex items-center gap-2">
@@ -328,7 +333,13 @@ function MapController() {
         
         {/* Info-Banner */}
          {showInfo && (
-           <div className="absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-gray-950/95 via-gray-950/90 to-transparent backdrop-blur-md z-[1001] border-b border-cyan-500/20" role="region" aria-live="polite" aria-label="Karteninfos">
+           <div 
+             className="absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-gray-950/95 via-gray-950/90 to-transparent backdrop-blur-md z-[1001] border-b border-cyan-500/20" 
+             role="region" 
+             aria-live="polite" 
+             aria-atomic="true"
+             aria-label="Karteninfos und Anleitung"
+           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">

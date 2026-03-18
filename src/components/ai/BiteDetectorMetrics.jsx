@@ -1,4 +1,5 @@
 import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 
 export default function BiteDetectorMetrics({
   running,
@@ -6,45 +7,52 @@ export default function BiteDetectorMetrics({
   tipScore,
   debugInfo
 }) {
-  if (!running) return null;
-
   return (
-    <>
-      {/* Live Metrics */}
-      <div className="grid grid-cols-2 gap-4" role="region" aria-label="Live Echtzeit-Metriken fuer Schnur- und Spitzen-Aktivitaet" aria-live="polite" aria-atomic="true">
-        <div>
-          <div className="flex justify-between text-sm text-gray-300 mb-1">
-            <span>Schnur-Aktivität</span>
-            <span aria-label={`Schnur-Aktivitaetswert: ${lineScore.toFixed(2)}`}>{lineScore.toFixed(2)}</span>
+    <Card className="glass-morphism border-gray-800">
+      <CardContent className="p-4">
+        <div 
+          className="space-y-3"
+          role="region"
+          aria-live="polite"
+          aria-atomic="true"
+          aria-label="Echtzeit Bissanzeiger Messwerte"
+        >
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700/50">
+              <p className="text-xs text-gray-400 mb-1">Angelschnur</p>
+              <p className="text-2xl font-mono text-cyan-400">
+                {running ? lineScore.toFixed(2) : '-'}
+              </p>
+            </div>
+            <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700/50">
+              <p className="text-xs text-gray-400 mb-1">Rutenspitze</p>
+              <p className="text-2xl font-mono text-amber-400">
+                {running ? tipScore.toFixed(2) : '-'}
+              </p>
+            </div>
           </div>
-          <div className="h-2 bg-gray-700 rounded-full overflow-hidden" role="progressbar" aria-valuenow={Math.min(100, lineScore * 20)} aria-valuemin="0" aria-valuemax="100" aria-label="Schnur-Aktivitaets-Fortschrittsbalken">
-            <div
-              className="h-full bg-cyan-400 transition-all duration-100"
-              style={{ width: `${Math.min(100, lineScore * 20)}%` }}
-              aria-hidden="true"
-            />
-          </div>
-        </div>
 
-        <div>
-          <div className="flex justify-between text-sm text-gray-300 mb-1">
-            <span>Spitzen-Aktivität</span>
-            <span aria-label={`Spitzen-Aktivitaetswert: ${tipScore.toFixed(2)}`}>{tipScore.toFixed(2)}</span>
-          </div>
-          <div className="h-2 bg-gray-700 rounded-full overflow-hidden" role="progressbar" aria-valuenow={Math.min(100, tipScore * 20)} aria-valuemin="0" aria-valuemax="100" aria-label="Spitzen-Aktivitaets-Fortschrittsbalken">
-            <div
-              className="h-full bg-yellow-400 transition-all duration-100"
-              style={{ width: `${Math.min(100, tipScore * 20)}%` }}
-              aria-hidden="true"
-            />
-          </div>
-        </div>
-      </div>
+          {debugInfo && (
+            <div 
+              className="text-xs text-gray-500 bg-gray-900/50 rounded p-2 font-mono"
+              role="status"
+              aria-label="Debug-Informationen"
+            >
+              {debugInfo}
+            </div>
+          )}
 
-      {/* Debug Info */}
-      <div className="text-xs text-gray-500 font-mono" role="status" aria-label={`Leistungs-Debug-Information: ${debugInfo}`}>
-        {debugInfo}
-      </div>
-    </>
+          {running && (
+            <div 
+              className="text-xs text-emerald-400 text-center py-1"
+              role="status"
+              aria-label="Bissanzeiger aktiv"
+            >
+              Aktiv - Erkennungen laufen
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

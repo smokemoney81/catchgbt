@@ -17,6 +17,7 @@ import PageTransition from '@/lib/PageTransitionEnhanced';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { migrateOfflineStorage } from '@/lib/StorageMigration';
+import ErrorBoundary from '@/lib/ErrorBoundary';
 
 const LazyPageFallback = () => (
   <div className="fixed inset-0 flex items-center justify-center bg-gray-950">
@@ -62,18 +63,22 @@ const AnimatedRoutes = () => {
       <AnimatePresence initial={false}>
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={
-            <LayoutWrapper currentPageName={mainPageKey}>
-              {MainPage && <MainPage />}
-            </LayoutWrapper>
+            <ErrorBoundary>
+              <LayoutWrapper currentPageName={mainPageKey}>
+                {MainPage && <MainPage />}
+              </LayoutWrapper>
+            </ErrorBoundary>
           } />
           {Object.entries(Pages).map(([path, Page]) => (
             <Route
               key={path}
               path={`/${path}`}
               element={
-                <LayoutWrapper currentPageName={path}>
-                  <Page />
-                </LayoutWrapper>
+                <ErrorBoundary>
+                  <LayoutWrapper currentPageName={path}>
+                    <Page />
+                  </LayoutWrapper>
+                </ErrorBoundary>
               }
             />
           ))}

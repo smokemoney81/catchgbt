@@ -6,8 +6,26 @@ export default function WaterCharts({ data, type }) {
   const isHistory = type === "history";
   const title = isHistory ? "30-Tage Verlauf" : "7-Tage Prognose";
 
+  if (!data || data.length === 0) {
+    return (
+      <div 
+        className="text-center py-8 text-gray-400"
+        role="status"
+        aria-live="polite"
+      >
+        Keine Daten verfuegbar
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6">
+    <div 
+      className="space-y-6"
+      role="region"
+      aria-live="polite"
+      aria-atomic="false"
+      aria-label={`Gewaesser-Daten ${title}`}
+    >
       
       {/* Fishing Score Chart */}
       <Card className="glass-morphism border-gray-800" role="region" aria-label="Fang-Score Diagramm">
@@ -15,7 +33,7 @@ export default function WaterCharts({ data, type }) {
           <CardTitle className="text-cyan-400">Fang-Score {isHistory ? "Verlauf" : "Prognose"}</CardTitle>
           <p className="text-xs text-gray-400 mt-1">Zeitliche Entwicklung der Fang-Erfolgswahrscheinlichkeit im Bereich 0-100</p>
         </CardHeader>
-        <CardContent>
+        <CardContent aria-live="polite" aria-atomic="true">
           <ResponsiveContainer width="100%" height={300}>
             <AreaChart data={data}>
               <defs>
@@ -62,7 +80,7 @@ export default function WaterCharts({ data, type }) {
           <CardTitle className="text-cyan-400">Temperatur & Chlorophyll</CardTitle>
           <p className="text-xs text-gray-400 mt-1">Temperatur in Grad Celsius (linke Achse) und Chlorophyll-a in mg/m³ (rechte Achse)</p>
         </CardHeader>
-        <CardContent>
+        <CardContent aria-live="polite" aria-atomic="true">
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -123,7 +141,7 @@ export default function WaterCharts({ data, type }) {
             <CardTitle className="text-cyan-400">Trübung & Sauerstoff</CardTitle>
             <p className="text-xs text-gray-400 mt-1">Wasserklarheit in NTU (linke Achse) und Sauerstoffgehalt in mg/L (rechte Achse)</p>
           </CardHeader>
-          <CardContent>
+          <CardContent aria-live="polite" aria-atomic="true">
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={data}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -185,10 +203,15 @@ export default function WaterCharts({ data, type }) {
             <CardTitle className="text-cyan-400">Algenblüte-Risiko Prognose</CardTitle>
             <p className="text-xs text-gray-400 mt-1">Geschaetztes Risiko für schädliche Algenblüten basierend auf Chlorophyll-Konzentration</p>
           </CardHeader>
-          <CardContent>
+          <CardContent aria-live="polite" aria-atomic="false">
             <div className="space-y-3">
               {data.map((item, idx) => (
-                <div key={idx} className="flex items-center justify-between p-3 rounded-lg bg-gray-800/50">
+                <div 
+                  key={idx} 
+                  className="flex items-center justify-between p-3 rounded-lg bg-gray-800/50"
+                  role="status"
+                  aria-label={`${item.date}: Algenrisiko ${item.algaeBloomRisk}`}
+                >
                   <span className="text-gray-300">{item.date}</span>
                   <div className="flex items-center gap-4">
                     <span className="text-white text-sm">
