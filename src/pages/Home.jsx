@@ -713,7 +713,7 @@ function LandingPageContent() {
 
             <div className="fixed top-32 left-0 right-0 z-10 w-full overflow-hidden flex items-center pointer-events-none">
                 <motion.div 
-                    className="whitespace-nowrap flex items-center text-4xl font-bold opacity-20 pl-4" 
+                    className="whitespace-nowrap flex items-center text-4xl font-bold opacity-70 pl-4" 
                     animate={{
                         backgroundImage: [
                             'linear-gradient(90deg, #a855f7, #3b82f6, #06b6d4)',
@@ -734,8 +734,8 @@ function LandingPageContent() {
                         WebkitTextFillColor: 'transparent'
                     }}
                 >
-                    <span className="mr-24">CatchGBT wünscht dir viel Erfolg und Petri Heil</span>
-                    <span className="mr-24">CatchGBT wünscht dir viel Erfolg und Petri Heil</span>
+                    <span className="mr-24">Catchly wünscht dir viel Erfolg und Petri Heil</span>
+                    <span className="mr-24">Catchly wünscht dir viel Erfolg und Petri Heil</span>
                 </motion.div>
                 <style>{`
                     @keyframes scroll {
