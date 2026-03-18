@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MobileSelect } from "@/components/ui/mobile-select";
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useOptimisticMutation } from '@/lib/useOptimisticMutation';
 import { PieChart, Pie, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ResponsiveContainer } from "recharts";
 import { Loader2, Sparkles, Save, Trash2, Plus, Minus, TrendingUp, X } from "lucide-react";
