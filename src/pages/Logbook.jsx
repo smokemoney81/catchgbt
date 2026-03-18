@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useOptimisticMutation } from "@/lib/useOptimisticMutation";
+import { useOptimisticMutation } from "@/lib/optimistic/useOptimisticMutation";
+import { useActionQueue } from "@/lib/optimistic/useActionQueue";
+import { createOptimisticCreate, createOptimisticDelete, createOptimisticUpdate } from "@/lib/optimistic/optimisticUtils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -117,53 +119,78 @@ export default function Logbook() {
     setEditingCatch(null);
   }, []);
 
-  // ---- Mutations ----
-  const createCatchMutation = useOptimisticMutation({
-    queryKey: 'catches',
-    mutationFn: (catchData) => base44.entities.Catch.create(catchData),
-    optimisticUpdate: (old = [], catchData) => [
-      { id: `tmp-${Date.now()}`, ...catchData, created_date: new Date().toISOString(), created_by: 'temp' },
-      ...old,
-    ],
-    onSuccess: async (savedCatch, variables) => {
-      toast.success("Fang gespeichert!");
-      setSavedCatchData(savedCatch);
-      base44.analytics.track({
-        eventName: "fishing_catch_logged",
-        properties: {
-          species: variables.species,
-          has_photo: !!variables.photo_url,
-          has_spot: !!variables.spot_id,
-          length_cm: variables.length_cm ?? null,
-        },
-      });
-      if (shareRef.current) {
-        const catchText = `Mein Fang: ${savedCatch.species}${savedCatch.length_cm ? ` (${savedCatch.length_cm}cm)` : ''}${savedCatch.weight_kg ? `, ${savedCatch.weight_kg}kg` : ''}${savedCatch.bait_used ? `\nKöder: ${savedCatch.bait_used}` : ''}${savedCatch.notes ? `\n\n${savedCatch.notes}` : ''}`;
-        await base44.entities.Post.create({ text: catchText, photo_url: savedCatch.photo_url || null, likes: 0, reported: false });
-        toast.success("Fang in Community geteilt!");
-        setShareInCommunity(false);
-      } else {
-        setShowShareDialog(true);
-      }
-    },
-    onError: () => toast.error("Fehler beim Speichern des Fangs"),
-  });
+  // ---- Action Queue ----
+  const actionQueue = useActionQueue();
 
-  const updateCatchMutation = useOptimisticMutation({
-    queryKey: 'catches',
-    mutationFn: ({ id, data }) => base44.entities.Catch.update(id, data),
-    optimisticUpdate: (old = [], { id, data }) => old.map(c => c.id === id ? { ...c, ...data } : c),
-    onSuccess: () => { toast.success("Fang aktualisiert!"); resetForm(); },
-    onError: () => toast.error("Fehler beim Aktualisieren"),
-  });
+  // ---- Mutations with Optimistic UI ----
+  const createCatchMutation = useOptimisticMutation<Partial<typeof catches[0]>, typeof catches>(
+    catches,
+    {
+      mutationFn: async (catchData) => {
+        const created = await base44.entities.Catch.create(catchData);
+        return [created, ...catches.filter(c => !c.id.startsWith('tmp-'))];
+      },
+      optimisticData: (variables) => 
+        createOptimisticCreate(catches, {
+          id: `tmp-${Date.now()}`,
+          ...variables,
+          created_date: new Date().toISOString(),
+          created_by: 'temp',
+        } as any),
+      onSuccess: async (newCatches, variables) => {
+        toast.success("Fang gespeichert!");
+        const savedCatch = newCatches[0];
+        setSavedCatchData(savedCatch);
+        
+        base44.analytics.track({
+          eventName: "fishing_catch_logged",
+          properties: {
+            species: variables.species,
+            has_photo: !!variables.photo_url,
+            has_spot: !!variables.spot_id,
+            length_cm: variables.length_cm ?? null,
+          },
+        });
 
-  const deleteCatchMutation = useOptimisticMutation({
-    queryKey: 'catches',
-    mutationFn: (id) => base44.entities.Catch.delete(id),
-    optimisticUpdate: (old = [], id) => old.filter(c => c.id !== id),
-    onSuccess: () => toast.success("Fang gelöscht"),
-    onError: () => toast.error("Fehler beim Löschen des Fangs"),
-  });
+        if (shareRef.current) {
+          const catchText = `Mein Fang: ${savedCatch.species}${savedCatch.length_cm ? ` (${savedCatch.length_cm}cm)` : ''}${savedCatch.weight_kg ? `, ${savedCatch.weight_kg}kg` : ''}${savedCatch.bait_used ? `\nKöder: ${savedCatch.bait_used}` : ''}${savedCatch.notes ? `\n\n${savedCatch.notes}` : ''}`;
+          await base44.entities.Post.create({ text: catchText, photo_url: savedCatch.photo_url || null, likes: 0, reported: false });
+          toast.success("Fang in Community geteilt!");
+          setShareInCommunity(false);
+        } else {
+          setShowShareDialog(true);
+        }
+      },
+      onError: () => toast.error("Fehler beim Speichern des Fangs"),
+    }
+  );
+
+  const updateCatchMutation = useOptimisticMutation<{ id: string; data: any }, typeof catches>(
+    catches,
+    {
+      mutationFn: async ({ id, data }) => {
+        await base44.entities.Catch.update(id, data);
+        return catches.map(c => c.id === id ? { ...c, ...data } : c);
+      },
+      optimisticData: ({ id, data }) => 
+        createOptimisticUpdate(catches, { ...catches.find(c => c.id === id), ...data } as any),
+      onSuccess: () => { toast.success("Fang aktualisiert!"); resetForm(); },
+      onError: () => toast.error("Fehler beim Aktualisieren"),
+    }
+  );
+
+  const deleteCatchMutation = useOptimisticMutation<string, typeof catches>(
+    catches,
+    {
+      mutationFn: async (id) => {
+        await base44.entities.Catch.delete(id);
+        return createOptimisticDelete(catches, id);
+      },
+      optimisticData: (id) => createOptimisticDelete(catches, id),
+      onSuccess: () => toast.success("Fang gelöscht"),
+      onError: () => toast.error("Fehler beim Löschen des Fangs"),
+    }
+  );
 
   // ---- Handlers ----
   const handleFileUpload = async (e) => {
@@ -201,11 +228,17 @@ export default function Logbook() {
     };
 
     if (editingCatch) {
-      updateCatchMutation.mutate({ id: editingCatch.id, data: catchData });
+      const actionId = actionQueue.enqueue(async () => {
+        await updateCatchMutation.mutate({ id: editingCatch.id, data: catchData });
+      }, 3);
     } else {
       resetForm();
-      createCatchMutation.mutate(catchData);
+      const actionId = actionQueue.enqueue(async () => {
+        await createCatchMutation.mutate(catchData);
+      }, 3);
     }
+    
+    actionQueue.scheduleProcessing();
   };
 
   const handleEdit = useCallback((catchItem) => {
