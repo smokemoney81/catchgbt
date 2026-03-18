@@ -162,7 +162,7 @@ function LayoutContent({ children, currentPageName }) {
   useEffect(() => {
     const handleToggleVoiceControl = () => {
       // Deaktiviere WakeWordDetector auf VoiceControl Seite
-      if (window.location.pathname.includes('VoiceControl')) {
+      if (currentPageName === 'VoiceControl') {
         console.log('On VoiceControl page - skipping WakeWordDetector');
         return;
       }
@@ -212,7 +212,7 @@ function LayoutContent({ children, currentPageName }) {
     window.addEventListener('wake-word-status-change', handleWakeWordStatusChange);
 
     // Cleanup wenn auf VoiceControl Seite navigiert wird
-    if (window.location.pathname.includes('VoiceControl') && wakeWordDetector?.isListening) {
+    if (currentPageName === 'VoiceControl' && wakeWordDetector?.isListening) {
       wakeWordDetector.stop();
       setWakeWordDetector(null);
     }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import PremiumGuard from "@/components/premium/PremiumGuard";
 import { base44 } from "@/api/base44Client";
+import { useState, useRef, useEffect } from "react";
 
 const CameraAnalysisSection = lazy(() => import("@/components/ai/CameraAnalysisSection"));
 const BiteDetectorSection = lazy(() => import("@/components/ai/BiteDetectorSection"));
@@ -13,6 +14,8 @@ const SectionSkeleton = () => (
 
 export default function AI() {
   const [user, setUser] = useState(null);
+  const cameraResultsRef = useRef(null);
+  const biteDetectorRef = useRef(null);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -25,6 +28,12 @@ export default function AI() {
     };
     loadUser();
   }, []);
+
+  const announceResult = (ref, message) => {
+    if (ref?.current) {
+      ref.current.textContent = message;
+    }
+  };
 
   return (
     <PremiumGuard 
@@ -43,15 +52,31 @@ export default function AI() {
             </p>
           </div>
 
-          <div role="region" aria-live="polite" aria-label="KI-Kamera-Analyseergebnisse">
+          <div 
+            ref={cameraResultsRef}
+            role="region" 
+            aria-live="polite" 
+            aria-label="KI-Kamera-Analyseergebnisse"
+            className="sr-only"
+          />
+
+          <div>
             <Suspense fallback={<SectionSkeleton />}>
-              <CameraAnalysisSection />
+              <CameraAnalysisSection onResultsUpdate={(msg) => announceResult(cameraResultsRef, msg)} />
             </Suspense>
           </div>
           
-          <div role="region" aria-live="polite" aria-label="Echtzeit-Bissanzeiger">
+          <div 
+            ref={biteDetectorRef}
+            role="region" 
+            aria-live="assertive" 
+            aria-label="Echtzeit-Bissanzeiger"
+            className="sr-only"
+          />
+
+          <div>
             <Suspense fallback={<SectionSkeleton />}>
-              <BiteDetectorSection />
+              <BiteDetectorSection onBiteDetected={(msg) => announceResult(biteDetectorRef, msg)} />
             </Suspense>
           </div>
         </div>
