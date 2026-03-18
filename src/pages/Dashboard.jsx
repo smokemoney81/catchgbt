@@ -24,6 +24,7 @@ export default function Dashboard() {
   const [weather, setWeather] = useState(null);
   const [nearestSpot, setNearestSpot] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [voiceOverlayOpen, setVoiceOverlayOpen] = useState(false);
   const [voiceStatus, setVoiceStatus] = useState({
     isActive: false,
     mode: null,
