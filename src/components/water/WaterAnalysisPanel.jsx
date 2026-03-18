@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -160,42 +159,42 @@ export default function WaterAnalysisPanel({ onDataUpdate }) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Control Panel */}
       <Card className="glass-morphism border-gray-800">
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-cyan-400">Analyse-Steuerung</CardTitle>
-            <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <CardTitle className="text-sm sm:text-base text-cyan-400">Analyse-Steuerung</CardTitle>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Button
                 onClick={handleLocationUpdate}
                 variant="outline"
                 size="sm"
-                className="border-cyan-600/50 hover:bg-cyan-600/20"
+                className="border-cyan-600/50 hover:bg-cyan-600/20 text-xs sm:text-sm flex-1 sm:flex-none"
               >
-                <MapPin className="w-4 h-4 mr-2" />
-                Standort aktualisieren
+                <MapPin className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                Standort
               </Button>
               <Button
                 onClick={handleRefresh}
                 disabled={loading}
                 size="sm"
-                className="bg-cyan-600 hover:bg-cyan-700"
+                className="bg-cyan-600 hover:bg-cyan-700 text-xs sm:text-sm flex-1 sm:flex-none"
               >
                 {loading ? (
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 animate-spin" />
                 ) : (
-                  <RefreshCw className="w-4 h-4 mr-2" />
+                  <RefreshCw className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 )}
-                Analyse starten
+                Analyse
               </Button>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-2 text-sm text-gray-400">
-            <MapPin className="w-4 h-4 text-cyan-400" />
-            <span>
+          <div className="flex items-start gap-2 text-xs sm:text-sm text-gray-400" role="status" aria-live="polite" aria-label="Aktueller Standort Koordinaten">
+            <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-cyan-400 flex-shrink-0 mt-0.5" />
+            <span className="break-words">
               {currentLocation?.name || "Kein Standort ausgewählt"} 
               {currentLocation && ` (${currentLocation.lat.toFixed(4)}°, ${currentLocation.lon.toFixed(4)}°)`}
             </span>
@@ -206,12 +205,12 @@ export default function WaterAnalysisPanel({ onDataUpdate }) {
       {/* Loading State */}
       {loading && (
         <Card className="glass-morphism border-gray-800">
-          <CardContent className="py-12">
-            <div className="flex flex-col items-center gap-4">
-              <Loader2 className="w-12 h-12 animate-spin text-cyan-400" />
+          <CardContent className="py-8 sm:py-12">
+            <div className="flex flex-col items-center gap-3 sm:gap-4" role="status" aria-live="assertive" aria-label="Analyse wird durchgefuehrt">
+              <Loader2 className="w-8 h-8 sm:w-12 sm:h-12 animate-spin text-cyan-400" />
               <div className="text-center">
-                <p className="text-white font-semibold mb-1">Satellitendaten werden analysiert...</p>
-                <p className="text-gray-400 text-sm">Sentinel-2, MODIS & Copernicus Marine</p>
+                <p className="text-sm sm:text-base text-white font-semibold mb-1">Satellitendaten werden analysiert...</p>
+                <p className="text-gray-400 text-xs sm:text-sm">Sentinel-2, MODIS & Copernicus Marine</p>
               </div>
             </div>
           </CardContent>
@@ -220,46 +219,51 @@ export default function WaterAnalysisPanel({ onDataUpdate }) {
 
       {/* Results */}
       {waterData && !loading && (
-        <>
+        <div role="region" aria-live="polite" aria-atomic="true" aria-label="Gewaesseranalyseergebnisse">
           {/* Tabs */}
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-1 sm:gap-2">
             <Button
               onClick={() => setSelectedTab("current")}
               variant={selectedTab === "current" ? "default" : "outline"}
-              className={selectedTab === "current" ? "bg-cyan-600" : "border-gray-700"}
+              className={`text-xs sm:text-sm ${selectedTab === "current" ? "bg-cyan-600" : "border-gray-700"}`}
             >
-              Aktuelle Werte
+              Aktuelle
             </Button>
             <Button
               onClick={() => setSelectedTab("history")}
               variant={selectedTab === "history" ? "default" : "outline"}
-              className={selectedTab === "history" ? "bg-cyan-600" : "border-gray-700"}
+              className={`text-xs sm:text-sm ${selectedTab === "history" ? "bg-cyan-600" : "border-gray-700"}`}
             >
-              30-Tage Verlauf
+              30-Tage
             </Button>
             <Button
               onClick={() => setSelectedTab("forecast")}
               variant={selectedTab === "forecast" ? "default" : "outline"}
-              className={selectedTab === "forecast" ? "bg-cyan-600" : "border-gray-700"}
+              className={`text-xs sm:text-sm ${selectedTab === "forecast" ? "bg-cyan-600" : "border-gray-700"}`}
             >
-              7-Tage Prognose
+              7-Tage
             </Button>
           </div>
 
           {/* Content */}
-          {selectedTab === "current" && <WaterDataDisplay data={waterData} />}
-          {selectedTab === "history" && <WaterCharts data={waterData.historicalTrend} type="history" />}
-          {selectedTab === "forecast" && <WaterCharts data={waterData.forecast} type="forecast" />}
-        </>
+          <div className="mt-4">
+            {selectedTab === "current" && <WaterDataDisplay data={waterData} />}
+            {selectedTab === "history" && <WaterCharts data={waterData.historicalTrend} type="history" />}
+            {selectedTab === "forecast" && <WaterCharts data={waterData.forecast} type="forecast" />}
+          </div>
+        </div>
       )}
 
       {/* No Data State */}
       {!waterData && !loading && (
         <Card className="glass-morphism border-gray-800">
-          <CardContent className="py-12">
-            <div className="text-center text-gray-400">
-              <p className="mb-4">Keine Analyse verfügbar</p>
-              <Button onClick={analyzeWater} className="bg-cyan-600 hover:bg-cyan-700">
+          <CardContent className="py-8 sm:py-12">
+            <div className="text-center text-gray-400 space-y-3">
+              <p className="text-sm sm:text-base">Keine Analyse verfügbar</p>
+              <Button 
+                onClick={analyzeWater} 
+                className="bg-cyan-600 hover:bg-cyan-700 text-xs sm:text-sm w-full sm:w-auto"
+              >
                 Erste Analyse starten
               </Button>
             </div>
