@@ -796,10 +796,10 @@ export default function ARWater3D() {
       </div>
 
       {/* Bottom Help */}
-      <div className="absolute bottom-4 left-4 right-4 z-10">
+      <div className="absolute bottom-4 left-4 right-4 z-10" role="region" aria-label="Bedienungshinweise fuer AR-Visualisierung">
         <Card className="glass-morphism p-2 border-gray-700">
           <div className="text-xs text-gray-400 text-center">
-            📱 Gerät drehen • 👆 Pinch/Zoom • 🔄 Drag zum Rotieren
+            Geraet drehen zum Rotieren. Zwei Finger zusammen zum Zoomen. Drag-Geste zum Rotieren der Szene.
           </div>
         </Card>
       </div>
