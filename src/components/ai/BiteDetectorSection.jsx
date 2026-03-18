@@ -615,8 +615,8 @@ export default function BiteDetectorSection() {
           KI-Bisserkennung
         </CardTitle>
         {error && (
-          <p className="text-sm text-red-400 mt-2">{error}</p>
-        )}
+            <p className="text-sm text-red-400 mt-2" role="alert" aria-live="assertive">{error}</p>
+          )}
         {/* Premium-Guthabenanzeige temporär deaktiviert
           {sessionId && user && !user.is_demo_user && (
               <div className="flex items-center gap-1 mt-2 px-2 py-1 bg-gray-800/50 rounded-lg max-w-fit">

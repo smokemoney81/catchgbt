@@ -270,8 +270,11 @@ function MapController() {
           </div>
 
         {/* Filter Panel */}
-        {showFilters && (
-         <div className="mt-2 bg-gray-800/50 rounded-lg p-2 space-y-1.5" role="group" aria-label="Kartenebenen-Filter">
+         {showFilters && (
+          <div className="mt-2 bg-gray-800/50 rounded-lg p-2 space-y-1.5" role="group" aria-label="Kartenebenen-Filter">
+            <div aria-live="polite" className="sr-only">
+              {`Karte zeigt ${filteredSpots.length} Spots, ${filteredClubs.length} Vereine, ${filteredWaters.length} Gewaesser`}
+            </div>
            <div className="flex items-center gap-2">
              <input
                type="checkbox"
@@ -324,8 +327,8 @@ function MapController() {
       <div className="relative flex-1">
         
         {/* Info-Banner */}
-        {showInfo && (
-          <div className="absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-gray-950/95 via-gray-950/90 to-transparent backdrop-blur-md z-[1001] border-b border-cyan-500/20">
+         {showInfo && (
+           <div className="absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-gray-950/95 via-gray-950/90 to-transparent backdrop-blur-md z-[1001] border-b border-cyan-500/20" role="region" aria-live="polite" aria-label="Karteninfos">
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
