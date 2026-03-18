@@ -32,8 +32,10 @@ const QuickCatchDialog = lazy(() => import("@/components/log/QuickCatchDialog"))
 const EnhancedTicker = lazy(() => import("@/components/layout/TipTicker"));
 const FeedbackManager = lazy(() => import("@/components/feedback/FeedbackManager"));
 const SupportAgentButton = lazy(() => import("@/components/layout/SupportAgentButton"));
+const ErrorBoundary = lazy(() => import("@/lib/ErrorBoundary").then(m => ({ default: m.default })));
 
 const LazyFallback = () => null;
+const MinimalErrorFallback = () => null;
 
 export default function Layout({ children, currentPageName }) {
   usePrefetch();
@@ -369,15 +371,21 @@ function LayoutContent({ children, currentPageName }) {
                 )}
                 
                 <Suspense fallback={<LazyFallback />}>
-                  <QuickCatchDialog />
+                  <ErrorBoundary isMinimal={true} isFull={false}>
+                    <QuickCatchDialog />
+                  </ErrorBoundary>
                 </Suspense>
 
                 <Suspense fallback={<LazyFallback />}>
-                  <FeedbackManager />
+                  <ErrorBoundary isMinimal={true} isFull={false}>
+                    <FeedbackManager />
+                  </ErrorBoundary>
                 </Suspense>
 
                 <Suspense fallback={<LazyFallback />}>
-                  <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} currentPageName={currentPageName} />
+                  <ErrorBoundary isMinimal={true} isFull={false}>
+                    <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} currentPageName={currentPageName} />
+                  </ErrorBoundary>
                 </Suspense>
 
                 <div className="sticky top-0 z-40 bg-gray-950">
@@ -387,7 +395,9 @@ function LayoutContent({ children, currentPageName }) {
                     isDemo={isDemo}
                   />
                   <Suspense fallback={<LazyFallback />}>
-                    <EnhancedTicker />
+                    <ErrorBoundary isMinimal={true} isFull={false}>
+                      <EnhancedTicker />
+                    </ErrorBoundary>
                   </Suspense>
                   <SubPageHeader title={currentPageName} />
                 </div>
@@ -405,7 +415,9 @@ function LayoutContent({ children, currentPageName }) {
                 <BottomTabs />
 
                 <Suspense fallback={<LazyFallback />}>
-                  <SupportAgentButton />
+                  <ErrorBoundary isMinimal={true} isFull={false}>
+                    <SupportAgentButton />
+                  </ErrorBoundary>
                 </Suspense>
 
                 <Toaster 
