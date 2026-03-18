@@ -37,6 +37,15 @@ const SupportAgentButton = lazy(() => import("@/components/layout/SupportAgentBu
 
 const LazyFallback = () => null;
 
+// Wrapper component to prevent lazy-loaded components from blocking rendering
+const SuspenseWithErrorBoundary = ({ children }) => (
+  <Suspense fallback={<LazyFallback />}>
+    <ErrorBoundary isMinimal={true} isFull={false}>
+      {children}
+    </ErrorBoundary>
+  </Suspense>
+);
+
 export default function Layout({ children, currentPageName }) {
   usePrefetch();
 
