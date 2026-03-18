@@ -14,18 +14,27 @@ const tabs = [
 export default function BottomTabs() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { resetStack } = useNavigationContext();
+  const { currentTab, switchTab, getTabStack } = useNavigationContext();
 
   const currentSegment = location.pathname.replace(/^\//, '').split('/')[0] || 'Dashboard';
   const isActive = (path) => currentSegment === path;
 
   const handleTabClick = (e, tab) => {
     e.preventDefault();
-    // Always navigate to root of the tab and reset the navigation stack.
-    // This matches native mobile tab bar behavior: tapping a tab you are already
-    // on scrolls to top; tapping a different tab always goes to its root.
-    resetStack();
-    navigate(createPageUrl(tab.path));
+    
+    // Switch to the new tab in the context
+    switchTab(tab.path);
+    
+    // Get the saved stack for this tab
+    const tabStack = getTabStack(tab.path);
+    
+    // Navigate to the last known route in that tab, or to the tab root if the stack is empty
+    if (tabStack.length > 0) {
+      const lastRoute = tabStack[tabStack.length - 1];
+      navigate(lastRoute);
+    } else {
+      navigate(createPageUrl(tab.path));
+    }
   };
 
   return (
