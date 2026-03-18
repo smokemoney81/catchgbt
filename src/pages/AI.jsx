@@ -32,23 +32,28 @@ export default function AI() {
       requiredPlan="elite"
       feature="KI-Kamera & Bissanzeiger"
     >
-      <div className="min-h-screen bg-gray-950 p-6 pb-32">
-        <div className="max-w-4xl mx-auto space-y-8">
+      <div className="min-h-screen bg-gray-950 px-3 sm:px-6 pb-32">
+        <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8 py-4 sm:py-6">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-cyan-400 drop-shadow-[0_0_20px_rgba(34,211,238,0.8)] mb-2">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-cyan-400 drop-shadow-[0_0_20px_rgba(34,211,238,0.8)] mb-2">
               KI-Assistent
             </h1>
-            <p className="text-gray-400">
+            <p className="text-sm sm:text-base text-gray-400">
               Fischarten erkennen & Bisserkennung
             </p>
           </div>
 
-          <Suspense fallback={<SectionSkeleton />}>
-            <CameraAnalysisSection />
-          </Suspense>
-          <Suspense fallback={<SectionSkeleton />}>
-            <BiteDetectorSection />
-          </Suspense>
+          <div role="region" aria-live="polite" aria-label="KI-Kamera-Analyseergebnisse">
+            <Suspense fallback={<SectionSkeleton />}>
+              <CameraAnalysisSection />
+            </Suspense>
+          </div>
+          
+          <div role="region" aria-live="polite" aria-label="Echtzeit-Bissanzeiger">
+            <Suspense fallback={<SectionSkeleton />}>
+              <BiteDetectorSection />
+            </Suspense>
+          </div>
         </div>
       </div>
     </PremiumGuard>
