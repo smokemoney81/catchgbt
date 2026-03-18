@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -11,6 +11,9 @@ import { toast } from "sonner";
 import { cacheEntityData, cacheWeatherData, getCachedWeather, getOfflineData, initOfflineDB } from "@/components/utils/OfflineDataCache";
 import OfflineCacheIndicator from "@/components/dashboard/OfflineCacheIndicator";
 import FishingRecommendationCard from "@/components/dashboard/FishingRecommendationCard";
+import { useQueryClient } from "@tanstack/react-query";
+import { usePredictivePrefetch } from "@/hooks/usePredictivePrefetch";
+import PageContainer from "@/components/layout/PageContainer";
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
