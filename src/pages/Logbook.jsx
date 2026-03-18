@@ -21,9 +21,7 @@ export default function Logbook() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [pullStart, setPullStart] = useState(0);
-  const [pullDistance, setPullDistance] = useState(0);
+
 
   // Individual state for form fields
   const [photoUrl, setPhotoUrl] = useState("");
