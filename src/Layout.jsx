@@ -1,13 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, lazy, Suspense } from "react";
 import { usePrefetch } from "@/hooks/usePrefetch";
 import SEO from "@/components/pwa/SEO";
 import { LocationProvider } from "@/components/location/LocationManager";
 import OfflineWrapper from "@/components/utils/OfflineWrapper";
 import Header from "@/components/layout/Header";
-import Sidebar from "@/components/layout/Sidebar";
-import EnhancedTicker from "@/components/layout/TipTicker";
-import QuickCatchDialog from "@/components/log/QuickCatchDialog";
-import SupportAgentButton from "@/components/layout/SupportAgentButton";
 import InstallPrompt from "@/components/pwa/InstallPrompt";
 import BottomTabs from "@/components/layout/BottomTabs";
 import SubPageHeader from "@/components/layout/SubPageHeader";
@@ -19,11 +15,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { HapticProvider } from "@/components/utils/HapticFeedback";
 import { SoundProvider } from "@/components/utils/SoundManager";
 import { Toaster } from "sonner";
-import FeedbackManager from "@/components/feedback/FeedbackManager";
 import { LanguageProvider } from "@/components/i18n/LanguageContext";
 import { PlanProvider } from "@/components/premium/PlanContext";
-import { AnimatePresence, motion } from "framer-motion";
-import { useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import PageTransition from "@/lib/PageTransitionEnhanced";
 import { WakeWordDetector } from "@/components/utils/WakeWordDetector";
 import { isGuestAllowedPage } from "@/components/utils/guestMode";
@@ -31,6 +25,15 @@ import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
 import { MobileStackProvider } from "@/components/navigation/MobileStackManager";
 import BackButtonHandler from "@/components/navigation/BackButtonHandler";
+
+// Lazy-loaded non-critical components
+const Sidebar = lazy(() => import("@/components/layout/Sidebar"));
+const QuickCatchDialog = lazy(() => import("@/components/log/QuickCatchDialog"));
+const EnhancedTicker = lazy(() => import("@/components/layout/TipTicker"));
+const FeedbackManager = lazy(() => import("@/components/feedback/FeedbackManager"));
+const SupportAgentButton = lazy(() => import("@/components/layout/SupportAgentButton"));
+
+const LazyFallback = () => null;
 
 export default function Layout({ children, currentPageName }) {
   const queryClient = useQueryClient();
