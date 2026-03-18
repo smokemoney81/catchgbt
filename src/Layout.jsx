@@ -27,6 +27,7 @@ import { MobileStackProvider } from "@/components/navigation/MobileStackManager"
 import BackButtonHandler from "@/components/navigation/BackButtonHandler";
 
 import ErrorBoundary from "@/lib/ErrorBoundary";
+import VoiceOverlay from "@/components/layout/VoiceOverlay";
 
 // Lazy-loaded non-critical components
 const Sidebar = lazy(() => import("@/components/layout/Sidebar"));
