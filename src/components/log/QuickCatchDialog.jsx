@@ -3,7 +3,6 @@ import { Catch, Spot, User } from "@/entities/all";
 import { UploadFile } from "@/integrations/Core";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MobileSelect } from "@/components/ui/mobile-select";
 import { Card } from "@/components/ui/card";
 import { RuleEntry } from "@/entities/RuleEntry";
