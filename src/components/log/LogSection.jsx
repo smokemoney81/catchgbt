@@ -401,7 +401,7 @@ export default function LogSection() {
               Mehr laden
             </Button>
           )}
-        </div>
+          </div>
         </SwipeToRefresh>
       </CardContent>
     </Card>
