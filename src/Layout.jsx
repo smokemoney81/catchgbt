@@ -397,11 +397,9 @@ function LayoutContent({ children, currentPageName }) {
                     setIsSidebarOpen={setIsSidebarOpen} 
                     isDemo={isDemo}
                   />
-                  <Suspense fallback={<LazyFallback />}>
-                    <ErrorBoundary isMinimal={true} isFull={false}>
-                      <EnhancedTicker />
-                    </ErrorBoundary>
-                  </Suspense>
+                  <SuspenseWithErrorBoundary>
+                    <EnhancedTicker />
+                  </SuspenseWithErrorBoundary>
                   <SubPageHeader title={currentPageName} />
                 </div>
 
