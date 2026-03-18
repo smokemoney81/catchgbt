@@ -133,10 +133,42 @@ function MapController() {
     }
   });
 
-  const handleSpotAdded = useCallback(async () => {
+  const updateSpotMutation = useOptimisticMutation({
+    queryKey: 'mapSpots',
+    mutationFn: ({ id, data }) => Spot.update(id, data),
+    optimisticUpdate: (oldSpots = [], variables) => 
+      oldSpots.map(spot => 
+        spot.id === variables.id ? { ...spot, ...variables.data } : spot
+      ),
+    onSuccess: () => {
+      triggerHaptic('success');
+      playSound('success');
+      toast.success("Spot erfolgreich aktualisiert!");
+    },
+    onError: () => {
+      toast.error("Fehler beim Aktualisieren des Spots");
+    }
+  });
+
+  const deleteSpotMutation = useOptimisticMutation({
+    queryKey: 'mapSpots',
+    mutationFn: (id) => Spot.delete(id),
+    optimisticUpdate: (oldSpots = [], id) => 
+      oldSpots.filter(spot => spot.id !== id),
+    onSuccess: () => {
+      triggerHaptic('success');
+      playSound('success');
+      toast.success("Spot erfolgreich gelöscht!");
+      setSelectedLocation(null);
+    },
+    onError: () => {
+      toast.error("Fehler beim Löschen des Spots");
+    }
+  });
+
+  const handleSpotAdded = useCallback(() => {
     setNewSpotCoords(null);
     setShowAddModal(false);
-    await loadAllData();
   }, []);
 
   const handleLocationClick = useCallback((location, type) => {
