@@ -144,18 +144,19 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
                   exit={{ opacity: 0, scale: 0.5, rotate: 45 }}
                   transition={{ duration: 0.3 }}
                   onClick={handleClose}
-                  className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-gray-800"
+                  aria-label="Menü schliessen"
+                  className="w-10 h-10 flex items-center justify-center text-gray-400 active:text-white active:scale-95 focus:ring-2 focus:ring-cyan-400 transition-all rounded-lg active:bg-gray-700 min-h-[44px] min-w-[44px]"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-5 h-5" aria-hidden="true" />
                 </motion.button>
               )}
             </AnimatePresence>
 
             <Link
-              to={createPageUrl("Profile")}
-              onClick={() => handleNavClick({ path: 'Profile', name: 'Profil' })}
-              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
-            >
+               to={createPageUrl("Profile")}
+               onClick={() => handleNavClick({ path: 'Profile', name: 'Profil' })}
+               className="flex items-center gap-3 active:opacity-60 active:scale-95 focus:ring-2 focus:ring-cyan-400 rounded-lg transition-all p-1"
+             >
               <div className="flex flex-col items-end">
                 <span className="font-semibold text-base leading-tight bg-gradient-to-r from-cyan-400 to-emerald-400 text-transparent bg-clip-text drop-shadow-[0_0_15px_rgba(34,211,238,0.8)] truncate max-w-[150px]">
                   {displayName}
@@ -213,12 +214,12 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
                       to={createPageUrl(item.path)}
                       onClick={() => handleNavClick(item)}
                       className={`
-                        flex items-center justify-between w-full text-left px-4 py-2 rounded-lg transition-colors text-sm
-                        ${item.indent ? 'pl-8' : ''}
-                        ${isActive ?
-                          'bg-emerald-600 text-white font-medium' :
-                          'text-gray-300 hover:text-white hover:bg-gray-800/50'}
-                      `}>
+                              flex items-center justify-between w-full text-left px-4 py-2 rounded-lg transition-all text-sm min-h-[44px] active:scale-95 focus:ring-2 focus:ring-cyan-400
+                              ${item.indent ? 'pl-8' : ''}
+                              ${isActive ?
+                                'bg-emerald-600 text-white font-medium active:bg-emerald-700' :
+                                'text-gray-300 active:text-white active:bg-gray-700'}
+                            `}>
                       <span>{displayText}</span>
                       {item.isBeta && (
                         <span className="ml-2 px-1.5 py-0.5 text-[9px] font-bold rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40">
@@ -245,9 +246,10 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
                   playSound('click');
                   base44.auth.logout(createPageUrl('Home'));
                 }}
-                className="flex items-center gap-3 w-full text-left px-4 py-2 rounded-lg transition-colors text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                className="flex items-center gap-3 w-full text-left px-4 py-2 rounded-lg transition-all text-sm text-red-400 active:text-red-300 active:bg-red-500/20 active:scale-95 focus:ring-2 focus:ring-red-400 min-h-[44px]"
+                aria-label="Abmelden"
               >
-                <LogOut className="w-4 h-4" />
+                <LogOut className="w-4 h-4" aria-hidden="true" />
                 Abmelden
               </button>
               
