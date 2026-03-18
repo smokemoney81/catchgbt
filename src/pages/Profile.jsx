@@ -477,7 +477,10 @@ export default function ProfilePage() {
                     </p>
                     <Button
                       className="bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-700 hover:to-emerald-700"
-                      onClick={() => window.location.href = '/PremiumPlans'}
+                      onClick={() => {
+                        const { mobileStack } = require('@/lib/MobileStackManager');
+                        mobileStack.push('/PremiumPlans');
+                      }}
                     >
                       <Crown className="w-4 h-4 mr-2" />
                       Jetzt upgraden
