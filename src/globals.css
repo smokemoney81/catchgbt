@@ -166,15 +166,23 @@
   padding-bottom: calc(var(--safe-area-bottom) + 2rem);
 }
 
-/* Prevent overscroll bounce on iOS */
+/* Selective overscroll prevention - allow inner scrolling, prevent elastic bounce */
 html {
-  overscroll-behavior-y: none;
-  overscroll-behavior-x: none;
+  overscroll-behavior: none;
 }
 
 body {
-  overscroll-behavior-y: none;
-  overscroll-behavior-x: none;
+  overscroll-behavior: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Allow scrolling on specific containers - exempt from overscroll blocking */
+.scroll-container,
+[role="region"],
+main,
+[data-scrollable="true"] {
+  overscroll-behavior: auto;
 }
 
 /* Prevent elastic scroll/overscroll on all scroll containers */
