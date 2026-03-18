@@ -368,6 +368,7 @@ export default function LogSection() {
         )}
 
         {/* Liste */}
+        <SwipeToRefresh onRefresh={refreshData}>
         <div className="space-y-3">
           {filtered.map(c => (
             <div key={c.id} className="p-4 rounded-xl bg-gray-800/40 flex items-start justify-between gap-4">
