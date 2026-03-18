@@ -56,32 +56,47 @@ const AuthenticatedApp = () => {
     </div>
   );
 
+  // AnimatePresence needs location from inside Router
+  return <AnimatedRoutes PageFallback={PageFallback} />;
+};
+
+const AnimatedRoutes = ({ PageFallback }) => {
+  const location = useLocation();
+  const { Pages, Layout, mainPage } = pagesConfig;
+  const mainPageKey = mainPage ?? Object.keys(Pages)[0];
+  const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
+  const LayoutWrapper = ({ children, currentPageName }) => Layout
+    ? <Layout currentPageName={currentPageName}>{children}</Layout>
+    : <>{children}</>;
+
   return (
     <Suspense fallback={PageFallback}>
-    <Routes>
-      <Route path="/" element={
-        <LayoutWrapper currentPageName={mainPageKey}>
-          <MainPage />
-        </LayoutWrapper>
-      } />
-      {Object.entries(Pages).map(([path, Page]) => (
-        <Route
-          key={path}
-          path={`/${path}`}
-          element={
-            <LayoutWrapper currentPageName={path}>
-              <Page />
+      <AnimatePresence mode="wait" initial={false}>
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={
+            <LayoutWrapper currentPageName={mainPageKey}>
+              <MainPage />
             </LayoutWrapper>
-          }
-        />
-      ))}
-      <Route path="/BathymetricCrowdsourcing" element={<LayoutWrapper currentPageName="BathymetricCrowdsourcing"><BathymetricCrowdsourcing /></LayoutWrapper>} />
-      <Route path="/ARKnotenAssistent" element={<LayoutWrapper currentPageName="ARKnotenAssistent"><ARKnotenAssistent /></LayoutWrapper>} />
-      <Route path="/KiBuddyBeta" element={<LayoutWrapper currentPageName="KiBuddyBeta"><KiBuddyBeta /></LayoutWrapper>} />
-      <Route path="/Events" element={<LayoutWrapper currentPageName="Events"><Events /></LayoutWrapper>} />
-      <Route path="/WeatherAlerts" element={<LayoutWrapper currentPageName="WeatherAlerts"><WeatherAlerts /></LayoutWrapper>} />
-      <Route path="*" element={<PageNotFound />} />
-    </Routes>
+          } />
+          {Object.entries(Pages).map(([path, Page]) => (
+            <Route
+              key={path}
+              path={`/${path}`}
+              element={
+                <LayoutWrapper currentPageName={path}>
+                  <Page />
+                </LayoutWrapper>
+              }
+            />
+          ))}
+          <Route path="/BathymetricCrowdsourcing" element={<LayoutWrapper currentPageName="BathymetricCrowdsourcing"><BathymetricCrowdsourcing /></LayoutWrapper>} />
+          <Route path="/ARKnotenAssistent" element={<LayoutWrapper currentPageName="ARKnotenAssistent"><ARKnotenAssistent /></LayoutWrapper>} />
+          <Route path="/KiBuddyBeta" element={<LayoutWrapper currentPageName="KiBuddyBeta"><KiBuddyBeta /></LayoutWrapper>} />
+          <Route path="/Events" element={<LayoutWrapper currentPageName="Events"><Events /></LayoutWrapper>} />
+          <Route path="/WeatherAlerts" element={<LayoutWrapper currentPageName="WeatherAlerts"><WeatherAlerts /></LayoutWrapper>} />
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </AnimatePresence>
     </Suspense>
   );
 };
