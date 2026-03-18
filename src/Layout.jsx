@@ -396,7 +396,9 @@ function LayoutContent({ children, currentPageName, queryClient }) {
 
                 <BottomTabs />
 
+                <Suspense fallback={<LazyFallback />}>
                   <SupportAgentButton />
+                </Suspense>
 
                 <Toaster 
                   position="bottom-center"
