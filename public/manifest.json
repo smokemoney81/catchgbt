@@ -1,51 +1,174 @@
 {
-  "id": "com.catchgbt.fishing.assistant.v3",
-  "name": "CatchGBT - KI Angelassistent",
-  "short_name": "CatchGBT",
-  "description": "Angel-App mit KI-Assistent. Finde die besten Angelplaetze, erhalte intelligente Tipps und dokumentiere deine Faenge!",
+  "name": "Catchly - KI Angelassistent",
+  "short_name": "Catchly",
+  "description": "KI-gestützter Angelassistent mit Bissanzeiger, Wasser-Analytics, Gemeinschaft und Premium-Features",
   "start_url": "/",
-  "display": "standalone",
-  "background_color": "#0b1324",
-  "theme_color": "#10b981",
-  "orientation": "portrait-primary",
   "scope": "/",
-  "lang": "de-DE",
-  "dir": "ltr",
-  "categories": ["sports", "lifestyle"],
-  "prefer_related_applications": false,
-  "icons": [
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#030712",
+  "theme_color": "#165DFF",
+  "categories": ["sports", "lifestyle", "productivity"],
+  "screenshots": [
     {
-      "src": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68bb3d3b9f83dc1f55ef532b/dcd615030_Screenshot_20250919_164159_Gallery.jpg",
-      "sizes": "192x192",
-      "type": "image/jpeg",
+      "src": "/screenshots/narrow-540x720.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow",
       "purpose": "any"
     },
     {
-      "src": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68bb3d3b9f83dc1f55ef532b/dcd615030_Screenshot_20250919_164159_Gallery.jpg",
+      "src": "/screenshots/wide-1280x720.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "purpose": "any"
+    },
+    {
+      "src": "/screenshots/square-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192x192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512x512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "shortcuts": [
     {
-      "name": "Fangbuch",
-      "short_name": "Faenge",
-      "description": "Dokumentiere deine Faenge",
-      "url": "/Logbook"
+      "name": "Fang erfassen",
+      "short_name": "Neuer Fang",
+      "description": "Schnell einen neuen Fang loggen und analysieren",
+      "url": "/Logbook",
+      "icons": [
+        {
+          "src": "/icons/shortcut-logbook-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     },
     {
-      "name": "KI-Assistent",
-      "short_name": "KI",
-      "description": "Starte den KI Angel-Assistenten",
-      "url": "/AIAssistant"
+      "name": "Karte",
+      "short_name": "Angelkarte",
+      "description": "Entdecke und navigiere zu Angelspots",
+      "url": "/Map",
+      "icons": [
+        {
+          "src": "/icons/shortcut-map-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     },
     {
-      "name": "Angelplaetze",
-      "short_name": "Karte",
-      "description": "Finde Angelplaetze in deiner Naehe",
-      "url": "/Map"
+      "name": "Bissanzeiger",
+      "short_name": "Bissanzeige",
+      "description": "Aktiviere KI-gestützte Bissanzeige mit Kamera",
+      "url": "/Analysis",
+      "icons": [
+        {
+          "src": "/icons/shortcut-bite-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     }
   ],
-  "screenshots": []
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "catch_image",
+          "accept": ["image/*"]
+        }
+      ]
+    }
+  },
+  "file_handlers": [
+    {
+      "action": "/import-data",
+      "accept": {
+        "text/csv": [".csv"],
+        "application/json": [".json"]
+      },
+      "launch_type": "single-client"
+    }
+  ],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "iarc_rating_id": "",
+  "scope_extensions": [
+    {
+      "origin": "https://www.openstreetmap.org"
+    },
+    {
+      "origin": "https://api.mapbox.com"
+    }
+  ]
 }
