@@ -13,17 +13,7 @@ import { MobileSelect } from "@/components/ui/mobile-select";
 import { Separator } from "@/components/ui/separator";
 import RatingWidget from "@/components/feedback/RatingWidget";
 import { useOptimisticMutation } from "@/lib/useOptimisticMutation";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import DeleteAccountDialog from "@/components/settings/DeleteAccountDialog";
 import { Trash2 } from "lucide-react";
 
 const generateReferralCode = () => {
