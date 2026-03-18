@@ -64,7 +64,7 @@ const AnimatedRoutes = ({ PageFallback }) => {
 
   return (
     <Suspense fallback={PageFallback}>
-      <AnimatePresence mode="wait" initial={false}>
+      <AnimatePresence initial={false}>
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={
             <LayoutWrapper currentPageName={mainPageKey}>
