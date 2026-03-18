@@ -306,24 +306,6 @@ export default function Logbook() {
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-8 pb-32">
-      {pullDistance > 0 && (
-        <div 
-          className="fixed top-0 left-0 right-0 flex items-center justify-center z-50 transition-opacity"
-          style={{ 
-            height: `${pullDistance}px`,
-            opacity: Math.min(pullDistance / 80, 1)
-          }}
-        >
-          <div className="w-8 h-8 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin" />
-        </div>
-      )}
-      
-      {isRefreshing && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-cyan-600 text-white px-4 py-2 rounded-full shadow-lg">
-          Aktualisiere...
-        </div>
-      )}
-      
       <Card className="glass-morphism border-gray-800 rounded-2xl">
         <CardHeader>
           {!editingCatch && (
