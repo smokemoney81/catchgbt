@@ -23,7 +23,7 @@ import { LanguageProvider } from "@/components/i18n/LanguageContext";
 import { PlanProvider } from "@/components/premium/PlanContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLocation } from "react-router-dom";
-import PageTransition from "@/components/layout/PageTransition";
+import PageTransition from "@/lib/PageTransitionEnhanced";
 import { WakeWordDetector } from "@/components/utils/WakeWordDetector";
 import { isGuestAllowedPage } from "@/components/utils/guestMode";
 import { createPageUrl } from "@/utils";
