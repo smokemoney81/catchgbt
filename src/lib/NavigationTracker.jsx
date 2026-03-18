@@ -33,7 +33,7 @@ export default function NavigationTracker() {
   // Keep mobileStack in sync when React Router location changes
   // This is ONE-WAY: React Router location -> mobileStack (never reverse)
   useEffect(() => {
-    mobileStack.pushToStack(location.pathname);
+    mobileStack.push(location.pathname);
   }, [location.pathname]);
 
   // MobileStackManager-exclusive back-button handling
@@ -44,10 +44,11 @@ export default function NavigationTracker() {
       event.preventDefault();
       
       // Check if we can go back in the mobileStack
-      const nextPath = mobileStack.handleAndroidBack();
+      const canGoBack = mobileStack.handleAndroidBack();
 
-      if (nextPath && nextPath !== location.pathname) {
-        // Navigate using React Router to the path from mobileStack
+      if (canGoBack) {
+        // Get the new pathname from mobileStack and navigate
+        const nextPath = mobileStack.getCurrentPathname();
         navigate(nextPath, { replace: true });
       }
       // If at root, mobileStack prevents app exit
