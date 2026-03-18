@@ -28,7 +28,7 @@ export function MobileSelect({
     setOpen(false);
   };
 
-  const triggerId = React.useId?.() ?? Math.random().toString(36).slice(2);
+  const triggerId = useId();
 
   return (
     <>
