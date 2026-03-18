@@ -3,7 +3,7 @@ import { User } from '@/entities/User';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Save, Settings2 } from 'lucide-react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { MobileSelect } from '@/components/ui/mobile-select';
 
 export default function GeneralSettings() {
     const [settings, setSettings] = useState({ language: 'de', theme: 'dark', units: 'metric' });

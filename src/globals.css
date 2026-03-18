@@ -15,4 +15,15 @@
     -webkit-user-select: none;
     touch-action: manipulation;
   }
+  /* Mobile Guidelines: 44x44px minimum tap target */
+  button, a, [role="button"], [role="tab"], input[type="checkbox"], input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  /* Inline/icon-only elements override: preserve layout but use padding trick */
+  button.icon-only, a.icon-only {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }

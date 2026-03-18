@@ -20,6 +20,7 @@ import FeedbackManager from "@/components/feedback/FeedbackManager";
 import { LanguageProvider } from "@/components/i18n/LanguageContext";
 import { PlanProvider } from "@/components/premium/PlanContext";
 import { AnimatePresence, motion } from "framer-motion";
+import PageTransition from "@/components/layout/PageTransition";
 import { WakeWordDetector } from "@/components/utils/WakeWordDetector";
 import { isGuestAllowedPage } from "@/components/utils/guestMode";
 import { createPageUrl } from "@/utils";
