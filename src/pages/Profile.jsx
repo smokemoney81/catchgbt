@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { MobileSelect } from "@/components/ui/mobile-select";
 import { Separator } from "@/components/ui/separator";
 import RatingWidget from "@/components/feedback/RatingWidget";
+import { useOptimisticMutation } from "@/lib/useOptimisticMutation";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -141,42 +142,55 @@ export default function ProfilePage() {
     setIsUploading(false);
   };
 
+  const saveProfileMutation = useOptimisticMutation({
+    mutationFn: async (data) => {
+      await base44.auth.updateMe(data);
+      return data;
+    },
+    optimisticUpdate: (oldUser, newData) => ({
+      ...oldUser,
+      ...newData
+    }),
+    onSuccess: () => {
+      setIsEditing(false);
+      toast.success('Profil erfolgreich aktualisiert!');
+    },
+    onError: () => {
+      toast.error('Fehler beim Speichern des Profils.');
+    },
+    invalidateOnSettle: false
+  });
+
   const handleSaveProfile = async () => {
     if (!nickname.trim()) {
       toast.error('Nickname darf nicht leer sein.');
       return;
     }
-
-    setIsSaving(true);
-    try {
-      await base44.auth.updateMe({ nickname: nickname.trim() });
-      setUser(prev => ({ ...prev, nickname: nickname.trim() }));
-      setIsEditing(false);
-      toast.success('Profil erfolgreich aktualisiert!');
-    } catch (error) {
-      toast.error('Fehler beim Speichern des Profils.');
-      console.error('Save error:', error);
-    }
-    setIsSaving(false);
+    saveProfileMutation.mutate({ nickname: nickname.trim() });
   };
 
-  const handleVoiceGenderChange = async (gender) => {
-    try {
-      await base44.auth.updateMe({
-        settings: {
-          ...user.settings,
-          voice_gender: gender
-        }
-      });
-      setUser(prev => ({
-        ...prev,
-        settings: { ...prev.settings, voice_gender: gender }
-      }));
-      toast.success(`Stimme auf ${gender === 'male' ? 'Männlich' : 'Weiblich'} geändert`);
-    } catch (error) {
+  const voiceGenderMutation = useOptimisticMutation({
+    mutationFn: async (data) => {
+      await base44.auth.updateMe(data);
+      return data;
+    },
+    optimisticUpdate: (oldUser, newData) => ({
+      ...oldUser,
+      ...newData
+    }),
+    onSuccess: () => {
+      toast.success('Stimme aktualisiert!');
+    },
+    onError: () => {
       toast.error('Fehler beim Ändern der Stimme');
-      console.error('Voice change error:', error);
-    }
+    },
+    invalidateOnSettle: false
+  });
+
+  const handleVoiceGenderChange = (gender) => {
+    voiceGenderMutation.mutate({
+      settings: { ...user?.settings, voice_gender: gender }
+    });
   };
 
   const copyReferralLink = async () => {
@@ -258,7 +272,7 @@ export default function ProfilePage() {
   }[currentPlan?.id || 'free'] || 'bg-gray-600';
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-6">
+    <div className="min-h-screen w-full px-4 sm:px-6 lg:px-8 py-6 pb-20 space-y-6 max-w-5xl mx-auto">
       
       {/* Profil-Header mit Bild und Basis-Info */}
       <Card className="glass-morphism border-gray-800 rounded-2xl">
