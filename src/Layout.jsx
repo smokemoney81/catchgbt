@@ -11,7 +11,7 @@ import UpdateNotification from "@/components/pwa/UpdateNotification";
 import OfflineIndicator from "@/components/pwa/OfflineIndicator";
 import { base44 } from "@/api/base44Client";
 import SwipeToRefresh from "@/components/utils/SwipeToRefresh";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { HapticProvider } from "@/components/utils/HapticFeedback";
 import { SoundProvider } from "@/components/utils/SoundManager";
 import { Toaster } from "sonner";
