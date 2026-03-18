@@ -29,6 +29,8 @@ import { WakeWordDetector } from "@/components/utils/WakeWordDetector";
 import { isGuestAllowedPage } from "@/components/utils/guestMode";
 import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
+import { MobileStackProvider } from "@/components/navigation/MobileStackManager";
+import BackButtonHandler from "@/components/navigation/BackButtonHandler";
 
 export default function Layout({ children, currentPageName }) {
   const queryClient = useQueryClient();
