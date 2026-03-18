@@ -925,7 +925,6 @@ export default function Community() {
 
 
       </div>
-      </SwipeToRefresh>
 
       <Dialog open={showCatchSelector} onOpenChange={setShowCatchSelector}>
        <DialogContent className="bg-gray-900 border-gray-800 text-white max-w-2xl max-h-[80vh] overflow-y-auto">
@@ -972,5 +971,6 @@ export default function Community() {
        </DialogContent>
       </Dialog>
       </div>
+      </SwipeToRefresh>
       );
       }
