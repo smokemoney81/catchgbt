@@ -81,6 +81,7 @@ export default function ShopPage() {
           </a>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </PageContainer>
   );
 }

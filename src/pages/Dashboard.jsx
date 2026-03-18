@@ -13,6 +13,8 @@ import OfflineCacheIndicator from "@/components/dashboard/OfflineCacheIndicator"
 import FishingRecommendationCard from "@/components/dashboard/FishingRecommendationCard";
 
 export default function Dashboard() {
+  const queryClient = useQueryClient();
+  usePredictivePrefetch('Dashboard');
   const [user, setUser] = useState(null);
   const [weather, setWeather] = useState(null);
   const [nearestSpot, setNearestSpot] = useState(null);
@@ -335,26 +337,8 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
     }
 
     return (
-    <div className="min-h-screen bg-gray-950">
-      {pullDistance > 0 && (
-        <div 
-          className="fixed top-0 left-0 right-0 flex items-center justify-center z-50 transition-opacity"
-          style={{ 
-            height: `${pullDistance}px`,
-            opacity: Math.min(pullDistance / 80, 1)
-          }}
-        >
-          <div className="w-8 h-8 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin" />
-        </div>
-      )}
-      
-      {isRefreshing && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-cyan-600 text-white px-4 py-2 rounded-full shadow-lg">
-          Aktualisiere...
-        </div>
-      )}
-      
-      <div className="max-w-7xl mx-auto px-4 py-8 space-y-12">
+    <PageContainer maxWidth="max-w-7xl" enableSwipeRefresh={true} onRefresh={loadData}>
+      <div className="space-y-12">
 
         <div className="flex items-center justify-between border-b border-gray-800/50 pb-6">
           <Button
@@ -515,6 +499,6 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
           </div>
         </div>
       </div>
-    </div>
+    </PageContainer>
     );
     }
