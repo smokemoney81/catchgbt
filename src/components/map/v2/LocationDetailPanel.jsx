@@ -127,9 +127,10 @@ export default function LocationDetailPanel({ location, onClose, onSetAsLocation
               variant="ghost"
               size="icon"
               onClick={onClose}
-              className="text-gray-400 hover:text-white"
+              aria-label="Standort-Details schliessen"
+              className="text-gray-400 hover:text-white min-h-[44px] min-w-[44px]"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4" aria-hidden="true" />
             </Button>
           </div>
         </CardHeader>
@@ -170,11 +171,12 @@ export default function LocationDetailPanel({ location, onClose, onSetAsLocation
                 variant="outline"
                 size="sm"
                 onClick={openGoogleMaps}
-                className="w-full mt-2"
+                aria-label="Navigation in Google Maps oeffnen"
+                className="w-full mt-2 min-h-[44px]"
               >
-                <Navigation className="w-4 h-4 mr-2" />
+                <Navigation className="w-4 h-4 mr-2" aria-hidden="true" />
                 Navigation starten
-                <ExternalLink className="w-3 h-3 ml-2" />
+                <ExternalLink className="w-3 h-3 ml-2" aria-hidden="true" />
               </Button>
             </div>
           )}
@@ -199,17 +201,19 @@ export default function LocationDetailPanel({ location, onClose, onSetAsLocation
               <>
                 <Button
                   onClick={onSetAsLocation}
-                  className="flex-1 bg-emerald-600 hover:bg-emerald-700"
+                  aria-label="Diesen Spot als aktuellen Standort festlegen"
+                  className="flex-1 bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
                 >
-                  <MapPin className="w-4 h-4 mr-2" />
+                  <MapPin className="w-4 h-4 mr-2" aria-hidden="true" />
                   Als Standort
                 </Button>
                 <Button
                   onClick={() => setShowSportSelector(true)}
                   variant="outline"
-                  className="flex-1"
+                  aria-label="Sportarten fuer diesen Spot bearbeiten"
+                  className="flex-1 min-h-[44px]"
                 >
-                  <Zap className="w-4 h-4 mr-2" />
+                  <Zap className="w-4 h-4 mr-2" aria-hidden="true" />
                   Sportarten
                 </Button>
               </>
@@ -219,9 +223,10 @@ export default function LocationDetailPanel({ location, onClose, onSetAsLocation
               <Button
                 onClick={openDirectRoute}
                 variant="outline"
-                className="flex-1"
+                aria-label="Route in Google Maps oeffnen"
+                className="flex-1 min-h-[44px]"
               >
-                <Navigation className="w-4 h-4 mr-2" />
+                <Navigation className="w-4 h-4 mr-2" aria-hidden="true" />
                 Route
               </Button>
             ) : null}
@@ -230,9 +235,10 @@ export default function LocationDetailPanel({ location, onClose, onSetAsLocation
               <Button
                 onClick={loadTravelTime}
                 variant="outline"
-                className="flex-1"
+                aria-label="Fahrtzeit zum Spot berechnen"
+                className="flex-1 min-h-[44px]"
               >
-                <Clock className="w-4 h-4 mr-2" />
+                <Clock className="w-4 h-4 mr-2" aria-hidden="true" />
                 Fahrzeit
               </Button>
             )}
