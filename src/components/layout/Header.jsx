@@ -92,6 +92,14 @@ export default function Header({
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const handleBack = () => {
+    triggerHaptic('light');
+    playSound('click');
+    if (mobileStack.handleAndroidBack()) {
+      navigate(mobileStack.getCurrentPathname());
+    }
+  };
+
   return (
     <header 
       className="sticky top-0 z-50 bg-gray-950/95 backdrop-blur-xl border-b border-gray-800 shadow-lg relative"
@@ -133,8 +141,27 @@ export default function Header({
           </motion.div>
         )}
 
-        {/* Left Side - Menu Button + Event Timer */}
+        {/* Left Side - Back/Menu Button + Event Timer */}
         <div className="flex items-center gap-3 relative z-20">
+          {canGoBack && (
+            <motion.div
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              className="rounded-lg"
+            >
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleBack}
+                aria-label="Zurueck zur vorherigen Seite"
+                className="text-emerald-400 active:scale-95 active:bg-emerald-500/20 focus:ring-2 focus:ring-emerald-400 transition-all duration-200 min-h-[44px] min-w-[44px]"
+              >
+                <ArrowLeft className="w-5 h-5" aria-hidden="true" />
+              </Button>
+            </motion.div>
+          )}
+          
           <motion.div
             animate={{ 
               scale: [1, 1.05, 1],
