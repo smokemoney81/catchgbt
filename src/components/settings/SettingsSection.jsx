@@ -57,7 +57,8 @@ export default function SettingsSection() {
                   setTimeout(() => playSound('success'), 100);
                 }
               }}
-              className={soundsEnabled ? "bg-emerald-600 hover:bg-emerald-700" : ""}
+              className={soundsEnabled ? "bg-emerald-600 active:scale-95 focus:ring-2 focus:ring-emerald-400" : "active:scale-95 focus:ring-2 focus:ring-gray-400"}
+              aria-pressed={soundsEnabled}
             >
               {soundsEnabled ? "Aktiviert" : "Deaktiviert"}
             </Button>
@@ -67,24 +68,24 @@ export default function SettingsSection() {
             <div className="p-4 bg-gray-800/30 rounded-lg space-y-2">
               <p className="text-xs text-gray-400 mb-2">Test-Sounds:</p>
               <div className="flex flex-wrap gap-2">
-                <Button size="sm" variant="outline" onClick={() => playSound('click')}>
-                  Klick
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => playSound('success')}>
-                  Erfolg
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => playSound('error')}>
-                  Fehler
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => playSound('warning')}>
-                  Warnung
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => playSound('notification')}>
-                  Benachrichtigung
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => playSound('selection')}>
-                  Auswahl
-                </Button>
+                <Button size="sm" variant="outline" onClick={() => playSound('click')} className="active:scale-95 focus:ring-2 focus:ring-gray-400">
+                    Klick
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => playSound('success')} className="active:scale-95 focus:ring-2 focus:ring-gray-400">
+                    Erfolg
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => playSound('error')} className="active:scale-95 focus:ring-2 focus:ring-gray-400">
+                    Fehler
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => playSound('warning')} className="active:scale-95 focus:ring-2 focus:ring-gray-400">
+                    Warnung
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => playSound('notification')} className="active:scale-95 focus:ring-2 focus:ring-gray-400">
+                    Benachrichtigung
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => playSound('selection')} className="active:scale-95 focus:ring-2 focus:ring-gray-400">
+                    Auswahl
+                  </Button>
               </div>
             </div>
           )}
