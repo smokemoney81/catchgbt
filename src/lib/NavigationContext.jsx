@@ -2,25 +2,41 @@ import { createContext, useContext, useState, useCallback } from 'react';
 
 /**
  * Centralized navigation stack context.
- * NavigationTracker populates this; SubPageHeader and BottomTabs consume it.
+ * Tracks route history, direction (for slide transitions), and whether the
+ * current screen is a root tab (controls back-button behavior).
  */
 
-const ROOT_SEGMENTS = new Set(['', 'Dashboard', 'Map', 'Logbook', 'Profile', 'Home', 'Start']);
+export const ROOT_SEGMENTS = new Set([
+  '', 'Dashboard', 'Map', 'Logbook', 'Profile', 'Home', 'Start',
+]);
 
 const NavigationContext = createContext({
   stack: [],
+  direction: 1,
   canGoBack: false,
   isRootTab: true,
   pushRoute: () => {},
+  popRoute: () => {},
 });
 
 export function NavigationProvider({ children }) {
   const [stack, setStack] = useState([]);
+  const [direction, setDirection] = useState(1); // 1 = forward, -1 = backward
 
   const pushRoute = useCallback((pathname) => {
     setStack(prev => {
       if (prev[prev.length - 1] === pathname) return prev;
+      setDirection(1);
       return [...prev, pathname];
+    });
+  }, []);
+
+  // Called when the user navigates back (hardware back or browser popstate).
+  const popRoute = useCallback(() => {
+    setStack(prev => {
+      if (prev.length <= 1) return prev;
+      setDirection(-1);
+      return prev.slice(0, -1);
     });
   }, []);
 
@@ -30,7 +46,9 @@ export function NavigationProvider({ children }) {
   const canGoBack = stack.length > 1 && !isRootTab;
 
   return (
-    <NavigationContext.Provider value={{ stack, canGoBack, isRootTab, pushRoute }}>
+    <NavigationContext.Provider
+      value={{ stack, direction, canGoBack, isRootTab, pushRoute, popRoute }}
+    >
       {children}
     </NavigationContext.Provider>
   );
