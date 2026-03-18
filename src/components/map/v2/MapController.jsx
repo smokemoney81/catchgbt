@@ -177,25 +177,30 @@ function MapController() {
           <div className="flex gap-1.5">
             <Button
               onClick={() => setShowInfo(!showInfo)}
+              aria-label={showInfo ? "Info ausblenden" : "Info anzeigen"}
+              aria-expanded={showInfo}
               className="bg-gray-800/90 hover:bg-gray-700 border border-gray-700 h-11 px-3"
             >
-              <Info className="w-4 h-4 sm:mr-1.5 text-cyan-400" />
+              <Info aria-hidden="true" className="w-4 h-4 sm:mr-1.5 text-cyan-400" />
               <span className="hidden sm:inline text-xs">Info</span>
             </Button>
             
             <Button
               onClick={handleMyLocation}
+              aria-label="Meinen Standort anzeigen"
               className="bg-gray-800/90 hover:bg-gray-700 border border-gray-700 h-11 px-3"
             >
-              <Navigation className="w-4 h-4 sm:mr-1.5 text-cyan-400" />
+              <Navigation aria-hidden="true" className="w-4 h-4 sm:mr-1.5 text-cyan-400" />
               <span className="hidden sm:inline text-xs">Standort</span>
             </Button>
 
             <Button
               onClick={() => setShowFilters(!showFilters)}
+              aria-label={showFilters ? "Filter ausblenden" : "Filter anzeigen"}
+              aria-expanded={showFilters}
               className="bg-gray-800/90 hover:bg-gray-700 border border-gray-700 h-11 px-3"
             >
-              <Layers className="w-4 h-4 sm:mr-1.5 text-cyan-400" />
+              <Layers aria-hidden="true" className="w-4 h-4 sm:mr-1.5 text-cyan-400" />
               <span className="hidden sm:inline text-xs">Filter</span>
             </Button>
           </div>
@@ -204,18 +209,19 @@ function MapController() {
            <div className="flex gap-1.5">
              <Button
                onClick={() => setShowDownloadDialog(true)}
+               aria-label="Karte fuer offline herunterladen"
                className="bg-purple-700/90 hover:bg-purple-600 border border-purple-600/50 h-11 px-3"
-               title="Karte fuer offline Download"
              >
-               <Download className="w-4 h-4 sm:mr-1.5 text-purple-300" />
+               <Download aria-hidden="true" className="w-4 h-4 sm:mr-1.5 text-purple-300" />
                <span className="hidden sm:inline text-xs">Download</span>
              </Button>
              {newSpotCoords && !showAddModal && (
                <Button
                  onClick={handleAddSpotClick}
+                 aria-label="Neuen Spot hinzufuegen"
                  className="bg-emerald-600/90 hover:bg-emerald-700 border border-emerald-500/50 text-white h-11 px-3"
                >
-                 <Plus className="w-4 h-4 sm:mr-1.5" />
+                 <Plus aria-hidden="true" className="w-4 h-4 sm:mr-1.5" />
                  <span className="hidden sm:inline text-xs">Spot</span>
                </Button>
              )}
@@ -308,9 +314,10 @@ function MapController() {
               </div>
               <button
                 onClick={() => setShowInfo(false)}
-                className="text-gray-400 hover:text-white transition-colors p-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                aria-label="Info schliessen"
+                className="text-gray-400 hover:text-white transition-colors p-2 min-h-[44px] min-w-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 rounded"
               >
-                <X className="w-4 h-4" />
+                <X aria-hidden="true" className="w-4 h-4" />
               </button>
             </div>
           </div>
