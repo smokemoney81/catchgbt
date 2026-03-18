@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createPageUrl } from "@/utils";
 import { User } from "@/entities/User";
+import { Mic } from "lucide-react";
 // Removed: Coins, WifiOff, Wifi imports as they are no longer used
 import { useHaptic } from "@/components/utils/HapticFeedback";
 import { motion, AnimatePresence } from "framer-motion";
