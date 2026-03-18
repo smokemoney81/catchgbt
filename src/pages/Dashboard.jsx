@@ -388,14 +388,14 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
         </div>
 
         {showAnalysis && aiAnalysis && (
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-sm p-6 border border-purple-500/30 shadow-2xl">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-900/30 to-blue-900/30 backdrop-blur-sm p-6 border border-purple-500/30 shadow-2xl" role="region" aria-live="assertive" aria-label="KI-Analyse Ergebnis">
             <button
               onClick={() => setShowAnalysis(false)}
               aria-label="Analyse schliessen"
               className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors flex items-center justify-center"
               style={{ minHeight: '44px', minWidth: '44px' }}
             >
-              ✕
+              X
             </button>
             <h3 className="text-lg font-bold text-purple-300 mb-4">KI Angel-Analyse</h3>
             <div className="text-gray-200 whitespace-pre-wrap leading-relaxed">
