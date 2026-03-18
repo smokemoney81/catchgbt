@@ -1,47 +1,55 @@
 import React, { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { MobileSelect } from '@/components/ui/mobile-select';
+import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 
 export default function RatingForm({ spot, onSuccess }) {
   const [rating, setRating] = useState(0);
   const [biteActivity, setBiteActivity] = useState('mittel');
   const [comment, setComment] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (rating === 0) {
-      toast.error('Bitte geben Sie eine Bewertung ab');
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      await base44.entities.WaterReview.create({
-        spot_id: spot.id,
-        spot_name: spot.name,
-        rating,
-        bite_activity: biteActivity,
-        comment,
-        latitude: spot.latitude,
-        longitude: spot.longitude,
-        reviewed_at: new Date().toISOString()
-      });
-
-      toast.success('Bewertung gespeichert');
+  const { mutate, isPending } = useMutation({
+    mutationFn: (data) => base44.entities.WaterReview.create(data),
+    onMutate: () => {
+      // Optimistically reset form immediately
+      const snapshot = { rating, biteActivity, comment };
       setRating(0);
       setBiteActivity('mittel');
       setComment('');
+      return { snapshot };
+    },
+    onSuccess: () => {
+      toast.success('Bewertung gespeichert');
       onSuccess?.();
-    } catch (error) {
-      console.error('Rating error:', error);
+    },
+    onError: (_err, _vars, ctx) => {
+      // Rollback form state
+      setRating(ctx.snapshot.rating);
+      setBiteActivity(ctx.snapshot.biteActivity);
+      setComment(ctx.snapshot.comment);
       toast.error('Fehler beim Speichern');
-    } finally {
-      setIsSubmitting(false);
+    },
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (rating === 0) {
+      toast.error('Bitte gib eine Bewertung ab');
+      return;
     }
+    mutate({
+      spot_id: spot.id,
+      spot_name: spot.name,
+      rating,
+      bite_activity: biteActivity,
+      comment,
+      latitude: spot.latitude,
+      longitude: spot.longitude,
+      reviewed_at: new Date().toISOString(),
+    });
   };
 
   return (
@@ -55,8 +63,9 @@ export default function RatingForm({ spot, onSuccess }) {
             <button
               key={star}
               type="button"
+              aria-label={`${star} Stern${star > 1 ? 'e' : ''}`}
               onClick={() => setRating(star)}
-              className={`text-2xl transition-all ${
+              className={`text-2xl transition-all min-h-[44px] min-w-[44px] ${
                 rating >= star ? 'text-amber-400 scale-110' : 'text-gray-600'
               }`}
             >
@@ -73,11 +82,11 @@ export default function RatingForm({ spot, onSuccess }) {
           onValueChange={setBiteActivity}
           label="Beissaktivitaet"
           options={[
-            { value: "sehr_gering", label: "Sehr gering" },
-            { value: "gering", label: "Gering" },
-            { value: "mittel", label: "Mittel" },
-            { value: "hoch", label: "Hoch" },
-            { value: "sehr_hoch", label: "Sehr hoch" },
+            { value: 'sehr_gering', label: 'Sehr gering' },
+            { value: 'gering', label: 'Gering' },
+            { value: 'mittel', label: 'Mittel' },
+            { value: 'hoch', label: 'Hoch' },
+            { value: 'sehr_hoch', label: 'Sehr hoch' },
           ]}
           className="bg-gray-800 border-gray-700 text-white"
         />
@@ -85,22 +94,22 @@ export default function RatingForm({ spot, onSuccess }) {
 
       <div className="space-y-2">
         <label className="text-xs text-gray-400">Kommentar (optional)</label>
-        <textarea
+        <Textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           maxLength={500}
           placeholder="Aktuelle Bedingungen, Fische, Koeder..."
-          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 resize-none h-20"
+          className="w-full bg-gray-800 border-gray-700 text-white placeholder-gray-500 h-20 resize-none"
         />
         <div className="text-xs text-gray-500">{comment.length}/500</div>
       </div>
 
       <Button
         type="submit"
-        disabled={isSubmitting}
+        disabled={isPending}
         className="w-full bg-cyan-600 hover:bg-cyan-700 disabled:opacity-50"
       >
-        {isSubmitting ? 'Speichert...' : 'Bewertung abgeben'}
+        {isPending ? 'Speichert...' : 'Bewertung abgeben'}
       </Button>
     </form>
   );
