@@ -219,23 +219,23 @@ export default function Layout({ children, currentPageName }) {
             scope: '/'
           })
           .then((registration) => {
-            console.log('[CatchGBT] Service Worker registriert:', registration.scope);
+            console.log('[Catchly] Service Worker registriert:', registration.scope);
             
             // Prüfe auf Updates
             registration.addEventListener('updatefound', () => {
               const newWorker = registration.installing;
-              console.log('[CatchGBT] Neuer Service Worker gefunden');
+              console.log('[Catchly] Neuer Service Worker gefunden');
               
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  console.log('[CatchGBT] Neuer Service Worker verfügbar - Update bereit');
+                  console.log('[Catchly] Neuer Service Worker verfügbar - Update bereit');
                   window.dispatchEvent(new CustomEvent('sw-update-available'));
                 }
               });
             });
           })
           .catch((error) => {
-            console.error('[CatchGBT] Service Worker Registrierung fehlgeschlagen:', error);
+            console.error('[Catchly] Service Worker Registrierung fehlgeschlagen:', error);
           });
       });
     }
@@ -390,7 +390,7 @@ export default function Layout({ children, currentPageName }) {
                   --radius: 1rem;
                   --background: 3 7 18;
                   --foreground: 248 250 252;
-                  --catchgbt: #165DFF;
+                  --catchly: #165DFF;
                 }
                 body { 
                   background: rgb(var(--background)); 
