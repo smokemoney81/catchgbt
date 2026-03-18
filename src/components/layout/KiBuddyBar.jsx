@@ -149,8 +149,20 @@ export default function KiBuddyBar({ onToggleChatbot, chatbotOpen, onOpenVoice }
             </div>
           </div>
 
-          {/* Right Side - Simplified Status */}
-          <div className="flex items-center justify-end flex-1 min-w-0">
+          {/* Right Side - Voice Button and Status */}
+          <div className="flex items-center justify-end flex-1 min-w-0 gap-3">
+            <motion.button
+              onClick={() => {
+                triggerHaptic('heavy');
+                onOpenVoice?.();
+              }}
+              className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 transition-all shadow-lg hover:shadow-cyan-500/50"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Mic className="w-5 h-5 text-white" />
+            </motion.button>
+
             <div className="text-center">
               <div className="flex items-center gap-1">
                 {isDemo ? (
