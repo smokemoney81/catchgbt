@@ -487,5 +487,6 @@ export default function Logbook() {
         </DialogContent>
       </Dialog>
     </div>
+    </SwipeToRefresh>
   );
 }
