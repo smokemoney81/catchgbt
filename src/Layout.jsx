@@ -358,15 +358,17 @@ export default function Layout({ children, currentPageName }) {
                   <SubPageHeader title={currentPageName} />
                 </div>
 
-                <SwipeToRefresh onRefresh={() => queryClient.invalidateQueries()}>
-                  <AnimatePresence initial={false}>
-                    <PageTransition key={currentPageName}>
-                      {children}
-                    </PageTransition>
-                  </AnimatePresence>
-                </SwipeToRefresh>
+                <div className="w-full min-h-screen px-0 sm:px-0">
+                  <SwipeToRefresh onRefresh={() => queryClient.invalidateQueries()}>
+                    <AnimatePresence initial={false}>
+                      <PageTransition key={currentPageName}>
+                        {children}
+                      </PageTransition>
+                    </AnimatePresence>
+                  </SwipeToRefresh>
+                </div>
 
-                  <BottomTabs />
+                <BottomTabs />
 
                   <SupportAgentButton />
 
