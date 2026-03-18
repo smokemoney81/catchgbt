@@ -4,21 +4,18 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useHaptic } from "@/components/utils/HapticFeedback";
 import { useSound } from "@/components/utils/SoundManager";
-
-const ROOT_TABS = ["Dashboard", "Map", "Logbook", "Profile", "Home", "Start", ""];
+import { useNavigationContext } from "@/lib/NavigationContext";
 
 export default function SubPageHeader({ title }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { triggerHaptic } = useHaptic();
   const { playSound } = useSound();
+  const { isRootTab } = useNavigationContext();
 
-  const currentPage = location.pathname.split('/').pop() || 'Dashboard';
-  const isRootTab = ROOT_TABS.includes(currentPage);
+  if (isRootTab) return null;
 
-  if (isRootTab) {
-    return null;
-  }
+  const currentPage = location.pathname.replace(/^\//, '').split('/')[0] || 'Dashboard';
 
   const handleBack = () => {
     triggerHaptic('light');
@@ -28,11 +25,9 @@ export default function SubPageHeader({ title }) {
 
   return (
     <div className="md:hidden sticky top-0 z-40 bg-gray-950/95 backdrop-blur-xl border-b border-gray-800">
-      <div 
+      <div
         className="flex items-center h-12 px-4"
-        style={{ 
-          paddingTop: 'env(safe-area-inset-top)',
-        }}
+        style={{ paddingTop: 'env(safe-area-inset-top)' }}
       >
         <Button
           variant="ghost"
