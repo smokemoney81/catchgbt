@@ -123,7 +123,7 @@ export default function Logbook() {
   const actionQueue = useActionQueue();
 
   // ---- Mutations with Optimistic UI ----
-  const createCatchMutation = useOptimisticMutation<Partial<typeof catches[0]>, typeof catches>(
+  const createCatchMutation = useOptimisticMutation(
     catches,
     {
       mutationFn: async (catchData) => {
@@ -165,7 +165,7 @@ export default function Logbook() {
     }
   );
 
-  const updateCatchMutation = useOptimisticMutation<{ id: string; data: any }, typeof catches>(
+  const updateCatchMutation = useOptimisticMutation(
     catches,
     {
       mutationFn: async ({ id, data }) => {
@@ -179,7 +179,7 @@ export default function Logbook() {
     }
   );
 
-  const deleteCatchMutation = useOptimisticMutation<string, typeof catches>(
+  const deleteCatchMutation = useOptimisticMutation(
     catches,
     {
       mutationFn: async (id) => {
