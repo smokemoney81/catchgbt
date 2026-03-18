@@ -431,14 +431,17 @@ Sei konkret und praxisorientiert!`;
     return (
       <div className="flex flex-col gap-1">
         <label className="text-xs text-gray-400">{label}</label>
-        <select value={value} onChange={e=> {
-            const newValue = e.target.value;
-            triggerHaptic('selection'); // Added haptic feedback
+        <MobileSelect
+          value={value}
+          onValueChange={(newValue) => {
+            triggerHaptic('selection');
             onChange(newValue);
-            toast.info(`${label} geändert: ${newValue}`);
-          }} className="p-2 rounded-lg bg-gray-700 text-white border border-gray-600">
-          {options.map(o => <option key={o} value={o}>{o}</option>)}
-        </select>
+            toast.info(`${label} geaendert: ${newValue}`);
+          }}
+          label={label}
+          options={options.map(o => ({ value: o, label: o }))}
+          className="bg-gray-700 border-gray-600 text-white"
+        />
       </div>
     );
   }
