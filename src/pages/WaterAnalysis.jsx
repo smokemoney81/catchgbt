@@ -8,11 +8,13 @@ import ExportPanel from "@/components/water/ExportPanel";
 import SpotComparison from "@/components/water/SpotComparison";
 import WaterAnalysisTutorial from "@/components/water/WaterAnalysisTutorial";
 import { Loader2, Satellite } from "lucide-react";
+import { useRef } from "react";
 
 export default function WaterAnalysisPage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [waterData, setWaterData] = useState(null);
+  const waterDataRef = useRef(null);
 
   useEffect(() => {
     loadUser();
@@ -87,10 +89,21 @@ export default function WaterAnalysisPage() {
             <WaterAnalysisTutorial />
           </div>
 
+          <div 
+            ref={waterDataRef}
+            role="region"
+            aria-live="polite"
+            aria-label="Wasserdaten-Analyseergebnisse"
+            className="sr-only"
+          />
+
           {/* Main Analysis Panel */}
           <div className="mb-8">
             <WaterAnalysisPanel onDataUpdate={(data) => {
               setWaterData(data);
+              if (waterDataRef?.current) {
+                waterDataRef.current.textContent = `Wasserdaten aktualisiert: Temperatur, Chlorophyll und Wellenhöhe analysiert.`;
+              }
               window.dispatchEvent(new CustomEvent('water-data-updated', { detail: data }));
             }} />
           </div>
