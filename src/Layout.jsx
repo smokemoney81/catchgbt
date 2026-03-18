@@ -96,6 +96,14 @@ function LayoutContent({ children, currentPageName }) {
     }
   };
 
+  const deferredRefreshUser = () => {
+    if (typeof requestIdleCallback !== 'undefined') {
+      requestIdleCallback(() => refreshUser(), { timeout: 2000 });
+    } else {
+      setTimeout(refreshUser, 0);
+    }
+  };
+
   // Track total online time via UsageSession
   useEffect(() => {
     if (!user?.email) return;
@@ -137,7 +145,7 @@ function LayoutContent({ children, currentPageName }) {
 
   useEffect(() => {
     if (currentPageName !== 'Home') {
-      refreshUser();
+      deferredRefreshUser();
     }
 
     // Save scroll position when leaving a page
