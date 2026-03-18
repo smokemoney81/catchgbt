@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { base44 } from "@/api/base44Client";
+import { Spot } from "@/entities/Spot";
 import { toast } from "sonner";
+import { useHaptic } from "@/components/utils/HapticFeedback";
+import { useOptimisticMutation } from "@/lib/useOptimisticMutation";
 
 const SPORTS = [
   "Spinnfischen",
@@ -18,8 +20,8 @@ const SPORTS = [
 ];
 
 export default function SportSelectorModal({ isOpen, onClose, spot }) {
+  const { triggerHaptic } = useHaptic();
   const [selectedSports, setSelectedSports] = useState(spot?.sports || []);
-  const [loading, setLoading] = useState(false);
 
   const toggleSport = (sport) => {
     setSelectedSports(prev =>
@@ -29,23 +31,32 @@ export default function SportSelectorModal({ isOpen, onClose, spot }) {
     );
   };
 
-  const handleSave = async () => {
+  const updateSportsMutation = useOptimisticMutation({
+    queryKey: 'mapSpots',
+    mutationFn: ({ id, sports }) => Spot.update(id, { sports }),
+    optimisticUpdate: (oldSpots = [], variables) =>
+      oldSpots.map(spot =>
+        spot.id === variables.id ? { ...spot, sports: variables.sports } : spot
+      ),
+    onSuccess: () => {
+      triggerHaptic('success');
+      toast.success("Sportarten gespeichert");
+      onClose();
+    },
+    onError: () => {
+      triggerHaptic('error');
+      toast.error("Fehler beim Speichern der Sportarten");
+    }
+  });
+
+  const handleSave = () => {
     if (!spot || selectedSports.length === 0) {
       toast.error("Bitte waehle mindestens eine Sportart aus");
+      triggerHaptic('light');
       return;
     }
 
-    setLoading(true);
-    try {
-      await base44.entities.Spot.update(spot.id, { sports: selectedSports });
-      toast.success("Sportarten gespeichert");
-      onClose();
-    } catch (error) {
-      console.error("Fehler beim Speichern:", error);
-      toast.error("Fehler beim Speichern der Sportarten");
-    } finally {
-      setLoading(false);
-    }
+    updateSportsMutation.mutate({ id: spot.id, sports: selectedSports });
   };
 
   return (
