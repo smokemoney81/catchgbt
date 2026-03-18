@@ -91,16 +91,16 @@ export default function SportSelectorModal({ isOpen, onClose, spot }) {
             onClick={onClose}
             variant="outline"
             className="flex-1 border-gray-700"
-            disabled={loading}
+            disabled={updateSportsMutation.isPending}
           >
             Abbrechen
           </Button>
           <Button
             onClick={handleSave}
             className="flex-1 bg-cyan-600 hover:bg-cyan-700"
-            disabled={loading}
+            disabled={updateSportsMutation.isPending}
           >
-            {loading ? "Speichert..." : "Speichern"}
+            {updateSportsMutation.isPending ? "Speichert..." : "Speichern"}
           </Button>
         </div>
       </DialogContent>
