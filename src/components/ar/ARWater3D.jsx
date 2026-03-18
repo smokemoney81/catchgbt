@@ -719,8 +719,8 @@ export default function ARWater3D() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.5 }}
         onClick={() => setShowTutorial(true)}
-        aria-label="AR Bedienungsanleitung anzeigen"
-        className="absolute top-4 right-4 z-20 w-11 h-11 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 active:scale-95 active:from-cyan-600 active:to-blue-700 shadow-lg flex items-center justify-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 min-h-[44px] min-w-[44px]"
+        aria-label="AR 3D Bathymetrie Bedienungsanleitung oeffnen"
+        className="absolute top-4 right-4 z-20 min-h-[44px] min-w-[44px] rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 active:scale-95 active:from-cyan-600 active:to-blue-700 shadow-lg flex items-center justify-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2"
       >
         <span className="text-white text-xl font-bold" aria-hidden="true">!</span>
       </motion.button>
@@ -740,9 +740,10 @@ export default function ARWater3D() {
           onClick={() => setShowControls(!showControls)}
           size="sm"
           variant="outline"
-          className="w-full active:scale-95 focus:ring-2 focus:ring-cyan-400"
+          className="w-full active:scale-95 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
           aria-expanded={showControls}
           aria-controls="ar-controls-panel"
+          aria-label={showControls ? 'AR Steuerelemente ausblenden' : 'AR Steuerelemente anzeigen'}
         >
           {showControls ? 'Steuerung verbergen' : 'Steuerung anzeigen'}
         </Button>
@@ -758,24 +759,29 @@ export default function ARWater3D() {
               <Button
                 onClick={loadRealBathymetry}
                 disabled={loading || !sensorRef.current}
-                className="w-full bg-cyan-600 active:scale-95 active:bg-cyan-700 focus:ring-2 focus:ring-cyan-400 disabled:opacity-50"
-                aria-label={loading ? 'Bathymetrie wird geladen' : 'Bathymetrie Daten laden'}
+                className="w-full bg-cyan-600 active:scale-95 active:bg-cyan-700 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 disabled:opacity-50"
+                aria-label={loading ? 'Bathymetrie-Daten werden geladen' : 'Aktuelle Bathymetrie-Daten fuer aktuelle GPS-Position laden'}
               >
                 {loading ? 'Lädt...' : 'Bathymetrie laden'}
               </Button>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs text-gray-300">
+              <label htmlFor="height-scale" className="text-xs text-gray-300">
                 Höhen-Skalierung: {heightScale.toFixed(2)}x
               </label>
               <Slider
+                id="height-scale"
                 value={[heightScale]}
                 onValueChange={handleHeightScaleChange}
                 min={0.1}
                 max={2.0}
                 step={0.1}
                 className="w-full"
+                aria-valuemin={0.1}
+                aria-valuemax={2.0}
+                aria-valuenow={heightScale}
+                aria-label="Hoehen-Skalierung der Bathymetrie-Visualisierung anpassen (0.1 bis 2.0x)"
               />
             </div>
 
