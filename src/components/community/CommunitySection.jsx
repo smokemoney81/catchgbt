@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -115,30 +116,43 @@ export default function CommunitySection() {
     );
   };
 
-  const handleCreatePost = async () => {
-    if (!newPost.text.trim()) {
-      toast.warning("Bitte gib einen Text ein");
-      return;
-    }
-
-    try {
-      await base44.entities.Post.create({
-        text: newPost.text,
-        photo_url: newPost.photo_url || null
-      });
-
-      setNewPost({ text: "", photo_url: "" });
-      await loadData();
-      
+  const createPostMutation = useMutation({
+    mutationFn: (data) => base44.entities.Post.create(data),
+    onMutate: (data) => {
+      const optimistic = {
+        id: `tmp-${Date.now()}`,
+        ...data,
+        likes: 0,
+        reported: false,
+        created_by: currentUser?.email,
+        created_date: new Date().toISOString(),
+      };
+      setPosts((prev) => [optimistic, ...prev]);
+      setNewPost({ text: '', photo_url: '' });
+      return { optimistic };
+    },
+    onSuccess: (saved, _, ctx) => {
+      // Replace tmp entry with real record
+      setPosts((prev) => prev.map((p) => (p.id === ctx.optimistic.id ? saved : p)));
       triggerHaptic('success');
       playSound('success');
-      toast.success("Post erfolgreich erstellt!");
-    } catch (error) {
-      console.error("Fehler beim Erstellen:", error);
-      toast.error("Fehler beim Erstellen des Posts");
+      toast.success('Post erfolgreich erstellt!');
+    },
+    onError: (_err, _vars, ctx) => {
+      setPosts((prev) => prev.filter((p) => p.id !== ctx.optimistic.id));
+      setNewPost({ text: ctx.optimistic.text, photo_url: ctx.optimistic.photo_url || '' });
       triggerHaptic('error');
       playSound('error');
+      toast.error('Fehler beim Erstellen des Posts');
+    },
+  });
+
+  const handleCreatePost = () => {
+    if (!newPost.text.trim()) {
+      toast.warning('Bitte gib einen Text ein');
+      return;
     }
+    createPostMutation.mutate({ text: newPost.text, photo_url: newPost.photo_url || null });
   };
 
   const handleLike = async (postId, currentLikes) => {
