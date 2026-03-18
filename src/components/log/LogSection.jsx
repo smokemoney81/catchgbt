@@ -328,10 +328,14 @@ export default function LogSection() {
           <div className="p-4 rounded-xl bg-gray-800/40 mb-4">
             <div className="grid md:grid-cols-2 gap-3">
               <Input placeholder="Art*" value={form.species} onChange={(e)=>setForm({...form, species: e.target.value})} className="bg-gray-800/50 border-gray-700 text-white" />
-              <Select value={form.spot_id} onValueChange={(v)=>setForm({...form, spot_id: v})}>
-                <SelectTrigger className="bg-gray-800/50 border-gray-700 text-white"><SelectValue placeholder="Spot" /></SelectTrigger>
-                <SelectContent>{spots.map(s=><SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}</SelectContent>
-              </Select>
+              <MobileSelect
+                value={form.spot_id}
+                onValueChange={(v) => setForm({ ...form, spot_id: v })}
+                placeholder="Spot"
+                label="Spot auswählen"
+                options={spots.map(s => ({ value: s.id, label: s.name }))}
+                className="bg-gray-800/50 border-gray-700 text-white"
+              />
               <Input type="number" placeholder="Länge (cm)" value={form.length_cm} onChange={(e)=>setForm({...form, length_cm: e.target.value})} className="bg-gray-800/50 border-gray-700 text-white" />
               <Input type="number" step="0.1" placeholder="Gewicht (kg)" value={form.weight_kg} onChange={(e)=>setForm({...form, weight_kg: e.target.value})} className="bg-gray-800/50 border-gray-700 text-white" />
               <Input placeholder="Köder" value={form.bait_used} onChange={(e)=>setForm({...form, bait_used: e.target.value})} className="bg-gray-800/50 border-gray-700 text-white" />
