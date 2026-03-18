@@ -49,32 +49,33 @@ export default function WaterRadarChart({ parameters }) {
       <CardContent>
         <ResponsiveContainer width="100%" height={400}>
           <RadarChart data={radarData}>
-            <PolarGrid stroke="#374151" />
+            <PolarGrid stroke="hsl(var(--border))" />
             <PolarAngleAxis 
               dataKey="parameter" 
-              tick={{ fill: '#9ca3af', fontSize: 12 }}
+              tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
             />
             <PolarRadiusAxis 
               angle={90} 
               domain={[0, 100]}
-              tick={{ fill: '#9ca3af', fontSize: 10 }}
+              tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }}
             />
             <Radar 
               name="Qualität" 
               dataKey="value" 
-              stroke="#22d3ee" 
-              fill="#22d3ee" 
+              stroke="hsl(var(--chart-2))" 
+              fill="hsl(var(--chart-2))" 
               fillOpacity={0.6}
             />
             <Tooltip 
               contentStyle={{ 
-                backgroundColor: '#1f2937', 
-                border: '1px solid #374151',
-                borderRadius: '8px'
+                backgroundColor: 'hsl(var(--card))', 
+                border: `1px solid hsl(var(--border))`,
+                borderRadius: '8px',
+                color: 'hsl(var(--foreground))'
               }}
               formatter={(value) => `${Math.round(value)}%`}
             />
-            <Legend wrapperStyle={{ color: '#9ca3af' }} />
+            <Legend wrapperStyle={{ color: 'hsl(var(--muted-foreground))' }} />
           </RadarChart>
         </ResponsiveContainer>
         
