@@ -128,9 +128,11 @@ function MapController() {
       playSound('success');
       toast.success("Spot erfolgreich hinzugefügt!");
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Add spot error:', error);
       toast.error("Fehler beim Hinzufügen des Spots");
-    }
+    },
+    invalidateOnSettle: true
   });
 
   const updateSpotMutation = useOptimisticMutation({
@@ -145,9 +147,11 @@ function MapController() {
       playSound('success');
       toast.success("Spot erfolgreich aktualisiert!");
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Update spot error:', error);
       toast.error("Fehler beim Aktualisieren des Spots");
-    }
+    },
+    invalidateOnSettle: true
   });
 
   const deleteSpotMutation = useOptimisticMutation({
@@ -161,15 +165,19 @@ function MapController() {
       toast.success("Spot erfolgreich gelöscht!");
       setSelectedLocation(null);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Delete spot error:', error);
       toast.error("Fehler beim Löschen des Spots");
-    }
+    },
+    invalidateOnSettle: true
   });
 
   const handleSpotAdded = useCallback(() => {
     setNewSpotCoords(null);
     setShowAddModal(false);
-  }, []);
+    // Invalidate fishingClubs as well since spots might relate to clubs
+    queryClient.invalidateQueries({ queryKey: ['mapClubs'] });
+  }, [queryClient]);
 
   const handleLocationClick = useCallback((location, type) => {
     setSelectedLocation({ ...location, type });
@@ -275,16 +283,18 @@ function MapController() {
           </div>
 
         {/* Filter Panel */}
-         {showFilters && (
-          <div className="mt-2 bg-gray-800/50 rounded-lg p-2 space-y-1.5" role="group" aria-label="Kartenebenen-Filter">
-            <div aria-live="polite" aria-atomic="true" aria-label="Aktive Kartenebenen Summary">
-              <div className="sr-only">
-                Aktiv: {filters.spots && 'Spots'}{filters.spots && filters.clubs && ', '}{filters.clubs && 'Vereine'}{(filters.spots || filters.clubs) && filters.waters && ', '}{filters.waters && 'Gewaesser'}. Karte zeigt {filteredSpots.length} Spots, {filteredClubs.length} Vereine, {filteredWaters.length} Gewaesser
-              </div>
-              <div className="text-xs text-gray-400 px-2 py-1 bg-gray-900/50 rounded mb-2">
-                {filteredSpots.length + filteredClubs.length + filteredWaters.length} Orte sichtbar
-              </div>
-            </div>
+        {showFilters && (
+         <div className="mt-2 bg-gray-800/50 rounded-lg p-2 space-y-1.5" role="group" aria-label="Kartenebenen-Filter">
+           <div aria-live="polite" aria-atomic="true" aria-label="Aktive Kartenebenen und Orte Summary">
+             <div className="sr-only">
+               Filter aktiv: {filters.spots && 'Spots'}{filters.spots && filters.clubs && ', '}{filters.clubs && 'Vereine'}{(filters.spots || filters.clubs) && filters.waters && ', '}{filters.waters && 'Gewaesser'}. 
+               Karte zeigt {filteredSpots.length} Spots, {filteredClubs.length} Vereine, {filteredWaters.length} Gewaesser. 
+               Insgesamt {filteredSpots.length + filteredClubs.length + filteredWaters.length} Orte sichtbar.
+             </div>
+             <div className="text-xs text-gray-400 px-2 py-1 bg-gray-900/50 rounded mb-2" role="status">
+               {filteredSpots.length + filteredClubs.length + filteredWaters.length} Orte sichtbar
+             </div>
+           </div>
            <div className="flex items-center gap-2">
              <input
                type="checkbox"
