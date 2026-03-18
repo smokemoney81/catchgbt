@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useState, useEffect } from 'react';
 import { Bell, ChevronLeft, ChevronRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
