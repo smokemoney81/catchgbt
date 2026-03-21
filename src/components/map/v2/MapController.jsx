@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Spot } from "@/entities/Spot";
 import { FishingClub } from "@/entities/FishingClub";
 import { Button } from "@/components/ui/button";
-import { MapPin, Plus, Layers, Navigation, X, Loader2, Info, Download } from "lucide-react";
+import { MapPin, Plus, Layers, Navigation, X, Loader2, Info } from "lucide-react";
 import { useLocation } from "@/components/location/LocationManager";
 import { toast } from "sonner";
 import { useHaptic } from "@/components/utils/HapticFeedback";
