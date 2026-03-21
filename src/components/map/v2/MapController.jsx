@@ -437,18 +437,7 @@ function MapController() {
            />
          )}
 
-        {/* Map Download Dialog */}
-         <MapDownloadDialog
-           isOpen={showDownloadDialog}
-           onClose={() => setShowDownloadDialog(false)}
-           bounds={mapCenter ? {
-             north: mapCenter.lat + 0.05,
-             south: mapCenter.lat - 0.05,
-             east: mapCenter.lng + 0.05,
-             west: mapCenter.lng - 0.05
-           } : null}
-           currentZoom={mapZoom}
-         />
+
         </div>
         </div>
         );
