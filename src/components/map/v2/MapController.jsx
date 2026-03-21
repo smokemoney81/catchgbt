@@ -36,7 +36,6 @@ function MapController() {
   });
   const [waterBodies, setWaterBodies] = useState([]);
   const [reviews, setReviews] = useState([]);
-  const [showDownloadDialog, setShowDownloadDialog] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   // Query data with react-query
