@@ -12,7 +12,7 @@ import { useOptimisticMutation } from "@/lib/useOptimisticMutation";
 import MapView from "./MapView";
 import AddSpotModal from "./AddSpotModal";
 import LocationDetailPanel from "./LocationDetailPanel";
-import MapDownloadDialog from "./MapDownloadDialog";
+
 
 function MapController() {
   const { currentLocation, requestGpsLocation, setSpotAsLocation } = useLocation();
