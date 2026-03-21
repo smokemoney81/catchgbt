@@ -259,15 +259,7 @@ function MapController() {
 
           {/* Rechte Buttons */}
            <div className="flex gap-1.5">
-             <Button
-               onClick={() => setShowDownloadDialog(true)}
-               aria-label="Karte fuer offline-Nutzung herunterladen"
-               className="bg-purple-700/90 hover:bg-purple-600 border border-purple-600/50 min-h-[44px] px-3"
-             >
-               <Download aria-hidden="true" className="w-4 h-4 sm:mr-1.5 text-purple-300" />
-               <span className="hidden sm:inline text-xs">Download</span>
-             </Button>
-             {newSpotCoords && !showAddModal && (
+{newSpotCoords && !showAddModal && (
                   <Button
                     onClick={handleAddSpotClick}
                     disabled={addSpotMutation.isPending}
