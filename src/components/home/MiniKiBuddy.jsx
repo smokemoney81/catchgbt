@@ -154,7 +154,7 @@ export default function MiniKiBuddy() {
   };
 
   return (
-    <div className="flex flex-col bg-gray-800/30 rounded-xl border border-gray-700/50 overflow-hidden h-96">
+    <div className="flex flex-col bg-gray-800/30 rounded-xl border border-gray-700/50 overflow-hidden" style={{ height: '24rem' }}>
       <div 
         className="sr-only"
         role="region"
@@ -181,7 +181,7 @@ export default function MiniKiBuddy() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 flex flex-col min-h-64">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 flex flex-col min-h-0">
         {messages.map((msg, i) => (
           <div
             key={i}
@@ -206,7 +206,7 @@ export default function MiniKiBuddy() {
       </div>
 
       {messages.length === 1 && !isLoading && (
-        <div className="px-3 pb-2 flex flex-wrap gap-2">
+        <div className="px-3 pb-1 flex flex-wrap gap-1.5 overflow-hidden max-h-20">
           {EXAMPLE_QUESTIONS.map((q, i) => (
             <button
               key={i}
