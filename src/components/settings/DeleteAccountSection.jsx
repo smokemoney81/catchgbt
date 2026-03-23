@@ -188,7 +188,7 @@ export default function DeleteAccountSection() {
             <Button
               variant="outline"
               onClick={handleCancel}
-              disabled={isDeleting}
+              disabled={deleteAccountMutation.isPending}
               className="border-gray-700 text-gray-300 hover:bg-gray-800 min-h-[44px]"
             >
               Abbrechen
