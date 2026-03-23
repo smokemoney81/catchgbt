@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import { User } from "@/entities/User";
+import { base44 } from "@/api/base44Client";
 import { Volume2, VolumeX } from "lucide-react";
 import { toast } from "sonner";
 import { useOptimisticMutation } from "@/lib/useOptimisticMutation";
