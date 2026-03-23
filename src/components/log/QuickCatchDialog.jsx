@@ -250,15 +250,16 @@ export default function QuickCatchDialog() {
     };
     window.addEventListener("openCatchDialog", handler);
     window.addEventListener("bite-detector-session-ended", biteDetectorHandler);
-    (async ()=> {
-        const spotList = await Spot.list();
-        setSpots(spotList.filter(s => s && s.id));
-    })();
     return () => {
       window.removeEventListener("openCatchDialog", handler);
       window.removeEventListener("bite-detector-session-ended", biteDetectorHandler);
     };
   }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    Spot.list().then(spotList => setSpots(spotList.filter(s => s && s.id))).catch(() => {});
+  }, [open]);
 
   useEffect(() => {
     const processQueue = async () => {
@@ -287,21 +288,26 @@ export default function QuickCatchDialog() {
     return () => window.removeEventListener("online", processQueue);
   }, []);
 
+  const [allRules, setAllRules] = useState([]);
+
   useEffect(() => {
-    (async () => {
-      const rules = await RuleEntry.list();
-      const warns = [];
-      const speciesLower = String(form.species || "").toLowerCase();
-      rules.filter(r => String(r.fish || "").toLowerCase() === speciesLower).forEach(r => {
-        if (r.min_size_cm && form.length_cm && Number(form.length_cm) < r.min_size_cm) warns.push(`Mindestmaß ${r.min_size_cm} cm unterschritten (${form.length_cm} cm).`);
-        if (r.closed_from && r.closed_to) {
-          const d = form.catch_time ? new Date(form.catch_time).toISOString().slice(0,10) : new Date().toISOString().slice(0,10);
-          if (d >= r.closed_from && d <= r.closed_to) warns.push(`Schonzeit: ${r.closed_from}–${r.closed_to}.`);
-        }
-      });
-      setRuleWarnings(warns);
-    })();
-  }, [form.species, form.length_cm, form.catch_time]);
+    if (!open) return;
+    RuleEntry.list().then(setAllRules).catch(() => {});
+  }, [open]);
+
+  useEffect(() => {
+    if (!allRules.length) return;
+    const warns = [];
+    const speciesLower = String(form.species || "").toLowerCase();
+    allRules.filter(r => String(r.fish || "").toLowerCase() === speciesLower).forEach(r => {
+      if (r.min_size_cm && form.length_cm && Number(form.length_cm) < r.min_size_cm) warns.push(`Mindestmaß ${r.min_size_cm} cm unterschritten (${form.length_cm} cm).`);
+      if (r.closed_from && r.closed_to) {
+        const d = form.catch_time ? new Date(form.catch_time).toISOString().slice(0,10) : new Date().toISOString().slice(0,10);
+        if (d >= r.closed_from && d <= r.closed_to) warns.push(`Schonzeit: ${r.closed_from}–${r.closed_to}.`);
+      }
+    });
+    setRuleWarnings(warns);
+  }, [form.species, form.length_cm, form.catch_time, allRules]);
 
   const calculateCatchCredits = (species, lengthCm) => {
     const baseCredits = 100;
@@ -399,9 +405,9 @@ export default function QuickCatchDialog() {
       const savedCatch = await Catch.create(catchData);
 
       try {
-        const user = await User.me();
+        const user = await base44.auth.me();
         const credits = calculateCatchCredits(trimmedSpecies, parseFloat(form.length_cm));
-        await User.updateMyUserData({
+        await base44.auth.updateMe({
           credits: (user.credits || 0) + credits,
           total_earned: (user.total_earned || 0) + credits
         });
