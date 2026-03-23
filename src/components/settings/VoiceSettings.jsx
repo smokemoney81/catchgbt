@@ -20,7 +20,7 @@ export default function VoiceSettings() {
 
   const loadSettings = async () => {
     try {
-      const user = await User.me();
+      const user = await base44.auth.me();
       const settings = user?.settings || {};
       
       const state = {
@@ -38,8 +38,8 @@ export default function VoiceSettings() {
   const voiceSettingsMutation = useOptimisticMutation({
     queryKey: 'userSettings',
     mutationFn: async (settings) => {
-      const user = await User.me();
-      await User.updateMyUserData({
+      const user = await base44.auth.me();
+      await base44.auth.updateMe({
         settings: {
           ...user.settings,
           audio_enabled: settings.audioEnabled,

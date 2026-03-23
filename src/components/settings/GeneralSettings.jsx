@@ -13,7 +13,7 @@ export default function GeneralSettings() {
     useEffect(() => {
         (async () => {
             try {
-                const user = await User.me();
+                const user = await base44.auth.me();
                 if (user && user.settings) {
                     const currentSettings = {
                         language: user.settings.language || 'de',
@@ -31,7 +31,7 @@ export default function GeneralSettings() {
 
     const settingsMutation = useOptimisticMutation({
         mutationFn: async (newSettings) => {
-            await User.updateMyUserData({ settings: newSettings });
+            await base44.auth.updateMe({ settings: newSettings });
             return newSettings;
         },
         optimisticUpdate: () => settings,

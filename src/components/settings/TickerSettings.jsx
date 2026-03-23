@@ -12,7 +12,7 @@ export default function TickerSettings() {
     useEffect(() => {
         (async () => {
             try {
-                const user = await User.me();
+                const user = await base44.auth.me();
                 if (user && user.settings && user.settings.ticker_speed) {
                     setSpeed(user.settings.ticker_speed);
                     setInitialSpeed(user.settings.ticker_speed);
@@ -25,7 +25,7 @@ export default function TickerSettings() {
 
     const tickerMutation = useOptimisticMutation({
         mutationFn: async (newSpeed) => {
-            await User.updateMyUserData({ settings: { ticker_speed: newSpeed } });
+            await base44.auth.updateMe({ settings: { ticker_speed: newSpeed } });
             return newSpeed;
         },
         optimisticUpdate: () => speed,
