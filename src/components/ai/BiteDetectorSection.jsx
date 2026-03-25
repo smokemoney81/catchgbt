@@ -687,6 +687,20 @@ export default function BiteDetectorSection() {
                 style={{ willChange: 'auto' }}
               />
               
+              {/* Screenreader-Statusbereich: kündigt Alarm und Betriebszustand an */}
+              <div
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                className="sr-only"
+              >
+                {running
+                  ? alarmActive
+                    ? 'Biss erkannt!'
+                    : 'Bisserkennung laeuft'
+                  : 'Bisserkennung gestoppt'}
+              </div>
+
               {!running && (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center text-muted-foreground">

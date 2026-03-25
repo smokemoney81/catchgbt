@@ -186,13 +186,23 @@ function MapController() {
 
   const handleMyLocation = useCallback(async () => {
     triggerHaptic('medium');
+    announceLive('Standort wird ermittelt...');
     await requestGpsLocation();
     if (currentLocation && currentLocation.lat != null && currentLocation.lon != null) {
       setMapCenter({ lat: currentLocation.lat, lng: currentLocation.lon });
       setMapZoom(15);
       toast.success("Standort aktualisiert");
+      announceLive('Standort aktualisiert');
     }
-  }, [triggerHaptic, requestGpsLocation, currentLocation]);
+  }, [triggerHaptic, requestGpsLocation, currentLocation, announceLive]);
+
+  // Screenreader-Statusmeldung für dynamische Kartenänderungen
+  const [liveRegionMessage, setLiveRegionMessage] = React.useState('');
+
+  const announceLive = useCallback((msg) => {
+    setLiveRegionMessage('');
+    setTimeout(() => setLiveRegionMessage(msg), 50);
+  }, []);
 
   const filteredSpots = filters.spots ? spots : [];
   const filteredClubs = fishingClubs.filter(fc => {
@@ -220,6 +230,10 @@ function MapController() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-250px)] min-h-[500px] rounded-2xl overflow-hidden border border-gray-800 shadow-2xl">
+      {/* Screenreader-Live-Region fuer Kartenstatusaenderungen */}
+      <div role="status" aria-live="polite" aria-atomic="true" className="sr-only">
+        {liveRegionMessage}
+      </div>
       
       {/* Button-Leiste */}
       <div className="flex-shrink-0 bg-gray-950/95 backdrop-blur-xl border-b border-gray-800 p-2">
