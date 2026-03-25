@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy, Suspense } from "react";
+import React, { useState, useEffect, lazy, Suspense, startTransition } from "react";
 import { usePrefetch } from "@/hooks/usePrefetch";
 import SEO from "@/components/pwa/SEO";
 import { LocationProvider } from "@/components/location/LocationManager";
@@ -11,7 +11,7 @@ import UpdateNotification from "@/components/pwa/UpdateNotification";
 import OfflineIndicator from "@/components/pwa/OfflineIndicator";
 import { base44 } from "@/api/base44Client";
 import SwipeToRefresh from "@/components/utils/SwipeToRefresh";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { HapticProvider } from "@/components/utils/HapticFeedback";
 import { SoundProvider } from "@/components/utils/SoundManager";
 import { Toaster } from "sonner";
@@ -29,7 +29,7 @@ import BackButtonHandler from "@/components/navigation/BackButtonHandler";
 import ErrorBoundary from "@/lib/ErrorBoundary";
 import VoiceOverlay from "@/components/layout/VoiceOverlay";
 
-// Lazy-loaded non-critical components
+// Lazy-loaded nicht-kritische Komponenten
 const Sidebar = lazy(() => import("@/components/layout/Sidebar"));
 const QuickCatchDialog = lazy(() => import("@/components/log/QuickCatchDialog"));
 const EnhancedTicker = lazy(() => import("@/components/layout/TipTicker"));
@@ -101,11 +101,15 @@ function LayoutContent({ children, currentPageName }) {
         currentUser = await base44.auth.me();
       }
 
-      setUser(currentUser);
+      startTransition(() => {
+        setUser(currentUser);
+      });
       window.dispatchEvent(new CustomEvent('user-refresh-request'));
     } catch (error) {
       console.warn("User not logged in or error fetching user data:", error);
-      setUser(null);
+      startTransition(() => {
+        setUser(null);
+      });
     }
   };
 
@@ -113,7 +117,7 @@ function LayoutContent({ children, currentPageName }) {
     if (typeof requestIdleCallback !== 'undefined') {
       requestIdleCallback(() => refreshUser(), { timeout: 2000 });
     } else {
-      setTimeout(refreshUser, 0);
+      setTimeout(refreshUser, 500);
     }
   };
 
@@ -156,11 +160,13 @@ function LayoutContent({ children, currentPageName }) {
     };
   }, [user?.email]);
 
+  // Einmaliger, verzögerter Aufruf nach dem ersten Paint – blockiert FCP nicht
   useEffect(() => {
-    if (currentPageName !== 'Home') {
-      deferredRefreshUser();
-    }
+    deferredRefreshUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  useEffect(() => {
     // Save scroll position when leaving a page
     if (previousPage && previousPage !== currentPageName) {
       setScrollPositions(prev => ({
