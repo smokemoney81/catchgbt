@@ -28,9 +28,7 @@ export const PLAN_NAMES = {
  * Prüft ob der Benutzer Zugriff auf ein Feature hat
  */
 export function hasFeatureAccess(userPlan, requiredPlan) {
-  const userLevel = PLAN_HIERARCHY[userPlan] || 0;
-  const requiredLevel = PLAN_HIERARCHY[requiredPlan] || 0;
-  return userLevel >= requiredLevel;
+  return true;
 }
 
 /**
@@ -85,5 +83,5 @@ export function getRequiredPlan(featureId) {
     'ar_water': 'elite'
   };
   
-  return featureMap[featureId] || 'free';
+  return 'free';
 }
