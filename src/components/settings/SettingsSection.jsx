@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Settings as SettingsIcon, Volume2, VolumeX } from "lucide-react";
+import { Settings as SettingsIcon, Volume2, VolumeX, Shield, FileText } from "lucide-react";
 import VoiceSettings from "./VoiceSettings";
 import GeneralSettings from "./GeneralSettings";
 import TickerSettings from "./TickerSettings";
@@ -92,6 +92,35 @@ export default function SettingsSection() {
         </CardContent>
       </Card>
       <DeleteAccountSection />
+
+      <Card className="glass-morphism border-gray-800 rounded-2xl">
+        <CardHeader>
+          <CardTitle className="text-cyan-400 flex items-center gap-3 drop-shadow-[0_0_12px_rgba(34,211,238,0.7)]">
+            <Shield className="w-5 h-5" />
+            Rechtliches
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <a
+            href="https://vecxtgwxqzrogthqqdys.supabase.co/functions/v1/legal/datenschutz"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 p-3 rounded-xl bg-gray-800/40 hover:bg-gray-700/50 transition-colors text-gray-200 hover:text-cyan-400"
+          >
+            <Shield className="w-4 h-4 text-cyan-500 shrink-0" />
+            <span className="text-sm font-medium">Datenschutzerklarung</span>
+          </a>
+          <a
+            href="https://vecxtgwxqzrogthqqdys.supabase.co/functions/v1/legal/agb"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 p-3 rounded-xl bg-gray-800/40 hover:bg-gray-700/50 transition-colors text-gray-200 hover:text-cyan-400"
+          >
+            <FileText className="w-4 h-4 text-cyan-500 shrink-0" />
+            <span className="text-sm font-medium">Nutzungsbedingungen (AGB)</span>
+          </a>
+        </CardContent>
+      </Card>
     </div>
   );
 }
