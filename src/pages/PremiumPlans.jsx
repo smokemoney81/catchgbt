@@ -243,6 +243,28 @@ export default function PremiumPlans() {
         'Gruppen-Ranking & Team-Challenges',
         '~23% Ersparnis gegenueber monatlichem Ultimate'
       ]
+    },
+    {
+      id: 'friends_monthly',
+      name: 'Freundschaft Monatlich',
+      price: 39.00,
+      discountedPrice: 19.00,
+      icon: Sparkles,
+      color: 'from-pink-600 to-rose-600',
+      description: 'Monatsplan - 19 EUR sobald ein Freund sich anmeldet',
+      popular: false,
+      yearly: false,
+      features: [
+        'Alles aus Ultimate (1 Monat)',
+        'Regulaer 39 EUR/Monat',
+        'NUR 19 EUR/Monat sobald ein eingeladener Freund sich anmeldet',
+        'Freundes-Einladungen inklusive',
+        'Gemeinsame Spot-Gruppen mit Freunden',
+        'Geteilte Fangbuecher & Statistiken',
+        'Freunde zu Clans & Events einladen',
+        'Gruppen-Ranking & Team-Challenges',
+        'Monatlich kuendbar'
+      ]
     }
   ];
 
@@ -316,6 +338,11 @@ export default function PremiumPlans() {
                         </span>
                       )}
                     </div>
+                    {plan.discountedPrice && (
+                      <div className="mt-2 text-sm text-emerald-400 font-semibold">
+                        Mit Freund: nur {plan.discountedPrice}€/Monat
+                      </div>
+                    )}
                     {plan.yearly && (
                       <div className="mt-1">
                         <Badge className="bg-emerald-700 text-white text-xs">Jahresplan</Badge>
