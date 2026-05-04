@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import LanguageSwitcher from '@/components/i18n/LanguageSwitcher';
 import { LanguageProvider, useLanguage } from '@/components/i18n/LanguageContext';
 import TutorialModal from '@/components/tutorial/TutorialModal';
+import DeleteAccountSection from '@/components/settings/DeleteAccountSection';
 
 const features = [
   'KI-Fischidentifikation aus Fotos',
@@ -132,11 +133,14 @@ function LandingPageContent() {
     const [currentPlan, setCurrentPlan] = useState(null);
     const [isLoadingPlan, setIsLoadingPlan] = useState(true);
     const [userName, setUserName] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [showDeleteAccount, setShowDeleteAccount] = useState(false);
     const { t } = useLanguage();
 
     useEffect(() => {
         loadUserPlan();
         loadUserName();
+        base44.auth.isAuthenticated().then(setIsAuthenticated).catch(() => setIsAuthenticated(false));
     }, []);
 
     const loadUserName = async () => {
@@ -866,6 +870,29 @@ function LandingPageContent() {
                     SOS
                 </motion.button>
             </div>
+
+            {isAuthenticated && (
+                <div className="fixed bottom-40 right-8 z-50">
+                    {showDeleteAccount ? (
+                        <div className="w-80">
+                            <DeleteAccountSection />
+                            <button
+                                onClick={() => setShowDeleteAccount(false)}
+                                className="mt-2 w-full text-xs text-gray-500 hover:text-gray-300 transition-colors text-center"
+                            >
+                                Abbrechen
+                            </button>
+                        </div>
+                    ) : (
+                        <button
+                            onClick={() => setShowDeleteAccount(true)}
+                            className="px-4 py-2 rounded-lg bg-red-950/40 hover:bg-red-900/50 text-red-400 border border-red-800/40 text-xs font-medium transition"
+                        >
+                            Konto löschen
+                        </button>
+                    )}
+                </div>
+            )}
 
             <TutorialModal isOpen={tutorialOpen} onClose={() => setTutorialOpen(false)} />
 
