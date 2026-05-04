@@ -178,19 +178,19 @@ function MapController() {
     queryClient.invalidateQueries({ queryKey: ['mapClubs'] });
   }, [queryClient]);
 
-  const handleLocationClick = useCallback((location, type) => {
-    setSelectedLocation({ ...location, type });
-    triggerHaptic('light');
-    playSound('selection');
-  }, [triggerHaptic, playSound]);
-
   // Screenreader-Statusmeldung für dynamische Kartenänderungen
-  const [liveRegionMessage, setLiveRegionMessage] = React.useState('');
+  const [liveRegionMessage, setLiveRegionMessage] = useState('');
 
   const announceLive = useCallback((msg) => {
     setLiveRegionMessage('');
     setTimeout(() => setLiveRegionMessage(msg), 50);
   }, []);
+
+  const handleLocationClick = useCallback((location, type) => {
+    setSelectedLocation({ ...location, type });
+    triggerHaptic('light');
+    playSound('selection');
+  }, [triggerHaptic, playSound]);
 
   const handleMyLocation = useCallback(async () => {
     triggerHaptic('medium');

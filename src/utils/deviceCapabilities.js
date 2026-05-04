@@ -148,7 +148,7 @@ export const DeviceCapabilities = {
 };
 
 // Auto-log in development
-if (typeof process !== 'undefined' && process.env.NODE_ENV === 'development') {
+if (import.meta.env.DEV) {
   if (typeof window !== 'undefined') {
     window.addEventListener('load', () => {
       // Available in console
