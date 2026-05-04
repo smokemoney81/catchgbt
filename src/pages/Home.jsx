@@ -742,11 +742,11 @@ function LandingPageContent() {
                         WebkitTextFillColor: 'transparent'
                     }}
                 >
-                    <span className="mr-24">Catchly wünscht dir viel Erfolg und Petri Heil</span>
+                    <span className="mr-24">Catchgbt wünscht dir viel Erfolg und Petri Heil</span>
                     <span className="mr-24">Deine Fangdaten werden niemals an Dritte weitergegeben</span>
                     <span className="mr-24">Private Logs: dein Fangbuch gehoert nur dir</span>
                     <span className="mr-24">Datenschutz nach DSGVO - volle Kontrolle uber deine Daten</span>
-                    <span className="mr-24">Catchly wünscht dir viel Erfolg und Petri Heil</span>
+                    <span className="mr-24">Catchgbt wünscht dir viel Erfolg und Petri Heil</span>
                 </motion.div>
                 <style>{`
                     @keyframes scroll {
@@ -797,7 +797,7 @@ function LandingPageContent() {
                                 animation: 'gradient-wave 3s ease infinite'
                             }}
                         >
-                            Catchly.com
+                            Catchgbt.com
                         </motion.span>
                     </motion.div>
                 </a>
