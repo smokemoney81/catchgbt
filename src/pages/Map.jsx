@@ -18,14 +18,8 @@ export default function MapPage() {
   }, []);
 
   return (
-    <PremiumGuard 
-      user={user} 
-      requiredPlan="basic"
-      feature="Die erweiterte Karten-Ansicht ist ein Basic-Feature"
-    >
-      <div className="min-h-screen bg-gray-950 p-4">
-        <MapController />
-      </div>
-    </PremiumGuard>
+    <div className="min-h-screen bg-gray-950 p-4">
+      <MapController />
+    </div>
   );
 }
