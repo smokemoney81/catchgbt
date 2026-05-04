@@ -35,6 +35,7 @@ const QuickCatchDialog = lazy(() => import("@/components/log/QuickCatchDialog"))
 const EnhancedTicker = lazy(() => import("@/components/layout/TipTicker"));
 const FeedbackManager = lazy(() => import("@/components/feedback/FeedbackManager"));
 const SupportAgentButton = lazy(() => import("@/components/layout/SupportAgentButton"));
+const FirstLoginTutorialPrompt = lazy(() => import("@/components/tutorial/FirstLoginTutorialPrompt"));
 
 const LazyFallback = () => null;
 
@@ -394,6 +395,12 @@ function LayoutContent({ children, currentPageName }) {
                 <SuspenseWithErrorBoundary>
                   <FeedbackManager />
                 </SuspenseWithErrorBoundary>
+
+                {user && (
+                  <SuspenseWithErrorBoundary>
+                    <FirstLoginTutorialPrompt />
+                  </SuspenseWithErrorBoundary>
+                )}
 
                 <SuspenseWithErrorBoundary>
                   <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} currentPageName={currentPageName} />
