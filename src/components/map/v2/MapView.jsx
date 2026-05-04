@@ -263,7 +263,7 @@ export default function MapView({
       )}
 
       {/* Review Markers with Stars */}
-      {onReviewsLoad && React.useMemo(() => {
+      {onReviewsLoad && ((() => {
         const reviewsBySpot = {};
         return (
           <>
@@ -300,7 +300,7 @@ export default function MapView({
             })}
           </>
         );
-      }, [])}
+      })())}
 
       {/* User Spots */}
       {spots.filter(spot => spot.latitude != null && spot.longitude != null).map((spot) => (

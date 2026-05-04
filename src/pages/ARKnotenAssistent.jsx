@@ -120,6 +120,7 @@ export default function ARKnotenAssistent() {
     });
     mpHandsRef.current.onResults(onHandResults);
 
+    const Camera = window.Camera;
     mpCameraRef.current = new Camera(videoRef.current, {
       onFrame: async () => {
         if (mpHandsRef.current) {

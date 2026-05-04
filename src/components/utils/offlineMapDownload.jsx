@@ -190,7 +190,7 @@ export async function getOfflineMapSize() {
 
 // Lösche alle offline Kartendaten
 export async function clearOfflineMaps() {
-  if (!tilesDb) await initTilesDb();
+  if (!tilesDb) await initTilesDB();
   
   return new Promise((resolve, reject) => {
     const transaction = tilesDb.transaction([TILE_STORE_NAME], 'readwrite');

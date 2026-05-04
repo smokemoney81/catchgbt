@@ -79,7 +79,7 @@ export default function SportSelectorModal({ isOpen, onClose, spot }) {
                 checked={selectedSports.includes(sport)}
                 onChange={() => toggleSport(sport)}
                 className="w-4 h-4 rounded"
-                disabled={loading}
+                disabled={updateSportsMutation.isPending}
               />
               <span className="text-sm text-gray-300">{sport}</span>
             </label>

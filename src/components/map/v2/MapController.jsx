@@ -184,6 +184,14 @@ function MapController() {
     playSound('selection');
   }, [triggerHaptic, playSound]);
 
+  // Screenreader-Statusmeldung für dynamische Kartenänderungen
+  const [liveRegionMessage, setLiveRegionMessage] = React.useState('');
+
+  const announceLive = useCallback((msg) => {
+    setLiveRegionMessage('');
+    setTimeout(() => setLiveRegionMessage(msg), 50);
+  }, []);
+
   const handleMyLocation = useCallback(async () => {
     triggerHaptic('medium');
     announceLive('Standort wird ermittelt...');
@@ -195,14 +203,6 @@ function MapController() {
       announceLive('Standort aktualisiert');
     }
   }, [triggerHaptic, requestGpsLocation, currentLocation, announceLive]);
-
-  // Screenreader-Statusmeldung für dynamische Kartenänderungen
-  const [liveRegionMessage, setLiveRegionMessage] = React.useState('');
-
-  const announceLive = useCallback((msg) => {
-    setLiveRegionMessage('');
-    setTimeout(() => setLiveRegionMessage(msg), 50);
-  }, []);
 
   const filteredSpots = filters.spots ? spots : [];
   const filteredClubs = fishingClubs.filter(fc => {

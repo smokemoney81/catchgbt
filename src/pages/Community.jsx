@@ -429,6 +429,8 @@ export default function Community() {
     }
   };
 
+  const queryClient = useQueryClient();
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
@@ -439,8 +441,6 @@ export default function Community() {
       </div>
     );
   }
-
-  const queryClient = useQueryClient();
 
   const handleRefresh = async () => {
     await Promise.all([
