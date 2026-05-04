@@ -150,16 +150,17 @@ export default function PremiumPlans() {
       price: 0,
       icon: Check,
       color: 'from-gray-600 to-gray-700',
-      description: 'Alles Wichtige zum Einstieg',
+      description: 'Kostenlos - alle Grundfunktionen',
       features: [
+        'Dashboard mit Wetter & Spot-Karte',
         'Digitales Fangbuch (unbegrenzt)',
-        'KI-Foto-Analyse (3x pro Monat)',
-        'Interaktive Karte mit Community-Spots',
-        'Wetter aktuell + 1 Tag',
-        'Schonzeiten & Mindestmasse',
-        'Angelschein-Pruefungsvorbereitung',
-        'Tutorials & Knotentechniken',
-        'Offline-Fangbuch'
+        'Interaktive Angelkarte mit Community-Spots',
+        'Schonzeiten & Mindestmasse nachschlagen',
+        'Angelschein-Pruefungsvorbereitung (Quiz)',
+        'Tutorials & AR-Knotenassistent',
+        'Fang-Statistiken (CatchStats)',
+        'Profil & Einstellungen',
+        'Community-Feed lesen & posten'
       ]
     },
     {
@@ -172,14 +173,14 @@ export default function PremiumPlans() {
       popular: false,
       features: [
         'Alles aus Free',
-        'KI-Foto-Analyse (unbegrenzt)',
-        'KI-Buddy Chat (unbegrenzt)',
+        'KI-Buddy Chat (unbegrenzt) - CatchGBT',
+        'KI-Foto-Analyse von Faengen (unbegrenzt)',
         'Wetter 5 Tage + Wetter-Alarme',
-        'Eigene Spots speichern (unbegrenzt)',
+        'Eigene Spots speichern & verwalten',
         'KI-Koeder-Mischer',
-        'Gewaesser-Wasseranalyse (Basis)',
-        'Trip-Planer mit KI',
-        'Fang-Statistiken & Filter'
+        'Gewaesser-Wasseranalyse',
+        'Trip-Planer mit KI-Unterstuetzung',
+        'Angelbedarf-Marktplatz (UsedGear)'
       ]
     },
     {
@@ -192,15 +193,16 @@ export default function PremiumPlans() {
       popular: true,
       features: [
         'Alles aus Basic',
-        'Satelliten-Gewaesseranalyse (Echtdaten)',
         'KI-Fangprognosen & Hotspot-Erkennung',
-        'AR-Gewaesser-Ansicht (3D)',
-        'Tiefenkarten & Crowdsourcing-Daten',
-        'Geraete-Integration (Bissanzeiger, Echolot)',
+        'Satelliten-Gewaesseranalyse (Echtdaten)',
+        'AR-Gewaesser-Ansicht 3D',
+        'Tiefenkarten & Bathymetrie-Crowdsourcing',
+        'Geraete-Integration (Echolot, Bissanzeiger)',
         'Voice Control: Hey Buddy',
+        'Digitale Lizenzverwaltung',
         'Community-Ranking, Clans & Events',
-        'Fang-Export (PDF & CSV)',
-        'Digitale Lizenzverwaltung'
+        'Fang-Export (PDF)',
+        'KI-Trip-Detailbericht (Premium)'
       ]
     },
     {
@@ -214,12 +216,12 @@ export default function PremiumPlans() {
       features: [
         'Alles aus Pro',
         'Live-Bissanzeiger per Smartphone-Kamera',
-        'KI-Kamera Echtzeit-Fischerkennung',
-        'Individuelle Spot-Tiefenanalysen',
-        'Profi-Statistiken: Zeitreihen & Trends',
-        'Detaillierte KI-Trip-Berichte (Premium)',
-        'Prioritaets-Synchronisation & Backup',
-        'Exklusive Ultimate-Features & fruehzeitiger Zugang'
+        'KI-Kamera: Echtzeit-Fischerkennung',
+        'CatchCam - KI-Analyse direkt vom Foto',
+        'Spot-Gruppen mit Freunden teilen',
+        'Profi-Analyse: Zeitreihen & Trends',
+        'Priorisierte KI-Antworten',
+        'Fruehzeitiger Zugang zu neuen Features'
       ]
     },
     {
@@ -239,7 +241,7 @@ export default function PremiumPlans() {
         'Geteilte Fangbuecher & Statistiken',
         'Freunde zu Clans & Events einladen',
         'Gruppen-Ranking & Team-Challenges',
-        'Spar 20% gegenueber monatlichem Elite-Plan'
+        '~23% Ersparnis gegenueber monatlichem Ultimate'
       ]
     }
   ];
