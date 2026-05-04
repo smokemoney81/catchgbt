@@ -13,7 +13,8 @@ import { MobileSelect } from "@/components/ui/mobile-select";
 import { Textarea } from "@/components/ui/textarea";
 import SwipeToRefresh from "@/components/utils/SwipeToRefresh";
 import { toast } from "sonner";
-import { Upload, X, Loader2, Share2 } from "lucide-react";
+import { Upload, X, Loader2, Share2, BarChart2 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { UploadFile, ExtractDataFromUploadedFile } from "@/integrations/Core";
 import CatchHistory from "@/components/log/CatchHistory";
 import PendingPhotoCard from '@/components/log/PendingPhotoCard';
@@ -487,6 +488,14 @@ export default function Logbook() {
         </div>
       )}
 
+      <div className="flex justify-end">
+        <Link to="/CatchStats">
+          <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-800 hover:bg-gray-700 border border-gray-700 text-cyan-400 text-sm font-medium transition-colors min-h-[44px]">
+            <BarChart2 className="w-4 h-4" />
+            Fang-Statistiken anzeigen
+          </button>
+        </Link>
+      </div>
       <CatchHistory catches={catches} isLoading={loading} onEdit={handleEdit} onDelete={handleDelete} onRefresh={() => queryClient.invalidateQueries({ queryKey: ['catches'] })} />
 
       <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>

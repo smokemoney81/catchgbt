@@ -18,6 +18,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { migrateOfflineStorage } from '@/lib/StorageMigration';
 import ErrorBoundary from '@/lib/ErrorBoundary';
+import CatchStats from '@/pages/CatchStats';
 
 const LazyPageFallback = () => (
   <div className="fixed inset-0 flex items-center justify-center bg-gray-950">
@@ -82,6 +83,13 @@ const AnimatedRoutes = () => {
               }
             />
           ))}
+          <Route path="/CatchStats" element={
+            <ErrorBoundary>
+              <LayoutWrapper currentPageName="CatchStats">
+                <CatchStats />
+              </LayoutWrapper>
+            </ErrorBoundary>
+          } />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </AnimatePresence>
