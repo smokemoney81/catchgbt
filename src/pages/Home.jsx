@@ -29,6 +29,10 @@ const features = [
   'Wetteralarme fur optimale Angelbedingungen',
   'Gerateintegration fur Echolote und Sensoren',
   'Angelparks und Vereine in deiner Nahe finden',
+  'Deine Fangdaten bleiben privat - keine Weitergabe an Dritte',
+  'Private Logs: dein Fangbuch ist nur fur dich sichtbar',
+  'Datenschutz nach DSGVO - du behaltst die Kontrolle uber deine Daten',
+  'Optional: Fange in der Community teilen oder privat behalten',
 ];
 
 const morningGreetings = [
@@ -739,6 +743,9 @@ function LandingPageContent() {
                     }}
                 >
                     <span className="mr-24">Catchly wünscht dir viel Erfolg und Petri Heil</span>
+                    <span className="mr-24">Deine Fangdaten werden niemals an Dritte weitergegeben</span>
+                    <span className="mr-24">Private Logs: dein Fangbuch gehoert nur dir</span>
+                    <span className="mr-24">Datenschutz nach DSGVO - volle Kontrolle uber deine Daten</span>
                     <span className="mr-24">Catchly wünscht dir viel Erfolg und Petri Heil</span>
                 </motion.div>
                 <style>{`
