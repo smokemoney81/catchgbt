@@ -49,6 +49,7 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
   const menuItems = [
     { name: "Dashboard", path: "Dashboard", key: "nav.dashboard" },
     { name: "Fangbuch", path: "Logbook", key: "nav.logbook" },
+    { name: "Fang-Uebersicht", path: "CatchStats", key: "nav.catchstats" },
     { name: "Spots & Karte", path: "Map", key: "nav.map" },
     { name: "Wetter", path: "Weather", key: "nav.weather" },
     { name: "Event", path: "Events", key: "nav.events", isLive: true },

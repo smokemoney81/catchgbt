@@ -496,6 +496,7 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
               { name: "Karte", path: "Map", offline: true },
               { name: "Wetter", path: "Weather", offline: true },
               { name: "Fangbuch", path: "Logbook", offline: true },
+              { name: "Fang-Uebersicht", path: "CatchStats" },
               { name: "KI-Chat", path: "AIAssistant" },
               { name: "KI-Cam", path: "AI" },
               { name: "Gewaesser (C)", path: "WaterAnalysis", offline: true },
