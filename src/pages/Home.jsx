@@ -729,38 +729,34 @@ function LandingPageContent() {
             </motion.div>
 
             <div className="fixed top-16 sm:top-32 left-0 right-0 z-10 w-full overflow-hidden flex items-center pointer-events-none">
-                <motion.div 
-                    className="whitespace-nowrap flex items-center text-xl sm:text-4xl font-bold opacity-70 pl-4" 
-                    animate={{
-                        backgroundImage: [
-                            'linear-gradient(90deg, #a855f7, #3b82f6, #06b6d4)',
-                            'linear-gradient(90deg, #3b82f6, #06b6d4, #a855f7)',
-                            'linear-gradient(90deg, #06b6d4, #a855f7, #3b82f6)',
-                            'linear-gradient(90deg, #a855f7, #3b82f6, #06b6d4)'
-                        ]
-                    }}
-                    transition={{
-                        duration: 5,
-                        repeat: Infinity,
-                        ease: "linear"
-                    }}
+                <div
+                    className="whitespace-nowrap flex items-center text-xl sm:text-4xl font-bold opacity-70 home-gold-scroll"
                     style={{
-                        animation: `scroll 40s linear infinite`,
+                        backgroundImage: 'linear-gradient(90deg, #fbbf24, #f59e0b, #fbbf24, #fde68a, #fbbf24)',
+                        backgroundSize: '200% auto',
                         backgroundClip: 'text',
                         WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent'
+                        WebkitTextFillColor: 'transparent',
+                        color: 'transparent'
                     }}
                 >
-                    <span className="mr-24">Catchgbt wünscht dir viel Erfolg und Petri Heil</span>
+                    <span className="mr-24 pl-4">Catchgbt wünscht dir viel Erfolg und Petri Heil</span>
                     <span className="mr-24">Deine Fangdaten werden niemals an Dritte weitergegeben</span>
                     <span className="mr-24">Private Logs: dein Fangbuch gehoert nur dir</span>
                     <span className="mr-24">Datenschutz nach DSGVO - volle Kontrolle uber deine Daten</span>
-                    <span className="mr-24">Catchgbt wünscht dir viel Erfolg und Petri Heil</span>
-                </motion.div>
+                    <span className="mr-24 pl-4">Catchgbt wünscht dir viel Erfolg und Petri Heil</span>
+                    <span className="mr-24">Deine Fangdaten werden niemals an Dritte weitergegeben</span>
+                    <span className="mr-24">Private Logs: dein Fangbuch gehoert nur dir</span>
+                    <span className="mr-24">Datenschutz nach DSGVO - volle Kontrolle uber deine Daten</span>
+                </div>
                 <style>{`
-                    @keyframes scroll {
-                        from { transform: translateX(0); }
-                        to { transform: translateX(-50%); }
+                    @keyframes homeGoldScroll {
+                        0% { transform: translate3d(0, 0, 0); }
+                        100% { transform: translate3d(-50%, 0, 0); }
+                    }
+                    .home-gold-scroll {
+                        animation: homeGoldScroll 40s linear infinite;
+                        will-change: transform;
                     }
                 `}</style>
             </div>
