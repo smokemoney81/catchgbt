@@ -141,6 +141,7 @@ Bewerte: "Ausgezeichnet" / "Gut" / "Akzeptabel" / "Unscharf" / "Schlecht"
 
 Antworte NUR mit validem JSON!`,
       file_urls: [file_url],
+      model: 'gemini_3_flash',
       response_json_schema: {
         type: "object",
         properties: {

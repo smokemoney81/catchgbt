@@ -25,6 +25,7 @@ Gib eine ehrliche, faire Bewertung ab.`;
       prompt,
       file_urls: [photo_url],
       add_context_from_internet: false,
+      model: 'gemini_3_flash',
       response_json_schema: {
         type: "object",
         properties: {

@@ -76,6 +76,7 @@ Gib Empfehlungen in exakt diesem JSON-Format zurueck:
 
     const aiResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt,
+      model: 'gemini_3_flash',
       response_json_schema: {
         type: "object",
         properties: {

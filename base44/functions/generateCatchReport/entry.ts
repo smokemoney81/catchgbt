@@ -34,6 +34,7 @@ Antworte im JSON-Format.`;
     const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt,
       file_urls: [photo_url],
+      model: 'gemini_3_flash',
       response_json_schema: {
         type: 'object',
         properties: {
