@@ -110,7 +110,7 @@ function FeatureHints() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentFeature(prev => (prev + 1) % features.length);
-    }, 20000);
+    }, 4000);
     return () => clearInterval(interval);
   }, []);
 
