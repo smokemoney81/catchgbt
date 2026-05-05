@@ -389,11 +389,8 @@ export default function PremiumPlans() {
                           )}
                         </Button>
                       )}
-                      <WebCheckoutButton planId={plan.id} disabled={isProcessing} />
-                      {billingAvailable && (
-                        <p className="text-[11px] text-gray-500 text-center">
-                          oder mit Karte, PayPal, SEPA oder Klarna im Browser
-                        </p>
+                      {!billingAvailable && (
+                        <WebCheckoutButton planId={plan.id} disabled={isProcessing} />
                       )}
                     </div>
                   )}
@@ -425,8 +422,9 @@ export default function PremiumPlans() {
           </div>
 
           <p className="text-gray-500 text-sm">
-            Bezahlung per Karte, PayPal, SEPA Lastschrift oder Klarna laeuft sicher ueber Stripe.
-            Google Play Kaeufe werden ueber deinen Google Account verwaltet (Kuendigung in den Play Store Einstellungen).
+            {billingAvailable
+              ? 'Alle Kaeufe erfolgen ueber deinen Google Play Account. Verwaltung & Kuendigung in den Play Store Einstellungen.'
+              : 'Bezahlung per Karte, PayPal, SEPA Lastschrift oder Klarna laeuft sicher ueber Stripe.'}
           </p>
         </div>
       </div>
