@@ -26,6 +26,7 @@ import {
   LifeBuoy,
 } from "lucide-react";
 import { useNavigationContext } from "@/lib/NavigationContext";
+import { trackFeatureClick } from "@/components/utils/tracker";
 
 const tabs = [
   { name: "Dashboard", path: "Dashboard", icon: Home },
@@ -62,6 +63,7 @@ export default function BottomTabs() {
 
   const handleTabClick = (e, tab) => {
     e.preventDefault();
+    trackFeatureClick(tab.path, { source: "bottom_tabs" });
     switchTab(tab.path);
     const tabStack = getTabStack(tab.path);
     if (tabStack.length > 0) {

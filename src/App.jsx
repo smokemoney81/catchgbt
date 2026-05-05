@@ -19,6 +19,8 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import { migrateOfflineStorage } from '@/lib/StorageMigration';
 import ErrorBoundary from '@/lib/ErrorBoundary';
 import CatchStats from '@/pages/CatchStats';
+import AdminTracking from '@/pages/AdminTracking';
+import PageViewTracker from '@/components/utils/PageViewTracker';
 
 const LazyPageFallback = () => (
   <div className="fixed inset-0 flex items-center justify-center bg-gray-950">
@@ -90,6 +92,13 @@ const AnimatedRoutes = () => {
               </LayoutWrapper>
             </ErrorBoundary>
           } />
+          <Route path="/AdminTracking" element={
+            <ErrorBoundary>
+              <LayoutWrapper currentPageName="AdminTracking">
+                <AdminTracking />
+              </LayoutWrapper>
+            </ErrorBoundary>
+          } />
           <Route path="*" element={<PageNotFound />} />
         </Routes>
       </AnimatePresence>
@@ -113,6 +122,7 @@ function App() {
           <Router>
             <NavigationProvider>
               <NavigationTracker />
+              <PageViewTracker />
               <AuthenticatedApp />
             </NavigationProvider>
           </Router>
