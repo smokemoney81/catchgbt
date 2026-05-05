@@ -86,11 +86,17 @@ Deno.serve(async (req) => {
       priceData.recurring = { interval: planConfig.interval, interval_count: 1 };
     }
 
-    // Zahlungsmethoden: Karte ist immer aktiv. Weitere Methoden (PayPal/Klarna/SEPA)
-    // musst du im Stripe-Dashboard unter Settings -> Payment methods aktivieren -
-    // dann werden sie automatisch in der Checkout-Seite angezeigt.
+    // Zahlungsmethoden: Karte enthaelt automatisch Google Pay und Apple Pay
+    // (Wallet-Buttons erscheinen wenn Geraet/Browser sie unterstuetzt).
+    // Weitere Methoden (PayPal/Klarna/SEPA) musst du im Stripe-Dashboard unter
+    // Settings -> Payment methods aktivieren.
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
+      payment_method_options: {
+        card: {
+          request_three_d_secure: 'automatic'
+        }
+      },
       line_items: [{ price_data: priceData, quantity: 1 }],
       mode: isSubscription ? 'subscription' : 'payment',
       success_url: successUrl,

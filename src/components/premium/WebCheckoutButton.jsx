@@ -44,7 +44,7 @@ export default function WebCheckoutButton({ planId, disabled }) {
       ) : (
         <>
           <CreditCard className="w-4 h-4" />
-          Mit Karte bezahlen
+          Karte / Google Pay / Apple Pay
         </>
       )}
     </Button>
