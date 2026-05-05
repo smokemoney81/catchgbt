@@ -2,40 +2,32 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Crown, Zap, Star, Sparkles, Mail, CreditCard, Loader2 } from "lucide-react";
+import { Check, Crown, Zap, Star, Sparkles, Mail, Loader2, ShoppingBag, Smartphone } from "lucide-react";
 import { toast } from "sonner";
 import { base44 } from "@/api/base44Client";
-
+import {
+  startGooglePlayPurchase,
+  isGooglePlayBillingAvailable
+} from "@/components/premium/googlePlayBilling";
 
 export default function PremiumPlans() {
   const [user, setUser] = useState(null);
   const [currentPlan, setCurrentPlan] = useState(null);
   const [loading, setLoading] = useState(true);
   const [processingPlan, setProcessingPlan] = useState(null);
+  const [billingAvailable, setBillingAvailable] = useState(false);
 
   useEffect(() => {
     loadData();
-    
-    // Check for successful payment redirect
-    const urlParams = new URLSearchParams(window.location.search);
-    const success = urlParams.get('success');
-    const planId = urlParams.get('plan_id');
-    const sessionId = urlParams.get('session_id');
-    
-    if (success === 'true' && planId && sessionId) {
-      handleStripeSuccess(planId, sessionId);
-    }
+    setBillingAvailable(isGooglePlayBillingAvailable());
   }, []);
 
   const loadData = async () => {
     try {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
-      console.log('[PremiumPlans] Current user:', currentUser.email);
 
       const planStatusResponse = await base44.functions.invoke('getPlanStatus');
-      console.log('[PremiumPlans] Plan status response:', planStatusResponse.data);
-      
       if (planStatusResponse.data && planStatusResponse.data.plan) {
         setCurrentPlan(planStatusResponse.data.plan);
       } else {
@@ -43,102 +35,31 @@ export default function PremiumPlans() {
       }
     } catch (error) {
       console.error("[PremiumPlans] Fehler beim Laden:", error);
-      setCurrentPlan({ id: 'free', name: 'Kostenlos' }); 
+      setCurrentPlan({ id: 'free', name: 'Kostenlos' });
     }
     setLoading(false);
   };
 
-  const handleStripeSuccess = async (planId, sessionId) => {
+  const handlePlayStorePurchase = async (planId) => {
+    setProcessingPlan(planId);
     try {
-      toast.info('Aktiviere deinen Premium-Plan...');
-      console.log('[PremiumPlans] Activating plan:', planId, sessionId);
-      
-      const response = await base44.functions.invoke('activatePlan', {
-        plan_id: planId,
-        payment_method: 'stripe',
-        transaction_id: sessionId
-      });
+      const result = await startGooglePlayPurchase(planId);
 
-      console.log('[PremiumPlans] Activation response:', response.data);
-
-      toast.success('Premium-Plan aktiviert', {
-        description: 'Dein Plan wurde erfolgreich aktiviert'
-      });
-
-      // Reload data
-      await loadData();
-      
-      // Clean URL
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } catch (error) {
-      console.error('[PremiumPlans] Plan activation error:', error);
-      toast.error('Fehler bei der Aktivierung', {
-        description: error.message || 'Bitte kontaktiere den Support'
-      });
-    }
-  };
-
-  const handleStripeCheckout = async (planId) => {
-    try {
-      setProcessingPlan(planId);
-      
-      console.log('[Frontend] Starting Stripe checkout for plan:', planId);
-      
-      toast.info('Erstelle Checkout-Session...', {
-        duration: 2000
-      });
-      
-      const response = await base44.functions.invoke('createStripeCheckoutSession', {
-        plan_id: planId
-      });
-
-      console.log('[Frontend] Stripe response:', response);
-      console.log('[Frontend] Response data:', response.data);
-
-      // Prüfe auf Fehler
-      if (response.data?.error) {
-        console.error('[Frontend] Stripe Error:', response.data.error);
-        console.error('[Frontend] Debug Info:', response.data.debug);
-        
-        toast.error('Stripe Fehler', {
-          description: response.data.error,
-          duration: 5000
+      if (result.success && result.pending) {
+        toast.info('Google Play Kauf gestartet', {
+          description: 'Bitte schließe den Kauf im Play Store Dialog ab.'
         });
-        setProcessingPlan(null);
-        return;
-      }
-
-      // Prüfe checkout_url
-      if (!response.data?.checkout_url) {
-        console.error('[Frontend] Keine checkout_url in Response:', response.data);
-        
-        toast.error('Fehler beim Checkout', {
-          description: 'Keine Checkout-URL erhalten. Bitte versuche es erneut.',
-          duration: 5000
+      } else if (!result.success) {
+        toast.error('Kauf nicht möglich', {
+          description: result.error,
+          duration: 6000
         });
-        setProcessingPlan(null);
-        return;
       }
-
-      console.log('[Frontend] Redirecting to:', response.data.checkout_url);
-      
-      toast.success('Weiterleitung zu Stripe...', {
-        duration: 1000
-      });
-      
-      // Redirect nach kurzer Verzögerung
-      setTimeout(() => {
-        window.location.href = response.data.checkout_url;
-      }, 500);
-
     } catch (error) {
-      console.error('[Frontend] Exception:', error);
-      console.error('[Frontend] Stack:', error.stack);
-      
-      toast.error('Fehler beim Checkout', {
-        description: error.message || 'Unbekannter Fehler',
-        duration: 5000
+      toast.error('Fehler', {
+        description: error.message || 'Unbekannter Fehler'
       });
+    } finally {
       setProcessingPlan(null);
     }
   };
@@ -282,7 +203,7 @@ export default function PremiumPlans() {
   return (
     <div className="min-h-screen bg-gray-950 p-6 pb-32">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-cyan-400 drop-shadow-[0_0_20px_rgba(34,211,238,0.8)] mb-4">
             Premium-Pläne
           </h1>
@@ -299,6 +220,17 @@ export default function PremiumPlans() {
           )}
         </div>
 
+        {!billingAvailable && (
+          <div className="max-w-3xl mx-auto mb-8 p-4 rounded-xl border border-amber-700/50 bg-amber-900/20 flex items-start gap-3">
+            <Smartphone className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-amber-100">
+              <strong className="block mb-1">Käufe nur in der Android-App</strong>
+              Premium-Pläne können ausschließlich über den Google Play Store in der CatchGBT Android-App gekauft werden.
+              Lade die App im Play Store herunter, um einen Plan zu erwerben.
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {plans.map((plan) => {
             const Icon = plan.icon;
@@ -306,7 +238,7 @@ export default function PremiumPlans() {
             const isProcessing = processingPlan === plan.id;
 
             return (
-              <Card 
+              <Card
                 key={plan.id}
                 className={`glass-morphism relative overflow-hidden ${
                   isCurrentPlan ? 'border-emerald-500 border-2' : 'border-gray-800'
@@ -371,19 +303,19 @@ export default function PremiumPlans() {
                     </Button>
                   ) : (
                     <Button
-                      onClick={() => handleStripeCheckout(plan.id)}
-                      disabled={isProcessing}
-                      className={`w-full bg-gradient-to-r ${plan.color} hover:opacity-90 flex items-center justify-center gap-2`}
+                      onClick={() => handlePlayStorePurchase(plan.id)}
+                      disabled={isProcessing || !billingAvailable}
+                      className={`w-full bg-gradient-to-r ${plan.color} hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-50`}
                     >
                       {isProcessing ? (
                         <>
                           <Loader2 className="w-4 h-4 animate-spin" />
-                          Weiterleitung...
+                          Kauf wird gestartet...
                         </>
                       ) : (
                         <>
-                          <CreditCard className="w-4 h-4" />
-                          Mit Google Pay bezahlen
+                          <ShoppingBag className="w-4 h-4" />
+                          {billingAvailable ? 'Im Play Store kaufen' : 'Nur in Android-App'}
                         </>
                       )}
                     </Button>
@@ -401,7 +333,7 @@ export default function PremiumPlans() {
               Fragen zu Premium?
             </h3>
             <p className="text-gray-400 mb-4">
-              Kontaktiere uns per E-Mail für ein individuelles Angebot oder bei Fragen zu den Premium-Plänen.
+              Kontaktiere uns per E-Mail bei Fragen zu den Premium-Plänen oder zum Google Play Kauf.
             </p>
             <Button
               onClick={() => {
@@ -414,9 +346,9 @@ export default function PremiumPlans() {
               Support kontaktieren
             </Button>
           </div>
-          
+
           <p className="text-gray-500 text-sm">
-            Alle Preise verstehen sich pro Monat. Jederzeit kündbar.
+            Alle Käufe erfolgen über deinen Google Play Account. Verwaltung & Kündigung in den Play Store Einstellungen.
           </p>
         </div>
       </div>

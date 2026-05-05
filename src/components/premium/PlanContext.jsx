@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
+import { planMeetsRequirement, getPlanLevel } from './planHierarchy';
 
 const PlanContext = createContext();
 
@@ -33,15 +34,19 @@ export function PlanProvider({ children }) {
 
   useEffect(() => {
     loadPlan();
-    
     window.addEventListener('plan-updated', loadPlan);
     return () => window.removeEventListener('plan-updated', loadPlan);
   }, []);
 
-  const hasFeature = (requiredPlan) => true;
+  const hasFeature = (requiredPlan = 'basic') => {
+    const currentPlanId = plan?.id || 'free';
+    return planMeetsRequirement(currentPlanId, requiredPlan);
+  };
+
+  const planLevel = getPlanLevel(plan?.id || 'free');
 
   return (
-    <PlanContext.Provider value={{ plan, loading, hasFeature, reload: loadPlan }}>
+    <PlanContext.Provider value={{ plan, loading, hasFeature, planLevel, reload: loadPlan }}>
       {children}
     </PlanContext.Provider>
   );
