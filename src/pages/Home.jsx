@@ -756,53 +756,6 @@ function LandingPageContent() {
                 `}</style>
             </div>
 
-            <motion.div 
-                className="fixed top-[3%] left-[35%] z-50"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-            >
-                <a
-                    href="https://catchgbt.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block"
-                >
-                    <motion.div
-                        animate={{
-                            scale: [1, 1.08, 1],
-                        }}
-                        transition={{
-                            duration: 2,
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                        }}
-                    >
-                        <motion.span
-                            animate={{
-                                textShadow: [
-                                    '0 0 30px rgba(34, 211, 238, 0.9), 0 0 60px rgba(34, 211, 238, 0.6)',
-                                    '0 0 50px rgba(16, 185, 129, 0.9), 0 0 80px rgba(16, 185, 129, 0.6)',
-                                    '0 0 30px rgba(34, 211, 238, 0.9), 0 0 60px rgba(34, 211, 238, 0.6)'
-                                ]
-                            }}
-                            transition={{
-                                duration: 3,
-                                repeat: Infinity,
-                                ease: "easeInOut"
-                            }}
-                            className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-2xl cursor-pointer hover:opacity-80 transition-opacity"
-                            style={{ 
-                                backgroundSize: '200% auto',
-                                animation: 'gradient-wave 3s ease infinite'
-                            }}
-                        >
-                            Catchgbt.com
-                        </motion.span>
-                    </motion.div>
-                </a>
-            </motion.div>
-
             <div className="fixed bottom-40 left-8 z-50">
                 <motion.button
                     initial={{ opacity: 0, scale: 0.8 }}
