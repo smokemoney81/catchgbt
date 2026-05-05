@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Crown, Zap, Star, Sparkles, Mail, Loader2, ShoppingBag, Smartphone } from "lucide-react";
+import { Check, Crown, Zap, Star, Sparkles, Mail, Loader2, ShoppingBag, Smartphone, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { base44 } from "@/api/base44Client";
 import {
   startGooglePlayPurchase,
-  isGooglePlayBillingAvailable
+  isGooglePlayBillingAvailable,
+  restoreGooglePlayPurchases
 } from "@/components/premium/googlePlayBilling";
 
 export default function PremiumPlans() {
@@ -16,6 +17,7 @@ export default function PremiumPlans() {
   const [loading, setLoading] = useState(true);
   const [processingPlan, setProcessingPlan] = useState(null);
   const [billingAvailable, setBillingAvailable] = useState(false);
+  const [restoring, setRestoring] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -45,13 +47,22 @@ export default function PremiumPlans() {
     try {
       const result = await startGooglePlayPurchase(planId);
 
-      if (result.success && result.pending) {
-        toast.info('Google Play Kauf gestartet', {
-          description: 'Bitte schließe den Kauf im Play Store Dialog ab.'
+      if (result.success && result.activated) {
+        toast.success('Plan aktiviert', {
+          description: 'Dein Premium-Plan ist jetzt aktiv.'
         });
-      } else if (!result.success) {
+        await loadData();
+        window.dispatchEvent(new CustomEvent('plan-updated'));
+      } else if (result.cancelled) {
+        toast.info('Kauf abgebrochen');
+      } else if (result.pending) {
+        toast.info('Kauf wird verarbeitet', {
+          description: 'Falls der Kauf erfolgreich war, nutze "Käufe wiederherstellen".',
+          duration: 8000
+        });
+      } else {
         toast.error('Kauf nicht möglich', {
-          description: result.error,
+          description: result.error || 'Unbekannter Fehler',
           duration: 6000
         });
       }
@@ -61,6 +72,36 @@ export default function PremiumPlans() {
       });
     } finally {
       setProcessingPlan(null);
+    }
+  };
+
+  const handleRestorePurchases = async () => {
+    setRestoring(true);
+    try {
+      const result = await restoreGooglePlayPurchases();
+
+      if (result.success && result.restored > 0) {
+        toast.success('Käufe wiederhergestellt', {
+          description: result.message || `Plan ${result.planId} aktiviert.`
+        });
+        await loadData();
+        window.dispatchEvent(new CustomEvent('plan-updated'));
+      } else if (result.success) {
+        toast.info('Keine Käufe gefunden', {
+          description: result.message || 'Es wurden keine aktiven Google Play Käufe gefunden.'
+        });
+      } else {
+        toast.error('Wiederherstellung fehlgeschlagen', {
+          description: result.error,
+          duration: 6000
+        });
+      }
+    } catch (error) {
+      toast.error('Fehler', {
+        description: error.message || 'Unbekannter Fehler'
+      });
+    } finally {
+      setRestoring(false);
     }
   };
 
@@ -216,6 +257,29 @@ export default function PremiumPlans() {
                 Aktueller Plan: {currentPlan.name}
                 {currentPlan.remaining_days && ` - Noch ${currentPlan.remaining_days} Tage`}
               </Badge>
+            </div>
+          )}
+
+          {billingAvailable && (
+            <div className="mt-6">
+              <Button
+                onClick={handleRestorePurchases}
+                disabled={restoring}
+                variant="outline"
+                className="border-cyan-500 text-cyan-400 hover:bg-cyan-500/10"
+              >
+                {restoring ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Wird wiederhergestellt...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Käufe wiederherstellen
+                  </>
+                )}
+              </Button>
             </div>
           )}
         </div>

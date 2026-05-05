@@ -4,7 +4,7 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
-    
+
     if (!user) {
       console.error('[activatePlan] No user authenticated');
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
@@ -13,58 +13,74 @@ Deno.serve(async (req) => {
     console.log('[activatePlan] User:', user.email);
 
     const body = await req.json();
-    const { plan_id, payment_method, transaction_id } = body;
+    const { plan_id, payment_method, transaction_id, purchase_token, product_id } = body;
 
-    console.log('[activatePlan] Request:', { plan_id, payment_method, transaction_id });
+    console.log('[activatePlan] Request:', { plan_id, payment_method, transaction_id, product_id });
 
-    // Validiere Plan-ID
-    const validPlans = ['free', 'basic', 'pro', 'ultimate'];
+    // Validiere Plan-ID (inkl. Friends-Pläne)
+    const validPlans = ['free', 'basic', 'pro', 'ultimate', 'elite', 'friends', 'friends_monthly'];
     if (!validPlans.includes(plan_id)) {
       console.error('[activatePlan] Invalid plan_id:', plan_id);
-      return Response.json({ 
+      return Response.json({
         ok: false,
-        error: 'Ungültiger Plan' 
+        error: 'Ungültiger Plan'
       }, { status: 400 });
     }
 
-    // Berechne Ablaufdatum (30 Tage ab jetzt)
+    // Normalisiere elite -> ultimate für Konsistenz
+    const normalizedPlan = plan_id === 'elite' ? 'ultimate' : plan_id;
+
+    // Laufzeit bestimmen: friends = 1 Jahr, alle anderen = 30 Tage
     let expiresAt = null;
-    if (plan_id !== 'free') {
+    let durationDays = 0;
+    if (normalizedPlan !== 'free') {
       const expires = new Date();
-      expires.setDate(expires.getDate() + 30);
+      if (normalizedPlan === 'friends') {
+        expires.setDate(expires.getDate() + 365);
+        durationDays = 365;
+      } else {
+        expires.setDate(expires.getDate() + 30);
+        durationDays = 30;
+      }
       expiresAt = expires.toISOString();
     }
 
-    console.log('[activatePlan] Activating plan:', plan_id, 'expires:', expiresAt);
+    console.log('[activatePlan] Activating plan:', normalizedPlan, 'expires:', expiresAt);
 
     // Aktiviere Plan für den aktuellen User
     const updateData = {
-      premium_plan_id: plan_id,
+      premium_plan_id: normalizedPlan,
       premium_expires_at: expiresAt
     };
+
+    // Optional: Google Play Daten persistieren (falls Felder existieren)
+    if (payment_method) updateData.premium_payment_method = payment_method;
+    if (transaction_id) updateData.premium_transaction_id = transaction_id;
+    if (purchase_token) updateData.premium_purchase_token = purchase_token;
+    if (product_id) updateData.premium_product_id = product_id;
 
     console.log('[activatePlan] Updating user with:', updateData);
 
     await base44.auth.updateMe(updateData);
 
-    console.log('[activatePlan] ✅ Plan activated successfully');
+    console.log('[activatePlan] Plan activated successfully');
 
     return Response.json({
       ok: true,
-      message: `${getPlanName(plan_id)} Plan erfolgreich aktiviert!`,
+      message: `${getPlanName(normalizedPlan)} Plan erfolgreich aktiviert!`,
       plan: {
-        id: plan_id,
+        id: normalizedPlan,
         expires_at: expiresAt,
-        duration_days: 30
+        duration_days: durationDays
       }
     });
   } catch (error) {
-    console.error('[activatePlan] ❌ Error:', error);
+    console.error('[activatePlan] Error:', error);
     console.error('[activatePlan] Stack:', error.stack);
-    return Response.json({ 
+    return Response.json({
       ok: false,
       error: error.message,
-      stack: error.stack 
+      stack: error.stack
     }, { status: 500 });
   }
 });
@@ -74,7 +90,9 @@ function getPlanName(planId) {
     free: 'Kostenlos',
     basic: 'Basic',
     pro: 'Pro',
-    ultimate: 'Ultimate'
+    ultimate: 'Ultimate',
+    friends: 'Freundschaft (Jahr)',
+    friends_monthly: 'Freundschaft (Monat)'
   };
   return names[planId] || 'Kostenlos';
 }
