@@ -7,6 +7,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend
 } from "recharts";
+import PlanGuard from "@/components/premium/PlanGuard";
 
 const COLORS = [
   "#22d3ee", "#10b981", "#f59e0b", "#a78bfa", "#f87171",
@@ -25,7 +26,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
-export default function CatchStats() {
+function CatchStatsContent() {
   const { data: catches = [], isLoading } = useQuery({
     queryKey: ["catches"],
     queryFn: () => base44.entities.Catch.list("-catch_time"),
@@ -234,6 +235,16 @@ export default function CatchStats() {
           </CardContent>
         </Card>
       )}
+    </div>
+  );
+}
+
+export default function CatchStats() {
+  return (
+    <div className="min-h-screen bg-gray-950 p-4 sm:p-6">
+      <PlanGuard requiredPlan="pro" featureName="Detaillierte Fang-Statistiken">
+        <CatchStatsContent />
+      </PlanGuard>
     </div>
   );
 }
