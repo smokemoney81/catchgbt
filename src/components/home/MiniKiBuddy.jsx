@@ -53,6 +53,7 @@ export default function MiniKiBuddy() {
   const messagesEndRef = useRef(null);
   const isFirstRender = useRef(true);
   const recognitionRef = useRef(null);
+  const autoSendRef = useRef(false);
 
   useEffect(() => {
     const stored = localStorage.getItem('userLocation');
@@ -82,6 +83,12 @@ export default function MiniKiBuddy() {
 
         if (event.results[event.results.length - 1].isFinal) {
           setIsListening(false);
+          const finalText = transcript.trim();
+          if (finalText) {
+            autoSendRef.current = true;
+            // Voice-Antwort erzwingen, da Eingabe per Sprache erfolgte
+            sendMessage(finalText, true);
+          }
         }
       };
 
@@ -104,8 +111,8 @@ export default function MiniKiBuddy() {
   //   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   // }, [messages]);
 
-  const sendMessage = async () => {
-    const text = input.trim();
+  const sendMessage = async (overrideText, forceVoice = false) => {
+    const text = (typeof overrideText === 'string' ? overrideText : input).trim();
     if (!text || isLoading) return;
 
     const newMessages = [...messages, { role: "user", content: text }];
@@ -123,7 +130,7 @@ export default function MiniKiBuddy() {
       const response = res?.data?.reply || "Ich konnte keine Antwort generieren.";
       setMessages(prev => [...prev, { role: "assistant", content: response }]);
 
-      if (voiceEnabled && response) {
+      if ((voiceEnabled || forceVoice) && response) {
         await speakText(response);
       }
     } catch (error) {
