@@ -86,14 +86,11 @@ Deno.serve(async (req) => {
       priceData.recurring = { interval: planConfig.interval, interval_count: 1 };
     }
 
-    // Zahlungsmethoden:
-    // - Karte (Visa/MC/Amex), PayPal, Klarna fuer alle
-    // - SEPA nur bei Abos (subscription mode)
-    const paymentMethods = ['card', 'paypal', 'klarna'];
-    if (isSubscription) paymentMethods.push('sepa_debit');
-
+    // Zahlungsmethoden: Karte ist immer aktiv. Weitere Methoden (PayPal/Klarna/SEPA)
+    // musst du im Stripe-Dashboard unter Settings -> Payment methods aktivieren -
+    // dann werden sie automatisch in der Checkout-Seite angezeigt.
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: paymentMethods,
+      payment_method_types: ['card'],
       line_items: [{ price_data: priceData, quantity: 1 }],
       mode: isSubscription ? 'subscription' : 'payment',
       success_url: successUrl,

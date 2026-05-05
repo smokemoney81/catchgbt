@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
   
   try {
     const body = await req.text();
-    event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+    event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
   } catch (err) {
     console.error('Webhook signature verification failed:', err.message);
     return Response.json({ error: 'Invalid signature' }, { status: 400 });
@@ -34,27 +34,36 @@ Deno.serve(async (req) => {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object;
-        
+
         // Hole User ID aus Metadata
         const userId = session.metadata?.user_id || session.client_reference_id;
         const planId = session.metadata?.plan_id;
-        
+
         if (!userId || !planId) {
           console.error('Missing user_id or plan_id in session metadata');
           return Response.json({ error: 'Missing metadata' }, { status: 400 });
         }
 
-        // Berechne Ablaufdatum (30 Tage ab jetzt)
+        // Laufzeit je Plan: friends = 1 Jahr, trial_10_10 = 10 Tage, alle anderen = 30 Tage
+        let durationDays = 30;
+        if (planId === 'friends') durationDays = 365;
+        else if (planId === 'trial_10_10') durationDays = 10;
+
         const expiresAt = new Date();
-        expiresAt.setDate(expiresAt.getDate() + 30);
+        expiresAt.setDate(expiresAt.getDate() + durationDays);
+
+        // Normalisiere elite/trial -> ultimate
+        let normalizedPlan = planId;
+        if (planId === 'elite') normalizedPlan = 'ultimate';
+        if (planId === 'trial_10_10') normalizedPlan = 'ultimate';
 
         // Aktiviere Premium-Plan für den User
         await base44.entities.User.update(userId, {
-          premium_plan_id: planId,
+          premium_plan_id: normalizedPlan,
           premium_expires_at: expiresAt.toISOString()
         });
 
-        console.log(`✅ Plan activated: ${planId} for user ${userId}`);
+        console.log(`Plan activated: ${normalizedPlan} (${durationDays}d) for user ${userId}`);
         break;
       }
 

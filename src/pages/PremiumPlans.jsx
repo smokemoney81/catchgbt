@@ -292,7 +292,7 @@ export default function PremiumPlans() {
             <Smartphone className="w-5 h-5 text-cyan-400 flex-shrink-0 mt-0.5" />
             <div className="text-sm text-cyan-100">
               <strong className="block mb-1">Bezahlung im Browser</strong>
-              Du kannst Premium-Plaene direkt hier mit Kreditkarte, PayPal, SEPA Lastschrift oder Klarna bezahlen.
+              Du kannst Premium-Plaene direkt hier mit Kreditkarte (Visa, Mastercard, Amex) bezahlen.
               In der Android-App ist zusaetzlich Google Play Billing verfuegbar.
             </div>
           </div>
@@ -424,7 +424,7 @@ export default function PremiumPlans() {
           <p className="text-gray-500 text-sm">
             {billingAvailable
               ? 'Alle Kaeufe erfolgen ueber deinen Google Play Account. Verwaltung & Kuendigung in den Play Store Einstellungen.'
-              : 'Bezahlung per Karte, PayPal, SEPA Lastschrift oder Klarna laeuft sicher ueber Stripe.'}
+              : 'Bezahlung per Kreditkarte laeuft sicher ueber Stripe.'}
           </p>
         </div>
       </div>
