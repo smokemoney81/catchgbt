@@ -10,6 +10,7 @@ import {
   isGooglePlayBillingAvailable,
   restoreGooglePlayPurchases
 } from "@/components/premium/googlePlayBilling";
+import TrialOfferPopup from "@/components/premium/TrialOfferPopup";
 
 export default function PremiumPlans() {
   const [user, setUser] = useState(null);
@@ -243,6 +244,7 @@ export default function PremiumPlans() {
 
   return (
     <div className="min-h-screen bg-gray-950 p-6 pb-32">
+      <TrialOfferPopup currentPlan={currentPlan} onPurchaseSuccess={loadData} />
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-cyan-400 drop-shadow-[0_0_20px_rgba(34,211,238,0.8)] mb-4">
