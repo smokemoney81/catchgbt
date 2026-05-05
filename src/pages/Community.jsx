@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Heart, MessageCircle, Send, Camera, AlertTriangle, User, Loader2, X, Globe, Facebook, Trophy, Users, Activity, Compass, Fish, TrendingUp, FileImage } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CompetitionCard from "@/components/community/CompetitionCard";
+import CompetitionLauncher from "@/components/community/CompetitionLauncher";
 import VotingEventCard from "@/components/community/VotingEventCard";
 import ClanLeaderboardCard from "@/components/community/ClanLeaderboardCard";
 import LeaderboardCard from "@/components/community/LeaderboardCard";
@@ -780,6 +781,15 @@ export default function Community() {
             </CardContent>
           </Card>
         )}
+
+        {/* Wettbewerbe starten */}
+        <CompetitionLauncher 
+          currentUser={currentUser}
+          onStarted={async () => {
+            await loadCompetitions();
+            await loadRecentActivity();
+          }}
+        />
 
         {/* Aktuelle Aktivitaten */}
          {recentActivity.length > 0 && (
