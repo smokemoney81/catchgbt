@@ -355,44 +355,51 @@ export default function Community() {
       return;
     }
 
-    // Optimistic update
+    if (!currentUser?.email) {
+      toast.error("Bitte melde dich an, um zu kommentieren");
+      return;
+    }
+
+    const text = commentText.trim();
+    const tempId = `temp-${Date.now()}`;
     const optimisticComment = {
-      id: `temp-${Date.now()}`,
+      id: tempId,
       post_id: postId,
-      text: commentText.trim(),
-      created_by: currentUser?.email,
+      text,
+      created_by: currentUser.email,
       created_date: new Date().toISOString()
     };
 
-    setPosts(posts.map(p => 
-      p.id === postId 
-        ? { ...p, comments: [...(p.comments || []), optimisticComment] } 
+    // Optimistic update mit functional setState (kein stale closure)
+    setPosts(prev => prev.map(p =>
+      p.id === postId
+        ? { ...p, comments: [...(p.comments || []), optimisticComment] }
         : p
     ));
     setCommentText("");
-    setCommenting(null);
 
     try {
       const newComment = await base44.entities.Comment.create({
         post_id: postId,
-        text: optimisticComment.text
+        text
       });
-      
-      // Replace temp comment with real one
-      setPosts(posts.map(p => 
-        p.id === postId 
-          ? { ...p, comments: p.comments.map(c => c.id === optimisticComment.id ? newComment : c) } 
+
+      // Temp-Kommentar durch echten ersetzen
+      setPosts(prev => prev.map(p =>
+        p.id === postId
+          ? { ...p, comments: (p.comments || []).map(c => c.id === tempId ? newComment : c) }
           : p
       ));
     } catch (error) {
       console.error("Fehler beim Kommentieren:", error);
-      // Revert on error
-      setPosts(posts.map(p => 
-        p.id === postId 
-          ? { ...p, comments: p.comments.filter(c => c.id !== optimisticComment.id) } 
+      // Bei Fehler: optimistic comment entfernen
+      setPosts(prev => prev.map(p =>
+        p.id === postId
+          ? { ...p, comments: (p.comments || []).filter(c => c.id !== tempId) }
           : p
       ));
-      toast.error("Kommentar fehlgeschlagen");
+      setCommentText(text);
+      toast.error("Kommentar fehlgeschlagen: " + (error.message || "Unbekannter Fehler"));
     }
   };
 
