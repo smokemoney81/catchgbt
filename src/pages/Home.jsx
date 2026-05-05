@@ -560,10 +560,10 @@ function LandingPageContent() {
     };
 
     return (
-        <div className="bg-black text-white h-screen overflow-hidden relative">
+        <div className="bg-black text-white min-h-screen w-full overflow-hidden relative" style={{ minHeight: '100dvh' }}>
 
 
-            <div className="fixed top-16 left-8 z-50 flex flex-col items-center gap-2">
+            <div className="fixed top-4 left-4 sm:top-16 sm:left-8 z-50 flex flex-col items-center gap-2">
                 <motion.button
                     onClick={() => setTutorialOpen(true)}
                     animate={{
@@ -598,11 +598,11 @@ function LandingPageContent() {
                 </motion.button>
             </div>
 
-            <div className="fixed top-16 right-8 z-50">
+            <div className="fixed top-4 right-4 sm:top-16 sm:right-8 z-50">
                 <LanguageSwitcher />
             </div>
 
-            <div className="relative isolate overflow-hidden h-full flex flex-col justify-center">
+            <div className="relative isolate overflow-hidden h-screen w-full flex flex-col justify-center" style={{ height: '100dvh' }}>
                 <img
                     src="https://images.unsplash.com/photo-1593352222543-c24119688536?q=80&w=2070&auto=format&fit=crop"
                     alt=""
@@ -653,7 +653,7 @@ function LandingPageContent() {
             </div>
 
             <motion.div 
-                className="fixed top-[30%] left-[30%] -translate-x-1/2 -translate-y-1/2 z-40 px-4 flex flex-col items-start gap-4 max-w-md"
+                className="fixed top-[28%] left-1/2 -translate-x-1/2 sm:left-[30%] sm:-translate-x-1/2 -translate-y-1/2 z-40 px-4 flex flex-col items-center sm:items-start gap-4 w-full max-w-md text-center sm:text-left"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
@@ -671,7 +671,7 @@ function LandingPageContent() {
             </motion.div>
 
             <motion.div 
-                className="fixed bottom-[35%] left-[30%] -translate-x-1/2 z-40 px-4"
+                className="fixed bottom-[40%] left-1/2 -translate-x-1/2 sm:left-[30%] sm:-translate-x-1/2 z-40 px-4 w-full max-w-md text-center sm:text-left"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
@@ -719,7 +719,7 @@ function LandingPageContent() {
                 </a>
             </motion.div>
 
-            <div className="fixed top-32 left-0 right-0 z-10 w-full overflow-hidden flex items-center pointer-events-none">
+            <div className="fixed top-20 sm:top-32 left-0 right-0 z-10 w-full overflow-hidden flex items-center pointer-events-none">
                 <motion.div 
                     className="whitespace-nowrap flex items-center text-4xl font-bold opacity-70 pl-4" 
                     animate={{
@@ -756,7 +756,7 @@ function LandingPageContent() {
                 `}</style>
             </div>
 
-            <div className="fixed bottom-40 left-8 z-50">
+            <div className="fixed bottom-24 sm:bottom-40 left-4 sm:left-8 z-50">
                 <motion.button
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ 
@@ -784,7 +784,7 @@ function LandingPageContent() {
                 </motion.button>
             </div>
 
-            <div className="fixed bottom-8 right-8 z-50 flex flex-col items-end gap-4">
+            <div className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-50 flex flex-col items-end gap-4">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -832,7 +832,7 @@ function LandingPageContent() {
             </div>
 
             {isAuthenticated && (
-                <div className="fixed bottom-40 right-8 z-50">
+                <div className="fixed bottom-24 sm:bottom-40 right-4 sm:right-8 z-50">
                     {showDeleteAccount ? (
                         <div className="w-80">
                             <DeleteAccountSection />
