@@ -15,8 +15,10 @@ import ClanLeaderboardCard from "@/components/community/ClanLeaderboardCard";
 import LeaderboardCard from "@/components/community/LeaderboardCard";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import ChatWidget from "@/components/community/ChatWidget";
+import { useFeatureTracking } from "@/hooks/useFeatureTracking";
 
 export default function Community() {
+  useFeatureTracking("community");
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newPostText, setNewPostText] = useState("");

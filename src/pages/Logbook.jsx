@@ -21,8 +21,10 @@ import PendingPhotoCard from '@/components/log/PendingPhotoCard';
 import LazyImage from '@/components/images/LazyImage';
 import { AnimatePresence } from 'framer-motion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { useFeatureTracking } from "@/hooks/useFeatureTracking";
 
 export default function Logbook() {
+  useFeatureTracking("catch_log");
   const queryClient = useQueryClient();
 
   // ---- Data fetching via TanStack Query ----

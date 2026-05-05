@@ -25,8 +25,10 @@ import { createPageUrl } from "@/utils";
 import BiteDetectorSection from "@/components/ai/BiteDetectorSection";
 import DeviceHub from "@/components/devices/DeviceHub";
 import PremiumGuard from "@/components/premium/PremiumGuard";
+import { useFeatureTracking } from "@/hooks/useFeatureTracking";
 
 export default function DevicesPage() {
+  useFeatureTracking("geraete");
   const [user, setUser] = useState(null);
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [loading, setLoading] = useState(true);

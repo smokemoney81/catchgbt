@@ -15,12 +15,14 @@ import RatingWidget from "@/components/feedback/RatingWidget";
 import { useOptimisticMutation } from "@/lib/useOptimisticMutation";
 import DeleteAccountDialog from "@/components/settings/DeleteAccountDialog";
 import { Trash2 } from "lucide-react";
+import { useFeatureTracking } from "@/hooks/useFeatureTracking";
 
 const generateReferralCode = () => {
   return Math.random().toString(36).substring(2, 10).toUpperCase();
 };
 
 export default function ProfilePage() {
+   useFeatureTracking('profil');
    const navigate = useNavigate();
    const [user, setUser] = useState(null);
    const [isLoading, setIsLoading] = useState(true);

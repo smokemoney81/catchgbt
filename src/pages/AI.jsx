@@ -1,4 +1,5 @@
 import React, { Suspense, lazy } from "react";
+import { useFeatureTracking } from "@/hooks/useFeatureTracking";
 
 const CameraAnalysisSection = lazy(() => import("@/components/ai/CameraAnalysisSection"));
 const BiteDetectorSection = lazy(() => import("@/components/ai/BiteDetectorSection"));
@@ -10,6 +11,7 @@ const SectionSkeleton = () => (
 );
 
 export default function AI() {
+  useFeatureTracking("bite_detector");
   return (
     <div className="min-h-screen bg-gray-950 px-3 sm:px-6 pb-32">
       <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8 py-4 sm:py-6">

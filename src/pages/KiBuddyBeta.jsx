@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { catchgbtChat } from "@/functions/catchgbtChat";
+import { useFeatureTracking } from "@/hooks/useFeatureTracking";
 
 export default function KiBuddyBeta() {
+  useFeatureTracking("ai_buddy");
   const [messages, setMessages] = useState([{ role: "system", text: "Hallo! Ich bin Marina, deine KI-Angelexpertin. Stelle mir eine Frage!" }]);
   const [input, setInput] = useState("");
   const [status, setStatus] = useState("");

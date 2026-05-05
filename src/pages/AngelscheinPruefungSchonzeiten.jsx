@@ -8,8 +8,10 @@ import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 import PremiumGuard from "@/components/premium/PremiumGuard";
+import { useFeatureTracking } from "@/hooks/useFeatureTracking";
 
 export default function AngelscheinPruefungSchonzeiten() {
+  useFeatureTracking("angelschein_pruefung");
   const [selectedRegion, setSelectedRegion] = useState("Baden-Württemberg");
   const [examStarted, setExamStarted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);

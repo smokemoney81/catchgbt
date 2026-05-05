@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MapPin, Package, Euro, Mail, Trash2, Upload, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { useFeatureTracking } from "@/hooks/useFeatureTracking";
 
 const CATEGORIES = [
   "Rute",
@@ -29,6 +30,7 @@ function centsToDisplay(cents, currency) {
 }
 
 export default function UsedGearMarket() {
+  useFeatureTracking("gear_market");
   const [user, setUser] = useState(null);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);

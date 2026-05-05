@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import LicensesSection from "@/components/licenses/LicensesSection";
 import PremiumGuard from "@/components/premium/PremiumGuard";
+import { useFeatureTracking } from "@/hooks/useFeatureTracking";
 
 function LicensesContent() {
+  useFeatureTracking("lizenzen");
   return (
     <div className="min-h-screen bg-gray-950 p-6 pb-32">
       <LicensesSection />

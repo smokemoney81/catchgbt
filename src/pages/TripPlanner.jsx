@@ -12,8 +12,10 @@ import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { useLocation } from "@/components/location/LocationManager";
+import { useFeatureTracking } from "@/hooks/useFeatureTracking";
 
 function TripPlannerContent() {
+  useFeatureTracking("fishing_plan");
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState(null);

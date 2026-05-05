@@ -9,8 +9,10 @@ import SpotComparison from "@/components/water/SpotComparison";
 import WaterAnalysisTutorial from "@/components/water/WaterAnalysisTutorial";
 import { Loader2, Satellite } from "lucide-react";
 import { useRef } from "react";
+import { useFeatureTracking } from "@/hooks/useFeatureTracking";
 
 export default function WaterAnalysisPage() {
+  useFeatureTracking("water_analysis");
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [waterData, setWaterData] = useState(null);

@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useLocation } from "@/components/location/LocationManager";
 import AddSpotModal from "@/components/map/v2/AddSpotModal";
 import SpotDetailPanel from "@/components/map/SpotDetailPanel";
+import { useFeatureTracking } from "@/hooks/useFeatureTracking";
 
 // Leaflet CSS laden
 if (typeof document !== "undefined") {
@@ -80,6 +81,7 @@ function MapClickHandler({ onMapClick }) {
 }
 
 export default function MapPage() {
+  useFeatureTracking("map");
   const { currentLocation, gpsLocation, requestGpsLocation } = useLocation();
   const [spots, setSpots] = useState([]);
   const [publicLocations, setPublicLocations] = useState([]);

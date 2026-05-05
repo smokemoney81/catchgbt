@@ -11,8 +11,10 @@ import { PieChart, Pie, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cel
 import { Loader2, Sparkles, Save, Trash2, Plus, Minus, TrendingUp, X } from "lucide-react";
 import { toast } from "sonner";
 import { useHaptic } from "@/components/utils/HapticFeedback";
+import { useFeatureTracking } from "@/hooks/useFeatureTracking";
 
 export default function BaitMixerPage() {
+  useFeatureTracking("bait_recipe");
   const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);

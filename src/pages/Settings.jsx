@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import SettingsSection from '@/components/settings/SettingsSection';
 import TutorialButton from '@/components/tutorial/TutorialButton';
 import TutorialModal from '@/components/tutorial/TutorialModal';
+import { useFeatureTracking } from '@/hooks/useFeatureTracking';
 
 export default function Settings() {
+  useFeatureTracking('einstellungen');
   const [tutorialOpen, setTutorialOpen] = useState(false);
 
   return (

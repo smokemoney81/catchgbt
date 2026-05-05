@@ -2,8 +2,10 @@ import React from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import SwipeToRefresh from "@/components/utils/SwipeToRefresh";
 import RankSection from "@/components/rank/RankSection";
+import { useFeatureTracking } from "@/hooks/useFeatureTracking";
 
 export default function Rank() {
+  useFeatureTracking("leaderboard");
   const queryClient = useQueryClient();
 
   const handleRefresh = () => {
