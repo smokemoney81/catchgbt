@@ -19,7 +19,8 @@ export const GOOGLE_PLAY_PRODUCT_IDS = {
   ultimate: 'catchgbt_ultimate_monthly',
   elite: 'catchgbt_ultimate_monthly', // Alias
   friends: 'catchgbt_friends_yearly',
-  friends_monthly: 'catchgbt_friends_monthly'
+  friends_monthly: 'catchgbt_friends_monthly',
+  trial_10_10: 'catchgbt_trial_10_10'
 };
 
 // Reverse-Map: productId -> planId

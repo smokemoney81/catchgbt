@@ -17,8 +17,8 @@ Deno.serve(async (req) => {
 
     console.log('[activatePlan] Request:', { plan_id, payment_method, transaction_id, product_id });
 
-    // Validiere Plan-ID (inkl. Friends-Pläne)
-    const validPlans = ['free', 'basic', 'pro', 'ultimate', 'elite', 'friends', 'friends_monthly'];
+    // Validiere Plan-ID (inkl. Friends-Pläne und Trial)
+    const validPlans = ['free', 'basic', 'pro', 'ultimate', 'elite', 'friends', 'friends_monthly', 'trial_10_10'];
     if (!validPlans.includes(plan_id)) {
       console.error('[activatePlan] Invalid plan_id:', plan_id);
       return Response.json({
@@ -27,17 +27,22 @@ Deno.serve(async (req) => {
       }, { status: 400 });
     }
 
-    // Normalisiere elite -> ultimate für Konsistenz
-    const normalizedPlan = plan_id === 'elite' ? 'ultimate' : plan_id;
+    // Normalisiere elite -> ultimate, trial_10_10 -> ultimate (Voller Funktionsumfang)
+    let normalizedPlan = plan_id;
+    if (plan_id === 'elite') normalizedPlan = 'ultimate';
+    if (plan_id === 'trial_10_10') normalizedPlan = 'ultimate';
 
-    // Laufzeit bestimmen: friends = 1 Jahr, alle anderen = 30 Tage
+    // Laufzeit bestimmen: friends = 1 Jahr, trial_10_10 = 10 Tage, alle anderen = 30 Tage
     let expiresAt = null;
     let durationDays = 0;
     if (normalizedPlan !== 'free') {
       const expires = new Date();
-      if (normalizedPlan === 'friends') {
+      if (plan_id === 'friends') {
         expires.setDate(expires.getDate() + 365);
         durationDays = 365;
+      } else if (plan_id === 'trial_10_10') {
+        expires.setDate(expires.getDate() + 10);
+        durationDays = 10;
       } else {
         expires.setDate(expires.getDate() + 30);
         durationDays = 30;
@@ -92,7 +97,8 @@ function getPlanName(planId) {
     pro: 'Pro',
     ultimate: 'Ultimate',
     friends: 'Freundschaft (Jahr)',
-    friends_monthly: 'Freundschaft (Monat)'
+    friends_monthly: 'Freundschaft (Monat)',
+    trial_10_10: '10-Tage-Trial'
   };
   return names[planId] || 'Kostenlos';
 }
