@@ -35,20 +35,25 @@ Deno.serve(async (req) => {
     const { plan_id } = body;
     console.log('[Stripe] Plan ID:', plan_id);
 
-    // 4. Validiere Plan
-    const PLAN_PRICES = {
-      basic: 1000,    // 10.00 EUR
-      pro: 1900,      // 19.00 EUR
-      ultimate: 2900  // 29.00 EUR
+    // 4. Validiere Plan (Preise in Cent, EUR)
+    const PLAN_CONFIG = {
+      basic:           { price: 499,   interval: 'month', name: 'Basic' },
+      pro:             { price: 999,   interval: 'month', name: 'Pro' },
+      ultimate:        { price: 1999,  interval: 'month', name: 'Ultimate' },
+      elite:           { price: 1999,  interval: 'month', name: 'Ultimate' },
+      friends:         { price: 5499,  interval: 'year',  name: 'Freundschaft (Jahr)' },
+      friends_monthly: { price: 3900,  interval: 'month', name: 'Freundschaft (Monat)' },
+      trial_10_10:     { price: 1000,  interval: null,    name: 'Trial 10 Tage' }
     };
 
-    if (!['basic', 'pro', 'ultimate'].includes(plan_id)) {
-      console.error('[Stripe] ❌ Ungültiger Plan:', plan_id);
+    const planConfig = PLAN_CONFIG[plan_id];
+    if (!planConfig) {
+      console.error('[Stripe] Ungueltiger Plan:', plan_id);
       return Response.json({ 
         error: 'Ungültiger Plan' 
       }, { status: 400 });
     }
-    console.log('[Stripe] ✅ Plan gültig:', plan_id);
+    console.log('[Stripe] Plan gueltig:', plan_id);
 
     // 5. App-URL ermitteln
     const appUrl = new URL(req.url).origin;
@@ -63,27 +68,34 @@ Deno.serve(async (req) => {
     // 6. Erstelle Stripe Checkout Session
     console.log('[Stripe] Erstelle Session...');
     
+    const isSubscription = planConfig.interval !== null;
+    const intervalLabel = planConfig.interval === 'year' ? 'Jaehrliches' : 'Monatliches';
+
+    const priceData = {
+      currency: 'eur',
+      product_data: {
+        name: `CatchGBT ${planConfig.name} Plan`,
+        description: isSubscription
+          ? `${intervalLabel} Abo fuer ${planConfig.name} mit allen Features`
+          : `Einmalkauf: ${planConfig.name}`,
+        images: ['https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68bb3d3b9f83dc1f55ef532b/e9d6eda08_icon_512.png'],
+      },
+      unit_amount: planConfig.price
+    };
+    if (isSubscription) {
+      priceData.recurring = { interval: planConfig.interval, interval_count: 1 };
+    }
+
+    // Zahlungsmethoden:
+    // - Karte (Visa/MC/Amex), PayPal, Klarna fuer alle
+    // - SEPA nur bei Abos (subscription mode)
+    const paymentMethods = ['card', 'paypal', 'klarna'];
+    if (isSubscription) paymentMethods.push('sepa_debit');
+
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card', 'sepa_debit'],
-      line_items: [
-        {
-          price_data: {
-            currency: 'eur',
-            product_data: {
-              name: `CatchGBT ${getPlanName(plan_id)} Plan`,
-              description: `Monatliches Abo für ${getPlanName(plan_id)} Plan mit allen Features`,
-              images: ['https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68bb3d3b9f83dc1f55ef532b/e9d6eda08_icon_512.png'],
-            },
-            unit_amount: PLAN_PRICES[plan_id],
-            recurring: {
-              interval: 'month',
-              interval_count: 1,
-            },
-          },
-          quantity: 1,
-        },
-      ],
-      mode: 'subscription',
+      payment_method_types: paymentMethods,
+      line_items: [{ price_data: priceData, quantity: 1 }],
+      mode: isSubscription ? 'subscription' : 'payment',
       success_url: successUrl,
       cancel_url: cancelUrl,
       customer_email: user.email,
@@ -124,12 +136,3 @@ Deno.serve(async (req) => {
     }, { status: 500 });
   }
 });
-
-function getPlanName(planId) {
-  const names = {
-    basic: 'Basic',
-    pro: 'Pro',
-    ultimate: 'Ultimate'
-  };
-  return names[planId] || 'Basic';
-}

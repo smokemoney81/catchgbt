@@ -11,6 +11,7 @@ import {
   restoreGooglePlayPurchases
 } from "@/components/premium/googlePlayBilling";
 import TrialOfferPopup from "@/components/premium/TrialOfferPopup";
+import WebCheckoutButton from "@/components/premium/WebCheckoutButton";
 
 export default function PremiumPlans() {
   const [user, setUser] = useState(null);
@@ -287,12 +288,12 @@ export default function PremiumPlans() {
         </div>
 
         {!billingAvailable && (
-          <div className="max-w-3xl mx-auto mb-8 p-4 rounded-xl border border-amber-700/50 bg-amber-900/20 flex items-start gap-3">
-            <Smartphone className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
-            <div className="text-sm text-amber-100">
-              <strong className="block mb-1">Käufe nur in der Android-App</strong>
-              Premium-Pläne können ausschließlich über den Google Play Store in der CatchGBT Android-App gekauft werden.
-              Lade die App im Play Store herunter, um einen Plan zu erwerben.
+          <div className="max-w-3xl mx-auto mb-8 p-4 rounded-xl border border-cyan-700/50 bg-cyan-900/20 flex items-start gap-3">
+            <Smartphone className="w-5 h-5 text-cyan-400 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-cyan-100">
+              <strong className="block mb-1">Bezahlung im Browser</strong>
+              Du kannst Premium-Plaene direkt hier mit Kreditkarte, PayPal, SEPA Lastschrift oder Klarna bezahlen.
+              In der Android-App ist zusaetzlich Google Play Billing verfuegbar.
             </div>
           </div>
         )}
@@ -368,23 +369,33 @@ export default function PremiumPlans() {
                       Kostenlos nutzen
                     </Button>
                   ) : (
-                    <Button
-                      onClick={() => handlePlayStorePurchase(plan.id)}
-                      disabled={isProcessing || !billingAvailable}
-                      className={`w-full bg-gradient-to-r ${plan.color} hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-50`}
-                    >
-                      {isProcessing ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          Kauf wird gestartet...
-                        </>
-                      ) : (
-                        <>
-                          <ShoppingBag className="w-4 h-4" />
-                          {billingAvailable ? 'Im Play Store kaufen' : 'Nur in Android-App'}
-                        </>
+                    <div className="space-y-2">
+                      {billingAvailable && (
+                        <Button
+                          onClick={() => handlePlayStorePurchase(plan.id)}
+                          disabled={isProcessing}
+                          className={`w-full bg-gradient-to-r ${plan.color} hover:opacity-90 flex items-center justify-center gap-2 disabled:opacity-50`}
+                        >
+                          {isProcessing ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                              Kauf wird gestartet...
+                            </>
+                          ) : (
+                            <>
+                              <ShoppingBag className="w-4 h-4" />
+                              Im Play Store kaufen
+                            </>
+                          )}
+                        </Button>
                       )}
-                    </Button>
+                      <WebCheckoutButton planId={plan.id} disabled={isProcessing} />
+                      {billingAvailable && (
+                        <p className="text-[11px] text-gray-500 text-center">
+                          oder mit Karte, PayPal, SEPA oder Klarna im Browser
+                        </p>
+                      )}
+                    </div>
                   )}
                 </CardContent>
               </Card>
@@ -414,7 +425,8 @@ export default function PremiumPlans() {
           </div>
 
           <p className="text-gray-500 text-sm">
-            Alle Käufe erfolgen über deinen Google Play Account. Verwaltung & Kündigung in den Play Store Einstellungen.
+            Bezahlung per Karte, PayPal, SEPA Lastschrift oder Klarna laeuft sicher ueber Stripe.
+            Google Play Kaeufe werden ueber deinen Google Account verwaltet (Kuendigung in den Play Store Einstellungen).
           </p>
         </div>
       </div>
