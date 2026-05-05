@@ -662,7 +662,7 @@ function LandingPageContent() {
             </div>
 
             <motion.div 
-                className="fixed top-[28%] left-1/2 -translate-x-1/2 sm:left-[30%] sm:-translate-x-1/2 -translate-y-1/2 z-40 px-4 flex flex-col items-center sm:items-start gap-4 w-full max-w-md text-center sm:text-left"
+                className="fixed top-[30%] left-[30%] -translate-x-1/2 -translate-y-1/2 z-40 px-4 flex flex-col items-start gap-4 max-w-md"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
@@ -680,7 +680,7 @@ function LandingPageContent() {
             </motion.div>
 
             <motion.div 
-                className="fixed bottom-[40%] left-1/2 -translate-x-1/2 sm:left-[30%] sm:-translate-x-1/2 z-40 px-4 w-full max-w-md text-center sm:text-left"
+                className="fixed bottom-[35%] left-[30%] -translate-x-1/2 z-40 px-4"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
