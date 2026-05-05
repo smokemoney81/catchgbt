@@ -4,30 +4,60 @@ import { catchgbtChat } from "@/functions/catchgbtChat";
 
 const SYSTEM_PROMPT = `Du bist CatchGBT, ein erfahrener Angel-Assistent. Du hilfst Anglern mit Tipps zu Fischarten, Koeder, Spots, Wetter, Ausruestung und Technik. Antworte auf Deutsch, freundlich und direkt. Halte Antworten kurz und praxisnah.`;
 
+// Globale Referenz auf aktuelle Audio-Wiedergabe, damit alte Wiedergaben gestoppt werden koennen
+let currentAudioRef = null;
+
+function stopCurrentAudio() {
+  if (currentAudioRef) {
+    try {
+      currentAudioRef.pause();
+      currentAudioRef.src = '';
+    } catch {}
+    currentAudioRef = null;
+  }
+}
+
 async function speakText(text) {
   if (!text) return;
-  
+
+  // Vorherige Wiedergabe stoppen
+  stopCurrentAudio();
+
   try {
     const response = await fetch('/api/functions/textToSpeech', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, language: 'de' })
+      body: JSON.stringify({ text: text.slice(0, 1000) })
     });
-    
+
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'TTS failed');
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.error || `TTS failed: ${response.status}`);
     }
-    
+
     const blob = await response.blob();
-    if (blob.size === 0) throw new Error('Empty audio response');
-    
-    const audio = new Audio(URL.createObjectURL(blob));
-    audio.volume = 1;
-    const playPromise = audio.play();
-    
-    if (playPromise !== undefined) {
-      playPromise.catch(err => console.error('Audio playback failed:', err));
+    if (blob.size === 0) throw new Error('Leere Audio-Antwort');
+
+    const audioUrl = URL.createObjectURL(blob);
+    const audio = new Audio(audioUrl);
+    audio.volume = 1.0;
+    audio.preload = 'auto';
+
+    // Aufraeumen, sobald Wiedergabe endet oder fehlschlaegt
+    const cleanup = () => {
+      URL.revokeObjectURL(audioUrl);
+      if (currentAudioRef === audio) currentAudioRef = null;
+    };
+    audio.onended = cleanup;
+    audio.onerror = cleanup;
+
+    currentAudioRef = audio;
+
+    try {
+      await audio.play();
+    } catch (playErr) {
+      console.warn('Audio play blocked (autoplay policy):', playErr);
+      cleanup();
     }
   } catch (error) {
     console.error('TTS error:', error);
