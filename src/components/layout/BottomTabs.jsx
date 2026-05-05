@@ -1,37 +1,71 @@
 import React from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, Map, BookOpen, User } from "lucide-react";
+import {
+  Home,
+  Map,
+  BookOpen,
+  User,
+  Brain,
+  Cloud,
+  Users,
+  Trophy,
+  Crown,
+  Settings,
+  Award,
+  GraduationCap,
+  Calendar,
+  Wrench,
+  Beaker,
+  Anchor,
+  ShoppingBag,
+  Compass,
+  Mic,
+  ScrollText,
+  Sparkles,
+  LifeBuoy,
+} from "lucide-react";
 import { useNavigationContext } from "@/lib/NavigationContext";
 
 const tabs = [
   { name: "Dashboard", path: "Dashboard", icon: Home },
-  { name: "Map",       path: "Map",       icon: Map },
-  { name: "Logbook",   path: "Logbook",   icon: BookOpen },
-  { name: "Profile",   path: "Profile",   icon: User },
+  { name: "Map", path: "Map", icon: Map },
+  { name: "Logbook", path: "Logbook", icon: BookOpen },
+  { name: "KI-Buddy", path: "KiBuddyBeta", icon: Brain },
+  { name: "Wetter", path: "Weather", icon: Cloud },
+  { name: "Wasser", path: "WaterAnalysis", icon: Compass },
+  { name: "Tripplan", path: "TripPlanner", icon: Calendar },
+  { name: "Köder", path: "BaitMixer", icon: Beaker },
+  { name: "Geräte", path: "Devices", icon: Wrench },
+  { name: "AR Knoten", path: "ARKnotenAssistent", icon: Anchor },
+  { name: "Quiz", path: "Quiz", icon: GraduationCap },
+  { name: "Prüfung", path: "AngelscheinPruefungSchonzeiten", icon: ScrollText },
+  { name: "Lizenzen", path: "Licenses", icon: Award },
+  { name: "Community", path: "Community", icon: Users },
+  { name: "Events", path: "Events", icon: Sparkles },
+  { name: "Rang", path: "Rank", icon: Trophy },
+  { name: "Shop", path: "Shop", icon: ShoppingBag },
+  { name: "Voice", path: "VoiceControl", icon: Mic },
+  { name: "Premium", path: "PremiumPlans", icon: Crown },
+  { name: "SOS", path: "WeatherAlerts", icon: LifeBuoy },
+  { name: "Profil", path: "Profile", icon: User },
+  { name: "Settings", path: "Settings", icon: Settings },
 ];
 
 export default function BottomTabs() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { currentTab, switchTab, getTabStack } = useNavigationContext();
+  const { switchTab, getTabStack } = useNavigationContext();
 
   const currentSegment = location.pathname.replace(/^\//, '').split('/')[0] || 'Dashboard';
   const isActive = (path) => currentSegment === path;
 
   const handleTabClick = (e, tab) => {
     e.preventDefault();
-    
-    // Switch to the new tab in the context
     switchTab(tab.path);
-    
-    // Get the saved stack for this tab
     const tabStack = getTabStack(tab.path);
-    
-    // Navigate to the last known route in that tab, or to the tab root if the stack is empty
     if (tabStack.length > 0) {
-      const lastRoute = tabStack[tabStack.length - 1];
-      navigate(lastRoute);
+      navigate(tabStack[tabStack.length - 1]);
     } else {
       navigate(createPageUrl(tab.path));
     }
@@ -44,7 +78,17 @@ export default function BottomTabs() {
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       role="tablist"
     >
-      <div className="flex items-center justify-around min-h-[60px]">
+      <div
+        className="flex items-stretch overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory min-h-[64px]"
+        style={{
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+          WebkitOverflowScrolling: 'touch',
+        }}
+      >
+        <style>{`
+          nav[aria-label="Hauptnavigation"] > div::-webkit-scrollbar { display: none; }
+        `}</style>
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const active = isActive(tab.path);
@@ -58,13 +102,16 @@ export default function BottomTabs() {
               aria-current={active ? 'page' : undefined}
               aria-selected={active}
               role="tab"
-              className={`flex flex-col items-center justify-center flex-1 h-full touch-target transition-colors`}
+              className="flex flex-col items-center justify-center min-w-[72px] px-3 py-2 snap-start touch-target transition-colors"
             >
               <Icon
                 aria-hidden="true"
                 className={`w-6 h-6 mb-1 transition-colors ${active ? 'text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.6)]' : 'text-gray-400'}`}
               />
-              <span className={`text-xs font-medium transition-colors ${active ? 'text-cyan-400' : 'text-gray-400'}`} aria-hidden="true">
+              <span
+                className={`text-[11px] font-medium whitespace-nowrap transition-colors ${active ? 'text-cyan-400' : 'text-gray-400'}`}
+                aria-hidden="true"
+              >
                 {tab.name}
               </span>
             </Link>
