@@ -2,90 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronLeft, ChevronRight, Volume2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { base44 } from '@/api/base44Client';
 import { useLanguage } from '@/components/i18n/LanguageContext';
-
-const playAudio = async (audioData) => {
-  try {
-    if (!audioData || !(audioData instanceof ArrayBuffer)) {
-      console.error("Invalid audio data");
-      return;
-    }
-    
-    const blob = new Blob([audioData], { type: 'audio/mpeg' });
-    const url = URL.createObjectURL(blob);
-    const audio = new Audio(url);
-
-    audio.onended = () => URL.revokeObjectURL(url);
-    audio.onerror = () => URL.revokeObjectURL(url);
-
-    await audio.play();
-  } catch (error) {
-    console.error("Audio playback failed:", error);
-  }
-};
-
-const playTextWithBrowserTTS = (text, lang = 'de-DE') => {
-  return new Promise((resolve) => {
-    if (typeof window === "undefined" || !window.speechSynthesis) {
-      console.log('[TTS] Browser TTS not available');
-      return resolve();
-    }
-
-    window.speechSynthesis.cancel();
-
-    const chunks = text.match(/[^.!?]+[.!?]+/g) || [text];
-    let currentChunk = 0;
-
-    const speakChunk = () => {
-      if (currentChunk >= chunks.length) {
-        console.log('[TTS] All chunks completed');
-        return resolve();
-      }
-
-      const utterance = new SpeechSynthesisUtterance(chunks[currentChunk].trim());
-      utterance.lang = lang;
-      utterance.rate = 1.1;
-      utterance.pitch = 1.0;
-      utterance.volume = 1.0;
-
-      const setVoice = () => {
-        const voices = window.speechSynthesis.getVoices();
-        const targetLang = lang.split('-')[0];
-        const preferredVoice = voices.find(voice => 
-          voice.lang.startsWith(targetLang) && 
-          (voice.name.includes('Google') || voice.name.includes('Enhanced'))
-        ) || voices.find(voice => voice.lang.startsWith(targetLang));
-        
-        if (preferredVoice) {
-          utterance.voice = preferredVoice;
-        }
-      };
-
-      if (window.speechSynthesis.getVoices().length > 0) {
-        setVoice();
-      } else {
-        window.speechSynthesis.onvoiceschanged = setVoice;
-      }
-
-      utterance.onend = () => {
-        currentChunk++;
-        setTimeout(speakChunk, 200);
-      };
-
-      utterance.onerror = (error) => {
-        console.error('[TTS] Chunk error:', error);
-        currentChunk++;
-        setTimeout(speakChunk, 200);
-      };
-
-      console.log(`[TTS] Speaking chunk ${currentChunk + 1}/${chunks.length}`);
-      window.speechSynthesis.speak(utterance);
-    };
-
-    speakChunk();
-  });
-};
+import { speakWithBrowserTTS, cancelBrowserTTS } from '@/components/utils/browserTTS';
 
 const tutorialSteps = {
   de: [
@@ -344,7 +262,7 @@ export default function TutorialModal({ isOpen, onClose }) {
 
   const handleNext = () => {
     if (isPlaying) {
-      window.speechSynthesis.cancel();
+      cancelBrowserTTS();
       setIsPlaying(false);
       setPlayingStep(null);
     }
@@ -355,7 +273,7 @@ export default function TutorialModal({ isOpen, onClose }) {
 
   const handlePrev = () => {
     if (isPlaying) {
-      window.speechSynthesis.cancel();
+      cancelBrowserTTS();
       setIsPlaying(false);
       setPlayingStep(null);
     }
@@ -366,7 +284,7 @@ export default function TutorialModal({ isOpen, onClose }) {
 
   const handlePlayAudio = async (stepIndex) => {
     if (isPlaying) {
-      window.speechSynthesis.cancel();
+      cancelBrowserTTS();
       setIsPlaying(false);
       setPlayingStep(null);
       return;
@@ -380,9 +298,7 @@ export default function TutorialModal({ isOpen, onClose }) {
       const text = `${step.title}. ${step.content}`;
       const lang = language === 'en' ? 'en-US' : 'de-DE';
 
-      console.log('[Tutorial TTS] Starting speech for step:', stepIndex);
-      await playTextWithBrowserTTS(text, lang);
-      console.log('[Tutorial TTS] Speech completed');
+      await speakWithBrowserTTS(text, { lang });
     } catch (error) {
       console.error('[Tutorial TTS] Error:', error);
     } finally {
