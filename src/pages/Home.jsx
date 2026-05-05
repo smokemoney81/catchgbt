@@ -145,6 +145,15 @@ function LandingPageContent() {
         loadUserPlan();
         loadUserName();
         base44.auth.isAuthenticated().then(setIsAuthenticated).catch(() => setIsAuthenticated(false));
+
+        const prevBg = document.body.style.backgroundColor;
+        const prevHtmlBg = document.documentElement.style.backgroundColor;
+        document.body.style.backgroundColor = '#000';
+        document.documentElement.style.backgroundColor = '#000';
+        return () => {
+            document.body.style.backgroundColor = prevBg;
+            document.documentElement.style.backgroundColor = prevHtmlBg;
+        };
     }, []);
 
     const loadUserName = async () => {
@@ -560,7 +569,7 @@ function LandingPageContent() {
     };
 
     return (
-        <div className="bg-black text-white min-h-screen w-full overflow-hidden relative" style={{ minHeight: '100dvh' }}>
+        <div className="bg-black text-white min-h-screen w-full overflow-hidden fixed inset-0" style={{ minHeight: '100dvh', paddingTop: 'env(safe-area-inset-top)' }}>
 
 
             <div className="fixed top-4 left-4 sm:top-16 sm:left-8 z-50 flex flex-col items-center gap-2">
@@ -719,9 +728,9 @@ function LandingPageContent() {
                 </a>
             </motion.div>
 
-            <div className="fixed top-20 sm:top-32 left-0 right-0 z-10 w-full overflow-hidden flex items-center pointer-events-none">
+            <div className="fixed top-16 sm:top-32 left-0 right-0 z-10 w-full overflow-hidden flex items-center pointer-events-none">
                 <motion.div 
-                    className="whitespace-nowrap flex items-center text-4xl font-bold opacity-70 pl-4" 
+                    className="whitespace-nowrap flex items-center text-xl sm:text-4xl font-bold opacity-70 pl-4" 
                     animate={{
                         backgroundImage: [
                             'linear-gradient(90deg, #a855f7, #3b82f6, #06b6d4)',
