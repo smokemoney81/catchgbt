@@ -5,28 +5,28 @@
 export const tutorialSteps = {
   de: [
     {
-      title: "Willkommen bei CatchGbt",
+      title: "Willkommen bei Catchgbt",
       route: "Home",
-      content: "CatchGbt ist deine Angel-App mit KI-Buddy, Karten, Wetter, Fangbuch und Satellitendaten. Im Tutorial gehen wir Schritt fuer Schritt jede Seite der App durch und zeigen dir, was du dort genau machen kannst.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/8351cc81b_generated_image.png"
+      content: "Catchgbt ist deine Angel-App mit KI-Buddy, Karten, Wetter, Fangbuch und Satellitendaten. Oben hast du die KI-Standort-Analyse und den Mini-KI-Buddy mit Schnellfragen wie 'Welcher Koeder ist jetzt gut?' oder 'Beste Angelzeit heute?'.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/350fbd318_Screenshot_20260506_075006_Comet.jpg"
     },
     {
       title: "Dashboard",
       route: "Dashboard",
-      content: "Auf dem Dashboard siehst du oben das aktuelle Wetter und den naechsten Spot, den blauen Hinweis-Link zur Karte, den Wetterradar und die KI-Angelempfehlung. Tippe auf 'Analysieren', um Empfehlungen aus Wetter und deinem Fangbuch zu erhalten.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/e1bb8a71b_generated_image.png"
+      content: "Auf dem Dashboard findest du den blauen Karten-Hinweis 'Entdecke neue Angelplaetze', die KI-Angelempfehlung mit 'Analysieren' (basierend auf Wetter + Fangbuch) und den Schonzeit-Waechter fuer dein Bundesland - hier z.B. Zander in NRW.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/99ca56a79_Screenshot_20260506_073747_Comet.jpg"
     },
     {
-      title: "Fangbuch",
+      title: "Neuen Fang erfassen",
       route: "Logbook",
-      content: "Im Fangbuch siehst du alle deine Faenge mit Foto, Art, Laenge, Gewicht und Datum. Mit dem orangen Kamera-Button vom Homescreen machst du ein Foto und die KI traegt Fischart, Groesse und Spot automatisch ein.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/cd74ae3ba_generated_image.png"
+      content: "Lade ein Foto hoch und tippe auf 'KI Fang-Analyse und automatisch ausfuellen' - die KI erkennt Fischart, Laenge und Gewicht. Mit 'In Community posten' teilst du deinen Fang direkt im Community-Feed.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/5b0f05d33_Screenshot_20260506_075100_Comet.jpg"
     },
     {
-      title: "Karte und Spots",
+      title: "Deine Angelkarte",
       route: "Map",
-      content: "Auf der Karte siehst du deine Spots, Community-Spots und Gewaesser mit Filter (Fluss, See, Teich). Tippe auf einen Pin, um Details zu sehen, oder lege per langem Druck einen neuen Spot an. Route-Planung oeffnet Google Maps.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/de8ae04af_generated_image.png"
+      content: "Die Karte zeigt: blaue Marker fuer deine persoenlichen Spots, gruene Marker fuer Angelvereine und Parks, roter Marker fuer deinen Standort und orange Marker fuer einen neuen Spot zum Speichern. Klicke auf die Karte, um einen neuen Spot zu markieren.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/bba222465_Screenshot_20260506_075200_Comet.jpg"
     },
     {
       title: "Wetter und Angelprognose",
@@ -277,28 +277,28 @@ export const tutorialSteps = {
   ],
   en: [
     {
-      title: "Welcome to CatchGbt",
+      title: "Welcome to Catchgbt",
       route: "Home",
-      content: "CatchGbt is your fishing app with AI buddy, maps, weather, logbook and satellite data. This tutorial walks you through every page step by step and shows what you can do there.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/8351cc81b_generated_image.png"
+      content: "Catchgbt is your fishing app with AI buddy, maps, weather, logbook and satellite data. At the top you have AI location analysis and the mini AI buddy with quick prompts like 'Which bait works now?' or 'Best fishing time today?'.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/350fbd318_Screenshot_20260506_075006_Comet.jpg"
     },
     {
       title: "Dashboard",
       route: "Dashboard",
-      content: "On the dashboard you see current weather and the nearest spot, the blue map link, the weather radar and the AI fishing recommendation. Tap 'Analyze' to get advice based on weather and your logbook.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/e1bb8a71b_generated_image.png"
+      content: "The dashboard has the blue map hint 'Discover new fishing spots', the AI fishing recommendation with 'Analyze' (based on weather + logbook) and the closed-season watcher for your region - here Zander in NRW.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/99ca56a79_Screenshot_20260506_073747_Comet.jpg"
     },
     {
-      title: "Logbook",
+      title: "Log a New Catch",
       route: "Logbook",
-      content: "In the logbook you see all your catches with photo, species, length, weight and date. With the orange camera button on the home screen you take a photo and the AI fills species, size and spot automatically.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/cd74ae3ba_generated_image.png"
+      content: "Upload a photo and tap 'AI catch analysis and auto fill' - the AI detects species, length and weight. Use 'Post to community' to share your catch in the community feed instantly.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/5b0f05d33_Screenshot_20260506_075100_Comet.jpg"
     },
     {
-      title: "Map and Spots",
+      title: "Your Fishing Map",
       route: "Map",
-      content: "On the map you see your spots, community spots and waters with filters (river, lake, pond). Tap a pin for details or long-press to add a new spot. Route planning opens Google Maps.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/de8ae04af_generated_image.png"
+      content: "The map shows: blue markers for your personal spots, green markers for fishing clubs and parks, red marker for your current location and orange marker for a new spot to save. Click on the map to mark a new spot.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/bba222465_Screenshot_20260506_075200_Comet.jpg"
     },
     {
       title: "Weather and Fishing Forecast",
