@@ -5,8 +5,9 @@ import { User, Bot } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Copy } from 'lucide-react';
 import { toast } from "sonner";
+import SpeakButton from "@/components/ai/SpeakButton";
 
-export default function MessageBubble({ message }) {
+export default function MessageBubble({ message, autoSpeak = true }) {
     if (!message || !message.content) {
         return null;
     }
@@ -80,6 +81,9 @@ export default function MessageBubble({ message }) {
                         >
                             {message.content}
                             </ReactMarkdown>
+                            <div className="mt-1 -mb-1 -ml-2">
+                                <SpeakButton text={message.content} autoPlay={autoSpeak} />
+                            </div>
                         </div>
                     )}
                 </div>

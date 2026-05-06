@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { getFishingRecommendation } from "@/functions/getFishingRecommendation";
 import { toast } from "sonner";
+import SpeakButton from "@/components/ai/SpeakButton";
 
 export default function FishingRecommendationCard() {
   const [loading, setLoading] = useState(false);
@@ -75,7 +76,19 @@ export default function FishingRecommendationCard() {
             <span className="text-xs text-gray-600">({data.catchCount} Faenge analysiert)</span>
           </div>
 
-          <p className="text-gray-200 text-sm leading-relaxed">{data.recommendation.summary}</p>
+          <div className="space-y-2">
+            <p className="text-gray-200 text-sm leading-relaxed">{data.recommendation.summary}</p>
+            <SpeakButton
+              autoPlay
+              text={[
+                data.recommendation.summary,
+                data.recommendation.optimal_times?.length ? `Optimale Zeiten: ${data.recommendation.optimal_times.join(', ')}.` : '',
+                data.recommendation.recommended_baits?.length ? `Empfohlene Koeder: ${data.recommendation.recommended_baits.join(', ')}.` : '',
+                data.recommendation.target_species?.length ? `Zielfische: ${data.recommendation.target_species.join(', ')}.` : '',
+                data.recommendation.tips?.length ? `Tipps: ${data.recommendation.tips.join('. ')}.` : ''
+              ].filter(Boolean).join(' ')}
+            />
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {data.recommendation.optimal_times?.length > 0 && (

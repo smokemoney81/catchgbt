@@ -6,10 +6,12 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
 import { format } from 'date-fns';
+import { useAITTS } from '@/hooks/useAITTS';
 
 export default function PendingPhotoCard({ photo, spots, findNearestSpot, onAnalyzed, onDeleted }) {
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [nearestSpot, setNearestSpot] = useState(null);
+    const { speak } = useAITTS();
 
     useEffect(() => {
         // Prüfe ob GPS-Daten vorhanden sind und finde nächsten Spot
@@ -56,10 +58,13 @@ export default function PendingPhotoCard({ photo, spots, findNearestSpot, onAnal
                     ? `${aiData.species_name || 'Unbekannt'} • ${aiData.length_cm ? Math.round(aiData.length_cm) + ' cm' : 'Länge unbekannt'} • 📍 ${nearestSpot.name}`
                     : `${aiData.species_name || 'Unbekannt'} • ${aiData.length_cm ? Math.round(aiData.length_cm) + ' cm' : 'Länge unbekannt'}`;
 
-                toast.success('🎣 Fang gespeichert!', {
+                toast.success('Fang gespeichert!', {
                     description: successMessage,
                     duration: 5000
                 });
+
+                const spokenText = `Fang erkannt: ${aiData.species_name || 'Unbekannte Art'}.${aiData.length_cm ? ` Laenge etwa ${Math.round(aiData.length_cm)} Zentimeter.` : ''}${aiData.weight_kg ? ` Gewicht etwa ${aiData.weight_kg} Kilogramm.` : ''}${nearestSpot ? ` Spot ${nearestSpot.name} zugewiesen.` : ''} ${aiData.visual_details || ''}`;
+                speak(spokenText);
 
                 onAnalyzed(photo.id, nearestSpot);
             } else {
