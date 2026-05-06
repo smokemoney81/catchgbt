@@ -98,7 +98,7 @@ export const tutorialSteps = {
       title: "Regeln und Schonzeiten",
       route: "AngelscheinPruefungSchonzeiten",
       content: "Hier pruefst du Mindestmasse und Schonzeiten je Bundesland. Ein roter Warner auf dem Dashboard zeigt aktive Schonzeiten in deiner Region direkt an.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2a6239b2d_generated_image.png"
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/6bd8b5826_Screenshot_20260506_075851_Comet.jpg"
     },
     {
       title: "Angelschein-Pruefung",
@@ -128,7 +128,7 @@ export const tutorialSteps = {
       title: "Premium-Plaene",
       route: "PremiumPlans",
       content: "Auf der Premium-Seite siehst du Free, Basic, Pro und Ultimate. Premium schaltet KI-Funktionen, Satellitendaten und erweiterte Karten frei. Drei Tage kostenlos testen.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2a3bfdd33_generated_image.png"
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/507add5b7_Screenshot_20260506_075927_Comet.jpg"
     },
     {
       title: "Einstellungen",
@@ -364,7 +364,7 @@ export const tutorialSteps = {
       title: "Rules and Closed Seasons",
       route: "AngelscheinPruefungSchonzeiten",
       content: "Check minimum sizes and closed seasons by region. A red warner on the dashboard shows active closed seasons in your region.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2a6239b2d_generated_image.png"
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/6bd8b5826_Screenshot_20260506_075851_Comet.jpg"
     },
     {
       title: "License Exam",
@@ -394,7 +394,7 @@ export const tutorialSteps = {
       title: "Premium Plans",
       route: "PremiumPlans",
       content: "On the premium page you see Free, Basic, Pro and Ultimate. Premium unlocks AI features, satellite data and extended maps. Three day free trial.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2a3bfdd33_generated_image.png"
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/507add5b7_Screenshot_20260506_075927_Comet.jpg"
     },
     {
       title: "Settings",
