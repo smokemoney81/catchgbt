@@ -5,10 +5,10 @@
 export const tutorialSteps = {
   de: [
     {
-      title: "Willkommen bei Catchgbt",
+      title: "Willkommen bei CatchGbt",
       route: "Home",
-      content: "Catchgbt ist deine Angel-App mit KI-Buddy, Karten, Wetter, Fangbuch und Satellitendaten. Oben hast du die KI-Standort-Analyse und den Mini-KI-Buddy mit Schnellfragen wie 'Welcher Koeder ist jetzt gut?' oder 'Beste Angelzeit heute?'.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/350fbd318_Screenshot_20260506_075006_Comet.jpg"
+      content: "CatchGbt ist deine Angel-App mit KI-Buddy, Karten, Wetter, Fangbuch und Satellitendaten. Im Tutorial gehen wir Schritt fuer Schritt jede Seite der App durch und zeigen dir, was du dort genau machen kannst.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/8351cc81b_generated_image.png"
     },
     {
       title: "Dashboard",
@@ -277,10 +277,10 @@ export const tutorialSteps = {
   ],
   en: [
     {
-      title: "Welcome to Catchgbt",
+      title: "Welcome to CatchGbt",
       route: "Home",
-      content: "Catchgbt is your fishing app with AI buddy, maps, weather, logbook and satellite data. At the top you have AI location analysis and the mini AI buddy with quick prompts like 'Which bait works now?' or 'Best fishing time today?'.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/350fbd318_Screenshot_20260506_075006_Comet.jpg"
+      content: "CatchGbt is your fishing app with AI buddy, maps, weather, logbook and satellite data. This tutorial walks you through every page step by step and shows what you can do there.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/8351cc81b_generated_image.png"
     },
     {
       title: "Dashboard",
