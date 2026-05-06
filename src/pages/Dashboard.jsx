@@ -5,7 +5,7 @@ import { createPageUrl } from "@/utils";
 import WakeWordIndicator from "@/components/header/WakeWordIndicator";
 import MiniKarte from "@/components/home/MiniKarte";
 import WeatherRadarMap from "@/components/weather/WeatherRadarMap";
-import MiniKiBuddy from "@/components/home/MiniKiBuddy";
+import MiniKiVoiceBuddy from "@/components/home/MiniKiVoiceBuddy";
 import SchonzeitWarner from "@/components/dashboard/SchonzeitWarner";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -427,8 +427,8 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
           </div>
         )}
 
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-900/40 backdrop-blur-sm border border-gray-800/50">
-          <MiniKiBuddy />
+        <div>
+          <MiniKiVoiceBuddy />
         </div>
 
         <Link
