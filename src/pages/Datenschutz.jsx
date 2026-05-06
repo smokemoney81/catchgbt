@@ -29,10 +29,8 @@ export default function Datenschutz() {
           <Section number="1" title="Verantwortlicher">
             <p>
               Sebastian Schorn<br />
-              Brucknerstr. 12<br />
-              50181 Bedburg<br />
               Deutschland<br />
-              E-Mail: kaisaschnitt99@gmail.com
+              E-Mail: s.s.bedburg@gmail.com
             </p>
           </Section>
 
@@ -101,7 +99,7 @@ export default function Datenschutz() {
           </Section>
 
           <Section number="11" title="Kontakt">
-            <p>E-Mail: kaisaschnitt99@gmail.com</p>
+            <p>E-Mail: s.s.bedburg@gmail.com</p>
           </Section>
         </CardContent>
       </Card>
