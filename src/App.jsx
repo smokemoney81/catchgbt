@@ -20,6 +20,7 @@ import { migrateOfflineStorage } from '@/lib/StorageMigration';
 import ErrorBoundary from '@/lib/ErrorBoundary';
 import CatchStats from '@/pages/CatchStats';
 import AdminTracking from '@/pages/AdminTracking';
+import Help from '@/pages/Help';
 import PageViewTracker from '@/components/utils/PageViewTracker';
 
 const LazyPageFallback = () => (
@@ -96,6 +97,13 @@ const AnimatedRoutes = () => {
             <ErrorBoundary>
               <LayoutWrapper currentPageName="AdminTracking">
                 <AdminTracking />
+              </LayoutWrapper>
+            </ErrorBoundary>
+          } />
+          <Route path="/Help" element={
+            <ErrorBoundary>
+              <LayoutWrapper currentPageName="Help">
+                <Help />
               </LayoutWrapper>
             </ErrorBoundary>
           } />
