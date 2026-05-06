@@ -390,33 +390,33 @@ function VoiceBuddy() {
   //   }
   // }, [conversationHistory]);
 
-  // Lade Wetter, Spot- und Regel-Daten
-  const loadAllData = async () => {
-    setLoadingInitialData(true);
+  // Lade Wetter, Spot- und Regel-Daten parallel - UI wird sofort interaktiv
+  useEffect(() => {
+    // UI sofort freigeben - Daten laden im Hintergrund
+    setLoadingInitialData(false);
     setError(null);
-    try {
-      // Load Weather Data
-      if (currentLocation?.lat && currentLocation?.lon) {
-        const weatherData = await fetchWeatherData(currentLocation.lat, currentLocation.lon);
-        setWeather(weatherData);
-        if (weatherData) {
-          const conditions = evaluateFishingConditions(weatherData);
-          setFishingConditions(conditions);
-        }
-      } else {
-        setWeather(null);
-        setFishingConditions(null);
-      }
 
-      // Load Nearest Spot
-      if (currentLocation?.lat && currentLocation?.lon) {
-        const spots = await base44.entities.Spot.list();
-        if (spots.length > 0) {
+    const hasLocation = currentLocation?.lat && currentLocation?.lon;
+
+    // Alle Requests parallel ohne aufeinander zu warten
+    if (hasLocation) {
+      fetchWeatherData(currentLocation.lat, currentLocation.lon)
+        .then(weatherData => {
+          if (weatherData) {
+            setWeather(weatherData);
+            setFishingConditions(evaluateFishingConditions(weatherData));
+          }
+        })
+        .catch(err => console.warn('Wetter laden fehlgeschlagen:', err));
+
+      base44.entities.Spot.list()
+        .then(spots => {
+          if (!spots || spots.length === 0) return;
           let nearest = null;
           let minDistance = Infinity;
           spots.forEach(spot => {
             const distance = Math.sqrt(
-              Math.pow(spot.latitude - currentLocation.lat, 2) + 
+              Math.pow(spot.latitude - currentLocation.lat, 2) +
               Math.pow(spot.longitude - currentLocation.lon, 2)
             );
             if (distance < minDistance) {
@@ -425,34 +425,15 @@ function VoiceBuddy() {
             }
           });
           setNearestSpot(nearest);
-        } else {
-          setNearestSpot(null);
-        }
-      } else {
-        setNearestSpot(null);
-      }
-
-      // NEU: Lade Regeln
-      const rulesData = await base44.entities.RuleEntry.list();
-      setRules(rulesData || []);
-      
-    } catch (error) {
-      console.error('Fehler beim Laden der Daten:', error);
-      setError('Daten konnten nicht geladen werden.');
-    } finally {
-      setLoadingInitialData(false);
+        })
+        .catch(err => console.warn('Spots laden fehlgeschlagen:', err));
     }
-  };
 
-  useEffect(() => {
-    // We only load data once currentLocation is available
-    if (currentLocation?.lat && currentLocation?.lon) {
-      loadAllData();
-    } else if (!currentLocation) {
-      // If location is not available yet, set loading to true
-      setLoadingInitialData(true);
-    }
-  }, [currentLocation]); // Depend on currentLocation
+    // Regeln immer laden (unabhängig von Location)
+    base44.entities.RuleEntry.list()
+      .then(rulesData => setRules(rulesData || []))
+      .catch(err => console.warn('Regeln laden fehlgeschlagen:', err));
+  }, [currentLocation]);
 
   // Ist gerade Schonzeit?
   const isInClosedSeason = (rule) => {
