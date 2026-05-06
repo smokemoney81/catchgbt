@@ -3,7 +3,7 @@ import { catchgbtChat } from "@/functions/catchgbtChat";
 
 export default function MiniKiVoiceBuddy() {
   const [messages, setMessages] = useState([
-    { role: "system", text: "Hallo! Ich bin Marina, deine KI-Angelexpertin. Stelle mir eine Frage!" }
+    { role: "system", text: "Hallo! Ich bin Buddy, deine KI-Angelexpertin. Stelle mir eine Frage!" }
   ]);
   const [input, setInput] = useState("");
   const [status, setStatus] = useState("");
@@ -127,7 +127,7 @@ export default function MiniKiVoiceBuddy() {
 
   const statusLabels = {
     listening: "Ich hoere zu...",
-    speaking: "Marina spricht...",
+    speaking: "Buddy spricht...",
     thinking: "Denke nach...",
     "": "Tippe oder aktiviere das Mikrofon"
   };
@@ -171,7 +171,7 @@ export default function MiniKiVoiceBuddy() {
           M
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 15, fontWeight: 600, color: "#e0f0ff" }}>Marina</div>
+          <div style={{ fontSize: 15, fontWeight: 600, color: "#e0f0ff" }}>Buddy</div>
           <div style={{ fontSize: 12, color: "#556677", marginTop: 2 }}>Deine KI-Angelexpertin</div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 3, height: 24, opacity: status === "speaking" ? 1 : 0, transition: "opacity 0.3s" }}>
