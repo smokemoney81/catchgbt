@@ -804,7 +804,8 @@ function VoiceBuddy() {
         }]);
 
         console.log('[VoiceControl] About to speak:', tip.substring(0, 60) + '...');
-        // Sprich die Antwort - mit garantiertem Fallback
+        // Pausiere Recognition damit TTS nicht abgeschnitten wird
+        try { recognitionRef.current?.stop(); } catch {}
         try {
           await speak(tip, { rate: 0.95 });
         } catch (speechError) {
@@ -812,6 +813,10 @@ function VoiceBuddy() {
           toast.warning('Audio konnte nicht abgespielt werden. Antwort ist sichtbar.');
         }
         console.log('[VoiceControl] Speech finished');
+        // Recognition wieder starten
+        if (isListeningRef.current) {
+          try { recognitionRef.current?.start(); } catch {}
+        }
         
         setIsSpeaking(false);
         setStatus('waiting');
