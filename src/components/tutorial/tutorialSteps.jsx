@@ -61,7 +61,7 @@ export const tutorialSteps = {
     {
       title: "Voice Control",
       route: "VoiceControl",
-      content: "Sage 'Hey Catch', um die Sprachsteuerung zu starten. Stelle Fragen wie 'Wo soll ich werfen?', 'Welchen Koeder?', 'Welche Strategie?' oder 'Wie ist das Wetter?' - die KI antwortet mit echten Wetter- und Spot-Daten.",
+      content: "Sage 'Hey Buddy', um die Sprachsteuerung zu starten. Stelle Fragen wie 'Wo soll ich werfen?', 'Welchen Koeder?', 'Welche Strategie?' oder 'Wie ist das Wetter?' - die KI antwortet mit echten Wetter- und Spot-Daten.",
       image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/124173541_Screenshot_20260506_075623_Comet.jpg"
     },
     {
@@ -209,66 +209,6 @@ export const tutorialSteps = {
       image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2a663230d_generated_image.png"
     },
     {
-      title: "Profil",
-      route: "Profile",
-      content: "Im Profil siehst du deinen Avatar, Mitglied seit, Gesamt-Faenge, groessten Fisch, Anzahl Arten und Punkte. Darunter erscheinen freigeschaltete Achievements und Badges.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/6ad01210e_generated_image.png"
-    },
-    {
-      title: "Events",
-      route: "Events",
-      content: "Auf der Events-Seite findest du laufende und kommende Turniere mit Preisen, Countdown und Teilnehmerzahl. Tippe auf 'Anmelden', um teilzunehmen, das Hauptevent ist mit cyanfarbenem Rand hervorgehoben.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/aab6a50d1_generated_image.png"
-    },
-    {
-      title: "Foto-Voting",
-      route: "Community",
-      content: "Im Community-Voting bewertest du Fang-Fotos anderer Angler per Wisch oder Herz-Button. Die Top 3 erscheinen unten als Leaderboard, dein Like zaehlt fuer das Wochen-Voting.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/fa4683e94_generated_image.png"
-    },
-    {
-      title: "Clans",
-      route: "Community",
-      content: "Gruende oder tritt einem Clan bei und sammelt gemeinsam Punkte. Im Clan-Tab siehst du Banner, Mitglieder mit Avatar, Punkte je Mitglied und kannst Mitglieder einladen oder den Clan verlassen.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/95dd9dcf5_generated_image.png"
-    },
-    {
-      title: "Tiefenkarten teilen",
-      route: "BathymetricCrowdsourcing",
-      content: "Lade deine Echolot-Daten hoch und hilf der Community, Tiefenkarten zu erstellen. Du siehst die Heatmap des Gewaessers, deine Beitraege und die letzten Uploader.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2dc12a292_generated_image.png"
-    },
-    {
-      title: "AR Knoten-Assistent",
-      route: "ARKnotenAssistent",
-      content: "Lerne Angelknoten Schritt fuer Schritt. Waehle Palomar, Clinch oder Uni-Knoten, folge den Anweisungen wie 'Schnur verdoppeln' und nutze Wiederholen oder Mikrofon zum Vorlesen.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/34b043c29_Screenshot_20260506_075755_Comet.jpg"
-    },
-    {
-      title: "Gebrauchte Ausruestung",
-      route: "UsedGear",
-      content: "Im Used-Gear-Marktplatz kaufst und verkaufst du gebrauchte Ruten, Rollen, Koeder und Boxen. Jedes Inserat zeigt Preis, Zustand, Standort und Verkaeufer. Filter helfen beim Suchen.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/1d9524c00_generated_image.png"
-    },
-    {
-      title: "Shop",
-      route: "Shop",
-      content: "Im Shop findest du Angelausruestung sortiert nach Kategorien mit Sterne-Bewertungen und Preisen. Der 'Kaufen'-Button leitet dich zu unseren Partnern.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/79580f951_generated_image.png"
-    },
-    {
-      title: "Funktionen bewerten",
-      route: "FunctionRatings",
-      content: "Hilf uns, die App zu verbessern. Bewerte einzelne Features wie KI-Buddy, Karte oder Kamera mit Sternen und schreibe Kommentare. Deine Stimme zaehlt.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2a663230d_generated_image.png"
-    },
-    {
-      title: "Fang-Statistiken",
-      route: "CatchStats",
-      content: "Sieh deine Faenge als Diagramme: Faenge pro Monat, Verteilung der Fischarten, groesste Faenge im Zeitverlauf, Durchschnittsgroesse und Lieblingsart auf einen Blick.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/592541dd9_generated_image.png"
-    },
-    {
       title: "Viel Erfolg",
       route: "Dashboard",
       content: "Du kennst jetzt jede wichtige Seite der App. Starte am besten mit dem Dashboard, logge deinen ersten Fang und probier den KI-Buddy aus. Petri Heil und tight lines.",
@@ -333,7 +273,7 @@ export const tutorialSteps = {
     {
       title: "Voice Control",
       route: "VoiceControl",
-      content: "Say 'Hey Catch' to start voice control. Ask things like 'Where to cast?', 'Which bait?', 'Which strategy?' or 'How is the weather?' - the AI replies with real weather and spot data.",
+      content: "Say 'Hey Buddy' to start voice control. Ask things like 'Where to cast?', 'Which bait?', 'Which strategy?' or 'How is the weather?' - the AI replies with real weather and spot data.",
       image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/124173541_Screenshot_20260506_075623_Comet.jpg"
     },
     {
@@ -479,66 +419,6 @@ export const tutorialSteps = {
       route: "FunctionRatings",
       content: "Rate individual app features with stars and a comment. Your feedback helps us improve CatchGbt where it matters most.",
       image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2a663230d_generated_image.png"
-    },
-    {
-      title: "Profile",
-      route: "Profile",
-      content: "Your profile shows avatar, member since, total catches, biggest fish, species count and points. Below you see unlocked achievements and badges.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/6ad01210e_generated_image.png"
-    },
-    {
-      title: "Events",
-      route: "Events",
-      content: "Events lists running and upcoming tournaments with prizes, countdown and participants. Tap 'Register' to join. The featured event has a cyan glowing border.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/aab6a50d1_generated_image.png"
-    },
-    {
-      title: "Photo Voting",
-      route: "Community",
-      content: "In community voting you rate other anglers' catch photos by swipe or heart button. The top 3 appear as a leaderboard below, your like counts for the weekly vote.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/fa4683e94_generated_image.png"
-    },
-    {
-      title: "Clans",
-      route: "Community",
-      content: "Found or join a clan and collect points together. The clan tab shows the banner, members with avatars, points per member and lets you invite or leave.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/95dd9dcf5_generated_image.png"
-    },
-    {
-      title: "Share Depth Maps",
-      route: "BathymetricCrowdsourcing",
-      content: "Upload fish finder data to help the community build depth maps. You see the lake heatmap, your contributions and the latest uploaders.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2dc12a292_generated_image.png"
-    },
-    {
-      title: "AR Knot Assistant",
-      route: "ARKnotenAssistent",
-      content: "Learn fishing knots step by step. Choose Palomar, Clinch or Uni knot, follow each step like 'Double the line' and use repeat or microphone to have it read aloud.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/34b043c29_Screenshot_20260506_075755_Comet.jpg"
-    },
-    {
-      title: "Used Gear",
-      route: "UsedGear",
-      content: "On the used gear marketplace you buy and sell second-hand rods, reels, lures and boxes. Each listing shows price, condition, location and seller. Filters help you find what you need.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/1d9524c00_generated_image.png"
-    },
-    {
-      title: "Shop",
-      route: "Shop",
-      content: "The shop offers fishing gear sorted by category with star ratings and prices. The 'Buy' button takes you to our partners.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/79580f951_generated_image.png"
-    },
-    {
-      title: "Rate Features",
-      route: "FunctionRatings",
-      content: "Help us improve. Rate features like AI buddy, map or camera with stars and leave comments. Your voice matters.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2a663230d_generated_image.png"
-    },
-    {
-      title: "Catch Stats",
-      route: "CatchStats",
-      content: "See your catches as charts: catches per month, species distribution, biggest catches over time, average size and favorite species at a glance.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/592541dd9_generated_image.png"
     },
     {
       title: "Good Luck",
