@@ -208,7 +208,12 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
 
                   // Normaler Menüpunkt
                   const isActive = currentPageName === item.path;
-                  const displayText = item.key.startsWith('nav.') ? t(item.key) : item.name;
+                  let displayText = item.name;
+                  if (item.key.startsWith('nav.')) {
+                    const translated = t(item.key);
+                    // Fallback auf item.name, wenn Key nicht übersetzt wurde
+                    displayText = (translated && translated !== item.key) ? translated : item.name;
+                  }
 
                   return (
                     <Link
