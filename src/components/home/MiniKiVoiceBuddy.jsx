@@ -75,10 +75,27 @@ export default function MiniKiVoiceBuddy() {
   const recRef = useRef(null);
   const waveRef = useRef(null);
   const synthRef = useRef(typeof window !== "undefined" ? window.speechSynthesis : null);
+  const voicesLoadedRef = useRef(false);
 
   useEffect(() => {
     if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
   }, [messages]);
+
+  // Stimmen vorab laden (Browser-Quirk: getVoices() ist initial leer)
+  useEffect(() => {
+    if (!synthRef.current) return;
+    const loadVoices = () => {
+      const vs = synthRef.current.getVoices();
+      if (vs && vs.length > 0) voicesLoadedRef.current = true;
+    };
+    loadVoices();
+    if (synthRef.current.onvoiceschanged !== undefined) {
+      synthRef.current.onvoiceschanged = loadVoices;
+    }
+    return () => {
+      if (synthRef.current) synthRef.current.cancel();
+    };
+  }, []);
 
   function startWave() {
     waveRef.current = setInterval(() => {
@@ -100,17 +117,40 @@ export default function MiniKiVoiceBuddy() {
   }
 
   function speak(text) {
-    if (!synthRef.current) return;
-    synthRef.current.cancel();
-    setStatus("speaking");
-    startWave();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "de-DE"; u.pitch = 1.1; u.rate = 1.0;
-    const v = getFemaleVoice();
-    if (v) u.voice = v;
-    u.onend = () => { setStatus(""); stopWave(); };
-    u.onerror = () => { setStatus(""); stopWave(); };
-    synthRef.current.speak(u);
+    if (!synthRef.current || !text) return;
+    try {
+      synthRef.current.cancel();
+      // kleiner Delay damit cancel() sauber durchläuft (Chrome-Bug)
+      setTimeout(() => {
+        if (!synthRef.current) return;
+        setStatus("speaking");
+        startWave();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "de-DE";
+        u.pitch = 1.1;
+        u.rate = 1.0;
+        u.volume = 1.0;
+        const v = getFemaleVoice();
+        if (v) u.voice = v;
+        u.onend = () => { setStatus(""); stopWave(); };
+        u.onerror = (e) => {
+          console.warn("TTS error:", e.error);
+          setStatus("");
+          stopWave();
+        };
+        try {
+          synthRef.current.speak(u);
+        } catch (err) {
+          console.warn("speak failed:", err);
+          setStatus("");
+          stopWave();
+        }
+      }, 80);
+    } catch (err) {
+      console.warn("speak outer error:", err);
+      setStatus("");
+      stopWave();
+    }
   }
 
   function stopSpeaking() {
@@ -223,9 +263,27 @@ export default function MiniKiVoiceBuddy() {
         <span style={{ fontSize: 12, color: "#8899aa", maxWidth: 180, lineHeight: 1.4 }}>Mikrofon aktivieren und Frage stellen</span>
         <button
           onClick={toggleMic}
-          style={{ display: "flex", alignItems: "center", gap: 7, background: recording ? "#22d3c8" : "#0d2a28", border: "1px solid #22d3c8", borderRadius: 10, padding: "8px 14px", color: recording ? "#060d1a" : "#22d3c8", fontSize: 13, fontWeight: 500, cursor: "pointer", fontFamily: "inherit" }}
+          disabled={status === "speaking" || status === "thinking"}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 7,
+            background: recording ? "#22d3c8" : "#0d2a28",
+            border: "1px solid #22d3c8",
+            borderRadius: 10,
+            padding: "8px 14px",
+            color: recording ? "#060d1a" : "#22d3c8",
+            fontSize: 13,
+            fontWeight: 500,
+            cursor: (status === "speaking" || status === "thinking") ? "not-allowed" : "pointer",
+            fontFamily: "inherit",
+            opacity: (status === "speaking" || status === "thinking") ? 0.45 : 1,
+            transition: "opacity 0.2s"
+          }}
         >
-          <span>{recording ? "Aktiv" : "Mikrofon"}</span>
+          <span>
+            {status === "speaking" ? "Gesperrt" : status === "thinking" ? "Warte..." : recording ? "Aktiv" : "Mikrofon"}
+          </span>
         </button>
       </div>
 
