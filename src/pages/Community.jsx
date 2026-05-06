@@ -45,6 +45,7 @@ export default function Community() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showChat, setShowChat] = useState(false);
   const [activeUserCount, setActiveUserCount] = useState(0);
+  const [activeTab, setActiveTab] = useState("competitions");
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -495,6 +496,44 @@ export default function Community() {
           </div>
         </div>
 
+        {/* Tab Navigation */}
+        <div className="flex gap-2 p-1 bg-gray-900/60 border border-gray-800 rounded-2xl overflow-x-auto">
+          <button
+            onClick={() => setActiveTab("competitions")}
+            className={`flex-1 min-w-fit flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+              activeTab === "competitions"
+                ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            <Trophy className="w-4 h-4" />
+            Wettbewerbe
+          </button>
+          <button
+            onClick={() => setActiveTab("feed")}
+            className={`flex-1 min-w-fit flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+              activeTab === "feed"
+                ? "bg-cyan-500/20 text-cyan-300 border border-cyan-500/40"
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            <MessageCircle className="w-4 h-4" />
+            Feed
+          </button>
+          <button
+            onClick={() => setActiveTab("leaderboards")}
+            className={`flex-1 min-w-fit flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+              activeTab === "leaderboards"
+                ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                : "text-gray-400 hover:text-white"
+            }`}
+          >
+            <TrendingUp className="w-4 h-4" />
+            Bestenlisten
+          </button>
+        </div>
+
+        {activeTab === "feed" && (<>
         {/* Suchleiste */}
         <Card className="glass-morphism border-gray-800">
           <CardContent className="p-4">
@@ -781,7 +820,9 @@ export default function Community() {
             </CardContent>
           </Card>
         )}
+        </>)}
 
+        {activeTab === "competitions" && (<>
         {/* Wettbewerbe starten */}
         <CompetitionLauncher 
           currentUser={currentUser}
@@ -863,7 +904,38 @@ export default function Community() {
           </div>
         )}
 
-        {/* Leaderboards */}
+        {/* Andere Wettbewerbe */}
+        {otherCompetitions.length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-amber-400" />
+              <h2 className="text-xl font-bold text-amber-400">Aktuelle Wettbewerbe</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {otherCompetitions.map((comp) => (
+                <CompetitionCard 
+                  key={comp.id} 
+                  competition={comp} 
+                  currentUser={currentUser}
+                  onUpdate={loadCompetitions}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {competitions.length === 0 && (
+          <Card className="glass-morphism border-gray-800">
+            <CardContent className="text-center py-12">
+              <Trophy className="w-12 h-12 text-amber-400/40 mx-auto mb-4" />
+              <p className="text-gray-300 mb-2 font-semibold">Noch keine aktiven Wettbewerbe</p>
+              <p className="text-sm text-gray-500">Starte selbst einen Wettbewerb oben oder schaue spaeter wieder vorbei</p>
+            </CardContent>
+          </Card>
+        )}
+        </>)}
+
+        {activeTab === "leaderboards" && (
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <Trophy className="w-5 h-5 text-cyan-400" />
@@ -887,25 +959,6 @@ export default function Community() {
             />
           </div>
         </div>
-
-        {/* Andere Wettbewerbe */}
-        {otherCompetitions.length > 0 && (
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-amber-400" />
-              <h2 className="text-xl font-bold text-amber-400">Aktuelle Wettbewerbe</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {otherCompetitions.map((comp) => (
-                <CompetitionCard 
-                  key={comp.id} 
-                  competition={comp} 
-                  currentUser={currentUser}
-                  onUpdate={loadCompetitions}
-                />
-              ))}
-            </div>
-          </div>
         )}
 
         {/* Externe Links Sektion */}
