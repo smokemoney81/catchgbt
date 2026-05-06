@@ -1,0 +1,300 @@
+// App-spezifische Tutorial-Schritte mit echten Screenshots der CatchGbt App
+// Jeder Schritt referenziert eine konkrete Seite (route) und nennt UI-Elemente,
+// die der Nutzer dort wirklich sieht.
+
+export const tutorialSteps = {
+  de: [
+    {
+      title: "Willkommen bei CatchGbt",
+      route: "Home",
+      content: "CatchGbt ist deine Angel-App mit KI-Buddy, Karten, Wetter, Fangbuch und Satellitendaten. Im Tutorial gehen wir Schritt fuer Schritt jede Seite der App durch und zeigen dir, was du dort genau machen kannst.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/8351cc81b_generated_image.png"
+    },
+    {
+      title: "Dashboard",
+      route: "Dashboard",
+      content: "Auf dem Dashboard siehst du oben das aktuelle Wetter und den naechsten Spot, den blauen Hinweis-Link zur Karte, den Wetterradar und die KI-Angelempfehlung. Tippe auf 'Analysieren', um Empfehlungen aus Wetter und deinem Fangbuch zu erhalten.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/e1bb8a71b_generated_image.png"
+    },
+    {
+      title: "Fangbuch",
+      route: "Logbook",
+      content: "Im Fangbuch siehst du alle deine Faenge mit Foto, Art, Laenge, Gewicht und Datum. Mit dem orangen Kamera-Button vom Homescreen machst du ein Foto und die KI traegt Fischart, Groesse und Spot automatisch ein.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/cd74ae3ba_generated_image.png"
+    },
+    {
+      title: "Karte und Spots",
+      route: "Map",
+      content: "Auf der Karte siehst du deine Spots, Community-Spots und Gewaesser mit Filter (Fluss, See, Teich). Tippe auf einen Pin, um Details zu sehen, oder lege per langem Druck einen neuen Spot an. Route-Planung oeffnet Google Maps.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/de8ae04af_generated_image.png"
+    },
+    {
+      title: "Wetter und Alarme",
+      route: "Weather",
+      content: "Auf der Wetter-Seite findest du Temperatur, Wind, Luftdruck, Niederschlag und das Radar. In den Einstellungen aktivierst du Wetter-Alarme, sodass du benachrichtigt wirst, wenn die Bedingungen passen.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/0eaa7bb70_generated_image.png"
+    },
+    {
+      title: "KI Chat-Buddy",
+      route: "AIAssistant",
+      content: "Der KI Chat-Buddy beantwortet Fragen zu Koedern, Techniken und Fischarten. Tippe deine Frage ein oder nutze das Mikrofon. Antworten koennen automatisch vorgelesen werden, wenn die Vorlesefunktion aktiv ist.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/77dbe4a84_generated_image.png"
+    },
+    {
+      title: "KI-Kamera und Bissanzeiger",
+      route: "AI",
+      content: "Die KI-Kamera erkennt Fischarten live im Bild und schaetzt Groesse und Zustand. Der Bissanzeiger nutzt die Kamera, um Bewegung an Pose oder Spitze zu erkennen und gibt einen Alarm.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/34479e913_generated_image.png"
+    },
+    {
+      title: "AR Gewaesser-Ansicht",
+      route: "ARView",
+      content: "In der AR-Ansicht legst du eine 3D-Tiefenkarte deines Gewaessers ueber das Kamerabild. Bewegungssensoren zeigen dir Strukturen und Hotspots in deiner Umgebung.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/ca6f51067_generated_image.png"
+    },
+    {
+      title: "Voice Control",
+      route: "VoiceControl",
+      content: "Sage 'Hey Buddy', um die Sprachsteuerung zu starten. Du kannst Faenge loggen, Wetter abfragen oder zu Seiten navigieren - alles haendefrei. Das Mikrofon-Symbol oben zeigt dir den Status.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/ed44d9ca5_generated_image.png"
+    },
+    {
+      title: "Gewaesser-Analyse",
+      route: "WaterAnalysis",
+      content: "Die Gewaesser-Analyse nutzt Satellitendaten und zeigt dir Wassertemperatur, Chlorophyll, Truebung und Algenrisiko. Vergleiche Spots, lass Hotspots berechnen und exportiere die Auswertung.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/96c6ff128_generated_image.png"
+    },
+    {
+      title: "Koeder-Mischer",
+      route: "BaitMixer",
+      content: "Im Koeder-Mischer kombinierst du Zutaten und siehst die Attraktivitaet je Fischart in Prozent. Speichere deine Rezepte, bewerte sie nach dem Einsatz und teile sie mit der Community.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/356d1c82e_generated_image.png"
+    },
+    {
+      title: "Ausruestung",
+      route: "Gear",
+      content: "Verwalte Ruten, Rollen, Schnuere und Haken in eigenen Setups. Lege Setups fuer Hecht, Karpfen oder Spinnfischen an und ruf sie beim Trip-Planen direkt auf.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/d22e686a3_generated_image.png"
+    },
+    {
+      title: "Trip-Planer",
+      route: "TripPlanner",
+      content: "Im Trip-Planer waehlst du Zielfisch und Spot. Die KI generiert eine Schritt-fuer-Schritt-Anleitung mit Wetter, Ausruestung und besten Zeiten. Aktive Trips bleiben oben sichtbar.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/40a4e4c9a_generated_image.png"
+    },
+    {
+      title: "Community",
+      route: "Community",
+      content: "In der Community teilst du Posts und Faenge, kommentierst, gibst Likes und nimmst an Wettbewerben teil. Ueber den Chat-Bereich tauschst du dich live mit anderen Anglern aus.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/66aa4ae02_generated_image.png"
+    },
+    {
+      title: "Ranking",
+      route: "Rank",
+      content: "Im Ranking siehst du dich im Vergleich zu anderen Anglern - taeglich, woechentlich, monatlich und gesamt. Punkte bekommst du fuer Faenge, Quiz-Antworten und Community-Aktivitaet.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/db56b7b94_generated_image.png"
+    },
+    {
+      title: "Regeln und Schonzeiten",
+      route: "AngelscheinPruefungSchonzeiten",
+      content: "Hier pruefst du Mindestmasse und Schonzeiten je Bundesland. Ein roter Warner auf dem Dashboard zeigt aktive Schonzeiten in deiner Region direkt an.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2a6239b2d_generated_image.png"
+    },
+    {
+      title: "Angelschein-Pruefung",
+      route: "Quiz",
+      content: "Lerne mit ueber 500 Original-Pruefungsfragen aus den Kategorien Allgemein, Geraetekunde, Gewaesserkunde und Gesetzeskunde. Jede Frage hat eine Erklaerung, dein Fortschritt wird gespeichert.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/c9b3ac324_generated_image.png"
+    },
+    {
+      title: "Lizenzen",
+      route: "Licenses",
+      content: "Lade Fotos deiner Angelscheine und Gewaesserkarten hoch, hinterlege das Ablaufdatum und du wirst rechtzeitig erinnert. Alles ist auch offline verfuegbar.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/67a6193dc_generated_image.png"
+    },
+    {
+      title: "Geraete-Integration",
+      route: "Devices",
+      content: "Verbinde Bissanzeiger, Echolote oder Smartwatches. Du siehst Akkustand und Signal, bekommst Push-Benachrichtigungen bei Bissen und kannst Echolot-Daten in der App auswerten.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/eb1eb77d9_generated_image.png"
+    },
+    {
+      title: "Arcade-Spiele",
+      route: "Match3Game",
+      content: "Zwischen den Sessions kannst du in der Arcade kleine Spiele wie Precision Cast, Match-3 oder Bite Timing spielen, Highscores sammeln und Achievements freischalten.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/03091aa2f_generated_image.png"
+    },
+    {
+      title: "Premium-Plaene",
+      route: "PremiumPlans",
+      content: "Auf der Premium-Seite siehst du Free, Basic, Pro und Ultimate. Premium schaltet KI-Funktionen, Satellitendaten und erweiterte Karten frei. Drei Tage kostenlos testen.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2a3bfdd33_generated_image.png"
+    },
+    {
+      title: "Einstellungen",
+      route: "Settings",
+      content: "In den Einstellungen waehlst du Sprache, Einheiten, Theme, Stimme, Sound und Wetter-Alarme. Hier aktivierst du auch die Vorlesefunktion fuer den KI-Buddy.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/dd5da882a_generated_image.png"
+    },
+    {
+      title: "PWA und Offline",
+      route: "Dashboard",
+      content: "Installiere CatchGbt als App ueber den Install-Button. Spots, Wetter, Lizenzen und Regeln sind dann auch ohne Internet verfuegbar und werden automatisch synchronisiert.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/a653338da_generated_image.png"
+    },
+    {
+      title: "Viel Erfolg",
+      route: "Dashboard",
+      content: "Du kennst jetzt jede wichtige Seite der App. Starte am besten mit dem Dashboard, logge deinen ersten Fang und probier den KI-Buddy aus. Petri Heil und tight lines.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/8df626539_generated_image.png"
+    }
+  ],
+  en: [
+    {
+      title: "Welcome to CatchGbt",
+      route: "Home",
+      content: "CatchGbt is your fishing app with AI buddy, maps, weather, logbook and satellite data. This tutorial walks you through every page step by step and shows what you can do there.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/8351cc81b_generated_image.png"
+    },
+    {
+      title: "Dashboard",
+      route: "Dashboard",
+      content: "On the dashboard you see current weather and the nearest spot, the blue map link, the weather radar and the AI fishing recommendation. Tap 'Analyze' to get advice based on weather and your logbook.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/e1bb8a71b_generated_image.png"
+    },
+    {
+      title: "Logbook",
+      route: "Logbook",
+      content: "In the logbook you see all your catches with photo, species, length, weight and date. With the orange camera button on the home screen you take a photo and the AI fills species, size and spot automatically.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/cd74ae3ba_generated_image.png"
+    },
+    {
+      title: "Map and Spots",
+      route: "Map",
+      content: "On the map you see your spots, community spots and waters with filters (river, lake, pond). Tap a pin for details or long-press to add a new spot. Route planning opens Google Maps.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/de8ae04af_generated_image.png"
+    },
+    {
+      title: "Weather and Alerts",
+      route: "Weather",
+      content: "The weather page shows temperature, wind, pressure, precipitation and the radar. In settings you enable weather alerts to be notified when conditions are right.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/0eaa7bb70_generated_image.png"
+    },
+    {
+      title: "AI Chat Buddy",
+      route: "AIAssistant",
+      content: "The AI chat buddy answers questions about baits, techniques and species. Type or use the microphone. Answers can be read aloud automatically when text-to-speech is active.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/77dbe4a84_generated_image.png"
+    },
+    {
+      title: "AI Camera and Bite Detector",
+      route: "AI",
+      content: "The AI camera recognizes species live and estimates size and condition. The bite detector uses the camera to detect motion of float or rod tip and alerts you.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/34479e913_generated_image.png"
+    },
+    {
+      title: "AR Water View",
+      route: "ARView",
+      content: "In the AR view a 3D depth map of your water is overlaid on the camera image. Motion sensors reveal structures and hotspots in your surroundings.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/ca6f51067_generated_image.png"
+    },
+    {
+      title: "Voice Control",
+      route: "VoiceControl",
+      content: "Say 'Hey Buddy' to start voice control. Log catches, ask for weather or navigate to pages - hands free. The microphone icon at the top shows the status.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/ed44d9ca5_generated_image.png"
+    },
+    {
+      title: "Water Analysis",
+      route: "WaterAnalysis",
+      content: "Water analysis uses satellite data and shows water temperature, chlorophyll, turbidity and algae risk. Compare spots, calculate hotspots and export results.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/96c6ff128_generated_image.png"
+    },
+    {
+      title: "Bait Mixer",
+      route: "BaitMixer",
+      content: "In the bait mixer you combine ingredients and see attractiveness per species in percent. Save recipes, rate them after use and share them with the community.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/356d1c82e_generated_image.png"
+    },
+    {
+      title: "Gear",
+      route: "Gear",
+      content: "Manage rods, reels, lines and hooks in setups. Create setups for pike, carp or spinning and load them when planning a trip.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/d22e686a3_generated_image.png"
+    },
+    {
+      title: "Trip Planner",
+      route: "TripPlanner",
+      content: "In the trip planner you choose target fish and spot. The AI generates a step-by-step plan with weather, gear and best times. Active trips stay on top.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/40a4e4c9a_generated_image.png"
+    },
+    {
+      title: "Community",
+      route: "Community",
+      content: "In the community you share posts and catches, comment, like and join contests. The chat area lets you talk live with other anglers.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/66aa4ae02_generated_image.png"
+    },
+    {
+      title: "Ranking",
+      route: "Rank",
+      content: "Ranking compares you to other anglers - daily, weekly, monthly and total. You earn points for catches, quiz answers and community activity.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/db56b7b94_generated_image.png"
+    },
+    {
+      title: "Rules and Closed Seasons",
+      route: "AngelscheinPruefungSchonzeiten",
+      content: "Check minimum sizes and closed seasons by region. A red warner on the dashboard shows active closed seasons in your region.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2a6239b2d_generated_image.png"
+    },
+    {
+      title: "License Exam",
+      route: "Quiz",
+      content: "Practice with 500+ original exam questions across general, tackle, water and law topics. Every question has an explanation and your progress is saved.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/c9b3ac324_generated_image.png"
+    },
+    {
+      title: "Licenses",
+      route: "Licenses",
+      content: "Upload photos of fishing licenses and permits, set the expiration date and get reminders. Everything stays available offline.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/67a6193dc_generated_image.png"
+    },
+    {
+      title: "Devices",
+      route: "Devices",
+      content: "Connect bite alarms, fish finders or smartwatches. See battery and signal, get push alerts on bites and analyze fish finder data in the app.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/eb1eb77d9_generated_image.png"
+    },
+    {
+      title: "Arcade Games",
+      route: "Match3Game",
+      content: "Between sessions play small games like Precision Cast, Match-3 or Bite Timing in the arcade, collect high scores and unlock achievements.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/03091aa2f_generated_image.png"
+    },
+    {
+      title: "Premium Plans",
+      route: "PremiumPlans",
+      content: "On the premium page you see Free, Basic, Pro and Ultimate. Premium unlocks AI features, satellite data and extended maps. Three day free trial.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2a3bfdd33_generated_image.png"
+    },
+    {
+      title: "Settings",
+      route: "Settings",
+      content: "In settings you choose language, units, theme, voice, sound and weather alerts. This is also where you enable text-to-speech for the AI buddy.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/dd5da882a_generated_image.png"
+    },
+    {
+      title: "PWA and Offline",
+      route: "Dashboard",
+      content: "Install CatchGbt as an app via the install button. Spots, weather, licenses and rules then work without internet and sync automatically.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/a653338da_generated_image.png"
+    },
+    {
+      title: "Good Luck",
+      route: "Dashboard",
+      content: "You now know every key page of the app. Start on the dashboard, log your first catch and try the AI buddy. Tight lines.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/8df626539_generated_image.png"
+    }
+  ]
+};
+
+export default tutorialSteps;
