@@ -7,8 +7,8 @@ Deno.serve((req) => {
         
         const manifest = {
             "id": "com.catchgbt.fishing.assistant.v3",
-            "name": "CatchGBT - Dein KI Angel-Assistent von Sebastian Schorn",
-            "short_name": "CatchGBT",
+            "name": "BaitBuddx - Dein KI Angel-Assistent von Sebastian Schorn",
+            "short_name": "BaitBuddx",
             "description": "Angel-App mit KI-Assistent. Finde die besten Angelplätze, erhalte intelligente Tipps und dokumentiere deine Fänge!",
             "start_url": "/",
             "display": "standalone",
