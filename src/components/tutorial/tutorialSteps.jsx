@@ -143,6 +143,66 @@ export const tutorialSteps = {
       image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/a653338da_generated_image.png"
     },
     {
+      title: "Profil",
+      route: "Profile",
+      content: "Auf deinem Profil siehst du deinen Avatar, Mitglied seit Datum, Gesamtfaenge, groessten Fisch, Anzahl Arten und Punkte. Achievement-Badges zeigen freigeschaltete Erfolge an.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/6ad01210e_generated_image.png"
+    },
+    {
+      title: "Fang-Statistiken",
+      route: "CatchStats",
+      content: "Detaillierte Statistiken zu deinen Faengen: Faenge pro Monat, Fischart-Verteilung, groesste Faenge im Zeitverlauf und Durchschnittsgroessen. Hilft dir, Muster zu erkennen.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/592541dd9_generated_image.png"
+    },
+    {
+      title: "Events",
+      route: "Events",
+      content: "Auf der Events-Seite findest du aktuelle Turniere und Aktionen mit Preisen und Countdown. Mit einem Tipp meldest du dich an und siehst die Teilnehmerzahl.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/aab6a50d1_generated_image.png"
+    },
+    {
+      title: "Foto-Voting",
+      route: "Community",
+      content: "Beim Community-Voting bewertest du Fang-Fotos anderer Angler per Like-Button. Die Top-Fotos kommen ins Leaderboard und gewinnen am Ende des Zeitraums.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/fa4683e94_generated_image.png"
+    },
+    {
+      title: "Clans",
+      route: "Community",
+      content: "Erstelle einen Clan oder tritt einem bei. Mitglieder sammeln gemeinsam Punkte fuer das Clan-Leaderboard. Im Clan-Bereich siehst du Mitglieder, Beitraege und kannst neue einladen.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/95dd9dcf5_generated_image.png"
+    },
+    {
+      title: "Tiefenkarten-Crowdsourcing",
+      route: "BathymetricCrowdsourcing",
+      content: "Lade deine Echolot-Daten hoch und hilf, eine genaue Tiefenkarte deines Gewaessers zu bauen. Die App rechnet alle Beitraege zu einer Heatmap zusammen.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2dc12a292_generated_image.png"
+    },
+    {
+      title: "AR Knoten-Assistent",
+      route: "ARKnotenAssistent",
+      content: "Lerne Anglerknoten Schritt fuer Schritt mit 3D-Animation. Waehle einen Knoten wie Palomar oder Clinch, folge den Schritten und uebe direkt mit deiner Schnur.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/06b2cde71_generated_image.png"
+    },
+    {
+      title: "Gebrauchte Ausruestung",
+      route: "UsedGear",
+      content: "Im Marktplatz kaufst und verkaufst du gebrauchte Angel-Ausruestung. Filter nach Kategorie, Zustand und Standort. Kontakt zum Verkaeufer direkt aus der App.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/1d9524c00_generated_image.png"
+    },
+    {
+      title: "Shop",
+      route: "Shop",
+      content: "Im Shop findest du empfohlene Angel-Produkte mit Bewertungen und Direkt-Links zu Partnern. Filtere nach Kategorie wie Ruten, Rollen, Koeder oder Zubehoer.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/79580f951_generated_image.png"
+    },
+    {
+      title: "Funktion-Bewertungen",
+      route: "FunctionRatings",
+      content: "Bewerte einzelne Features der App mit Sternen und einem Kommentar. Dein Feedback hilft uns, CatchGbt gezielt zu verbessern.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2a663230d_generated_image.png"
+    },
+    {
       title: "Viel Erfolg",
       route: "Dashboard",
       content: "Du kennst jetzt jede wichtige Seite der App. Starte am besten mit dem Dashboard, logge deinen ersten Fang und probier den KI-Buddy aus. Petri Heil und tight lines.",
@@ -287,6 +347,66 @@ export const tutorialSteps = {
       route: "Dashboard",
       content: "Install CatchGbt as an app via the install button. Spots, weather, licenses and rules then work without internet and sync automatically.",
       image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/a653338da_generated_image.png"
+    },
+    {
+      title: "Profile",
+      route: "Profile",
+      content: "On your profile you see your avatar, member-since date, total catches, biggest fish, species count and points. Achievement badges show your unlocked milestones.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/6ad01210e_generated_image.png"
+    },
+    {
+      title: "Catch Statistics",
+      route: "CatchStats",
+      content: "Detailed statistics about your catches: catches per month, species distribution, biggest catches over time and average sizes. Helps you spot patterns.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/592541dd9_generated_image.png"
+    },
+    {
+      title: "Events",
+      route: "Events",
+      content: "On the events page you find current tournaments and actions with prizes and countdown. Tap to register and see how many anglers joined.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/aab6a50d1_generated_image.png"
+    },
+    {
+      title: "Photo Voting",
+      route: "Community",
+      content: "In community voting you rate other anglers' catch photos with the like button. Top photos enter the leaderboard and win at the end of the period.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/fa4683e94_generated_image.png"
+    },
+    {
+      title: "Clans",
+      route: "Community",
+      content: "Create a clan or join one. Members collect points together for the clan leaderboard. Inside the clan area you see members, contributions and can invite new ones.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/95dd9dcf5_generated_image.png"
+    },
+    {
+      title: "Bathymetric Crowdsourcing",
+      route: "BathymetricCrowdsourcing",
+      content: "Upload your fish finder data and help build an accurate depth map of your water. The app combines all contributions into a heatmap.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2dc12a292_generated_image.png"
+    },
+    {
+      title: "AR Knot Assistant",
+      route: "ARKnotenAssistent",
+      content: "Learn fishing knots step by step with 3D animation. Choose a knot like Palomar or Clinch, follow the steps and practice directly with your line.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/06b2cde71_generated_image.png"
+    },
+    {
+      title: "Used Gear",
+      route: "UsedGear",
+      content: "In the marketplace you buy and sell used fishing gear. Filter by category, condition and location. Contact the seller directly from the app.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/1d9524c00_generated_image.png"
+    },
+    {
+      title: "Shop",
+      route: "Shop",
+      content: "The shop lists recommended fishing products with ratings and direct links to partners. Filter by category like rods, reels, baits or accessories.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/79580f951_generated_image.png"
+    },
+    {
+      title: "Feature Ratings",
+      route: "FunctionRatings",
+      content: "Rate individual app features with stars and a comment. Your feedback helps us improve CatchGbt where it matters most.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2a663230d_generated_image.png"
     },
     {
       title: "Good Luck",
