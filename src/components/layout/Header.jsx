@@ -11,6 +11,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import WakeWordIndicator from "@/components/header/WakeWordIndicator";
 import EventTimer from "@/components/header/EventTimer";
+import LastBuddyMessage from "@/components/header/LastBuddyMessage";
 import { base44 } from "@/api/base44Client";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { mobileStack } from "@/lib/MobileStackManager";
@@ -216,11 +217,9 @@ export default function Header({
           <EventTimer />
         </div>
 
-        {/* Center - Logo/Title */}
+        {/* Center - Letzte Buddy-Nachricht (klickbar zum Voice Control) */}
         <div className="flex items-center gap-2 relative z-20">
-          <div className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-emerald-400 text-transparent bg-clip-text drop-shadow-[0_0_15px_rgba(34,211,238,0.8)]">
-            Catchgbt
-          </div>
+          <LastBuddyMessage />
           
           {isDemo && (
             <Badge className="bg-amber-500 text-black text-xs font-bold">

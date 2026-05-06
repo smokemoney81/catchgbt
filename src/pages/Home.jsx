@@ -788,11 +788,11 @@ function LandingPageContent() {
                         color: 'transparent'
                     }}
                 >
-                    <span className="mr-24 pl-4">Catchgbt wünscht dir viel Erfolg und Petri Heil</span>
+                    <span className="mr-24 pl-4">BaitBuddy wünscht dir viel Erfolg und Petri Heil</span>
                     <span className="mr-24">Deine Fangdaten werden niemals an Dritte weitergegeben</span>
                     <span className="mr-24">Private Logs: dein Fangbuch gehoert nur dir</span>
                     <span className="mr-24">Datenschutz nach DSGVO - volle Kontrolle uber deine Daten</span>
-                    <span className="mr-24 pl-4">Catchgbt wünscht dir viel Erfolg und Petri Heil</span>
+                    <span className="mr-24 pl-4">BaitBuddy wünscht dir viel Erfolg und Petri Heil</span>
                     <span className="mr-24">Deine Fangdaten werden niemals an Dritte weitergegeben</span>
                     <span className="mr-24">Private Logs: dein Fangbuch gehoert nur dir</span>
                     <span className="mr-24">Datenschutz nach DSGVO - volle Kontrolle uber deine Daten</span>

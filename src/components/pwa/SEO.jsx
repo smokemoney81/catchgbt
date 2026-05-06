@@ -24,13 +24,13 @@ export default function SEO() {
     };
 
     // Title und Description
-    document.title = "CatchGbt – Angeln smarter: Fangbuch, Spots, KI & mehr";
-    setMeta("name", "description", "CatchGbt: Fangbuch, Spots, Wetter, Analyse, Community und KI-Fangberatung – DSGVO-freundlich, Dark Mode, offline nutzbar.");
+    document.title = "BaitBuddy – Angeln smarter: Fangbuch, Spots, KI & mehr";
+    setMeta("name", "description", "BaitBuddy: Fangbuch, Spots, Wetter, Analyse, Community und KI-Fangberatung – DSGVO-freundlich, Dark Mode, offline nutzbar.");
     setMeta("name", "theme-color", "#0b1324");
     setMeta("name", "robots", "index, follow");
 
     // Open Graph
-    setMeta("property", "og:title", "CatchGbt");
+    setMeta("property", "og:title", "BaitBuddy");
     setMeta("property", "og:description", "Fangbuch, Spots, Wetter, Analyse, Community und KI-Fangberatung – alles in einer App.");
     setMeta("property", "og:type", "website");
     setMeta("property", "og:url", window.location.origin);

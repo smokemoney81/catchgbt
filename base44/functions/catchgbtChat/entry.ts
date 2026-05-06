@@ -214,7 +214,7 @@ Deno.serve(async (req) => {
     const contextSection = buildContextSection(contextData);
 
     const systemPrompt =
-      'Du bist CatchGBT, ein professioneller Angel-Experte und Sprach-Assistent fuer eine Angel-App. ' +
+      'Du bist BaitBuddy, ein professioneller Angel-Experte und Sprach-Assistent fuer eine Angel-App. ' +
       'Gib kurze, hilfreiche Antworten. Keine Emojis.\n\n' +
       'WICHTIG - DU KANNST AKTIONEN AUSFUEHREN:\n' +
       'Wenn der Nutzer eine konkrete Aktion will (Fang eintragen, Community-Post erstellen, Seite oeffnen), ' +
