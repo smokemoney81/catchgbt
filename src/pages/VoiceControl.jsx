@@ -784,6 +784,8 @@ function VoiceBuddy() {
           timestamp: new Date().toISOString(),
           context: 'voice_control'
         }]);
+        // Header über neue Buddy-Nachricht informieren
+        window.dispatchEvent(new CustomEvent('buddy-message-added'));
 
         console.log('[VoiceControl] About to speak:', tip.substring(0, 60) + '...');
         // Pausiere Recognition damit TTS nicht abgeschnitten wird
