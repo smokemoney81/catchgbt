@@ -16,6 +16,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { usePredictivePrefetch } from "@/hooks/usePredictivePrefetch";
 import PageContainer from "@/components/layout/PageContainer";
 import VoiceOverlay from "@/components/layout/VoiceOverlay";
+import CommunityPostDialog from "@/components/community/CommunityPostDialog";
 
 export default function Dashboard() {
   const queryClient = useQueryClient();
@@ -40,6 +41,7 @@ export default function Dashboard() {
   const [aiAnalysis, setAiAnalysis] = useState(null);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [voiceTranscript, setVoiceTranscript] = useState('');
+  const [showCommunityDialog, setShowCommunityDialog] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -517,23 +519,41 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
               { name: "Ranking", path: "Ranking" },
               { name: "Angelschein", path: "AngelscheinPruefungSchonzeiten", offline: true }
             ].map((feature) => (
-              <Link
-                key={feature.path}
-                to={createPageUrl(feature.path)}
-                className="group relative overflow-hidden rounded-xl bg-gray-900/50 hover:bg-gray-800/60 border border-gray-800/50 hover:border-gray-700/60 p-5 text-center transition-all"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative">
-                  <div className="text-sm font-medium text-gray-300 group-hover:text-cyan-400 transition-colors">{feature.name}</div>
-                  {feature.offline && (
-                    <div className="text-xs text-emerald-400 mt-1">Offline verfuegbar</div>
-                  )}
-                </div>
-              </Link>
+              feature.path === "Community" ? (
+                <button
+                  key={feature.path}
+                  onClick={() => setShowCommunityDialog(true)}
+                  className="group relative overflow-hidden rounded-xl bg-gray-900/50 hover:bg-gray-800/60 border border-gray-800/50 hover:border-gray-700/60 p-5 text-center transition-all"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative">
+                    <div className="text-sm font-medium text-gray-300 group-hover:text-cyan-400 transition-colors">{feature.name}</div>
+                  </div>
+                </button>
+              ) : (
+                <Link
+                  key={feature.path}
+                  to={createPageUrl(feature.path)}
+                  className="group relative overflow-hidden rounded-xl bg-gray-900/50 hover:bg-gray-800/60 border border-gray-800/50 hover:border-gray-700/60 p-5 text-center transition-all"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/0 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative">
+                    <div className="text-sm font-medium text-gray-300 group-hover:text-cyan-400 transition-colors">{feature.name}</div>
+                    {feature.offline && (
+                      <div className="text-xs text-emerald-400 mt-1">Offline verfuegbar</div>
+                    )}
+                  </div>
+                </Link>
+              )
             ))}
           </div>
         </div>
       </div>
+
+      <CommunityPostDialog
+        isOpen={showCommunityDialog}
+        onOpenChange={setShowCommunityDialog}
+      />
     </PageContainer>
     );
     }
