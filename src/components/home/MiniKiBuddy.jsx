@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { catchgbtChat } from "@/functions/catchgbtChat";
+import { textToSpeech } from "@/functions/textToSpeech";
 
 const SYSTEM_PROMPT = `Du bist CatchGBT, ein erfahrener Angel-Assistent. Du hilfst Anglern mit Tipps zu Fischarten, Koeder, Spots, Wetter, Ausruestung und Technik. Antworte auf Deutsch, freundlich und direkt. Halte Antworten kurz und praxisnah.`;
 
@@ -24,18 +25,16 @@ async function speakText(text) {
   stopCurrentAudio();
 
   try {
-    const response = await fetch('/api/functions/textToSpeech', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: text.slice(0, 1000) })
-    });
+    // Aufruf ueber Base44 SDK (axios), liefert response mit data als ArrayBuffer/Blob
+    const res = await textToSpeech({ text: text.slice(0, 1000) }, { responseType: 'blob' });
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new Error(error.error || `TTS failed: ${response.status}`);
+    let blob = res?.data;
+    if (!blob) throw new Error('Leere Audio-Antwort');
+
+    // Falls SDK ArrayBuffer liefert, in Blob konvertieren
+    if (!(blob instanceof Blob)) {
+      blob = new Blob([blob], { type: 'audio/mpeg' });
     }
-
-    const blob = await response.blob();
     if (blob.size === 0) throw new Error('Leere Audio-Antwort');
 
     const audioUrl = URL.createObjectURL(blob);
