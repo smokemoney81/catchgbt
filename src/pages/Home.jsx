@@ -686,7 +686,7 @@ function LandingPageContent() {
                 transition={{ duration: 0.6, delay: 0.4 }}
             >
                 <a
-                    href="https://catchgbt-q7scna.manus.space"
+                    href="https://bit.ly/4d97tHI"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block text-left"
@@ -702,6 +702,9 @@ function LandingPageContent() {
                         }}
                     >
                         <div className="flex flex-col items-start gap-1">
+                            <span className="text-[10px] sm:text-xs font-bold tracking-[0.3em] uppercase text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]">
+                                Weblog
+                            </span>
                             <motion.span
                                 animate={{
                                     textShadow: [
@@ -721,7 +724,7 @@ function LandingPageContent() {
                                     animation: 'gradient-wave 3s ease infinite'
                                 }}
                             >
-                                Catchgbt-q7scna.manus.space
+                                bit.ly/4d97tHI
                             </motion.span>
                         </div>
                     </motion.div>
