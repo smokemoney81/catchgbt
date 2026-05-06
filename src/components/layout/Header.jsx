@@ -219,7 +219,7 @@ export default function Header({
         {/* Center - Logo/Title */}
         <div className="flex items-center gap-2 relative z-20">
           <div className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-emerald-400 text-transparent bg-clip-text drop-shadow-[0_0_15px_rgba(34,211,238,0.8)]">
-            BaitBuddx
+            Catchgbt
           </div>
           
           {isDemo && (

@@ -1,13 +1,13 @@
-// App-spezifische Tutorial-Schritte mit echten Screenshots der BaitBuddx App
+// App-spezifische Tutorial-Schritte mit echten Screenshots der CatchGbt App
 // Jeder Schritt referenziert eine konkrete Seite (route) und nennt UI-Elemente,
 // die der Nutzer dort wirklich sieht.
 
 export const tutorialSteps = {
   de: [
     {
-      title: "Willkommen bei BaitBuddx",
+      title: "Willkommen bei CatchGbt",
       route: "Home",
-      content: "BaitBuddx ist deine Angel-App mit KI-Buddy, Karten, Wetter, Fangbuch und Satellitendaten. Im Tutorial gehen wir Schritt fuer Schritt jede Seite der App durch und zeigen dir, was du dort genau machen kannst.",
+      content: "CatchGbt ist deine Angel-App mit KI-Buddy, Karten, Wetter, Fangbuch und Satellitendaten. Im Tutorial gehen wir Schritt fuer Schritt jede Seite der App durch und zeigen dir, was du dort genau machen kannst.",
       image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/8351cc81b_generated_image.png"
     },
     {
@@ -145,7 +145,7 @@ export const tutorialSteps = {
     {
       title: "PWA und Offline",
       route: "Dashboard",
-      content: "Installiere BaitBuddx als App ueber den Install-Button. Spots, Wetter, Lizenzen und Regeln sind dann auch ohne Internet verfuegbar und werden automatisch synchronisiert.",
+      content: "Installiere CatchGbt als App ueber den Install-Button. Spots, Wetter, Lizenzen und Regeln sind dann auch ohne Internet verfuegbar und werden automatisch synchronisiert.",
       image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/a653338da_generated_image.png"
     },
     {
@@ -205,7 +205,7 @@ export const tutorialSteps = {
     {
       title: "Funktion-Bewertungen",
       route: "FunctionRatings",
-      content: "Bewerte einzelne Features der App mit Sternen und einem Kommentar. Dein Feedback hilft uns, BaitBuddx gezielt zu verbessern.",
+      content: "Bewerte einzelne Features der App mit Sternen und einem Kommentar. Dein Feedback hilft uns, CatchGbt gezielt zu verbessern.",
       image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2a663230d_generated_image.png"
     },
     {
@@ -217,9 +217,9 @@ export const tutorialSteps = {
   ],
   en: [
     {
-      title: "Welcome to BaitBuddx",
+      title: "Welcome to CatchGbt",
       route: "Home",
-      content: "BaitBuddx is your fishing app with AI buddy, maps, weather, logbook and satellite data. This tutorial walks you through every page step by step and shows what you can do there.",
+      content: "CatchGbt is your fishing app with AI buddy, maps, weather, logbook and satellite data. This tutorial walks you through every page step by step and shows what you can do there.",
       image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/8351cc81b_generated_image.png"
     },
     {
@@ -357,7 +357,7 @@ export const tutorialSteps = {
     {
       title: "PWA and Offline",
       route: "Dashboard",
-      content: "Install BaitBuddx as an app via the install button. Spots, weather, licenses and rules then work without internet and sync automatically.",
+      content: "Install CatchGbt as an app via the install button. Spots, weather, licenses and rules then work without internet and sync automatically.",
       image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/a653338da_generated_image.png"
     },
     {
@@ -417,7 +417,7 @@ export const tutorialSteps = {
     {
       title: "Feature Ratings",
       route: "FunctionRatings",
-      content: "Rate individual app features with stars and a comment. Your feedback helps us improve BaitBuddx where it matters most.",
+      content: "Rate individual app features with stars and a comment. Your feedback helps us improve CatchGbt where it matters most.",
       image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/2a663230d_generated_image.png"
     },
     {

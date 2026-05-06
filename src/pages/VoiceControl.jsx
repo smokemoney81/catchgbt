@@ -1137,7 +1137,7 @@ function VoiceBuddy() {
                         : 'bg-gray-800/60 border border-gray-700 text-gray-200'
                     }`}>
                       <p className="text-xs text-gray-500 mb-1">
-                        {msg.role === 'user' ? 'Du' : 'BaitBuddx'} - {msg.timestamp ? format(new Date(msg.timestamp), 'HH:mm') : ''}
+                        {msg.role === 'user' ? 'Du' : 'CatchGBT'} - {msg.timestamp ? format(new Date(msg.timestamp), 'HH:mm') : ''}
                       </p>
                       <p className="text-sm leading-relaxed">{msg.content}</p>
                     </div>

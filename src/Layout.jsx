@@ -263,23 +263,23 @@ function LayoutContent({ children, currentPageName }) {
             scope: '/'
           })
           .then((registration) => {
-            console.log('[BaitBuddx] Service Worker registriert:', registration.scope);
+            console.log('[Catchly] Service Worker registriert:', registration.scope);
             
             // Prüfe auf Updates
             registration.addEventListener('updatefound', () => {
               const newWorker = registration.installing;
-              console.log('[BaitBuddx] Neuer Service Worker gefunden');
+              console.log('[Catchly] Neuer Service Worker gefunden');
               
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  console.log('[BaitBuddx] Neuer Service Worker verfügbar - Update bereit');
+                  console.log('[Catchly] Neuer Service Worker verfügbar - Update bereit');
                   window.dispatchEvent(new CustomEvent('sw-update-available'));
                 }
               });
             });
           })
           .catch((error) => {
-            console.error('[BaitBuddx] Service Worker Registrierung fehlgeschlagen:', error);
+            console.error('[Catchly] Service Worker Registrierung fehlgeschlagen:', error);
           });
       });
     }

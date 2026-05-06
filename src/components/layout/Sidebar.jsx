@@ -261,7 +261,7 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
               </button>
               
               <div className="text-xs text-gray-500 text-center">
-                &copy; 2024 BaitBuddx
+                &copy; 2024 CatchGbt
               </div>
             </div>
           </div>
