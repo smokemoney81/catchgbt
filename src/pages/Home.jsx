@@ -686,51 +686,6 @@ function LandingPageContent() {
                 transition={{ duration: 0.6, delay: 0.4 }}
             >
                 <a
-                    href="https://bit.ly/4d97tHI"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block text-left"
-                >
-                    <motion.div
-                        animate={{
-                            scale: [1, 1.08, 1],
-                        }}
-                        transition={{
-                            duration: 2,
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                        }}
-                    >
-                        <div className="flex flex-col items-start gap-1">
-                            <span className="text-[10px] sm:text-xs font-bold tracking-[0.3em] uppercase text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]">
-                                Weblog
-                            </span>
-                            <motion.span
-                                animate={{
-                                    textShadow: [
-                                        '0 0 30px rgba(34, 211, 238, 0.9), 0 0 60px rgba(34, 211, 238, 0.6)',
-                                        '0 0 50px rgba(16, 185, 129, 0.9), 0 0 80px rgba(16, 185, 129, 0.6)',
-                                        '0 0 30px rgba(34, 211, 238, 0.9), 0 0 60px rgba(34, 211, 238, 0.6)'
-                                    ]
-                                }}
-                                transition={{
-                                    duration: 3,
-                                    repeat: Infinity,
-                                    ease: "easeInOut"
-                                }}
-                                className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent drop-shadow-2xl break-words"
-                                style={{ 
-                                    backgroundSize: '200% auto',
-                                    animation: 'gradient-wave 3s ease infinite'
-                                }}
-                            >
-                                bit.ly/4d97tHI
-                            </motion.span>
-                        </div>
-                    </motion.div>
-                </a>
-
-                <a
                     href="https://bit.ly/4uvwtjw"
                     target="_blank"
                     rel="noopener noreferrer"
