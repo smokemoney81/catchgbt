@@ -116,10 +116,11 @@ export default function Help() {
         </div>
 
         <Tabs defaultValue="ticket" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-gray-900/60 border border-gray-800">
+          <TabsList className="grid w-full grid-cols-4 bg-gray-900/60 border border-gray-800">
             <TabsTrigger value="ticket">Ticket erstellen</TabsTrigger>
             <TabsTrigger value="meine">Meine Tickets</TabsTrigger>
             <TabsTrigger value="ki">KI-Hilfe</TabsTrigger>
+            <TabsTrigger value="bewertungen">Bewertungen</TabsTrigger>
           </TabsList>
 
           <TabsContent value="ticket" className="mt-4">
@@ -254,6 +255,25 @@ export default function Help() {
                     <p className="text-sm text-gray-200 whitespace-pre-wrap">{aiAnswer}</p>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="bewertungen" className="mt-4">
+            <Card className="glass-morphism border-gray-800">
+              <CardHeader>
+                <CardTitle className="text-white">Funktionsbewertungen</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-300 mb-4">
+                  Sieh dir an, wie andere Nutzer die Funktionen der App bewerten oder gib selbst eine Bewertung ab.
+                </p>
+                <Button
+                  onClick={() => window.location.href = "/FunctionRatings"}
+                  className="w-full bg-amber-600 hover:bg-amber-700"
+                >
+                  Zu den Funktionsbewertungen
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
