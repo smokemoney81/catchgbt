@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { mobileStack } from './MobileStackManager';
+import { stackManager } from '@/components/navigation/MobileStackManager';
 
 export default function PageNotFound() {
   const navigate = useNavigate();
 
   const handleGoHome = () => {
-    mobileStack.reset();
+    stackManager.switchTab('home');
     navigate('/');
   };
 
