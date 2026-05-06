@@ -1,9 +1,70 @@
 import { useState, useRef, useEffect } from "react";
 import { catchgbtChat } from "@/functions/catchgbtChat";
+import { base44 } from "@/api/base44Client";
+import { useNavigate } from "react-router-dom";
+import { createPageUrl } from "@/utils";
+import { toast } from "sonner";
+
+const ALLOWED_PAGES = ["Dashboard","Logbook","Map","Weather","Community","Gear","AIAssistant","TripPlanner","Profile","Settings","Ranking","WaterAnalysis","AngelscheinPruefungSchonzeiten","Quiz","Licenses","Events","BaitMixer","CatchStats","ARKnotenAssistent","Shop","Premium","PremiumPlans","VoiceControl","TripPlanner","Help","Tutorials","Devices","DeviceIntegration","StartFishing","Start"];
+
+function parseAction(text) {
+  if (!text) return { clean: text, action: null };
+  const m = text.match(/<<ACTION>>([\s\S]*?)<<END>>/);
+  if (!m) return { clean: text, action: null };
+  let action = null;
+  try { action = JSON.parse(m[1].trim()); } catch {}
+  const clean = text.replace(m[0], "").trim();
+  return { clean, action };
+}
+
+async function executeAction(action, navigate) {
+  if (!action || !action.type) return null;
+  try {
+    if (action.type === "log_catch") {
+      const p = action.params || {};
+      if (!p.species) return "Bitte sage mir welche Fischart - dann trage ich es ein.";
+      const data = {
+        species: p.species,
+        catch_time: new Date().toISOString(),
+        ...(p.length_cm != null && { length_cm: Number(p.length_cm) }),
+        ...(p.weight_kg != null && { weight_kg: Number(p.weight_kg) }),
+        ...(p.bait_used && { bait_used: p.bait_used }),
+        ...(p.notes && { notes: p.notes }),
+        ...(p.is_released != null && { is_released: !!p.is_released })
+      };
+      await base44.entities.Catch.create(data);
+      toast.success(`Fang eingetragen: ${p.species}`);
+      return `Fang ${p.species} wurde im Fangbuch eingetragen.`;
+    }
+    if (action.type === "post_community") {
+      const p = action.params || {};
+      if (!p.text) return "Was soll ich posten?";
+      const me = await base44.auth.me().catch(() => null);
+      await base44.entities.Post.create({
+        text: p.text,
+        author_name: me?.nickname || me?.full_name || "Angler"
+      });
+      toast.success("Community-Post erstellt");
+      return "Dein Beitrag wurde in der Community gepostet.";
+    }
+    if (action.type === "navigate") {
+      const p = action.params || {};
+      if (!p.page || !ALLOWED_PAGES.includes(p.page)) return "Diese Seite kenne ich nicht.";
+      navigate(createPageUrl(p.page));
+      return `Oeffne ${p.page}.`;
+    }
+  } catch (e) {
+    console.error("Action error:", e);
+    toast.error("Aktion fehlgeschlagen");
+    return "Die Aktion konnte nicht ausgefuehrt werden.";
+  }
+  return null;
+}
 
 export default function MiniKiVoiceBuddy() {
+  const navigate = useNavigate();
   const [messages, setMessages] = useState([
-    { role: "system", text: "Hallo! Ich bin Buddy, deine KI-Angelexpertin. Stelle mir eine Frage!" }
+    { role: "system", text: "Hallo! Ich bin Buddy. Ich kann Faenge eintragen, Community-Posts erstellen, Seiten oeffnen und Daten vorlesen." }
   ]);
   const [input, setInput] = useState("");
   const [status, setStatus] = useState("");
@@ -71,9 +132,17 @@ export default function MiniKiVoiceBuddy() {
         context: "ki_voice_buddy_dashboard"
       });
 
-      const ans = res?.data?.reply || "Keine Antwort erhalten.";
-      setMessages(m => [...m, { role: "assistant", text: ans }]);
-      if (tonAn) speak(ans);
+      const raw = res?.data?.reply || "Keine Antwort erhalten.";
+      const { clean, action } = parseAction(raw);
+      let finalText = clean || "Erledigt.";
+
+      if (action) {
+        const actionMsg = await executeAction(action, navigate);
+        if (actionMsg) finalText = (finalText ? finalText + " " : "") + actionMsg;
+      }
+
+      setMessages(m => [...m, { role: "assistant", text: finalText }]);
+      if (tonAn) speak(finalText);
       else setStatus("");
     } catch {
       setStatus("");
