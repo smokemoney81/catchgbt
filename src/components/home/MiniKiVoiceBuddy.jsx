@@ -294,8 +294,12 @@ export default function MiniKiVoiceBuddy() {
 
       {/* Avatar row */}
       <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 16px", background: "#0a1624", borderTop: "1px solid #111e2e", borderBottom: "1px solid #111e2e" }}>
-        <div style={{ width: 52, height: 52, borderRadius: 14, background: "linear-gradient(135deg,#7c3aed,#4f46e5)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, color: "#fff", fontWeight: 700, flexShrink: 0, boxShadow: avatarGlow, transition: "box-shadow 0.3s" }}>
-          M
+        <div style={{ width: 52, height: 52, borderRadius: 14, overflow: "hidden", flexShrink: 0, boxShadow: avatarGlow, transition: "box-shadow 0.3s" }}>
+          <img
+            src="https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/5dfd72037_1778092195086.png"
+            alt="BaitBuddy"
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          />
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 15, fontWeight: 600, color: "#e0f0ff" }}>Buddy</div>
