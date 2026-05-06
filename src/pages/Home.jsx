@@ -731,7 +731,7 @@ function LandingPageContent() {
                 </a>
 
                 <a
-                    href="https://bit.ly/4uvwtjw"
+                    href="https://bit.ly/4d97tHI"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block text-left"
@@ -769,7 +769,7 @@ function LandingPageContent() {
                                     animation: 'gradient-wave 3s ease infinite'
                                 }}
                             >
-                                bit.ly/4uvwtjw
+                                bit.ly/4d97tHI
                             </motion.span>
                         </div>
                     </motion.div>
