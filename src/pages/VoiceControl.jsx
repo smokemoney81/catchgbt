@@ -9,6 +9,63 @@ import { toast } from "sonner";
 import { Mic, Waves, Zap, AlertCircle, MapPin, Cloud, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
+import { createPageUrl } from "@/utils";
+
+const ALLOWED_PAGES = ["Dashboard","Logbook","Map","Weather","Community","Gear","AIAssistant","TripPlanner","Profile","Settings","Ranking","WaterAnalysis","AngelscheinPruefungSchonzeiten","Quiz","Licenses","Events","BaitMixer","CatchStats","ARKnotenAssistent","Shop","Premium","PremiumPlans","Help","Tutorials","Devices","DeviceIntegration","StartFishing","Start"];
+
+function parseActionFromReply(text) {
+  if (!text) return { clean: text, action: null };
+  const m = text.match(/<<ACTION>>([\s\S]*?)<<END>>/);
+  if (!m) return { clean: text, action: null };
+  let action = null;
+  try { action = JSON.parse(m[1].trim()); } catch {}
+  const clean = text.replace(m[0], "").trim();
+  return { clean, action };
+}
+
+async function executeVoiceAction(action, navigate) {
+  if (!action || !action.type) return null;
+  try {
+    if (action.type === "log_catch") {
+      const p = action.params || {};
+      if (!p.species) return "Bitte sage mir welche Fischart.";
+      await base44.entities.Catch.create({
+        species: p.species,
+        catch_time: new Date().toISOString(),
+        ...(p.length_cm != null && { length_cm: Number(p.length_cm) }),
+        ...(p.weight_kg != null && { weight_kg: Number(p.weight_kg) }),
+        ...(p.bait_used && { bait_used: p.bait_used }),
+        ...(p.notes && { notes: p.notes }),
+        ...(p.is_released != null && { is_released: !!p.is_released })
+      });
+      toast.success(`Fang eingetragen: ${p.species}`);
+      return `Fang ${p.species} wurde im Fangbuch eingetragen.`;
+    }
+    if (action.type === "post_community") {
+      const p = action.params || {};
+      if (!p.text) return "Was soll ich posten?";
+      const me = await base44.auth.me().catch(() => null);
+      await base44.entities.Post.create({
+        text: p.text,
+        author_name: me?.nickname || me?.full_name || "Angler"
+      });
+      toast.success("Community-Post erstellt");
+      return "Dein Beitrag wurde in der Community gepostet.";
+    }
+    if (action.type === "navigate") {
+      const p = action.params || {};
+      if (!p.page || !ALLOWED_PAGES.includes(p.page)) return "Diese Seite kenne ich nicht.";
+      navigate(createPageUrl(p.page));
+      return `Oeffne ${p.page}.`;
+    }
+  } catch (e) {
+    console.error("Voice action error:", e);
+    toast.error("Aktion fehlgeschlagen");
+    return "Die Aktion konnte nicht ausgefuehrt werden.";
+  }
+  return null;
+}
 
 // Config
 const WAKE_WORD = 'hey catch';
@@ -298,6 +355,7 @@ function VoiceBuddy() {
   const [loadingHistory, setLoadingHistory] = useState(true);
   
   const { currentLocation } = useLocation();
+  const navigate = useNavigate();
   const recognitionRef = useRef(null);
   const isWaitingForCommandRef = useRef(false);
   const isListeningRef = useRef(false);
@@ -433,17 +491,24 @@ function VoiceBuddy() {
       return "Sag 'Hey Catch, wo soll ich werfen' oder 'Hey Catch, welchen Köder?'";
     }
 
-    // KI-Fallback für komplexere Fragen
+    // KI-Fallback für komplexere Fragen (inkl. Aktionen)
     if (parsed.intent === 'ai_fallback') {
       setProcessingAI(true);
       try {
         const response = await base44.functions.invoke('catchgbtChat', {
           messages: [{ role: 'user', content: parsed.entities.question }],
-          context: 'voice_control'
+          context: 'voice_control',
+          userLocation: currentLocation ? { latitude: currentLocation.lat, longitude: currentLocation.lon } : null
         });
         setProcessingAI(false);
-        const reply = response?.data?.reply || response?.reply || "Tut mir leid, ich konnte keine Antwort generieren.";
-        return reply;
+        const raw = response?.data?.reply || response?.reply || "Tut mir leid, ich konnte keine Antwort generieren.";
+        const { clean, action } = parseActionFromReply(raw);
+        let finalText = clean || "Erledigt.";
+        if (action) {
+          const actionMsg = await executeVoiceAction(action, navigate);
+          if (actionMsg) finalText = (finalText ? finalText + " " : "") + actionMsg;
+        }
+        return finalText;
       } catch (error) {
         console.error('AI fallback error:', error);
         setProcessingAI(false);
