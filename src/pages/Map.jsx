@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import PremiumGuard from "@/components/premium/PremiumGuard";
 import MapController from "@/components/map/v2/MapController";
 import WeatherRadarMap from "@/components/weather/WeatherRadarMap";
+import BathymetricCrowdsourcing from "@/pages/BathymetricCrowdsourcing";
 
 export default function MapPage() {
   const [user, setUser] = useState(null);
@@ -30,6 +31,10 @@ export default function MapPage() {
         <div className="h-96">
           <WeatherRadarMap />
         </div>
+      </div>
+
+      <div className="mt-6 relative overflow-hidden rounded-2xl bg-gradient-to-br from-gray-900/80 to-gray-900/40 backdrop-blur-sm border border-gray-800/50">
+        <BathymetricCrowdsourcing />
       </div>
     </div>
   );
