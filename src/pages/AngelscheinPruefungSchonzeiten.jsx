@@ -637,7 +637,7 @@ export default function AngelscheinPruefungSchonzeiten() {
               </Card>
 
               {question.explanation && (
-                (userAnswers[currentQuestion] !== null || revealedExplanations[currentQuestion]) ? (
+                revealedExplanations[currentQuestion] ? (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -649,11 +649,9 @@ export default function AngelscheinPruefungSchonzeiten() {
                           <div>
                             <h4 className="font-semibold text-cyan-400 mb-2">Erklärung</h4>
                             <p className="text-gray-300 leading-relaxed">{question.explanation}</p>
-                            {revealedExplanations[currentQuestion] && userAnswers[currentQuestion] === null && (
-                              <p className="text-xs text-amber-400 mt-3">
-                                Diese Frage wird nicht gewertet, da die Erklärung vor der Antwort angezeigt wurde.
-                              </p>
-                            )}
+                            <p className="text-xs text-amber-400 mt-3">
+                              Diese Frage wird nicht gewertet.
+                            </p>
                           </div>
                         </div>
                       </CardContent>
