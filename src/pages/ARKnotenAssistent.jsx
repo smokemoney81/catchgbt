@@ -35,6 +35,51 @@ const KNOTS = {
       { title:"Festziehen", desc:"Kräftig am Hauptstrang ziehen — Knoten endgültig fixieren.", tip:"Befeuchten nicht vergessen!", ar:{ hl:[4,8], arrow:{dx:-0.15,dy:0.12}, label:"Festziehen" }},
       { title:"Kürzen", desc:"Überstand auf 2–3mm kürzen. Fertig!", tip:"Auch für zwei Schnüre verbindbar.", ar:{ hl:[8], arrow:null, label:"2-3mm" }},
     ]
+  },
+  "Schlaufenknoten": {
+    color: "#ff6b9d",
+    steps: [
+      { title:"Schnur falten", desc:"Falte das Ende der Schnur ca. 10cm doppelt, sodass eine Schlaufe entsteht.", tip:"Je grösser, desto einfacher.", ar:{ hl:[4,8], arrow:{dx:0,dy:-0.15}, label:"Falten" }},
+      { title:"Überhandknoten", desc:"Bilde mit der doppelten Schnur einen losen Überhandknoten.", tip:"Nicht festziehen!", ar:{ hl:[4,8], arrow:{dx:0.12,dy:0}, label:"Überhand" }},
+      { title:"Schlaufe durchziehen", desc:"Führe die Schlaufe nochmal durch den entstandenen Knoten.", tip:"Doppelt hält besser.", ar:{ hl:[4,8,12], arrow:{dx:0,dy:0.12}, label:"Durchziehen" }},
+      { title:"Befeuchten", desc:"Befeuchte den Knoten kurz vor dem Festziehen.", tip:"Schützt die Schnur.", ar:{ hl:[4,8], arrow:null, label:"Anfeuchten" }},
+      { title:"Festziehen", desc:"Ziehe Schlaufe und beide Enden gleichmässig fest.", tip:"Gleichmässig - kein Rucken.", ar:{ hl:[4,8], arrow:{dx:-0.12,dy:0.12}, label:"Festziehen" }},
+      { title:"Kürzen", desc:"Überstand auf 3mm kürzen. Fertig!", tip:"Ideal für Vorfächer.", ar:{ hl:[8], arrow:null, label:"3mm" }},
+    ]
+  },
+  "Stopperknoten": {
+    color: "#9d4aff",
+    steps: [
+      { title:"Hilfsschnur legen", desc:"Lege ein 15cm Stück Schnur parallel zur Hauptschnur.", tip:"Gleiche Schnur verwenden.", ar:{ hl:[4,8], arrow:{dx:0,dy:-0.15}, label:"Parallel legen" }},
+      { title:"Schlaufe bilden", desc:"Forme aus der Hilfsschnur eine Schlaufe über die Hauptschnur.", tip:"Schlaufe locker halten.", ar:{ hl:[4,8], arrow:{dx:0.15,dy:0.1}, label:"Schlaufe" }},
+      { title:"5× wickeln", desc:"Wickle ein Ende 5× um beide Schnüre durch die Schlaufe.", tip:"Eng nebeneinander wickeln.", ar:{ hl:[4,8], arrow:{dx:0.18,dy:-0.05}, label:"5 Wicklungen" }},
+      { title:"Festziehen", desc:"Ziehe beide Enden der Hilfsschnur fest zusammen.", tip:"Knoten muss noch verschiebbar sein.", ar:{ hl:[4,8], arrow:{dx:-0.12,dy:0.1}, label:"Zuziehen" }},
+      { title:"Position prüfen", desc:"Schiebe den Knoten zur gewünschten Stelle - er muss verstellbar bleiben.", tip:"Stoppt Pose oder Perle.", ar:{ hl:[4,8], arrow:{dx:0,dy:0}, label:"Verschieben" }},
+      { title:"Enden kürzen", desc:"Lasse 1-2cm der Hilfsschnur stehen, Rest abschneiden.", tip:"Längere Enden = mehr Halt.", ar:{ hl:[8], arrow:null, label:"1-2cm" }},
+    ]
+  },
+  "Albright-Knoten": {
+    color: "#4affc8",
+    steps: [
+      { title:"Schlaufe formen", desc:"Bilde mit der dickeren Schnur eine ca. 8cm grosse Schlaufe.", tip:"Verbindet zwei Schnüre.", ar:{ hl:[4,8], arrow:{dx:0,dy:-0.15}, label:"Schlaufe" }},
+      { title:"Dünnere durchführen", desc:"Führe die dünnere Schnur durch die Schlaufe der dickeren.", tip:"15cm Tag-End lassen.", ar:{ hl:[4,8,12], arrow:{dx:0.12,dy:0}, label:"Durchführen" }},
+      { title:"10× wickeln", desc:"Wickle die dünnere Schnur 10× um beide Schenkel der Schlaufe.", tip:"Wicklungen eng und ordentlich.", ar:{ hl:[4,8], arrow:{dx:0.18,dy:-0.05}, label:"10 Wicklungen" }},
+      { title:"Zurück durchführen", desc:"Führe das Ende zurück durch die Schlaufe - in die gleiche Richtung wie zu Beginn.", tip:"Gleiche Richtung beachten!", ar:{ hl:[4,8], arrow:{dx:-0.15,dy:0.1}, label:"Zurück durch" }},
+      { title:"Befeuchten & ziehen", desc:"Befeuchte und ziehe alle vier Enden gleichmässig fest.", tip:"Wicklungen müssen sauber liegen.", ar:{ hl:[4,8], arrow:{dx:-0.1,dy:0.1}, label:"Festziehen" }},
+      { title:"Kürzen", desc:"Beide Enden auf 3mm kürzen. Fertig!", tip:"Ideal Geflecht zu Mono.", ar:{ hl:[8], arrow:null, label:"3mm" }},
+    ]
+  },
+  "Blutknoten": {
+    color: "#ff8c42",
+    steps: [
+      { title:"Schnüre kreuzen", desc:"Lege beide Schnurenden über Kreuz, je 15cm Tag-End.", tip:"Verbindet zwei gleich dicke Schnüre.", ar:{ hl:[4,8], arrow:{dx:0,dy:-0.15}, label:"Kreuzen" }},
+      { title:"Erste Seite wickeln", desc:"Wickle das eine Ende 5× um die andere Schnur.", tip:"Eng nebeneinander.", ar:{ hl:[4,8], arrow:{dx:0.18,dy:0}, label:"5× wickeln" }},
+      { title:"Zurück durch Mitte", desc:"Führe das Ende zurück durch die Mitte zwischen beiden Schnüren.", tip:"Mit Daumen festhalten.", ar:{ hl:[4,8,12], arrow:{dx:-0.1,dy:-0.1}, label:"Durch Mitte" }},
+      { title:"Zweite Seite wickeln", desc:"Wickle das andere Ende ebenfalls 5× - in die Gegenrichtung.", tip:"Gleiche Anzahl Wicklungen!", ar:{ hl:[4,8], arrow:{dx:-0.18,dy:0}, label:"5× andere Seite" }},
+      { title:"Durch Mitte führen", desc:"Führe auch dieses Ende zurück durch die Mitte - entgegengesetzt.", tip:"Beide Enden zeigen jetzt entgegengesetzt.", ar:{ hl:[4,8], arrow:{dx:0.1,dy:-0.1}, label:"Durch Mitte" }},
+      { title:"Befeuchten & ziehen", desc:"Befeuchte und ziehe alle vier Enden gleichzeitig fest.", tip:"Knoten zieht sich symmetrisch.", ar:{ hl:[4,8], arrow:{dx:-0.15,dy:0.1}, label:"Festziehen" }},
+      { title:"Kürzen", desc:"Beide Tag-Enden auf 2mm kürzen. Fertig!", tip:"Klassischer Vorfachknoten.", ar:{ hl:[8], arrow:null, label:"2mm" }},
+    ]
   }
 };
 
