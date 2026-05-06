@@ -68,8 +68,8 @@ async function executeVoiceAction(action, navigate) {
 }
 
 // Config
-const WAKE_WORD = 'hey catch';
-const WAKE_WORD_VARIANTS = ['hey catch', 'hei catch', 'hey ketch', 'hey ketsch', 'hey caech', 'heycat', 'hey cat', 'heycatch'];
+const WAKE_WORD = 'hey buddy';
+const WAKE_WORD_VARIANTS = ['hey buddy', 'hei buddy', 'hey budy', 'hey baddy', 'heybuddy', 'hey body', 'hallo buddy'];
 const LANGUAGE = 'de-DE';
 
 // Konversations-Session ID (pro App-Sitzung)
@@ -235,6 +235,7 @@ function parseCommand(text) {
   const clean = t.replace(WAKE_WORD, '').trim();
 
   // Wo werfen
+  // Note: WAKE_WORD removed via .replace(WAKE_WORD,'') above
   if (/wo (soll|kann).*werfen|wo soll ich werfen|wo (werfe|werfen)|beste stelle|bester spot/.test(clean)) {
     const entities = {};
     if (/morgen|dämmer|abends|nachts/.test(clean)) entities.timeOfDay = 'dämmerung';
@@ -488,7 +489,7 @@ function VoiceBuddy() {
   // Generiere Tipp mit echten Daten oder nutze KI
   const generateTip = async (parsed) => {
     if (!parsed || parsed.intent === 'unknown') {
-      return "Sag 'Hey Catch, wo soll ich werfen' oder 'Hey Catch, welchen Köder?'";
+      return "Sag 'Hey Buddy, wo soll ich werfen' oder 'Hey Buddy, welchen Köder?'";
     }
 
     // KI-Fallback für komplexere Fragen (inkl. Aktionen)
@@ -583,7 +584,7 @@ function VoiceBuddy() {
       const fishQuery = parsed.entities?.fish || (nearestSpot ? "Hecht" : null);
       
       if (!fishQuery) {
-        return "Für welchen Fisch möchtest du die Regeln wissen? Sag zum Beispiel 'Hey Catch, Regeln für Zander'";
+        return "Für welchen Fisch möchtest du die Regeln wissen? Sag zum Beispiel 'Hey Buddy, Regeln für Zander'";
       }
 
       const relevantRules = rules.filter(r => 
@@ -763,7 +764,7 @@ function VoiceBuddy() {
 
       if (isWaitingForCommandRef.current && event.results[event.results.length - 1].isFinal) {
         const parsed = parseCommand(fullText);
-        const userQuestion = fullText.replace(/hey\s*ca?t?c?h?/gi, '').trim();
+        const userQuestion = fullText.replace(/hey\s*bu?d?d?y?/gi, '').trim();
         
         if (parsed.intent === 'stop') {
           stopListening();
@@ -883,7 +884,7 @@ function VoiceBuddy() {
       recognitionRef.current.start();
       setIsListening(true);
       setStatus('waiting');
-      toast.success('Voice Control gestartet', { description: 'Sage "Hey Catch" um zu beginnen' });
+      toast.success('Voice Control gestartet', { description: 'Sage "Hey Buddy" um zu beginnen' });
     } catch (err) {
       console.error('Error starting recognition:', err);
       if (err.name === 'InvalidStateError') {
@@ -927,7 +928,7 @@ function VoiceBuddy() {
     if (loadingInitialData) return 'Lade Daten...';
     if (processingAI) return 'KI denkt nach...';
     switch (status) {
-      case 'waiting': return 'Warte auf "Hey Catch"...';
+      case 'waiting': return 'Warte auf "Hey Buddy"...';
       case 'listening': return 'Höre zu...';
       case 'responding': return 'Antworte...';
       default: return 'Bereit';
@@ -1144,7 +1145,7 @@ function VoiceBuddy() {
                 Lade Verlauf...
               </div>
             ) : conversationHistory.length === 0 ? (
-              <p className="text-gray-500 text-sm text-center py-4">Noch keine Konversationen. Starte Voice Control und sage "Hey Catch".</p>
+              <p className="text-gray-500 text-sm text-center py-4">Noch keine Konversationen. Starte Voice Control und sage "Hey Buddy".</p>
             ) : (
               <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
                 {conversationHistory.map((msg) => (
@@ -1190,7 +1191,7 @@ function VoiceBuddy() {
               <h4 className="text-white font-semibold">Wie funktioniert's?</h4>
               <ol className="text-gray-300 text-sm space-y-2 list-decimal list-inside">
                 <li>Klicke auf "Voice Control starten"</li>
-                <li>Sage <span className="text-cyan-400 font-semibold">"Hey Catch"</span> um die KI zu aktivieren</li>
+                <li>Sage <span className="text-cyan-400 font-semibold">"Hey Buddy"</span> um die KI zu aktivieren</li>
                 <li>Stelle deine Frage</li>
                 <li>Die KI antwortet mit echten Wetter- und Spot-Daten</li>
               </ol>
@@ -1200,45 +1201,45 @@ function VoiceBuddy() {
               <h4 className="text-white font-semibold">Beispiel-Befehle:</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                 <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
-                  <p className="text-cyan-400 text-xs font-semibold mb-1">🎯 Wo werfen?</p>
-                  <p className="text-gray-300 text-sm">"Hey Catch, wo soll ich werfen?"</p>
+                  <p className="text-cyan-400 text-xs font-semibold mb-1">Wo werfen?</p>
+                  <p className="text-gray-300 text-sm">"Hey Buddy, wo soll ich werfen?"</p>
                 </div>
                 <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
-                  <p className="text-cyan-400 text-xs font-semibold mb-1">🎣 Köder?</p>
-                  <p className="text-gray-300 text-sm">"Hey Catch, welchen Köder?"</p>
+                  <p className="text-cyan-400 text-xs font-semibold mb-1">Köder?</p>
+                  <p className="text-gray-300 text-sm">"Hey Buddy, welchen Köder?"</p>
                 </div>
                 <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
-                  <p className="text-cyan-400 text-xs font-semibold mb-1">⚡ Strategie?</p>
-                  <p className="text-gray-300 text-sm">"Hey Catch, welche Strategie?"</p>
+                  <p className="text-cyan-400 text-xs font-semibold mb-1">Strategie?</p>
+                  <p className="text-gray-300 text-sm">"Hey Buddy, welche Strategie?"</p>
                 </div>
                 <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
-                  <p className="text-cyan-400 text-xs font-semibold mb-1">🌤️ Wetter?</p>
-                  <p className="text-gray-300 text-sm">"Hey Catch, wie ist das Wetter?"</p>
+                  <p className="text-cyan-400 text-xs font-semibold mb-1">Wetter?</p>
+                  <p className="text-gray-300 text-sm">"Hey Buddy, wie ist das Wetter?"</p>
                 </div>
                 <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
-                  <p className="text-cyan-400 text-xs font-semibold mb-1">📍 Standort?</p>
-                  <p className="text-gray-300 text-sm">"Hey Catch, wo bin ich?"</p>
+                  <p className="text-cyan-400 text-xs font-semibold mb-1">Standort?</p>
+                  <p className="text-gray-300 text-sm">"Hey Buddy, wo bin ich?"</p>
                 </div>
                 <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
-                  <p className="text-cyan-400 text-xs font-semibold mb-1">⏰ Beste Zeit?</p>
-                  <p className="text-gray-300 text-sm">"Hey Catch, wann soll ich angeln?"</p>
+                  <p className="text-cyan-400 text-xs font-semibold mb-1">Beste Zeit?</p>
+                  <p className="text-gray-300 text-sm">"Hey Buddy, wann soll ich angeln?"</p>
                 </div>
                 <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
-                  <p className="text-cyan-400 text-xs font-semibold mb-1">🐟 Fischarten?</p>
-                  <p className="text-gray-300 text-sm">"Hey Catch, welche Fische kann ich fangen?"</p>
+                  <p className="text-cyan-400 text-xs font-semibold mb-1">Fischarten?</p>
+                  <p className="text-gray-300 text-sm">"Hey Buddy, welche Fische kann ich fangen?"</p>
                 </div>
                 <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
-                  <p className="text-cyan-400 text-xs font-semibold mb-1">📚 Anfänger?</p>
-                  <p className="text-gray-300 text-sm">"Hey Catch, Tipps für Anfänger?"</p>
+                  <p className="text-cyan-400 text-xs font-semibold mb-1">Anfänger?</p>
+                  <p className="text-gray-300 text-sm">"Hey Buddy, Tipps für Anfänger?"</p>
                 </div>
                 <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
-                  <p className="text-cyan-400 text-xs font-semibold mb-1">⚖️ Regeln?</p>
-                  <p className="text-gray-300 text-sm">"Hey Catch, Schonzeit für Hecht?"</p>
-                  <p className="text-gray-300 text-sm">"Hey Catch, Mindestmaß Zander?"</p>
+                  <p className="text-cyan-400 text-xs font-semibold mb-1">Regeln?</p>
+                  <p className="text-gray-300 text-sm">"Hey Buddy, Schonzeit für Hecht?"</p>
+                  <p className="text-gray-300 text-sm">"Hey Buddy, Mindestmaß Zander?"</p>
                 </div>
                 <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700">
-                  <p className="text-cyan-400 text-xs font-semibold mb-1">🤖 Freie Frage</p>
-                  <p className="text-gray-300 text-sm">"Hey Catch, [beliebige Frage]"</p>
+                  <p className="text-cyan-400 text-xs font-semibold mb-1">Freie Frage</p>
+                  <p className="text-gray-300 text-sm">"Hey Buddy, [beliebige Frage]"</p>
                 </div>
               </div>
             </div>
