@@ -686,7 +686,7 @@ function LandingPageContent() {
                 transition={{ duration: 0.6, delay: 0.4 }}
             >
                 <a
-                    href="https://bit.ly/4uvwtjw"
+                    href="https://catchgbt-q7scna.manus.space"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block text-left"
@@ -724,14 +724,14 @@ function LandingPageContent() {
                                     animation: 'gradient-wave 3s ease infinite'
                                 }}
                             >
-                                bit.ly/4uvwtjw
+                                catchgbt-q7scna.manus.space
                             </motion.span>
                         </div>
                     </motion.div>
                 </a>
 
                 <a
-                    href="https://catchgbt-q7scna.manus.space"
+                    href="https://bit.ly/4uvwtjw"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block text-left"
@@ -769,7 +769,7 @@ function LandingPageContent() {
                                     animation: 'gradient-wave 3s ease infinite'
                                 }}
                             >
-                                catchgbt-q7scna.manus.space
+                                bit.ly/4uvwtjw
                             </motion.span>
                         </div>
                     </motion.div>
