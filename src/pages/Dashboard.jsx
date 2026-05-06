@@ -429,13 +429,14 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
           <MiniKiBuddy />
         </div>
 
-        <div className="text-center py-3 px-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
-          <p className="text-sm text-blue-400">
+        <Link
+          to={createPageUrl('Map')}
+          className="block text-center py-3 px-4 rounded-xl bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/15 hover:border-blue-400/40 transition-colors"
+        >
+          <p className="text-sm text-blue-400 underline underline-offset-4 decoration-blue-500/40">
             Entdecke auf der Karte neue Angelplaetze und plane deine Route direkt mit Google Maps
           </p>
-        </div>
-
-        <FishingRecommendationCard />
+        </Link>
 
         <SchonzeitWarner />
 
@@ -496,6 +497,8 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
             <WeatherRadarMap />
           </div>
         </div>
+
+        <FishingRecommendationCard />
 
         <div className="space-y-4">
           <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Schnellzugriff</h3>
