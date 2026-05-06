@@ -128,36 +128,40 @@ export default function Header({
     >
       <div className="px-4 h-16 flex items-center justify-between">
         
-        {/* Animierter Plan-Name im Hintergrund */}
+        {/* Animierter Plan-Name im Hintergrund - durchgehender CSS-Loop */}
         {!planLoading && currentPlan && (
-          <motion.div
-            initial={{ x: '100%', opacity: 0 }}
-            animate={{ 
-              x: ['100%', '-100%'],
-              opacity: [0.4, 0.8, 0.5, 0.8, 0.4]
-            }}
-            transition={{
-              x: { duration: 20, ease: "linear", repeat: Infinity, repeatDelay: 0 },
-              opacity: { 
-                duration: 20, 
-                times: [0, 0.25, 0.5, 0.75, 1],
-                ease: "easeInOut", 
-                repeat: Infinity, 
-                repeatDelay: 0 
-              }
-            }}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-0 pointer-events-none whitespace-nowrap"
-            style={{ width: 'max-content' }}
+          <div
+            className="absolute inset-0 z-0 pointer-events-none overflow-hidden flex items-center"
+            aria-hidden="true"
           >
-            <span className={`text-5xl font-bold tracking-wider ${
-              currentPlan.id === 'free' ? 'text-gray-300/40 drop-shadow-[0_0_20px_rgba(209,213,219,0.3)]' : 
-              currentPlan.id === 'basic' ? 'text-blue-400/50 drop-shadow-[0_0_20px_rgba(96,165,250,0.4)]' :
-              currentPlan.id === 'pro' ? 'text-purple-400/50 drop-shadow-[0_0_20px_rgba(192,132,252,0.4)]' :
-              'text-amber-400/50 drop-shadow-[0_0_20px_rgba(251,191,36,0.4)]'
-            }`}>
-              {currentPlan.name} Plan
-            </span>
-          </motion.div>
+            <div
+              className="whitespace-nowrap header-plan-scroll flex"
+              style={{ willChange: 'transform' }}
+            >
+              {[0, 1].map((i) => (
+                <span
+                  key={i}
+                  className={`inline-block px-12 text-5xl font-bold tracking-wider ${
+                    currentPlan.id === 'free' ? 'text-gray-300/40 drop-shadow-[0_0_20px_rgba(209,213,219,0.3)]' :
+                    currentPlan.id === 'basic' ? 'text-blue-400/50 drop-shadow-[0_0_20px_rgba(96,165,250,0.4)]' :
+                    currentPlan.id === 'pro' ? 'text-purple-400/50 drop-shadow-[0_0_20px_rgba(192,132,252,0.4)]' :
+                    'text-amber-400/50 drop-shadow-[0_0_20px_rgba(251,191,36,0.4)]'
+                  }`}
+                >
+                  {currentPlan.name} Plan
+                </span>
+              ))}
+            </div>
+            <style>{`
+              @keyframes headerPlanScroll {
+                0% { transform: translate3d(0, 0, 0); }
+                100% { transform: translate3d(-50%, 0, 0); }
+              }
+              .header-plan-scroll {
+                animation: headerPlanScroll 18s linear infinite;
+              }
+            `}</style>
+          </div>
         )}
 
         {/* Left Side - Back/Menu Button + Event Timer */}
