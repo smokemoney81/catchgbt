@@ -130,7 +130,7 @@ export default function Sidebar({ isOpen, setIsOpen, currentPageName }) {
 
       {/* Sidebar */}
       <div className={`
-        fixed top-0 left-0 h-full w-80 bg-gray-950/95 backdrop-blur-xl border-r border-gray-800 z-[9999]
+        fixed top-0 left-0 h-full w-[85vw] max-w-80 bg-gray-950/95 backdrop-blur-xl border-r border-gray-800 z-[9999]
         transform transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
