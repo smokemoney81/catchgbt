@@ -55,8 +55,8 @@ export const tutorialSteps = {
     {
       title: "Voice Control",
       route: "VoiceControl",
-      content: "Sage 'Hey Buddy', um die Sprachsteuerung zu starten. Du kannst Faenge loggen, Wetter abfragen oder zu Seiten navigieren - alles haendefrei. Das Mikrofon-Symbol oben zeigt dir den Status.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/ed44d9ca5_generated_image.png"
+      content: "Sage 'Hey Catch', um die Sprachsteuerung zu starten. Stelle Fragen wie 'Wo soll ich werfen?', 'Welchen Koeder?', 'Welche Strategie?' oder 'Wie ist das Wetter?' - die KI antwortet mit echten Wetter- und Spot-Daten.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/124173541_Screenshot_20260506_075623_Comet.jpg"
     },
     {
       title: "Gewaesser-Analyse",
@@ -79,8 +79,8 @@ export const tutorialSteps = {
     {
       title: "Trip-Planer",
       route: "TripPlanner",
-      content: "Im Trip-Planer waehlst du Zielfisch und Spot. Die KI generiert eine Schritt-fuer-Schritt-Anleitung mit Wetter, Ausruestung und besten Zeiten. Aktive Trips bleiben oben sichtbar.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/40a4e4c9a_generated_image.png"
+      content: "Im Trip-Planer bekommst du Schnur-Tipp, Haken-Tipp und weitere Hinweise je Zielfisch. Mit dem KI-Buddy Setup-Check wird dein Setup geprueft, mit 'In meinen Plan speichern' uebernimmst du es als aktiven Trip.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/982cd5a63_Screenshot_20260506_075835_Comet.jpg"
     },
     {
       title: "Community",
@@ -103,8 +103,8 @@ export const tutorialSteps = {
     {
       title: "Angelschein-Pruefung",
       route: "Quiz",
-      content: "Lerne mit ueber 500 Original-Pruefungsfragen aus den Kategorien Allgemein, Geraetekunde, Gewaesserkunde und Gesetzeskunde. Jede Frage hat eine Erklaerung, dein Fortschritt wird gespeichert.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/c9b3ac324_generated_image.png"
+      content: "Bereite dich optimal auf die Fischerpruefung vor. Waehle dein Bundesland, starte die Pruefungssimulation und uebe mit Original-Fragen aus Allgemein, Geraetekunde, Gewaesserkunde und Gesetzeskunde.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/8dab2a8c5_Screenshot_20260506_075524_Comet.jpg"
     },
     {
       title: "Lizenzen",
@@ -181,8 +181,8 @@ export const tutorialSteps = {
     {
       title: "AR Knoten-Assistent",
       route: "ARKnotenAssistent",
-      content: "Lerne Anglerknoten Schritt fuer Schritt mit 3D-Animation. Waehle einen Knoten wie Palomar oder Clinch, folge den Schritten und uebe direkt mit deiner Schnur.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/06b2cde71_generated_image.png"
+      content: "Lerne Anglerknoten Schritt fuer Schritt. Waehle Palomar, Clinch oder Uni-Knoten und folge den Anweisungen wie 'Schnur verdoppeln - Falte ca. 20cm der Schnur und fuehre die Schlaufe durch das Oehr'. Mit Mikrofon kannst du dich vorlesen lassen.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/34b043c29_Screenshot_20260506_075755_Comet.jpg"
     },
     {
       title: "Gebrauchte Ausruestung",
@@ -235,8 +235,8 @@ export const tutorialSteps = {
     {
       title: "AR Knoten-Assistent",
       route: "ARKnotenAssistent",
-      content: "Lerne Angelknoten Schritt fuer Schritt mit 3D-Animation. Waehle einen Knoten wie Palomar, sieh den Schwierigkeitsgrad und folge den Anweisungen Step 1 bis 7.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/06b2cde71_generated_image.png"
+      content: "Lerne Angelknoten Schritt fuer Schritt. Waehle Palomar, Clinch oder Uni-Knoten, folge den Anweisungen wie 'Schnur verdoppeln' und nutze Wiederholen oder Mikrofon zum Vorlesen.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/34b043c29_Screenshot_20260506_075755_Comet.jpg"
     },
     {
       title: "Gebrauchte Ausruestung",
@@ -321,8 +321,8 @@ export const tutorialSteps = {
     {
       title: "Voice Control",
       route: "VoiceControl",
-      content: "Say 'Hey Buddy' to start voice control. Log catches, ask for weather or navigate to pages - hands free. The microphone icon at the top shows the status.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/ed44d9ca5_generated_image.png"
+      content: "Say 'Hey Catch' to start voice control. Ask things like 'Where to cast?', 'Which bait?', 'Which strategy?' or 'How is the weather?' - the AI replies with real weather and spot data.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/124173541_Screenshot_20260506_075623_Comet.jpg"
     },
     {
       title: "Water Analysis",
@@ -345,8 +345,8 @@ export const tutorialSteps = {
     {
       title: "Trip Planner",
       route: "TripPlanner",
-      content: "In the trip planner you choose target fish and spot. The AI generates a step-by-step plan with weather, gear and best times. Active trips stay on top.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/40a4e4c9a_generated_image.png"
+      content: "The trip planner shows line tip, hook tip and more notes per target fish. Use the AI Buddy Setup-Check to verify your setup and 'Save to my plan' to make it your active trip.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/982cd5a63_Screenshot_20260506_075835_Comet.jpg"
     },
     {
       title: "Community",
@@ -369,8 +369,8 @@ export const tutorialSteps = {
     {
       title: "License Exam",
       route: "Quiz",
-      content: "Practice with 500+ original exam questions across general, tackle, water and law topics. Every question has an explanation and your progress is saved.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/c9b3ac324_generated_image.png"
+      content: "Prepare for the fishing license exam. Pick your region, start the exam simulation and practice with original questions on general, tackle, water and law topics.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/8dab2a8c5_Screenshot_20260506_075524_Comet.jpg"
     },
     {
       title: "Licenses",
@@ -447,8 +447,8 @@ export const tutorialSteps = {
     {
       title: "AR Knot Assistant",
       route: "ARKnotenAssistent",
-      content: "Learn fishing knots step by step with 3D animation. Choose a knot like Palomar or Clinch, follow the steps and practice directly with your line.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/06b2cde71_generated_image.png"
+      content: "Learn fishing knots step by step. Choose Palomar, Clinch or Uni knot, follow instructions like 'Double the line - fold ~20cm and pass the loop through the eye'. Tap microphone to hear it read aloud.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/34b043c29_Screenshot_20260506_075755_Comet.jpg"
     },
     {
       title: "Used Gear",
@@ -501,8 +501,8 @@ export const tutorialSteps = {
     {
       title: "AR Knot Assistant",
       route: "ARKnotenAssistent",
-      content: "Learn fishing knots step by step with 3D animation. Choose a knot like Palomar, see the difficulty and follow steps 1 to 7.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/06b2cde71_generated_image.png"
+      content: "Learn fishing knots step by step. Choose Palomar, Clinch or Uni knot, follow each step like 'Double the line' and use repeat or microphone to have it read aloud.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/34b043c29_Screenshot_20260506_075755_Comet.jpg"
     },
     {
       title: "Used Gear",
