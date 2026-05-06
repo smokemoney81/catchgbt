@@ -29,16 +29,22 @@ export const tutorialSteps = {
       image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/de8ae04af_generated_image.png"
     },
     {
-      title: "Wetter und Alarme",
+      title: "Wetter und Angelprognose",
       route: "Weather",
-      content: "Auf der Wetter-Seite findest du Temperatur, Wind, Luftdruck, Niederschlag und das Radar. In den Einstellungen aktivierst du Wetter-Alarme, sodass du benachrichtigt wirst, wenn die Bedingungen passen.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/0eaa7bb70_generated_image.png"
+      content: "Im Tab 'Aktuell' siehst du Temperatur, Angel-Bedingungen, Luftdruck, Wind mit Boeen, Luftfeuchtigkeit, Sichtweite, Bewoelkung und Taupunkt. Mit 'Standort aktualisieren' holst du die Werte fuer deinen aktuellen GPS-Standort.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/952b7bda5_Screenshot_20260506_075229_Comet.jpg"
+    },
+    {
+      title: "Wetter-Alarme",
+      route: "Weather",
+      content: "Im Tab 'Alarme' legst du fest, wann du gewarnt werden moechtest: Regen-Warnung ab z.B. 60% Regenwahrscheinlichkeit, Wind-Warnung ab 10 m/s und Sturm-Warnung ab 15 m/s Boeen. Aktiviere die Schalter rechts neben jeder Warnung.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/5b1eca6ff_Screenshot_20260506_075247_Comet.jpg"
     },
     {
       title: "KI Chat-Buddy",
       route: "AIAssistant",
-      content: "Der KI Chat-Buddy beantwortet Fragen zu Koedern, Techniken und Fischarten. Tippe deine Frage ein oder nutze das Mikrofon. Antworten koennen automatisch vorgelesen werden, wenn die Vorlesefunktion aktiv ist.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/77dbe4a84_generated_image.png"
+      content: "Der KI-Angel-Buddy hilft mit Fisch-Infos zu Hecht, Zander und Karpfen, Wetter-Tipps, Koeder-Empfehlungen, Spot-Strategien und Timing fuer die besten Tageszeiten. Tippe deine Frage ins Eingabefeld 'Frage an den KI-Buddy'.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/fca8f2aad_Screenshot_20260506_075315_Comet.jpg"
     },
     {
       title: "KI-Kamera und Bissanzeiger",
@@ -59,10 +65,10 @@ export const tutorialSteps = {
       image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/124173541_Screenshot_20260506_075623_Comet.jpg"
     },
     {
-      title: "Gewaesser-Analyse",
+      title: "Satelliten-Gewaesseranalyse",
       route: "WaterAnalysis",
-      content: "Die Gewaesser-Analyse nutzt Satellitendaten und zeigt dir Wassertemperatur, Chlorophyll, Truebung und Algenrisiko. Vergleiche Spots, lass Hotspots berechnen und exportiere die Auswertung.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/96c6ff128_generated_image.png"
+      content: "KI-gestuetzte Wasseranalyse mit Echtzeit-Satellitendaten von Sentinel-2, MODIS und Copernicus. Tippe auf 'Standort' fuer GPS und auf 'Analyse', um Wassertemperatur, Chlorophyll, Truebung und Algenrisiko zu berechnen.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/1eb0bdeac_Screenshot_20260506_075353_Comet.jpg"
     },
     {
       title: "Koeder-Mischer",
@@ -295,16 +301,22 @@ export const tutorialSteps = {
       image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/de8ae04af_generated_image.png"
     },
     {
-      title: "Weather and Alerts",
+      title: "Weather and Fishing Forecast",
       route: "Weather",
-      content: "The weather page shows temperature, wind, pressure, precipitation and the radar. In settings you enable weather alerts to be notified when conditions are right.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/0eaa7bb70_generated_image.png"
+      content: "The 'Current' tab shows temperature, fishing conditions, pressure, wind with gusts, humidity, visibility, cloud cover and dew point. Tap 'Update location' to refresh values for your GPS position.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/952b7bda5_Screenshot_20260506_075229_Comet.jpg"
+    },
+    {
+      title: "Weather Alerts",
+      route: "Weather",
+      content: "In the 'Alerts' tab you set when to be warned: rain alert from e.g. 60% rain probability, wind alert from 10 m/s and storm alert from 15 m/s gusts. Toggle the switches on the right of each alert.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/5b1eca6ff_Screenshot_20260506_075247_Comet.jpg"
     },
     {
       title: "AI Chat Buddy",
       route: "AIAssistant",
-      content: "The AI chat buddy answers questions about baits, techniques and species. Type or use the microphone. Answers can be read aloud automatically when text-to-speech is active.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/77dbe4a84_generated_image.png"
+      content: "The AI fishing buddy helps with fish info on pike, zander and carp, weather tips, bait recommendations, spot strategies and timing for the best hours. Type your question in the 'Ask the AI Buddy' field.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/fca8f2aad_Screenshot_20260506_075315_Comet.jpg"
     },
     {
       title: "AI Camera and Bite Detector",
@@ -325,10 +337,10 @@ export const tutorialSteps = {
       image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/124173541_Screenshot_20260506_075623_Comet.jpg"
     },
     {
-      title: "Water Analysis",
+      title: "Satellite Water Analysis",
       route: "WaterAnalysis",
-      content: "Water analysis uses satellite data and shows water temperature, chlorophyll, turbidity and algae risk. Compare spots, calculate hotspots and export results.",
-      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/96c6ff128_generated_image.png"
+      content: "AI-powered water analysis with real-time satellite data from Sentinel-2, MODIS and Copernicus. Tap 'Location' for GPS and 'Analyze' to compute water temperature, chlorophyll, turbidity and algae risk.",
+      image: "https://media.base44.com/images/public/68bb3d3b9f83dc1f55ef532b/1eb0bdeac_Screenshot_20260506_075353_Comet.jpg"
     },
     {
       title: "Bait Mixer",
