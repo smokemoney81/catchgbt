@@ -2,14 +2,16 @@ import React, { memo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, MapPin, Ruler, Weight, Fish, Edit, Trash2, Eye } from 'lucide-react';
+import { Calendar, MapPin, Ruler, Weight, Fish, Edit, Trash2, Eye, Share2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import CatchDetailModal from './CatchDetailModal';
+import ShareCatchDialog from './ShareCatchDialog';
 import { base44 } from '@/api/base44Client';
 
 function CatchCard({ catchItem, onEdit, onDelete }) {
   const [showDetailModal, setShowDetailModal] = React.useState(false);
+  const [showShareDialog, setShowShareDialog] = React.useState(false);
   const [spots, setSpots] = React.useState([]);
   const [imageLoaded, setImageLoaded] = React.useState(false);
   const [imageError, setImageError] = React.useState(false);
@@ -115,6 +117,15 @@ function CatchCard({ catchItem, onEdit, onDelete }) {
             <Button
               size="sm"
               variant="outline"
+              aria-label={`${catchItem.species || 'Fang'} teilen`}
+              onClick={() => setShowShareDialog(true)}
+              className="border-gray-700 hover:border-emerald-500/50"
+            >
+              <Share2 aria-hidden="true" className="w-4 h-4" />
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
               aria-label={`${catchItem.species || 'Fang'} bearbeiten`}
               onClick={() => onEdit(catchItem)}
               className="border-gray-700 hover:border-blue-500/50"
@@ -141,6 +152,12 @@ function CatchCard({ catchItem, onEdit, onDelete }) {
           onClose={() => setShowDetailModal(false)}
         />
       )}
+
+      <ShareCatchDialog
+        catchItem={catchItem}
+        open={showShareDialog}
+        onOpenChange={setShowShareDialog}
+      />
     </>
   );
 }
