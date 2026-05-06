@@ -23,6 +23,7 @@ export default function AngelscheinPruefungSchonzeiten() {
   const [showGame, setShowGame] = useState(false);
   const [rules, setRules] = useState([]);
   const [user, setUser] = useState(null);
+  const [revealedExplanations, setRevealedExplanations] = useState({});
 
   const bundeslaender = [
     "Baden-Württemberg",
@@ -142,19 +143,34 @@ export default function AngelscheinPruefungSchonzeiten() {
 
   const handleFinishExam = () => {
     setShowResults(true);
-    
-    const correctAnswers = userAnswers.filter((answer, index) => 
-      answer === questions[index]?.correct_answer_index
+
+    // Fragen, bei denen die Erklärung vor der Antwort aufgedeckt wurde, zählen nicht
+    const scorableIndices = questions
+      .map((_, i) => i)
+      .filter(i => !revealedExplanations[i]);
+
+    const correctAnswers = scorableIndices.filter(i =>
+      userAnswers[i] === questions[i]?.correct_answer_index
     ).length;
-    
-    const percentage = (correctAnswers / questions.length) * 100;
+
+    const totalScorable = scorableIndices.length || 1;
+    const percentage = (correctAnswers / totalScorable) * 100;
     const passed = percentage >= 60;
 
     if (passed) {
-      toast.success(`Bestanden! ${correctAnswers} von ${questions.length} richtig (${percentage.toFixed(1)}%)`);
+      toast.success(`Bestanden! ${correctAnswers} von ${totalScorable} richtig (${percentage.toFixed(1)}%)`);
     } else {
-      toast.error(`Nicht bestanden. ${correctAnswers} von ${questions.length} richtig (${percentage.toFixed(1)}%)`);
+      toast.error(`Nicht bestanden. ${correctAnswers} von ${totalScorable} richtig (${percentage.toFixed(1)}%)`);
     }
+  };
+
+  const handleRevealExplanation = () => {
+    if (revealedExplanations[currentQuestion]) return;
+    const ok = window.confirm(
+      "Wenn du dir die Erklärung jetzt anzeigen lässt, wird diese Frage nicht gewertet (kein Punkt). Fortfahren?"
+    );
+    if (!ok) return;
+    setRevealedExplanations(prev => ({ ...prev, [currentQuestion]: true }));
   };
 
   const resetExam = () => {
@@ -164,6 +180,7 @@ export default function AngelscheinPruefungSchonzeiten() {
     setUserAnswers([]);
     setShowResults(false);
     setTimeLeft(3600);
+    setRevealedExplanations({});
   };
 
   const formatTime = (seconds) => {
@@ -619,23 +636,48 @@ export default function AngelscheinPruefungSchonzeiten() {
                 </CardContent>
               </Card>
 
-              {userAnswers[currentQuestion] !== null && question.explanation && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                >
+              {question.explanation && (
+                (userAnswers[currentQuestion] !== null || revealedExplanations[currentQuestion]) ? (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    <Card className="glass-morphism border-gray-800 mb-6">
+                      <CardContent className="pt-6">
+                        <div className="flex items-start gap-3">
+                          <BookOpen className="w-5 h-5 text-cyan-400 mt-1 flex-shrink-0" />
+                          <div>
+                            <h4 className="font-semibold text-cyan-400 mb-2">Erklärung</h4>
+                            <p className="text-gray-300 leading-relaxed">{question.explanation}</p>
+                            {revealedExplanations[currentQuestion] && userAnswers[currentQuestion] === null && (
+                              <p className="text-xs text-amber-400 mt-3">
+                                Diese Frage wird nicht gewertet, da die Erklärung vor der Antwort angezeigt wurde.
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ) : (
                   <Card className="glass-morphism border-gray-800 mb-6">
-                    <CardContent className="pt-6">
+                    <CardContent className="pt-6 flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
                       <div className="flex items-start gap-3">
                         <BookOpen className="w-5 h-5 text-cyan-400 mt-1 flex-shrink-0" />
-                        <div>
-                          <h4 className="font-semibold text-cyan-400 mb-2">Erklärung</h4>
-                          <p className="text-gray-300 leading-relaxed">{question.explanation}</p>
-                        </div>
+                        <p className="text-gray-300 text-sm leading-relaxed">
+                          Du kannst dir die Erklärung anzeigen lassen. Diese Frage wird dann nicht gewertet.
+                        </p>
                       </div>
+                      <Button
+                        onClick={handleRevealExplanation}
+                        variant="outline"
+                        className="border-amber-500 text-amber-400 hover:bg-amber-500/10 whitespace-nowrap"
+                      >
+                        Erklärung anzeigen
+                      </Button>
                     </CardContent>
                   </Card>
-                </motion.div>
+                )
               )}
 
               <div className="flex justify-between gap-3">
