@@ -64,6 +64,7 @@ export default function ARKnotenAssistent() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const recognitionRef = useRef(null);
+  const isListeningRef = useRef(false);
   const arAnimIdRef = useRef(null);
   const mpHandsRef = useRef(null);
   const mpCameraRef = useRef(null);
@@ -301,6 +302,7 @@ export default function ARKnotenAssistent() {
     recognitionRef.current.interimResults = true;
 
     recognitionRef.current.onstart = () => {
+      isListeningRef.current = true;
       setIsListening(true);
       setTranscript('Höre zu...');
     };
@@ -324,15 +326,20 @@ export default function ARKnotenAssistent() {
     };
 
     recognitionRef.current.onend = () => {
-      if (isListening) recognitionRef.current.start();
+      if (isListeningRef.current) {
+        try { recognitionRef.current.start(); } catch {}
+      }
     };
 
     recognitionRef.current.start();
   };
 
   const stopMic = () => {
+    isListeningRef.current = false;
     setIsListening(false);
-    if (recognitionRef.current) recognitionRef.current.stop();
+    if (recognitionRef.current) {
+      try { recognitionRef.current.stop(); } catch {}
+    }
   };
 
   const handleVoice = (text) => {
