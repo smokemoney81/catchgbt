@@ -77,11 +77,11 @@ export default function BottomTabs() {
     <nav
       aria-label="Hauptnavigation"
       className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-950/95 backdrop-blur-xl border-t border-gray-800 z-50"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 0px)' }}
       role="tablist"
     >
       <div
-        className="flex items-stretch overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory min-h-[64px]"
+        className="flex items-stretch overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory min-h-[56px]"
         style={{
           scrollbarWidth: 'none',
           msOverflowStyle: 'none',
@@ -104,7 +104,7 @@ export default function BottomTabs() {
               aria-current={active ? 'page' : undefined}
               aria-selected={active}
               role="tab"
-              className="flex flex-col items-center justify-center min-w-[72px] px-3 py-2 snap-start touch-target transition-colors"
+              className="flex flex-col items-center justify-center min-w-[68px] px-3 py-1.5 snap-start touch-target transition-colors"
             >
               <Icon
                 aria-hidden="true"

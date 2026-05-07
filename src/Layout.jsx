@@ -406,7 +406,7 @@ function LayoutContent({ children, currentPageName }) {
                   <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} currentPageName={currentPageName} />
                 </SuspenseWithErrorBoundary>
 
-                <div className="sticky top-0 z-40 bg-gray-950">
+                <div className="sticky top-0 z-40 bg-gray-950" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
                   <Header 
                     isSidebarOpen={isSidebarOpen}
                     setIsSidebarOpen={setIsSidebarOpen} 
