@@ -5,7 +5,73 @@ import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { toast } from "sonner";
 
-const ALLOWED_PAGES = ["Dashboard","Logbook","Map","Weather","Community","Gear","AIAssistant","TripPlanner","Profile","Settings","Ranking","WaterAnalysis","AngelscheinPruefungSchonzeiten","Quiz","Licenses","Events","BaitMixer","CatchStats","ARKnotenAssistent","Shop","Premium","PremiumPlans","VoiceControl","TripPlanner","Help","Tutorials","Devices","DeviceIntegration","StartFishing","Start"];
+const ALLOWED_PAGES = ["Dashboard","Logbook","Map","Weather","Community","Gear","AIAssistant","TripPlanner","Profile","Settings","Rank","WaterAnalysis","AngelscheinPruefungSchonzeiten","Quiz","Licenses","Events","BaitMixer","CatchStats","ARKnotenAssistent","Shop","Premium","PremiumPlans","VoiceControl","Help","Tutorials","Devices","DeviceIntegration","StartFishing","Start","WeatherAlerts","UsedGear","BathymetricCrowdsourcing"];
+
+const PAGE_ALIASES = {
+  "fangbuch": "Logbook",
+  "logbuch": "Logbook",
+  "logbook": "Logbook",
+  "karte": "Map",
+  "map": "Map",
+  "wetter": "Weather",
+  "weather": "Weather",
+  "community": "Community",
+  "ki": "KiBuddyBeta",
+  "kibuddy": "KiBuddyBeta",
+  "buddy": "KiBuddyBeta",
+  "wasser": "WaterAnalysis",
+  "wasseranalyse": "WaterAnalysis",
+  "trip": "TripPlanner",
+  "tripplaner": "TripPlanner",
+  "tripplanner": "TripPlanner",
+  "profil": "Profile",
+  "profile": "Profile",
+  "einstellungen": "Settings",
+  "settings": "Settings",
+  "rang": "Rank",
+  "ranking": "Rank",
+  "rank": "Rank",
+  "pruefung": "AngelscheinPruefungSchonzeiten",
+  "prüfung": "AngelscheinPruefungSchonzeiten",
+  "angelschein": "AngelscheinPruefungSchonzeiten",
+  "schonzeiten": "AngelscheinPruefungSchonzeiten",
+  "quiz": "Quiz",
+  "lizenzen": "Licenses",
+  "licenses": "Licenses",
+  "events": "Events",
+  "event": "Events",
+  "köder": "BaitMixer",
+  "koeder": "BaitMixer",
+  "bait": "BaitMixer",
+  "baitmixer": "BaitMixer",
+  "statistik": "CatchStats",
+  "stats": "CatchStats",
+  "knoten": "ARKnotenAssistent",
+  "ar": "ARKnotenAssistent",
+  "shop": "Shop",
+  "premium": "PremiumPlans",
+  "voice": "VoiceControl",
+  "hilfe": "Help",
+  "help": "Help",
+  "tutorial": "Tutorials",
+  "tutorials": "Tutorials",
+  "geräte": "Devices",
+  "geraete": "Devices",
+  "devices": "Devices",
+  "sos": "WeatherAlerts",
+  "warnung": "WeatherAlerts",
+  "dashboard": "Dashboard",
+  "home": "Dashboard"
+};
+
+function resolvePage(name) {
+  if (!name) return null;
+  const direct = ALLOWED_PAGES.find(p => p.toLowerCase() === String(name).toLowerCase());
+  if (direct) return direct;
+  const alias = PAGE_ALIASES[String(name).toLowerCase().trim()];
+  if (alias) return alias;
+  return null;
+}
 
 function parseAction(text) {
   if (!text) return { clean: text, action: null };
@@ -49,9 +115,61 @@ async function executeAction(action, navigate) {
     }
     if (action.type === "navigate") {
       const p = action.params || {};
-      if (!p.page || !ALLOWED_PAGES.includes(p.page)) return "Diese Seite kenne ich nicht.";
-      navigate(createPageUrl(p.page));
-      return `Oeffne ${p.page}.`;
+      const target = resolvePage(p.page);
+      if (!target) return "Diese Seite kenne ich nicht.";
+      navigate(createPageUrl(target));
+      return `Oeffne ${target}.`;
+    }
+    if (action.type === "save_spot") {
+      const p = action.params || {};
+      if (!p.name || p.latitude == null || p.longitude == null) {
+        return "Ich brauche Name und Koordinaten fuer den Spot.";
+      }
+      await base44.entities.Spot.create({
+        name: p.name,
+        latitude: Number(p.latitude),
+        longitude: Number(p.longitude),
+        water_type: p.water_type || "see",
+        notes: p.notes || "",
+        is_favorite: !!p.is_favorite
+      });
+      toast.success(`Spot gespeichert: ${p.name}`);
+      return `Spot ${p.name} gespeichert.`;
+    }
+    if (action.type === "create_trip") {
+      const p = action.params || {};
+      if (!p.title || !p.target_fish) return "Ich brauche Titel und Zielfisch fuer den Trip.";
+      await base44.entities.FishingPlan.create({
+        title: p.title,
+        target_fish: p.target_fish,
+        spot_info: p.spot_info || "",
+        weather_summary: p.weather_summary || "",
+        gear_summary: p.gear_summary || "",
+        steps: Array.isArray(p.steps) ? p.steps : [],
+        is_active: !!p.is_active
+      });
+      toast.success(`Trip angelegt: ${p.title}`);
+      return `Trip ${p.title} wurde im Tripplaner angelegt.`;
+    }
+    if (action.type === "support_ticket") {
+      const p = action.params || {};
+      if (!p.subject || !p.message) return "Ich brauche Betreff und Beschreibung.";
+      const me = await base44.auth.me().catch(() => null);
+      await base44.entities.SupportTicket.create({
+        subject: p.subject,
+        message: p.message,
+        category: p.category || "frage",
+        user_email: me?.email,
+        user_name: me?.full_name
+      });
+      toast.success("Support-Ticket erstellt");
+      return "Dein Support-Ticket wurde erstellt.";
+    }
+    if (action.type === "open_url") {
+      const p = action.params || {};
+      if (!p.url) return null;
+      window.open(p.url, "_blank");
+      return `Oeffne ${p.url}.`;
     }
   } catch (e) {
     console.error("Action error:", e);
@@ -159,7 +277,29 @@ export default function MiniKiVoiceBuddy() {
     setStatus("");
   }
 
+  function tryDirectCommand(q) {
+    const t = q.toLowerCase().trim();
+    // "öffne X" / "zeige X" / "geh zu X" / "navigiere zu X"
+    const navMatch = t.match(/^(?:oeffne|öffne|offne|zeige|zeig|geh(?:e)? zu|navigiere zu|gehe nach|wechsle zu)\s+(.+)$/i);
+    if (navMatch) {
+      const target = resolvePage(navMatch[1].trim());
+      if (target) {
+        navigate(createPageUrl(target));
+        return `Oeffne ${target}.`;
+      }
+    }
+    return null;
+  }
+
   async function ask(q) {
+    // Direktbefehl-Erkennung (sofortige Reaktion ohne LLM)
+    const direct = tryDirectCommand(q);
+    if (direct) {
+      setMessages(m => [...m, { role: "assistant", text: direct }]);
+      if (tonAn) speak(direct);
+      return;
+    }
+
     setStatus("thinking");
     try {
       const chatMessages = messages
