@@ -5,7 +5,6 @@ import { createPageUrl } from "@/utils";
 import WakeWordIndicator from "@/components/header/WakeWordIndicator";
 import MiniKarte from "@/components/home/MiniKarte";
 import WeatherRadarMap from "@/components/weather/WeatherRadarMap";
-import MiniKiVoiceBuddy from "@/components/home/MiniKiVoiceBuddy";
 import SchonzeitWarner from "@/components/dashboard/SchonzeitWarner";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -388,7 +387,10 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
           <div className="flex flex-col items-end gap-2">
             <OfflineCacheIndicator />
             <button
-              onClick={() => setVoiceOverlayOpen(true)}
+              onClick={() => {
+                window.dispatchEvent(new CustomEvent('toggle-voice-control'));
+              }}
+              aria-label={voiceStatus.isListening ? "Mikrofon ausschalten" : "Mikrofon einschalten"}
               className={`flex items-center gap-3 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 border border-cyan-500/30 hover:border-cyan-400/50 transition-all min-h-[44px] min-w-[44px] ${
                 buttonPulse ? 'animate-pulse ring-2 ring-cyan-400' : ''
               }`}
@@ -426,10 +428,6 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
             </div>
           </div>
         )}
-
-        <div>
-          <MiniKiVoiceBuddy />
-        </div>
 
         <Link
           to={createPageUrl('Map')}
