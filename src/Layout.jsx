@@ -430,9 +430,11 @@ function LayoutContent({ children, currentPageName }) {
 
                 <BottomTabs />
 
-                <SuspenseWithErrorBoundary>
-                  <SupportAgentButton />
-                </SuspenseWithErrorBoundary>
+                {currentPageName === "Help" && (
+                  <SuspenseWithErrorBoundary>
+                    <SupportAgentButton />
+                  </SuspenseWithErrorBoundary>
+                )}
 
                 <VoiceOverlay 
                   isOpen={voiceOverlayOpen} 
