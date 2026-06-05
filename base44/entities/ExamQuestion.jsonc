@@ -1,0 +1,83 @@
+{
+  "name": "ExamQuestion",
+  "type": "object",
+  "properties": {
+    "category": {
+      "type": "string",
+      "enum": [
+        "allgemein",
+        "geraetekunde",
+        "gewaesserkunde",
+        "gesetzeskunde"
+      ],
+      "description": "Kategorie der Pr\u00fcfungsfrage"
+    },
+    "question": {
+      "type": "string",
+      "description": "Die Pr\u00fcfungsfrage"
+    },
+    "answers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array mit den Antwortm\u00f6glichkeiten (immer 4 Antworten)"
+    },
+    "correct_answer_index": {
+      "type": "number",
+      "description": "Index der richtigen Antwort (0-3)"
+    },
+    "explanation": {
+      "type": "string",
+      "description": "Erkl\u00e4rung zur richtigen Antwort"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "leicht",
+        "mittel",
+        "schwer"
+      ],
+      "default": "mittel",
+      "description": "Schwierigkeitsgrad der Frage"
+    },
+    "region": {
+      "type": "string",
+      "enum": [
+        "Deutschland",
+        "Baden-W\u00fcrttemberg",
+        "Bayern",
+        "Berlin",
+        "Brandenburg",
+        "Bremen",
+        "Hamburg",
+        "Hessen",
+        "Mecklenburg-Vorpommern",
+        "Niedersachsen",
+        "Nordrhein-Westfalen",
+        "Rheinland-Pfalz",
+        "Saarland",
+        "Sachsen",
+        "Sachsen-Anhalt",
+        "Schleswig-Holstein",
+        "Th\u00fcringen"
+      ],
+      "default": "Deutschland",
+      "description": "Bundesland oder deutschlandweit g\u00fcltig"
+    }
+  },
+  "required": [
+    "category",
+    "question",
+    "answers",
+    "correct_answer_index"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

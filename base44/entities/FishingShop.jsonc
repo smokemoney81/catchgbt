@@ -1,0 +1,44 @@
+{
+  "name": "FishingShop",
+  "type": "object",
+  "properties": {
+    "region": {
+      "type": "string",
+      "description": "Bundesland"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name des Angelgeschaefts"
+    },
+    "address": {
+      "type": "string",
+      "description": "Adresse"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Telefonnummer"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Breitengrad"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Laengengrad"
+    }
+  },
+  "required": [
+    "region",
+    "name",
+    "latitude",
+    "longitude"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

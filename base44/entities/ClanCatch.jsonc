@@ -1,0 +1,66 @@
+{
+  "name": "ClanCatch",
+  "type": "object",
+  "properties": {
+    "catch_id": {
+      "type": "string",
+      "description": "Referenz zum Fang"
+    },
+    "clan_id": {
+      "type": "string",
+      "description": "Referenz zum Clan"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "E-Mail des Nutzers"
+    },
+    "competition_id": {
+      "type": "string",
+      "description": "Referenz zum Wettbewerb"
+    },
+    "species": {
+      "type": "string",
+      "description": "Fischart"
+    },
+    "length_cm": {
+      "type": "number",
+      "description": "Laenge in cm"
+    },
+    "points_earned": {
+      "type": "number",
+      "description": "Verdiente Punkte"
+    },
+    "catch_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Zeitpunkt des Fangs"
+    },
+    "is_validated": {
+      "type": "boolean",
+      "default": true,
+      "description": "Ob der Fang validiert wurde"
+    }
+  },
+  "required": [
+    "catch_id",
+    "clan_id",
+    "user_id",
+    "competition_id",
+    "length_cm"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

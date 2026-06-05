@@ -1,0 +1,57 @@
+{
+  "name": "Spot",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name des Angelplatzes"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Breitengrad"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "L\u00e4ngengrad"
+    },
+    "water_type": {
+      "type": "string",
+      "enum": [
+        "fluss",
+        "see",
+        "teich",
+        "kanal",
+        "meer",
+        "bach"
+      ],
+      "description": "Gew\u00e4ssertyp"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Pers\u00f6nliche Notizen zum Spot"
+    },
+    "is_favorite": {
+      "type": "boolean",
+      "default": false,
+      "description": "Als Favorit markiert"
+    },
+    "depth_meters": {
+      "type": "number",
+      "description": "Gesch\u00e4tzte Tiefe in Metern"
+    }
+  },
+  "required": [
+    "name",
+    "latitude",
+    "longitude",
+    "water_type"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

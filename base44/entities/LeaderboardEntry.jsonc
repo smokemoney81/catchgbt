@@ -1,0 +1,59 @@
+{
+  "name": "LeaderboardEntry",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Benutzer-ID"
+    },
+    "period": {
+      "type": "string",
+      "enum": [
+        "daily",
+        "weekly",
+        "monthly",
+        "yearly",
+        "all_time"
+      ],
+      "description": "Zeitraum f\u00fcr die Wertung"
+    },
+    "points": {
+      "type": "number",
+      "default": 0,
+      "description": "Erreichte Punkte"
+    },
+    "catches_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Anzahl der F\u00e4nge"
+    },
+    "period_start": {
+      "type": "string",
+      "format": "date",
+      "description": "Start des Bewertungszeitraums"
+    },
+    "period_end": {
+      "type": "string",
+      "format": "date",
+      "description": "Ende des Bewertungszeitraums"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Letzte Aktualisierung"
+    }
+  },
+  "required": [
+    "user_id",
+    "period",
+    "period_start"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

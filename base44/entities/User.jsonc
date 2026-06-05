@@ -1,0 +1,64 @@
+{
+  "name": "User",
+  "type": "object",
+  "properties": {
+    "nickname": {
+      "type": "string",
+      "description": "Benutzername oder Spitzname"
+    },
+    "bio": {
+      "type": "string",
+      "description": "Kurze Biografie"
+    },
+    "profile_picture_url": {
+      "type": "string",
+      "description": "URL zum Profilbild"
+    },
+    "total_points": {
+      "type": "number",
+      "default": 0,
+      "description": "Gesamtpunkte des Benutzers"
+    },
+    "premium_plan_id": {
+      "type": "string",
+      "description": "ID des Premium-Plans (free, basic, pro, ultimate)"
+    },
+    "premium_expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Ablaufdatum des Premium-Plans"
+    },
+    "settings": {
+      "type": "object",
+      "description": "Benutzereinstellungen",
+      "properties": {},
+      "default": {}
+    },
+    "is_demo_user": {
+      "type": "boolean",
+      "default": false,
+      "description": "Markiert Demo-Benutzer"
+    },
+    "first_open_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Zeitstempel der ersten App-\u00d6ffnung"
+    },
+    "trial_start_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Startdatum der kostenlosen Testphase"
+    },
+    "trial_end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Enddatum der kostenlosen Testphase"
+    },
+    "has_had_trial": {
+      "type": "boolean",
+      "default": false,
+      "description": "Zeigt an, ob der Benutzer bereits eine kostenlose Testphase hatte"
+    }
+  },
+  "required": []
+}

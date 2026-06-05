@@ -1,0 +1,57 @@
+{
+  "name": "SpotGroup",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name der privaten Spot-Gruppe"
+    },
+    "description": {
+      "type": "string",
+      "description": "Beschreibung der Gruppe"
+    },
+    "is_private": {
+      "type": "boolean",
+      "default": true,
+      "description": "Ob die Gruppe privat ist"
+    },
+    "member_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "E-Mail-Adressen der Gruppenmitglieder"
+    },
+    "shared_spot_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "IDs der mit der Gruppe geteilten Spots"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "member_emails": {
+            "$in": [
+              "{{user.email}}"
+            ]
+          }
+        }
+      ]
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

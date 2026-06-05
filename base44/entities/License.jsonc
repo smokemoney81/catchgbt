@@ -1,0 +1,40 @@
+{
+  "name": "License",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "Lizenztyp (z.B. Jahreskarte)"
+    },
+    "number": {
+      "type": "string",
+      "description": "Lizenznummer"
+    },
+    "valid_until": {
+      "type": "string",
+      "format": "date",
+      "description": "G\u00fcltig bis"
+    },
+    "photo_url": {
+      "type": "string",
+      "description": "Foto/Scan der Lizenz"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notizen"
+    }
+  },
+  "required": [
+    "type",
+    "number",
+    "valid_until"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

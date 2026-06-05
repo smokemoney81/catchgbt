@@ -1,0 +1,81 @@
+{
+  "name": "BaitRecipe",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name des Rezepts"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "boilies",
+        "bait"
+      ],
+      "description": "Rezept-Kategorie"
+    },
+    "target_fish": {
+      "type": "string",
+      "description": "Zielfischart"
+    },
+    "ingredients": {
+      "type": "object",
+      "description": "Zutaten mit Prozents\u00e4tzen {zutat: prozent}",
+      "properties": {},
+      "default": {}
+    },
+    "total_percentage": {
+      "type": "number",
+      "description": "Gesamtprozentsatz (sollte 100 sein)"
+    },
+    "attractiveness_score": {
+      "type": "number",
+      "description": "Berechnet: Attraktivit\u00e4t f\u00fcr Zielfisch (0-100)"
+    },
+    "estimated_cost": {
+      "type": "number",
+      "description": "Gesch\u00e4tzte Kosten pro kg"
+    },
+    "ai_generated": {
+      "type": "boolean",
+      "default": false,
+      "description": "Wurde von KI generiert"
+    },
+    "ai_analysis": {
+      "type": "string",
+      "description": "KI-Analyse und Tipps zum Rezept"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Pers\u00f6nliche Notizen"
+    },
+    "is_favorite": {
+      "type": "boolean",
+      "default": false,
+      "description": "Als Favorit markiert"
+    },
+    "usage_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Wie oft wurde dieses Rezept verwendet"
+    },
+    "success_rating": {
+      "type": "number",
+      "description": "Erfolgsrate 1-5 Sterne"
+    }
+  },
+  "required": [
+    "name",
+    "category",
+    "target_fish",
+    "ingredients"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

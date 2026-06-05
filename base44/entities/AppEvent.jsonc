@@ -1,0 +1,50 @@
+{
+  "name": "AppEvent",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name des Events"
+    },
+    "description": {
+      "type": "string",
+      "description": "Beschreibung des Events"
+    },
+    "prize": {
+      "type": "string",
+      "description": "Preis des Events"
+    },
+    "rules": {
+      "type": "string",
+      "description": "Regeln des Events"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Startdatum"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Enddatum"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Ob der Event aktiv ist"
+    }
+  },
+  "required": [
+    "name",
+    "start_date",
+    "end_date"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

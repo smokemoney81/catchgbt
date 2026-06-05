@@ -1,0 +1,66 @@
+{
+  "name": "Catch",
+  "type": "object",
+  "properties": {
+    "spot_id": {
+      "type": "string",
+      "description": "Referenz zum Angelplatz"
+    },
+    "species": {
+      "type": "string",
+      "description": "Fischart (Hecht, Zander, Karpfen, etc.)"
+    },
+    "length_cm": {
+      "type": "number",
+      "description": "L\u00e4nge in Zentimetern"
+    },
+    "weight_kg": {
+      "type": "number",
+      "description": "Gewicht in Kilogramm"
+    },
+    "bait_used": {
+      "type": "string",
+      "description": "Verwendeter K\u00f6der"
+    },
+    "photo_url": {
+      "type": "string",
+      "description": "URL zum Foto des Fangs"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notizen zum Fang"
+    },
+    "catch_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Zeitpunkt des Fangs"
+    },
+    "points_earned": {
+      "type": "number",
+      "default": 1,
+      "description": "Verdiente Punkte f\u00fcr diesen Fang"
+    },
+    "is_released": {
+      "type": "boolean",
+      "default": false,
+      "description": "Fisch wurde zur\u00fcckgesetzt"
+    },
+    "ai_analysis": {
+      "type": "object",
+      "description": "JSON-Objekt, das die Ergebnisse der KI-Analyse enth\u00e4lt.",
+      "properties": {}
+    }
+  },
+  "required": [
+    "species",
+    "catch_time"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

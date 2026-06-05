@@ -1,0 +1,26 @@
+{
+  "name": "Comment",
+  "type": "object",
+  "properties": {
+    "post_id": {
+      "type": "string",
+      "description": "Referenz zum Post"
+    },
+    "text": {
+      "type": "string",
+      "description": "Kommentar"
+    },
+    "author_name": {
+      "type": "string",
+      "description": "Anzeigename des Autors"
+    }
+  },
+  "required": [
+    "post_id",
+    "text"
+  ],
+  "rls": {
+    "read": {},
+    "write": {}
+  }
+}

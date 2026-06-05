@@ -1,0 +1,43 @@
+{
+  "name": "ChatMessage",
+  "type": "object",
+  "properties": {
+    "conversation_id": {
+      "type": "string",
+      "description": "ID der Konversation/Session"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "user",
+        "assistant"
+      ],
+      "description": "Rolle des Absenders"
+    },
+    "content": {
+      "type": "string",
+      "description": "Inhalt der Nachricht"
+    },
+    "context": {
+      "type": "string",
+      "description": "Kontext (z.B. Seitenname)"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Zeitstempel der Nachricht"
+    }
+  },
+  "required": [
+    "role",
+    "content"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "name": "PremiumEvent",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "E-Mail des Benutzers"
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "purchase",
+        "session_start",
+        "session_stop",
+        "heartbeat",
+        "admin_credit_grant"
+      ],
+      "description": "Event-Typ"
+    },
+    "credits_amount": {
+      "type": "number",
+      "description": "Credits-Betrag (positiv bei Kauf, negativ bei Verbrauch)"
+    },
+    "payload": {
+      "type": "object",
+      "description": "Zus\u00e4tzliche Event-Daten",
+      "properties": {}
+    }
+  },
+  "required": [
+    "user_id",
+    "event_type"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "user_id": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "user_id": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

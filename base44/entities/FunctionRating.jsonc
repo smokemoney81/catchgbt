@@ -1,0 +1,39 @@
+{
+  "name": "FunctionRating",
+  "type": "object",
+  "properties": {
+    "function_name": {
+      "type": "string",
+      "description": "Name der bewerteten Funktion"
+    },
+    "rating": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Bewertung von 1-5 Sternen"
+    },
+    "comment": {
+      "type": "string",
+      "description": "Optionaler Kommentar"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "E-Mail des Benutzers"
+    }
+  },
+  "required": [
+    "function_name",
+    "rating",
+    "user_email"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

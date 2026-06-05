@@ -1,0 +1,90 @@
+{
+  "name": "GearListing",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Titel der Anzeige"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Rute",
+        "Rolle",
+        "K\u00f6der",
+        "Schnur",
+        "Set",
+        "Bekleidung",
+        "Zubeh\u00f6r",
+        "Sonstiges"
+      ],
+      "description": "Kategorie des Artikels"
+    },
+    "condition": {
+      "type": "string",
+      "enum": [
+        "neu",
+        "wie neu",
+        "gut",
+        "gebraucht",
+        "defekt"
+      ],
+      "description": "Zustand des Artikels"
+    },
+    "price_cents": {
+      "type": "number",
+      "description": "Preis in Cent"
+    },
+    "currency": {
+      "type": "string",
+      "default": "EUR",
+      "description": "W\u00e4hrung"
+    },
+    "negotiable": {
+      "type": "boolean",
+      "default": false,
+      "description": "Verhandlungsbasis"
+    },
+    "location": {
+      "type": "string",
+      "description": "Standort"
+    },
+    "shipping_available": {
+      "type": "boolean",
+      "default": false,
+      "description": "Versand m\u00f6glich"
+    },
+    "description": {
+      "type": "string",
+      "description": "Beschreibung"
+    },
+    "image_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Bild-URLs (max 6)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Anzeige aktiv"
+    },
+    "seller_email": {
+      "type": "string",
+      "description": "E-Mail des Verk\u00e4ufers (f\u00fcr Kontakt)"
+    }
+  },
+  "required": [
+    "title",
+    "category",
+    "condition",
+    "price_cents"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

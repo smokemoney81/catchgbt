@@ -1,0 +1,35 @@
+{
+  "name": "SpeciesParams",
+  "type": "object",
+  "properties": {
+    "species_common_name": {
+      "type": "string"
+    },
+    "region": {
+      "type": "string"
+    },
+    "a": {
+      "type": "number"
+    },
+    "b": {
+      "type": "number"
+    },
+    "source": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "species_common_name",
+    "region",
+    "a",
+    "b"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

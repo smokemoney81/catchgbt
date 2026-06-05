@@ -1,0 +1,69 @@
+{
+  "name": "DepthDataPoint",
+  "type": "object",
+  "properties": {
+    "latitude": {
+      "type": "number",
+      "description": "Breitengrad der Messung"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Laengengrad der Messung"
+    },
+    "depth_meters": {
+      "type": "number",
+      "description": "Gemessene Tiefe in Metern"
+    },
+    "water_body_name": {
+      "type": "string",
+      "description": "Name des Gewaessers (optional)"
+    },
+    "device_type": {
+      "type": "string",
+      "enum": [
+        "echolot",
+        "manual",
+        "gps_logger",
+        "app"
+      ],
+      "default": "echolot",
+      "description": "Geraetetyp der Messung"
+    },
+    "measured_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Zeitpunkt der Messung"
+    },
+    "is_public": {
+      "type": "boolean",
+      "default": true,
+      "description": "Ob der Datenpunkt fuer die Community sichtbar ist"
+    },
+    "quality_score": {
+      "type": "number",
+      "default": 5,
+      "description": "Qualitaetsbewertung 1-10"
+    }
+  },
+  "required": [
+    "latitude",
+    "longitude",
+    "depth_meters",
+    "measured_at"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "is_public": true
+        },
+        {
+          "created_by": "{{user.email}}"
+        }
+      ]
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

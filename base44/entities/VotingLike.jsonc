@@ -1,0 +1,29 @@
+{
+  "name": "VotingLike",
+  "type": "object",
+  "properties": {
+    "submission_id": {
+      "type": "string",
+      "description": "Referenz zur VotingSubmission"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "E-Mail des Nutzers"
+    },
+    "competition_id": {
+      "type": "string",
+      "description": "Referenz zum Wettbewerb"
+    }
+  },
+  "required": [
+    "submission_id",
+    "user_id",
+    "competition_id"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

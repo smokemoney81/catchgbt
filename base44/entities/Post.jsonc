@@ -1,0 +1,35 @@
+{
+  "name": "Post",
+  "type": "object",
+  "properties": {
+    "text": {
+      "type": "string",
+      "description": "Post-Text"
+    },
+    "photo_url": {
+      "type": "string",
+      "description": "Bild-URL"
+    },
+    "likes": {
+      "type": "number",
+      "default": 0,
+      "description": "Likes"
+    },
+    "reported": {
+      "type": "boolean",
+      "default": false,
+      "description": "Gemeldet"
+    },
+    "author_name": {
+      "type": "string",
+      "description": "Anzeigename des Autors"
+    }
+  },
+  "required": [
+    "text"
+  ],
+  "rls": {
+    "read": {},
+    "write": {}
+  }
+}

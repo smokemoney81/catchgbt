@@ -1,0 +1,54 @@
+{
+  "name": "PremiumWallet",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "E-Mail des Benutzers (unique)"
+    },
+    "purchased_credits": {
+      "type": "number",
+      "default": 0,
+      "description": "Gekaufte Credits"
+    },
+    "consumed_credits": {
+      "type": "number",
+      "default": 0,
+      "description": "Verbrauchte Credits"
+    },
+    "total_spent_eur": {
+      "type": "number",
+      "default": 0,
+      "description": "Gesamtausgaben in Euro"
+    }
+  },
+  "required": [
+    "user_id"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

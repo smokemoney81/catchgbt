@@ -1,0 +1,74 @@
+{
+  "name": "Clan",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name des Clans"
+    },
+    "description": {
+      "type": "string",
+      "description": "Beschreibung des Clans"
+    },
+    "members": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "E-Mail-Adressen der Mitglieder (3-10)"
+    },
+    "founder_email": {
+      "type": "string",
+      "description": "E-Mail des Gruenders"
+    },
+    "competition_id": {
+      "type": "string",
+      "description": "Referenz zum aktuellen Wettbewerb"
+    },
+    "total_event_score": {
+      "type": "number",
+      "default": 0,
+      "description": "Gesamtpunktzahl des Clans"
+    },
+    "total_catches": {
+      "type": "number",
+      "default": 0,
+      "description": "Anzahl der Faenge"
+    },
+    "average_size": {
+      "type": "number",
+      "default": 0,
+      "description": "Durchschnittliche Fischgroesse"
+    }
+  },
+  "required": [
+    "name",
+    "founder_email"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "founder_email": "{{user.email}}"
+        },
+        {
+          "members": {
+            "$in": [
+              "{{user.email}}"
+            ]
+          }
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

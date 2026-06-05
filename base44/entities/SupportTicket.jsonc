@@ -1,0 +1,79 @@
+{
+  "name": "SupportTicket",
+  "type": "object",
+  "properties": {
+    "subject": {
+      "type": "string",
+      "description": "Betreff des Tickets"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "bug",
+        "frage",
+        "feedback",
+        "abrechnung",
+        "sonstiges"
+      ],
+      "default": "frage",
+      "description": "Kategorie des Tickets"
+    },
+    "message": {
+      "type": "string",
+      "description": "Beschreibung des Anliegens"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "E-Mail-Adresse des Nutzers"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "Name des Nutzers"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "offen",
+        "in_bearbeitung",
+        "geloest",
+        "geschlossen"
+      ],
+      "default": "offen",
+      "description": "Status des Tickets"
+    },
+    "admin_response": {
+      "type": "string",
+      "description": "Antwort des Supports"
+    }
+  },
+  "required": [
+    "subject",
+    "message"
+  ],
+  "rls": {
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

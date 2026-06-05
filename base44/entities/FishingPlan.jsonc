@@ -1,0 +1,55 @@
+{
+  "name": "FishingPlan",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Ein Titel f\u00fcr den Plan, z.B. 'Zander am M\u00fcggelsee'"
+    },
+    "target_fish": {
+      "type": "string",
+      "description": "Der Zielfisch f\u00fcr diesen Plan."
+    },
+    "spot_info": {
+      "type": "string",
+      "description": "Informationen zum Spot oder Standort."
+    },
+    "weather_summary": {
+      "type": "string",
+      "description": "Zusammenfassung des Wetters zum Zeitpunkt der Analyse."
+    },
+    "gear_summary": {
+      "type": "string",
+      "description": "Zusammenfassung der verwendeten Ausr\u00fcstung."
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Die von der KI generierten Schritte."
+    },
+    "detailed_report": {
+      "type": "string",
+      "description": "Detaillierter Premium-Bericht mit Erfolgsprognosen und erweiterten Analysen"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": false,
+      "description": "Ob dieser Trip aktuell als aktiv markiert ist"
+    }
+  },
+  "required": [
+    "title",
+    "target_fish",
+    "steps"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

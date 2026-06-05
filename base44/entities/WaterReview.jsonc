@@ -1,0 +1,63 @@
+{
+  "name": "WaterReview",
+  "type": "object",
+  "properties": {
+    "spot_id": {
+      "type": "string",
+      "description": "Referenz zum Spot/Gew\u00e4sser"
+    },
+    "spot_name": {
+      "type": "string",
+      "description": "Name des Spots zur Anzeige"
+    },
+    "rating": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Sterne-Bewertung 1-5"
+    },
+    "bite_activity": {
+      "type": "string",
+      "enum": [
+        "sehr_gering",
+        "gering",
+        "mittel",
+        "hoch",
+        "sehr_hoch"
+      ],
+      "description": "Aktuelle Bei\u00dfaktivitaet"
+    },
+    "comment": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Kurzer Kommentar zur aktuellen Situation"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Breitengrad fuer Kartenmarkierung"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "Laengengrad fuer Kartenmarkierung"
+    },
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Zeitpunkt der Bewertung"
+    }
+  },
+  "required": [
+    "spot_id",
+    "spot_name",
+    "rating",
+    "bite_activity",
+    "latitude",
+    "longitude"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

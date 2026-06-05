@@ -187,35 +187,27 @@ export default function Header({
           
           <motion.div
             animate={{ 
-              scale: [1, 1.05, 1],
+              scale: [1, 1.04, 1],
               boxShadow: [
-                '0 0 0 0 rgba(34, 211, 238, 0)',
-                '0 0 20px 5px rgba(34, 211, 238, 0.4)',
-                '0 0 0 0 rgba(34, 211, 238, 0)'
+                '0 0 12px 2px rgba(34, 211, 238, 0.35)',
+                '0 0 24px 8px rgba(34, 211, 238, 0.65)',
+                '0 0 12px 2px rgba(34, 211, 238, 0.35)'
               ]
             }}
             transition={{ 
-              duration: 2,
+              duration: 2.2,
               repeat: Infinity,
               ease: "easeInOut"
             }}
-            className="rounded-lg"
+            className="rounded-xl"
           >
             <Button
-              variant="ghost"
-              size="icon"
               onClick={handleLeftSidebarToggle}
               aria-label={isSidebarOpen ? "Menü schliessen" : "Menü öffnen"}
               aria-expanded={isSidebarOpen}
-              className="text-cyan-400 active:scale-95 active:bg-cyan-500/20 focus:ring-2 focus:ring-cyan-400 transition-all duration-200 text-base font-bold relative overflow-hidden group min-h-[44px] min-w-[44px]"
+              className="bg-gradient-to-r from-cyan-400 to-emerald-400 hover:from-cyan-300 hover:to-emerald-300 text-gray-950 font-extrabold tracking-wide active:scale-95 focus:ring-2 focus:ring-cyan-300 transition-all duration-200 h-11 px-5 rounded-xl border border-cyan-200/40 shadow-lg text-base"
             >
               <span className="relative z-10" aria-hidden="true">Menü</span>
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-emerald-500/20"
-                initial={{ opacity: 0 }}
-                whileHover={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              />
             </Button>
           </motion.div>
           <EventTimer />

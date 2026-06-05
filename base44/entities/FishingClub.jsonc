@@ -1,0 +1,88 @@
+{
+  "name": "FishingClub",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name des Angelvereins oder -parks"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "club",
+        "spot"
+      ],
+      "description": "Kategorie: Verein oder Angelpark"
+    },
+    "address": {
+      "type": "object",
+      "properties": {
+        "street": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "postal_code": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string",
+          "default": "DE"
+        }
+      },
+      "description": "Strukturierte Adresse"
+    },
+    "coordinates": {
+      "type": "object",
+      "properties": {
+        "lng": {
+          "type": "number"
+        },
+        "lat": {
+          "type": "number"
+        }
+      },
+      "description": "Geocodierte Koordinaten"
+    },
+    "website": {
+      "type": "string",
+      "description": "Website-URL"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Telefonnummer"
+    },
+    "email": {
+      "type": "string",
+      "description": "E-Mail-Adresse"
+    },
+    "source": {
+      "type": "string",
+      "description": "Datenquelle (community_entities, next_spots)"
+    },
+    "geocoded_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Zeitpunkt der Geocodierung"
+    },
+    "is_validated": {
+      "type": "boolean",
+      "default": false,
+      "description": "Ob die Daten manuell validiert wurden"
+    }
+  },
+  "required": [
+    "name",
+    "category",
+    "source"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

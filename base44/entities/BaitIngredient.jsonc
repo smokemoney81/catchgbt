@@ -1,0 +1,103 @@
+{
+  "name": "BaitIngredient",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name der Zutat (z.B. Weizenmehl)"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "boilies",
+        "bait",
+        "both"
+      ],
+      "description": "Kategorie: Boilies, Anf\u00fctterung oder beides"
+    },
+    "max_percentage": {
+      "type": "number",
+      "default": 30,
+      "description": "Maximaler Prozentsatz in der Mischung"
+    },
+    "fish_attractiveness": {
+      "type": "object",
+      "description": "Attraktivit\u00e4tspunkte pro Fischart (0-10)",
+      "properties": {
+        "Karpfen": {
+          "type": "number",
+          "default": 0
+        },
+        "Brassen": {
+          "type": "number",
+          "default": 0
+        },
+        "Rotauge": {
+          "type": "number",
+          "default": 0
+        },
+        "Hecht": {
+          "type": "number",
+          "default": 0
+        },
+        "Zander": {
+          "type": "number",
+          "default": 0
+        },
+        "Barsch": {
+          "type": "number",
+          "default": 0
+        },
+        "Forelle": {
+          "type": "number",
+          "default": 0
+        },
+        "Aal": {
+          "type": "number",
+          "default": 0
+        }
+      },
+      "default": {}
+    },
+    "nutritional_value": {
+      "type": "object",
+      "description": "N\u00e4hrwertangaben",
+      "properties": {
+        "protein": {
+          "type": "number",
+          "description": "Proteingehalt in %"
+        },
+        "carbs": {
+          "type": "number",
+          "description": "Kohlenhydrate in %"
+        },
+        "fat": {
+          "type": "number",
+          "description": "Fettgehalt in %"
+        }
+      },
+      "default": {}
+    },
+    "cost_per_kg": {
+      "type": "number",
+      "description": "Kosten pro Kilogramm in Euro"
+    },
+    "description": {
+      "type": "string",
+      "description": "Beschreibung und Verwendung"
+    }
+  },
+  "required": [
+    "name",
+    "category",
+    "max_percentage"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

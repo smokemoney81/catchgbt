@@ -1,0 +1,42 @@
+{
+  "name": "EventRanking",
+  "type": "object",
+  "properties": {
+    "userId": {
+      "type": "string",
+      "description": "E-Mail oder User-ID"
+    },
+    "userName": {
+      "type": "string",
+      "description": "Anzeigename des Users"
+    },
+    "eventTime": {
+      "type": "number",
+      "description": "Event-Zeit in Sekunden"
+    },
+    "platzierung": {
+      "type": "number",
+      "description": "Platzierung (1, 2, 3, ...)"
+    },
+    "datum": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Zeitpunkt der Berechnung"
+    }
+  },
+  "required": [
+    "userId",
+    "userName",
+    "eventTime",
+    "platzierung",
+    "datum"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

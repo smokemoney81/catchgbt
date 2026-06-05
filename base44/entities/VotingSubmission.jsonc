@@ -1,0 +1,97 @@
+{
+  "name": "VotingSubmission",
+  "type": "object",
+  "properties": {
+    "competition_id": {
+      "type": "string",
+      "description": "Referenz zum Wettbewerb"
+    },
+    "catch_id": {
+      "type": "string",
+      "description": "Referenz zum Fang"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "E-Mail des Einreichenden"
+    },
+    "photo_url": {
+      "type": "string",
+      "description": "URL des Fangfotos"
+    },
+    "species": {
+      "type": "string",
+      "description": "Fischart"
+    },
+    "length_cm": {
+      "type": "number",
+      "description": "Laenge in cm"
+    },
+    "catch_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Zeitpunkt des Fangs"
+    },
+    "community_likes": {
+      "type": "number",
+      "default": 0,
+      "description": "Anzahl der Community-Likes"
+    },
+    "ai_score": {
+      "type": "number",
+      "default": 0,
+      "description": "KI-Bewertung 0-100"
+    },
+    "total_score": {
+      "type": "number",
+      "default": 0,
+      "description": "Gesamtscore (70% Likes + 30% KI)"
+    },
+    "is_suspicious": {
+      "type": "boolean",
+      "default": false,
+      "description": "Markierung verdaechtiger Einreichungen"
+    },
+    "disqualification_reason": {
+      "type": "string",
+      "description": "Grund fuer Disqualifikation"
+    },
+    "ai_analysis": {
+      "type": "object",
+      "description": "Detaillierte KI-Analyse",
+      "properties": {
+        "plausibility": {
+          "type": "number"
+        },
+        "visibility": {
+          "type": "number"
+        },
+        "species_match": {
+          "type": "number"
+        },
+        "explanation": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "required": [
+    "competition_id",
+    "user_id",
+    "species"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "name": "BathymetricMap",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name der Tiefenkarte"
+    },
+    "water_body_name": {
+      "type": "string",
+      "description": "Name des Gewaessers"
+    },
+    "bounds": {
+      "type": "object",
+      "description": "Geografische Grenzen der Karte",
+      "properties": {
+        "north": {
+          "type": "number"
+        },
+        "south": {
+          "type": "number"
+        },
+        "east": {
+          "type": "number"
+        },
+        "west": {
+          "type": "number"
+        }
+      }
+    },
+    "center_lat": {
+      "type": "number",
+      "description": "Mittelpunkt Breitengrad"
+    },
+    "center_lng": {
+      "type": "number",
+      "description": "Mittelpunkt Laengengrad"
+    },
+    "data_points_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Anzahl der verwendeten Messpunkte"
+    },
+    "contributors_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Anzahl der beitragenden Nutzer"
+    },
+    "max_depth": {
+      "type": "number",
+      "description": "Maximale Tiefe in Metern"
+    },
+    "avg_depth": {
+      "type": "number",
+      "description": "Durchschnittliche Tiefe in Metern"
+    },
+    "ai_analysis": {
+      "type": "string",
+      "description": "KI-generierte Analyse und Fischereitipps"
+    },
+    "hotspots": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "lat": {
+            "type": "number"
+          },
+          "lng": {
+            "type": "number"
+          },
+          "depth": {
+            "type": "number"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "KI-erkannte Tiefhotspots",
+      "default": []
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "processing",
+        "ready",
+        "error"
+      ],
+      "default": "pending",
+      "description": "Status der Kartengenerierung"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Zeitpunkt der letzten Generierung"
+    }
+  },
+  "required": [
+    "name",
+    "water_body_name"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

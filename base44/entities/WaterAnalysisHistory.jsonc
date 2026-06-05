@@ -1,0 +1,103 @@
+{
+  "name": "WaterAnalysisHistory",
+  "type": "object",
+  "properties": {
+    "spot_id": {
+      "type": "string",
+      "description": "Referenz zum Spot (optional)"
+    },
+    "spot_name": {
+      "type": "string",
+      "description": "Name des analysierten Spots"
+    },
+    "latitude": {
+      "type": "number",
+      "description": "Breitengrad"
+    },
+    "longitude": {
+      "type": "number",
+      "description": "L\u00e4ngengrad"
+    },
+    "temperature": {
+      "type": "number",
+      "description": "Wassertemperatur in \u00b0C"
+    },
+    "satellite_sst": {
+      "type": "number",
+      "description": "Satelliten-SST (falls verf\u00fcgbar)"
+    },
+    "chlorophyll_a": {
+      "type": "number",
+      "description": "Chlorophyll-a Konzentration in mg/m\u00b3"
+    },
+    "turbidity_ntu": {
+      "type": "number",
+      "description": "Tr\u00fcbung in NTU"
+    },
+    "algae_risk": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "unknown"
+      ],
+      "description": "Algenbl\u00fcte-Risiko"
+    },
+    "wind_speed": {
+      "type": "number",
+      "description": "Windgeschwindigkeit in m/s"
+    },
+    "wind_direction": {
+      "type": "number",
+      "description": "Windrichtung in Grad"
+    },
+    "wave_height": {
+      "type": "number",
+      "description": "Wellenh\u00f6he in Metern"
+    },
+    "visibility": {
+      "type": "number",
+      "description": "Sichtweite in Metern"
+    },
+    "quality_score": {
+      "type": "number",
+      "description": "Gesamtqualit\u00e4ts-Score 0-100"
+    },
+    "weather_impact": {
+      "type": "number",
+      "description": "Wetter-Einfluss 0-100"
+    },
+    "weather_condition": {
+      "type": "string",
+      "description": "Wetterbedingung"
+    },
+    "fishing_forecast": {
+      "type": "string",
+      "description": "KI-Fangprognose Text"
+    },
+    "satellite_data_available": {
+      "type": "boolean",
+      "default": false,
+      "description": "Ob echte Satellitendaten verf\u00fcgbar waren"
+    },
+    "analyzed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Zeitpunkt der Analyse"
+    }
+  },
+  "required": [
+    "latitude",
+    "longitude",
+    "analyzed_at"
+  ],
+  "rls": {
+    "read": {
+      "created_by": "{{user.email}}"
+    },
+    "write": {
+      "created_by": "{{user.email}}"
+    }
+  }
+}

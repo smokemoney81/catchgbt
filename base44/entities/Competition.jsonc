@@ -1,0 +1,93 @@
+{
+  "name": "Competition",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Titel des Wettbewerbs"
+    },
+    "description": {
+      "type": "string",
+      "description": "Beschreibung und Regeln"
+    },
+    "competition_type": {
+      "type": "string",
+      "enum": [
+        "biggest_catch",
+        "most_catches",
+        "specific_species",
+        "photo_contest"
+      ],
+      "description": "Art des Wettbewerbs"
+    },
+    "target_species": {
+      "type": "string",
+      "description": "Zielfischart (optional, f\u00fcr specific_species)"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Startdatum"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Enddatum"
+    },
+    "prize": {
+      "type": "string",
+      "description": "Gewinn/Preis"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Ob der Wettbewerb aktiv ist"
+    },
+    "participants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "E-Mail-Adressen der Teilnehmer"
+    },
+    "submissions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "user_email": {
+            "type": "string"
+          },
+          "catch_id": {
+            "type": "string"
+          },
+          "submitted_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "value": {
+            "type": "number"
+          }
+        }
+      },
+      "default": [],
+      "description": "Eingereichte F\u00e4nge"
+    }
+  },
+  "required": [
+    "title",
+    "description",
+    "competition_type",
+    "start_date",
+    "end_date"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

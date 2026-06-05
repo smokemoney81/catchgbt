@@ -1,0 +1,48 @@
+{
+  "name": "RuleEntry",
+  "type": "object",
+  "properties": {
+    "region": {
+      "type": "string",
+      "description": "Region/Verband"
+    },
+    "fish": {
+      "type": "string",
+      "description": "Fischart"
+    },
+    "min_size_cm": {
+      "type": "number",
+      "description": "Mindestma\u00df in cm"
+    },
+    "closed_from": {
+      "type": "string",
+      "format": "date",
+      "description": "Schonzeit von"
+    },
+    "closed_to": {
+      "type": "string",
+      "format": "date",
+      "description": "Schonzeit bis"
+    },
+    "hook_limit": {
+      "type": "string",
+      "description": "Haken-/K\u00f6der-Limits"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Hinweise"
+    }
+  },
+  "required": [
+    "region",
+    "fish"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

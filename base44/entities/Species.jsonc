@@ -1,0 +1,27 @@
+{
+  "name": "Species",
+  "type": "object",
+  "properties": {
+    "common_name": {
+      "type": "string"
+    },
+    "latin_name": {
+      "type": "string"
+    },
+    "region": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "common_name",
+    "region"
+  ],
+  "rls": {
+    "read": {},
+    "write": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
