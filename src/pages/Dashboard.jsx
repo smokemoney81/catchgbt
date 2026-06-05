@@ -387,9 +387,8 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
           
           <div className="flex flex-col items-end gap-2">
             <OfflineCacheIndicator />
-            <button
-              onClick={() => setVoiceOverlayOpen(true)}
-              className={`flex items-center gap-3 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 border border-cyan-500/30 hover:border-cyan-400/50 transition-all min-h-[44px] min-w-[44px] ${
+            <div
+              className={`flex items-center gap-3 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500/20 to-emerald-500/20 border border-cyan-500/30 transition-all ${
                 buttonPulse ? 'animate-pulse ring-2 ring-cyan-400' : ''
               }`}
             >
@@ -401,7 +400,7 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
                 error={voiceStatus.error}
                 showAlways={true}
               />
-            </button>
+            </div>
             {voiceTranscript && (
               <div className="bg-gradient-to-br from-cyan-900/50 to-cyan-900/30 rounded-lg px-4 py-2 border-2 border-cyan-500/60 shadow-lg shadow-cyan-500/20 w-full max-w-sm">
                 <p className="text-sm text-cyan-200 font-medium break-words">{voiceTranscript}</p>
