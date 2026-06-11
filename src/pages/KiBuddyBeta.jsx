@@ -150,6 +150,11 @@ export default function KiBuddyBeta() {
             </button>
           </div>
 
+          {/* Hinweis: moegliche Verzoegerung */}
+          <div style={{ padding: "8px 16px", background: "#0d1a2a", borderBottom: "1px solid #111e2e", fontSize: 11, color: "#f5b54a", lineHeight: 1.4 }}>
+            Hinweis: Bei Antworten kann es zu kurzen Verzoegerungen kommen.
+          </div>
+
           {/* Voice control row */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px", background: "#08111f" }}>
             <span style={{ fontSize: 12, color: "#8899aa", maxWidth: 180, lineHeight: 1.4 }}>Mikrofon aktivieren und Frage stellen</span>
