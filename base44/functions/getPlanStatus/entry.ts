@@ -22,18 +22,11 @@ Deno.serve(async (req) => {
       });
     }
 
-    const planId = user.premium_plan_id || 'free';
-    const expiresAt = user.premium_expires_at;
-    
-    let isActive = true;
-    let remainingDays = null;
-    
-    if (expiresAt) {
-      const expiry = new Date(expiresAt);
-      const now = new Date();
-      remainingDays = Math.ceil((expiry - now) / (1000 * 60 * 60 * 24));
-      isActive = remainingDays > 0;
-    }
+    // Alle Premium-Funktionen sind freigeschaltet: jeder Nutzer bekommt den hoechsten Plan.
+    const planId = 'ultimate';
+    const expiresAt = null;
+    const isActive = true;
+    const remainingDays = null;
 
     const planNames = {
       'free': 'Free',

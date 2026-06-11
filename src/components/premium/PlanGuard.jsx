@@ -25,6 +25,10 @@ export default function PlanGuard({ children, requiredPlan = 'basic', fallback =
     );
   }
 
+  // Alle Premium-Funktionen sind fuer alle Nutzer freigeschaltet.
+  return children;
+
+  // eslint-disable-next-line no-unreachable
   if (hasFeature(requiredPlan)) {
     return children;
   }

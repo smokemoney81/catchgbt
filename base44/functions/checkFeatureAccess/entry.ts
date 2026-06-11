@@ -16,17 +16,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'feature_id required' }, { status: 400 });
     }
 
-    const planId = user.premium_plan_id || 'free';
-    const expiresAt = user.premium_expires_at;
-    
-    let isPlanActive = true;
-    if (planId !== 'free' && expiresAt) {
-      const now = new Date();
-      const expires = new Date(expiresAt);
-      isPlanActive = expires > now;
-    }
-
-    const effectivePlan = isPlanActive ? planId : 'free';
+    // Alle Premium-Funktionen sind fuer alle Nutzer freigeschaltet.
+    const effectivePlan = 'ultimate';
     
     const allPlans = ['free', 'basic', 'pro', 'elite', 'ultimate'];
     const featureAccess = {
@@ -57,10 +48,9 @@ Deno.serve(async (req) => {
       'ar_view': allPlans
     };
 
-    const allowedPlans = featureAccess[feature_id] || [];
-    const hasAccess = allowedPlans.includes(effectivePlan);
-    
-    const requiredPlanName = hasAccess ? effectivePlan : getMinimumRequiredPlan(feature_id);
+    // Zugriff immer erlauben.
+    const hasAccess = true;
+    const requiredPlanName = effectivePlan;
 
     return Response.json({
       ok: true,
