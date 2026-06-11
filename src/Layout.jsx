@@ -136,13 +136,17 @@ function LayoutContent({ children, currentPageName }) {
       started_at: new Date().toISOString(),
       status: 'active',
       last_heartbeat: new Date().toISOString()
-    }).then(s => { sessionDbId = s.id; });
+    }).then(s => { sessionDbId = s.id; }).catch(() => {});
 
     const heartbeat = setInterval(async () => {
       if (!sessionDbId) return;
-      await base44.entities.UsageSession.update(sessionDbId, {
-        last_heartbeat: new Date().toISOString()
-      });
+      try {
+        await base44.entities.UsageSession.update(sessionDbId, {
+          last_heartbeat: new Date().toISOString()
+        });
+      } catch (_) {
+        // Netzwerkfehler beim Heartbeat ignorieren
+      }
     }, 30000);
 
     const stopSession = () => {
@@ -150,7 +154,7 @@ function LayoutContent({ children, currentPageName }) {
       base44.entities.UsageSession.update(sessionDbId, {
         status: 'stopped',
         stopped_at: new Date().toISOString()
-      });
+      }).catch(() => {});
     };
 
     window.addEventListener('beforeunload', stopSession);
