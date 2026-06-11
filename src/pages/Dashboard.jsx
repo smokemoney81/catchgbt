@@ -5,7 +5,6 @@ import { createPageUrl } from "@/utils";
 import WakeWordIndicator from "@/components/header/WakeWordIndicator";
 import MiniKarte from "@/components/home/MiniKarte";
 import WeatherRadarMap from "@/components/weather/WeatherRadarMap";
-import MiniKiVoiceBuddy from "@/components/home/MiniKiVoiceBuddy";
 import SchonzeitWarner from "@/components/dashboard/SchonzeitWarner";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -426,9 +425,32 @@ Antworte auf Deutsch, klar und direkt, ohne Floskeln, in max 6 Saetzen.`;
           </div>
         )}
 
-        <div>
-          <MiniKiVoiceBuddy />
-        </div>
+        <Link
+          to={createPageUrl('KiBuddyBeta')}
+          className="block relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-900/40 via-blue-900/30 to-cyan-900/30 backdrop-blur-sm p-6 sm:p-7 border border-purple-500/30 hover:border-cyan-400/50 transition-all shadow-lg hover:shadow-2xl group"
+        >
+          <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl group-hover:bg-cyan-500/20 transition-colors" />
+          <div className="relative flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center flex-shrink-0 shadow-lg text-white text-2xl font-bold">
+              M
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap mb-1">
+                <h3 className="text-base sm:text-lg font-bold text-white">KI Voice-Buddy oeffnen</h3>
+                <span className="text-[10px] font-semibold text-cyan-300 bg-cyan-500/15 border border-cyan-400/30 rounded-md px-2 py-0.5 uppercase tracking-wider">Beta</span>
+              </div>
+              <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
+                Frag mich alles rund ums Angeln oder steuere die App per Sprache.
+              </p>
+              <p className="text-xs text-cyan-400/80 mt-2 italic">
+                z.B. "Mach einen Fangbuch-Eintrag" oder "Welcher Koeder ist heute gut?"
+              </p>
+            </div>
+            <div className="text-cyan-400 text-2xl group-hover:translate-x-1 transition-transform flex-shrink-0">
+              &gt;
+            </div>
+          </div>
+        </Link>
 
         <Link
           to={createPageUrl('Map')}
